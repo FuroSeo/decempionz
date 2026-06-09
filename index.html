@@ -786,7 +786,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
 
-  <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:12px"></button>
+  <button class="btn btn-share" style="font-size:.82rem;margin-top:10px;margin-bottom:4px" onclick="shareResult()">📤 Share</button>
+  <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:6px"></button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
 </div>
 
@@ -820,6 +821,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="go-journey"></div>
   </div>
 
+  <button class="btn btn-share" style="font-size:.9rem;margin-bottom:8px" onclick="shareResult()">📤 Share Run</button>
   <button class="btn btn-gold" onclick="startGame()">🎲 Try Again</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
 </div>
@@ -3090,8 +3092,12 @@ function shareResult(){
   const formatLabel={'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League';
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
+  const isWinner=G.phase==='done'||document.getElementById('screen-trophy').classList.contains('active');
+  const statusLine=isWinner
+    ? gradeEmoji+' Grade '+grade+' — '+formatLabel+' Winner!'
+    : '💔 Eliminated in '+formatLabel+' ('+campW+'W '+campD+'D '+campL+'L)';
   const text=[
-    gradeEmoji+' Grade '+grade+' — '+formatLabel+' Winner!',
+    statusLine,
     '📋 '+G.formation+' · '+campW+'W '+campD+'D '+campL+'L',
     '⚽ '+G.campaignGF+'–'+G.campaignGA+' goals · Top scorer: '+topScorerStr,
     '🏟️ Can you beat me? → https://decempionz.com'
