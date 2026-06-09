@@ -1926,10 +1926,9 @@ function renderCurrentCard(p, empSlots){
   // Count same-type players remaining in pool
   const sameTypeLeft=G.draftPool.slice(G.draftIdx+1).filter(q=>posGroup(q.p)===pg).length;
 
-  // Get team colors and season from club name
-  const teamPair=Object.entries(TEAMS).find(([k,t])=>t.name===p.club);
-  const teamKey=teamPair?teamPair[0]:'';
-  const teamEntry=teamPair?teamPair[1]:null;
+  // Get team colors and season — use teamId directly to avoid ambiguity (e.g. two Inter Milan seasons)
+  const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
+  const teamEntry=TEAMS[teamKey]||null;
   const season=teamEntry?teamEntry.season:'';
 
 
