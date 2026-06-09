@@ -2546,7 +2546,11 @@ function runPenaltyKick(){
   const name=isHome?(P.names[P.hKicks.length%P.names.length]||'Player'):(P.oppNames[P.aKicks.length%P.oppNames.length]||P.oppName);
   if(isHome){P.hKicks.push(scored);if(scored)P.h++;}
   else{P.aKicks.push(scored);if(scored)P.a++;}
-  const cid=isHome?'pen-home-icons':'pen-away-icons';
+  // Use SD-specific containers if in sudden death, else default
+  const sdR=P.sdRound||0;
+  const baseCid=isHome?'pen-home-icons':'pen-away-icons';
+  const sdCid=isHome?'pen-home-sd-'+sdR:'pen-away-sd-'+sdR;
+  const cid=(sdR>0&&document.getElementById(sdCid))?sdCid:baseCid;
   const ic=document.createElement('span');
   ic.title=lastName(name);
   ic.style='font-size:1.15rem;cursor:default;'+(!scored?'color:var(--red2)':'');
@@ -2569,7 +2573,28 @@ function checkPenDone(){
   if(hT>=maxRounds&&aT>=maxRounds){
     if(h!==a){finishPenalties();return true;}
     P.maxRounds++;
-    document.getElementById('pen-msg').textContent='Sudden death!';
+    const sdRound=P.maxRounds-5; // how many SD rounds played
+    document.getElementById('pen-msg').textContent=
+      sdRound===1?'⚡ Sudden Death!':'⚡ Sudden Death — Round '+sdRound;
+    // Add visual separator for sudden death rounds
+    const rows=document.getElementById('pen-rows');
+    const sep=document.createElement('div');
+    sep.style='width:100%;text-align:center;font-size:.55rem;font-weight:700;color:var(--gold);'+
+      'letter-spacing:1px;text-transform:uppercase;margin:4px 0;border-top:1px dashed var(--brd);padding-top:4px';
+    sep.textContent='⚡ SD'+(sdRound>1?' '+sdRound:'');
+    rows.appendChild(sep);
+    // Add new icon containers for this SD round
+    const hRow=document.createElement('div');
+    hRow.style='display:flex;align-items:center;gap:6px';
+    hRow.innerHTML='<span style="font-size:.6rem;color:var(--gold);width:64px;font-weight:700;flex-shrink:0">Decempionz</span>'+
+      '<div id="pen-home-sd-'+sdRound+'" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
+    const aRow=document.createElement('div');
+    aRow.style='display:flex;align-items:center;gap:6px';
+    aRow.innerHTML='<span style="font-size:.6rem;color:var(--mut);width:64px;font-weight:700;flex-shrink:0">'+
+      M.oppName.split(' ')[0]+'</span>'+
+      '<div id="pen-away-sd-'+sdRound+'" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
+    rows.appendChild(hRow);rows.appendChild(aRow);
+    P.sdRound=sdRound;
   }
   return false;
 }
