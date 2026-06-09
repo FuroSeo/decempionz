@@ -2277,7 +2277,7 @@ let M={};
 /* tactic */
 var _pendingMatch=null;
 var selectedTactic='balanced';
-const TACT_MOD={attack:{myXG:1.15,oppXG:1.10},balanced:{myXG:1,oppXG:1},defend:{myXG:0.90,oppXG:0.85}};
+const TACT_MOD={attack:{myXG:1.10,oppXG:1.08},balanced:{myXG:1,oppXG:1},defend:{myXG:0.92,oppXG:0.88}};
 // Counter-tactic matrix [myXGmul, oppXGmul] — rock/paper/scissors:
 // Attack beats Defend (pressing breaks low block)
 // Balanced beats Attack (possession bypasses press)
@@ -2398,19 +2398,19 @@ function _runMatch(){
   const ctKey=(G.tactic||'balanced')+'-'+oppTactic;
   const ct=COUNTER_MOD[ctKey]||[1,1];
 
-  // Calibrated xG
-  let myXG=Math.max(.15,((atk-oppStr*.82)*.40+0.62)*tm.myXG*ct[0]);
-  let oppXG=Math.max(.10,((oppStr-def*.78)*.44+0.34)*tm.oppXG*ct[1]);
+  // Calibrated xG — tighter formula to limit high-scoring outliers
+  let myXG=Math.max(.13,((atk-oppStr*.84)*.36+0.56)*tm.myXG*ct[0]);
+  let oppXG=Math.max(.10,((oppStr-def*.80)*.42+0.32)*tm.oppXG*ct[1]);
 
-  // Star player bonus — reduced impact
+  // Star player bonus
   const starP=pl.reduce((b,p)=>p.r>(b?.r||0)?p:b,null);
-  const starBonus=starP?Math.max(0,(starP.r-8.5)*0.07):0;
-  myXG=Math.min(myXG+starBonus,3.0);
+  const starBonus=starP?Math.max(0,(starP.r-8.5)*0.06):0;
+  myXG=Math.min(myXG+starBonus,2.6);
 
-  // Momentum modifier — reduced impact
-  const momMod=(G.momentum||0)*0.04;
-  myXG=Math.max(.10,Math.min(myXG+momMod,3.0));
-  oppXG=Math.max(.08,Math.min(oppXG-momMod*.4,3.0));
+  // Momentum modifier
+  const momMod=(G.momentum||0)*0.03;
+  myXG=Math.max(.10,Math.min(myXG+momMod,2.6));
+  oppXG=Math.max(.08,Math.min(oppXG-momMod*.35,2.6));
 
   // Draw-pull for evenly matched games
   const xgDiff=Math.abs(myXG-oppXG);
