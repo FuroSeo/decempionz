@@ -1719,17 +1719,17 @@ function confirmDiff(){confirmSetup();}
 function initDraft(){
   if(!G.formation) return;
   const f = FORMATIONS[G.formation];
-  // Build pool: per club → 1 guaranteed top + up to 4 random from the rest
-  // Gives ~135 players with realistic rating spread (not all 9-10)
+  // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
+  // Key by teamId (not club name) so multiple seasons of the same club each get fair representation
   const clubBuckets={};
   G.tournament.teams.forEach(id=>{
     const t=TEAMS[id];
     const sorted=[...t.players].sort((a,b)=>b.r-a.r);
-    const key=t.name;
-    if(!clubBuckets[key]) clubBuckets[key]={top:null,rest:[]};
+    const key=id;
+    clubBuckets[key]={top:null,rest:[]};
     sorted.forEach((p,i)=>{
       const entry={...p,club:t.name,teamId:id};
-      if(i===0&&!clubBuckets[key].top) clubBuckets[key].top=entry;
+      if(i===0) clubBuckets[key].top=entry;
       else clubBuckets[key].rest.push(entry);
     });
   });
@@ -3176,4 +3176,9 @@ function showShareToast(msg){
 <!-- First-visit disclaimer banner -->
 <div id="banner-disclaimer" style="display:none">
   <p>Decempionz is an independent fan project — not affiliated with UEFA, FIFA, or any club. No data collected. <a onclick="openLegal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">Full disclaimer →</a></p>
-  <button class="btn-
+  <button class="btn-banner-legal" onclick="openLegal()">Legal</button>
+  <button class="btn-banner-ok" onclick="closeBanner()">Got it</button>
+</div>
+
+</body>
+</html>         
