@@ -454,6 +454,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   cursor:pointer;white-space:nowrap;font-weight:700}
 .btn-banner-ok{background:var(--gold);color:#000;border:none}
 .btn-banner-legal{background:transparent;color:var(--mut);border:1px solid var(--brd)}
+
+/* ── Screen nav logo ── */
+.screen-logo{display:block;font-size:.65rem;font-weight:900;letter-spacing:2.5px;
+  text-transform:uppercase;cursor:pointer;margin-bottom:14px;
+  background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:.75;transition:opacity .18s}
+.screen-logo:hover{opacity:1}
 </style>
 </head>
 <body><script>
@@ -513,6 +521,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- FORMAT PICKER -->
 <div class="screen" id="screen-format">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <h2 style="margin-bottom:6px">Choose Tournament Format</h2>
   <p style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Each format has a different structure, era pool and number of matches.</p>
   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
@@ -565,6 +575,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- ERA PICKER -->
 <div class="screen" id="screen-era">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <h2 style="margin-bottom:6px">Choose an Era</h2>
   <p style="color:var(--mut);font-size:.82rem;margin-bottom:10px">Pick a specific era or go All Time for the widest possible draft pool.</p>
   <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-weight:700;border:none;padding:13px;border-radius:10px;font-size:.85rem;letter-spacing:.5px" onclick="selectAllTime()">
@@ -578,6 +590,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- SETUP SCREEN -->
 <div class="screen" id="screen-tourn">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <!-- Mode header -->
   <div style="text-align:center;margin-bottom:16px;padding-top:4px">
     <div id="st-badge" style="display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:3px 12px;margin-bottom:8px"></div>
@@ -595,6 +609,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- FORMATION PICK -->
 <div class="screen" id="screen-formation">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <div style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
   <div style="font-size:.72rem;color:var(--mut);margin-bottom:10px">Determines your draft slots</div>
   <div class="form-grid" id="form-grid"></div>
@@ -613,6 +629,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- BLIND DRAFT -->
 <div class="screen" id="screen-draft">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <div class="draft-hdr">
     <div>
       <div style="font-weight:800;font-size:1.05rem" id="d-title"></div>
@@ -639,6 +657,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- CAMPAIGN -->
 <div class="screen" id="screen-campaign">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
   <div class="camp-hdr">
     <div>
@@ -680,6 +700,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- MATCH -->
 <div class="screen" id="screen-match">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <div style="text-align:center;margin-bottom:12px" id="m-tag"></div>
   <div class="match-wrap">
     <div class="m-teams">
@@ -705,6 +727,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- RESULT -->
 <div class="screen" id="screen-result">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
 
   <!-- Compact header -->
   <div class="res-header">
@@ -750,6 +774,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <div style="text-align:center;padding:16px 0 8px">
     <div style="font-size:3.5rem;margin-bottom:8px">💔</div>
     <h2>Eliminated</h2>
@@ -782,6 +808,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- TROPHY -->
 <div class="screen" id="screen-trophy" style="position:relative">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <div class="confetti-wrap" id="t-confetti"></div>
   <div style="position:relative;z-index:1">
 
@@ -822,6 +850,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- HOW TO PLAY -->
 <div class="screen" id="screen-howto">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
   <h2 style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 58-squad pool spanning 27 legendary clubs. Each era comes with its own tournament teams and draft pool.</p>
