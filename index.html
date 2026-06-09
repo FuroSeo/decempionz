@@ -1693,7 +1693,7 @@ function selectFormation(el, key){
 
 /* difficulty */
 var selectedDiff='normal';
-const DIFF_CFG={easy:{passes:10,oppMod:-.25},normal:{passes:7,oppMod:0},hard:{passes:5,oppMod:.25}};
+const DIFF_CFG={easy:{passes:10,oppMod:-.20},normal:{passes:7,oppMod:.15},hard:{passes:5,oppMod:.40}};
 function selectDiff(level,el){
   selectedDiff=level;
   document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
@@ -2368,7 +2368,19 @@ function _runMatch(){
   let oppStr=_pendingMatch.oppStr;
   // Apply difficulty opponent modifier
   const diffCfg=DIFF_CFG[G.difficulty||'normal']||DIFF_CFG.normal;
-  oppStr=Math.max(5,oppStr+diffCfg.oppMod);
+  // Progressive round bonus: knockout rounds get progressively harder
+  // Group: +0 | R16/R1: +0 | QF/R2: +0.25 | SF: +0.55 | Final: +0.90
+  let roundBonus=0;
+  if(G.phase==='knockout'){
+    const isCoppa=G.format==='coppa';
+    const roundIdx=G.knockRound;
+    if(isCoppa){
+      roundBonus=[0,0,0.25,0.55,0.90][roundIdx]||0;
+    } else {
+      roundBonus=[0,0.25,0.55,0.90][roundIdx]||0;
+    }
+  }
+  oppStr=Math.max(5,oppStr+diffCfg.oppMod+roundBonus);
 
   // Calculate my team strength from slot-aware squad
   const pl=G.squad.length?G.squad:G.slotPlayers.filter(Boolean);
@@ -2385,23 +2397,23 @@ function _runMatch(){
   const ctKey=(G.tactic||'balanced')+'-'+oppTactic;
   const ct=COUNTER_MOD[ctKey]||[1,1];
 
-  // Calibrated xG (Champions League avg ~2.5-2.8 total goals)
-  let myXG=Math.max(.20,((atk-oppStr*.80)*.42+0.68)*tm.myXG*ct[0]);
-  let oppXG=Math.max(.08,((oppStr-def*.80)*.42+0.30)*tm.oppXG*ct[1]);
+  // Calibrated xG
+  let myXG=Math.max(.15,((atk-oppStr*.82)*.40+0.62)*tm.myXG*ct[0]);
+  let oppXG=Math.max(.10,((oppStr-def*.78)*.44+0.34)*tm.oppXG*ct[1]);
 
-  // Star player bonus (best player above 8.5 threshold)
+  // Star player bonus — reduced impact
   const starP=pl.reduce((b,p)=>p.r>(b?.r||0)?p:b,null);
-  const starBonus=starP?Math.max(0,(starP.r-8.5)*0.10):0;
-  myXG=Math.min(myXG+starBonus,3.2);
+  const starBonus=starP?Math.max(0,(starP.r-8.5)*0.07):0;
+  myXG=Math.min(myXG+starBonus,3.0);
 
-  // Momentum modifier (±0.05 per momentum point, range -3 to +3)
-  const momMod=(G.momentum||0)*0.05;
-  myXG=Math.max(.12,Math.min(myXG+momMod,3.2));
-  oppXG=Math.max(.06,Math.min(oppXG-momMod*.5,3.0));
+  // Momentum modifier — reduced impact
+  const momMod=(G.momentum||0)*0.04;
+  myXG=Math.max(.10,Math.min(myXG+momMod,3.0));
+  oppXG=Math.max(.08,Math.min(oppXG-momMod*.4,3.0));
 
-  // Draw-pull for evenly matched games (Champions League: lots of 1-1, 0-0)
+  // Draw-pull for evenly matched games
   const xgDiff=Math.abs(myXG-oppXG);
-  if(xgDiff<0.40){const pull=0.06*(0.40-xgDiff)/0.40;myXG-=pull;oppXG-=pull;}
+  if(xgDiff<0.35){const pull=0.05*(0.35-xgDiff)/0.35;myXG-=pull;oppXG-=pull;}
 
   // Store tactic matchup result for match log
   const tacAdv=ct[0]>1.05?'advantage':ct[0]<0.95?'disadvantage':'neutral';
