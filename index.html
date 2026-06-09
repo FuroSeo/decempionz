@@ -2347,8 +2347,9 @@ function playRound(){
     roundLabel=`Group Stage — Match ${G.groupRound+1}`;
     roundTag='group';
   } else {
-    const KNAMES=['Round of 16','Quarter-Final','Semi-Final','Final'];
-    const KTAGS=['r16','qf','sf','final'];
+    const isCoppaR=G.format==='coppa';
+    const KNAMES=isCoppaR?['Round 1','Round 2','Quarter-Final','Semi-Final','Final']:['Round of 16','Quarter-Final','Semi-Final','Final'];
+    const KTAGS=isCoppaR?['r1','r2','qf','sf','final']:['r16','qf','sf','final'];
     const opp=G.knockOpps[G.knockRound];
     oppName=opp.name;
     oppStr=opp.str;
@@ -3175,9 +3176,4 @@ function showShareToast(msg){
 <!-- First-visit disclaimer banner -->
 <div id="banner-disclaimer" style="display:none">
   <p>Decempionz is an independent fan project — not affiliated with UEFA, FIFA, or any club. No data collected. <a onclick="openLegal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">Full disclaimer →</a></p>
-  <button class="btn-banner-legal" onclick="openLegal()">Legal</button>
-  <button class="btn-banner-ok" onclick="closeBanner()">Got it</button>
-</div>
-
-</body>
-</html>
+  <button class="btn-
