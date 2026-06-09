@@ -424,6 +424,36 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
   .format-card:hover{border-color:var(--acc)}
   .format-card.fc-sel{border-color:var(--gold);background:rgba(234,179,8,.07)}
+
+/* ── Legal footer ── */
+.legal-footer{text-align:center;padding:12px 16px 18px;font-size:.58rem;color:var(--mut);
+  border-top:1px solid var(--brd);margin-top:16px;line-height:1.8}
+.legal-footer a{color:var(--mut);text-decoration:underline;cursor:pointer}
+.legal-footer a:hover{color:var(--gold)}
+/* ── Legal modal ── */
+#modal-legal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;
+  display:none;align-items:center;justify-content:center;padding:16px}
+#modal-legal.open{display:flex}
+.modal-legal-box{background:var(--bg);border:1px solid var(--brd);border-radius:16px;
+  max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px 20px}
+.modal-legal-box h2{font-size:.95rem;font-weight:900;color:var(--gold);margin-bottom:18px;
+  letter-spacing:.5px;text-align:center}
+.modal-legal-box h3{font-size:.72rem;font-weight:700;color:#eef2ff;margin:16px 0 6px;
+  text-transform:uppercase;letter-spacing:.8px}
+.modal-legal-box p{font-size:.68rem;color:var(--mut);line-height:1.65;margin:0}
+.modal-legal-close{display:block;width:100%;margin-top:22px;padding:10px;
+  background:var(--s2);border:1px solid var(--brd);border-radius:8px;
+  color:#eef2ff;font-size:.72rem;font-weight:700;cursor:pointer;text-align:center}
+.modal-legal-close:hover{background:var(--gold);color:#000}
+/* ── First-visit banner ── */
+#banner-disclaimer{position:fixed;bottom:0;left:0;right:0;background:var(--s1);
+  border-top:1px solid var(--brd);padding:10px 16px;z-index:9998;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#banner-disclaimer p{flex:1;font-size:.62rem;color:var(--mut);line-height:1.5;margin:0;min-width:180px}
+#banner-disclaimer button{font-size:.62rem;padding:6px 14px;border-radius:6px;
+  cursor:pointer;white-space:nowrap;font-weight:700}
+.btn-banner-ok{background:var(--gold);color:#000;border:none}
+.btn-banner-legal{background:transparent;color:var(--mut);border:1px solid var(--brd)}
 </style>
 </head>
 <body><script>
@@ -473,6 +503,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <button class="btn btn-gold" onclick="startGame()" style="font-size:1rem;padding:17px;letter-spacing:.5px">🏆 Road to Glory</button>
   <button class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:8px">❓ How to play</button>
+  <div class="legal-footer">
+    © 2026 Decempionz &nbsp;·&nbsp;
+    <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
+    <a onclick="openLegal()">Privacy</a> &nbsp;·&nbsp;
+    <a onclick="openLegal()">Terms</a>
+  </div>
 </div>
 
 <!-- FORMAT PICKER -->
@@ -2961,6 +2997,48 @@ function syncThemeIcon(){
 }
 // Aggiorna icona al caricamento
 document.addEventListener('DOMContentLoaded',syncThemeIcon);
+
+// ── Legal / Disclaimer ──────────────────────────────────────────────────────
+function openLegal(){document.getElementById('modal-legal').classList.add('open');}
+function closeLegal(){document.getElementById('modal-legal').classList.remove('open');}
+function closeBanner(){
+  document.getElementById('banner-disclaimer').style.display='none';
+  try{localStorage.setItem('dcz_disclaimer','1');}catch(e){}
+}
+document.addEventListener('DOMContentLoaded',function(){
+  try{
+    if(!localStorage.getItem('dcz_disclaimer')){
+      document.getElementById('banner-disclaimer').style.display='flex';
+    }
+  }catch(e){
+    document.getElementById('banner-disclaimer').style.display='flex';
+  }
+});
+
 </script>
+
+<!-- Legal modal -->
+<div id="modal-legal">
+  <div class="modal-legal-box">
+    <h2>Legal &amp; Disclaimers</h2>
+    <h3>Fan Project Disclaimer</h3>
+    <p>Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club. Player names, team names, and historical references are used purely for recreational purposes under fan creativity principles.</p>
+    <h3>Copyright</h3>
+    <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
+    <h3>Privacy &amp; Cookies</h3>
+    <p>Decempionz does not collect, store, or transmit any personal data. No cookies are used for tracking or advertising. The game runs entirely in your browser — no account registration, no analytics, no third-party trackers of any kind.</p>
+    <h3>Terms of Use</h3>
+    <p>This game is provided free of charge for personal, non-commercial use. It is offered "as is" without warranties of any kind. The creators accept no liability for any issues arising from use of the site. Commercial use, redistribution, or modification without permission is prohibited.</p>
+    <button class="modal-legal-close" onclick="closeLegal()">Close</button>
+  </div>
+</div>
+
+<!-- First-visit disclaimer banner -->
+<div id="banner-disclaimer" style="display:none">
+  <p>Decempionz is an independent fan project — not affiliated with UEFA, FIFA, or any club. No data collected. <a onclick="openLegal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">Full disclaimer →</a></p>
+  <button class="btn-banner-legal" onclick="openLegal()">Legal</button>
+  <button class="btn-banner-ok" onclick="closeBanner()">Got it</button>
+</div>
+
 </body>
 </html>
