@@ -740,6 +740,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="pen-score" style="text-align:center;font-size:1.6rem;font-weight:800;letter-spacing:2px;margin-bottom:10px">0 – 0</div>
     <div id="pen-rows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
     <div id="pen-msg" style="text-align:center;font-size:.68rem;color:var(--mut);min-height:16px"></div>
+    <div id="pen-sd-banner" style="display:none;text-align:center;font-size:.65rem;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px"></div>
   </div>
 </div>
 
@@ -2523,6 +2524,8 @@ function startPenalties(){
   document.getElementById('pen-rows').innerHTML='';
   document.getElementById('pen-score').textContent='0 – 0';
   document.getElementById('pen-msg').textContent='';
+  const sdBanner=document.getElementById('pen-sd-banner');
+  if(sdBanner){sdBanner.style.display='none';sdBanner.textContent='';}
   document.getElementById('btn-mact').style.display='none';
   const rows=document.getElementById('pen-rows');
   const hRow=document.createElement('div');
@@ -2574,8 +2577,9 @@ function checkPenDone(){
     if(h!==a){finishPenalties();return true;}
     P.maxRounds++;
     const sdRound=P.maxRounds-5; // how many SD rounds played
-    document.getElementById('pen-msg').textContent=
-      sdRound===1?'⚡ Sudden Death!':'⚡ Sudden Death — Round '+sdRound;
+    // Show SD banner separately — don't overwrite the kicker name in pen-msg
+    const sdB=document.getElementById('pen-sd-banner');
+    if(sdB){sdB.style.display='block';sdB.textContent=sdRound===1?'⚡ Sudden Death':'⚡ Sudden Death — Round '+sdRound;}
     // Add visual separator for sudden death rounds
     const rows=document.getElementById('pen-rows');
     const sep=document.createElement('div');
