@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Decempionz — Draft legendary football squads and conquer Europe. A blind draft card game spanning 60 years of Champions League history.">
 <meta name="author" content="Decempionz">
-<meta property="og:title" content="Decempionz">
+<meta property="og:title" content="Decempionz — The Ultimate Football Draft">
+<meta property="og:description" content="Draft legendary players, build your XI and conquer Europe. 58 historic squads, 3 tournament formats.">
+<meta property="og:image" content="https://decempionz.com/og-image.png">
+<meta property="og:url" content="https://decempionz.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Decempionz — The Ultimate Football Draft">
+<meta name="twitter:description" content="Draft legends. Build your XI. Conquer Europe.">
+<meta name="twitter:image" content="https://decempionz.com/og-image.png">
 <meta property="og:description" content="Draft legendary football squads and conquer Europe across 10 historic eras.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#07090f">
@@ -462,6 +470,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   opacity:.75;transition:opacity .18s}
 .screen-logo:hover{opacity:1}
+
+/* ── Share button ── */
+.btn-share{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;
+  font-weight:700;font-size:.85rem;letter-spacing:.3px}
+.btn-share:hover{opacity:.88}
+#share-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:#1e293b;color:#f1f5f9;border:1px solid var(--brd);border-radius:8px;
+  padding:10px 20px;font-size:.75rem;font-weight:600;z-index:9999;
+  opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#share-toast.show{opacity:1}
 </style>
 </head>
 <body><script>
@@ -843,6 +861,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div id="t-journey"></div>
     </div>
 
+    <button class="btn btn-share" style="font-size:1rem;margin-bottom:8px" onclick="shareResult()">📤 Share Result</button>
     <button class="btn btn-gold" style="font-size:1rem" onclick="startGame()">🎲 Play Again</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
   </div>
@@ -3045,8 +3064,52 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 });
 
+
+// ── Share result ──────────────────────────────────────────────────────────────
+function shareResult(){
+  const all=[...G.groupUserResults,...G.knockResults];
+  const campW=all.filter(r=>r.myG>r.oppG).length;
+  const campD=all.filter(r=>r.myG===r.oppG).length;
+  const campL=all.filter(r=>r.myG<r.oppG).length;
+  const total=all.reduce((s,r)=>s+(r.stars||0),0), max=all.length*3;
+  const pct=max>0?total/max:0;
+  const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
+  const gradeEmoji={'S':'🌟','A':'⭐','B':'✅','C':'🏳️'}[grade]||'🏆';
+  const formatLabel={'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League';
+  const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
+  const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
+  const text=[
+    gradeEmoji+' Grade '+grade+' — '+formatLabel+' Winner!',
+    '📋 '+G.formation+' · '+campW+'W '+campD+'D '+campL+'L',
+    '⚽ '+G.campaignGF+'–'+G.campaignGA+' goals · Top scorer: '+topScorerStr,
+    '🏟️ Can you beat me? → https://decempionz.com'
+  ].join('\n');
+
+  if(navigator.share){
+    navigator.share({title:'Decempionz',text:text,url:'https://decempionz.com'}).catch(()=>{});
+  } else {
+    try{
+      navigator.clipboard.writeText(text).then(function(){showShareToast('📋 Copied to clipboard!');});
+    }catch(e){
+      // Fallback for older browsers
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showShareToast('📋 Copied to clipboard!');
+    }
+  }
+}
+function showShareToast(msg){
+  const t=document.getElementById('share-toast');
+  if(!t)return;
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
 </script>
 
+<div id="share-toast">📋 Copied to clipboard!</div>
 <!-- Legal modal -->
 <div id="modal-legal">
   <div class="modal-legal-box">
