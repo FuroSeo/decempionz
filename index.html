@@ -2082,22 +2082,24 @@ function finalizeDraft(){
       i++;
     }
   }
-  try{
-    setupCampaign();
-    showCampaign();
-  }catch(e){
-    console.error('Campaign init error:',e);
-    // Reset flags so a retry is possible, then attempt navigation anyway
-    G.draftFinalized=false;
-    G.draftLock=false;
-    const ab=document.getElementById('btn-acc');if(ab)ab.disabled=false;
-    const pb=document.getElementById('btn-pss');if(pb)pb.disabled=false;
-    try{showCampaign();}catch(e2){
-      console.error('showCampaign also failed:',e2);
-      // Last resort: just switch screens so player isn't stuck on draft
-      showScreen('screen-campaign');
+  // Update pitch one last time so user sees the completed squad
+  renderPitch(null);
+  setTimeout(function(){
+    try{
+      setupCampaign();
+      showCampaign();
+    }catch(e){
+      console.error('Campaign init error:',e);
+      G.draftFinalized=false;
+      G.draftLock=false;
+      const ab=document.getElementById('btn-acc');if(ab)ab.disabled=false;
+      const pb=document.getElementById('btn-pss');if(pb)pb.disabled=false;
+      try{showCampaign();}catch(e2){
+        console.error('showCampaign also failed:',e2);
+        showScreen('screen-campaign');
+      }
     }
-  }
+  },1500);
 }
 
 
@@ -3227,4 +3229,4 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                
+    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                             
