@@ -888,7 +888,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.3.1';
+const GAME_VERSION='4.3.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3528,22 +3528,32 @@ function shareResult(){
   const statusLine=isWinner
     ? gradeEmoji+' Grade '+grade+' — '+formatLabel+' Winner!'
     : '💔 Eliminated in '+formatLabel+' ('+campW+'W '+campD+'D '+campL+'L)';
-  const text=[
+  const diffLabel={'easy':'🟢 Facile','normal':'🟡 Normale','hard':'🔴 Difficile'}[G.difficulty||'normal']||'🟡';
+  const coachStr=G.coach?(' · 👔 '+G.coach.name):'';
+  const isIt=(G.lang||'it')==='it';
+  const challengeLine=isIt?'Puoi fare meglio? → decempionz.com':'Can you beat me? → decempionz.com';
+  const wdlLabel=isIt?(campW+'V '+campD+'P '+campL+'S'):(campW+'W '+campD+'D '+campL+'L');
+  const goalLabel=isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
+  const scorerLabel=isIt?'Capocannoniere: ':'Top scorer: ';
+  const lines=[
     statusLine,
-    '📋 '+G.formation+' · '+campW+'W '+campD+'D '+campL+'L',
-    '⚽ '+G.campaignGF+'–'+G.campaignGA+' goals · Top scorer: '+topScorerStr,
-    '🏟️ Can you beat me? → https://decempionz.com'
+    diffLabel+' · '+G.formation+coachStr,
+    '⚽ '+wdlLabel+' · '+goalLabel,
+    '🌟 '+scorerLabel+topScorerStr,
+    '',
+    challengeLine
   ].join('\n');
+  const shareUrl='https://decempionz.com';
 
   if(navigator.share){
-    navigator.share({title:'Decempionz',text:text,url:'https://decempionz.com'}).catch(()=>{});
+    navigator.share({title:'Decempionz',text:lines}).catch(()=>{});
   } else {
     try{
-      navigator.clipboard.writeText(text).then(function(){showShareToast('📋 Copied to clipboard!');});
+      navigator.clipboard.writeText(lines).then(function(){showShareToast('📋 Copied to clipboard!');});
     }catch(e){
       // Fallback for older browsers
       const ta=document.createElement('textarea');
-      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      ta.value=lines; ta.style.position='fixed'; ta.style.opacity='0';
       document.body.appendChild(ta); ta.focus(); ta.select();
       document.execCommand('copy'); document.body.removeChild(ta);
       showShareToast('📋 Copied to clipboard!');
