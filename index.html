@@ -540,39 +540,39 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-format">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <h2 style="margin-bottom:6px">Choose Tournament Format</h2>
-  <p style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Each format has a different structure, era pool and number of matches.</p>
+  <h2 data-i18n="fmt.title" style="margin-bottom:6px">Choose Tournament Format</h2>
+  <p data-i18n="fmt.subtitle" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Each format has a different structure, era pool and number of matches.</p>
   <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
     <div class="format-card" id="fc-coppa" onclick="selectFormat('coppa',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">🏆 Old Cup</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">1956 – 1992</div></div>
-        <div style="text-align:right;font-size:.7rem;color:var(--mut)">5 matches<br>pure knockout</div>
+        <div data-i18n-html="fmt.coppa.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">5 matches<br>pure knockout</div>
       </div>
-      <div style="font-size:.75rem;color:var(--acc);margin-top:8px">Pure knockout from round one — no group stage. Every match is do-or-die.</div>
+      <div data-i18n="fmt.coppa.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">Pure knockout from round one — no group stage. Every match is do-or-die.</div>
     </div>
     <div class="format-card fc-sel" id="fc-classic" onclick="selectFormat('classic',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">⭐ Classic</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">1992 – 2024</div></div>
-        <div style="text-align:right;font-size:.7rem;color:var(--mut)">7 matches<br>group + knockout</div>
+        <div data-i18n-html="fmt.classic.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">7 matches<br>group + knockout</div>
       </div>
-      <div style="font-size:.75rem;color:var(--acc);margin-top:8px">3 group stage matches to qualify, then R16 → QF → SF → Final. The classic format.</div>
+      <div data-i18n="fmt.classic.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">3 group stage matches to qualify, then R16 → QF → SF → Final. The classic format.</div>
     </div>
     <div class="format-card" id="fc-nuovo" onclick="selectFormat('nuovo',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">🔮 New Wave</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">2024 +</div></div>
-        <div style="text-align:right;font-size:.7rem;color:var(--mut)">up to 10 matches<br>league + knockout</div>
+        <div data-i18n-html="fmt.nuovo.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">up to 10 matches<br>league + knockout</div>
       </div>
-      <div style="font-size:.75rem;color:var(--acc);margin-top:8px">6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.</div>
+      <div data-i18n="fmt.nuovo.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.</div>
     </div>
   </div>
   <div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
     <div style="min-width:0;flex:1">
-      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:3px;white-space:nowrap">Draft Pool</div>
+      <div data-i18n="fmt.draft_pool" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:3px;white-space:nowrap">Draft Pool</div>
       <div id="fmt-era-display" style="font-size:.83rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">🌍 All Time</div>
     </div>
-    <button class="btn btn-ghost" style="padding:7px 13px;font-size:.75rem;white-space:nowrap;flex-shrink:0;width:auto;border-color:var(--acc);color:var(--acc)" onclick="browseEraFromFormat()">Browse Era →</button>
+    <button class="btn btn-ghost" style="padding:7px 13px;font-size:.75rem;white-space:nowrap;flex-shrink:0;width:auto;border-color:var(--acc);color:var(--acc)" onclick="browseEraFromFormat()" data-i18n="fmt.browse_era">Browse Era →</button>
   </div>
-  <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Difficulty</div>
+  <div data-i18n="fmt.difficulty" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Difficulty</div>
   <div class="diff-grid" style="margin-bottom:14px">
     <div class="diff-card diff-easy" id="dc-easy" onclick="selectDiff('easy',this)">
       <div data-i18n="diff.easy" class="diff-title">🟢 Easy</div>
@@ -587,21 +587,21 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div data-i18n="diff.hard_desc" class="diff-desc">2 rerolls · Opponents stronger</div>
     </div>
   </div>
-    <button id="btn-format-confirm" class="btn btn-gold" onclick="confirmFormat()">Choose Formation →</button>
+    <button id="btn-format-confirm" data-i18n="fmt.choose_formation" class="btn btn-gold" onclick="confirmFormat()">Choose Formation →</button>
 </div>
 
 <!-- ERA PICKER -->
 <div class="screen" id="screen-era">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <h2 style="margin-bottom:6px">Choose an Era</h2>
-  <p style="color:var(--mut);font-size:.82rem;margin-bottom:10px">Pick a specific era or go All Time for the widest possible draft pool.</p>
+  <h2 data-i18n="era.title" style="margin-bottom:6px">Choose an Era</h2>
+  <p data-i18n="era.subtitle" style="color:var(--mut);font-size:.82rem;margin-bottom:10px">Pick a specific era or go All Time for the widest possible draft pool.</p>
   <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-weight:700;border:none;padding:13px;border-radius:10px;font-size:.85rem;letter-spacing:.5px" onclick="selectAllTime()">
-    🌍 All Time &nbsp;<span style="font-weight:400;font-size:.72rem;opacity:.85">— 58 squads, all eras, maximum chaos</span>
+    🌍 All Time &nbsp;<span data-i18n="era.alltime_tag" style="font-weight:400;font-size:.72rem;opacity:.85">— 58 squads, all eras, maximum chaos</span>
   </button>
-  <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:8px">Or pick a specific era</div>
+  <div data-i18n="era.or_pick" style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:8px">Or pick a specific era</div>
   <div id="era-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
-  <button id="btn-era-confirm" class="btn btn-gold btn-inactive" onclick="confirmEra()">Use this Era →</button>
+  <button id="btn-era-confirm" data-i18n="era.use_this" class="btn btn-gold btn-inactive" onclick="confirmEra()">Use this Era →</button>
   <button class="btn btn-ghost" onclick="eraBack()">← Back</button>
 </div>
 
@@ -618,7 +618,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <!-- Squad preview -->
   <div style="margin-bottom:16px">
-    <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Squads in pool</div>
+    <div data-i18n="tourn.squads_in_pool" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Squads in pool</div>
     <div id="st-preview" style="display:flex;gap:5px;flex-wrap:wrap"></div>
   </div>
   <button class="btn btn-ghost" onclick="showScreen('screen-home')">← Back</button>
@@ -628,18 +628,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-formation">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <div style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
-  <div style="font-size:.72rem;color:var(--mut);margin-bottom:10px">Determines your draft slots</div>
+  <div data-i18n="form.title" style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
+  <div data-i18n="form.subtitle" style="font-size:.72rem;color:var(--mut);margin-bottom:10px">Determines your draft slots</div>
   <div class="form-grid" id="form-grid"></div>
   <div style="margin-top:10px;margin-bottom:10px">
-    <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Playing Style</div>
+    <div data-i18n="form.playing_style" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Playing Style</div>
     <div class="mini-tact-row">
       <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="fmt-attack" onclick="selectFormTactic('attack',this)">⚔️ Attack</button>
       <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="fmt-balanced" onclick="selectFormTactic('balanced',this)">⚖️ Balanced</button>
       <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="fmt-defend" onclick="selectFormTactic('defend',this)">🛡️ Defend</button>
     </div>
   </div>
-  <button id="btn-start-draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
+  <button id="btn-start-draft" data-i18n="form.start_draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
   <button class="btn btn-ghost" onclick="showScreen('screen-format')">← Back</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
 </div>
@@ -691,14 +691,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Knockout section -->
   <div id="section-knockout" style="display:none">
-    <div class="phase-label">Knockout Stage</div>
+    <div data-i18n="camp.knockout_stage" class="phase-label">Knockout Stage</div>
     <div id="knockout-rounds"></div>
   </div>
 
   <div id="pre-match-panel" style="display:none">
     <div class="pmp-box">
       <div class="pmp-scout" id="pmp-scout"></div>
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
+      <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
       <div class="mini-tact-row">
         <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="pmt-attack" onclick="selectMatchTactic('attack',this)">⚔️ Attack</button>
         <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="pmt-balanced" onclick="selectMatchTactic('balanced',this)">⚖️ Balanced</button>
@@ -764,7 +764,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Player ratings strip -->
   <div class="card" style="margin-top:8px;padding:10px 12px;overflow:visible">
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Player Ratings</div>
+    <div data-i18n="result.player_ratings" style="font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Player Ratings</div>
     <div id="r-ratings-strip" style="overflow:hidden;overflow-x:scroll;-webkit-overflow-scrolling:touch"></div>
   </div>
 
@@ -872,22 +872,22 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <h2 data-i18n="howto.title" style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don't fit any open slot are skipped automatically.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Tactic & scout report.</strong> Before each match a scout report reveals the opponent's likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Knockouts.</strong> Round of 16 → Quarter-Final → Semi-Final → Final. One loss ends the campaign. Draws go to penalties.</p>
-    <p><strong style="color:var(--text)">Stars.</strong> Win by 2+ goals = ⭐⭐⭐ &nbsp;·&nbsp; Win by 1 = ⭐⭐ &nbsp;·&nbsp; Draw or pens = ⭐ &nbsp;·&nbsp; Loss = 0.</p>
+    <p data-i18n-html="howto.p1" style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
+    <p data-i18n-html="howto.p2" style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
+    <p data-i18n-html="howto.p3" style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.</p>
+    <p data-i18n-html="howto.p4" style="margin-bottom:11px"><strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don't fit any open slot are skipped automatically.</p>
+    <p data-i18n-html="howto.p5" style="margin-bottom:11px"><strong style="color:var(--text)">Tactic & scout report.</strong> Before each match a scout report reveals the opponent's likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.</p>
+    <p data-i18n-html="howto.p6" style="margin-bottom:11px"><strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.</p>
+    <p data-i18n-html="howto.p7" style="margin-bottom:11px"><strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.</p>
+    <p data-i18n-html="howto.p8" style="margin-bottom:11px"><strong style="color:var(--text)">Knockouts.</strong> Round of 16 → Quarter-Final → Semi-Final → Final. One loss ends the campaign. Draws go to penalties.</p>
+    <p data-i18n-html="howto.p9"><strong style="color:var(--text)">Stars.</strong> Win by 2+ goals = ⭐⭐⭐ &nbsp;·&nbsp; Win by 1 = ⭐⭐ &nbsp;·&nbsp; Draw or pens = ⭐ &nbsp;·&nbsp; Loss = 0.</p>
   </div>
   <div style="font-size:.6rem;color:var(--mut);text-align:center;margin-top:18px">Decempionz v<span class="gv"></span></div>
   <button data-i18n="ui.back" class="btn btn-gold" onclick="showScreen('screen-home')" style="margin-top:8px">← Back</button>
 </div>
 
 <script>
-const GAME_VERSION='4.2.3';
+const GAME_VERSION='4.2.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -990,6 +990,50 @@ const STRINGS={
     'nuovo.of6':'di 6 ·',
     'nuovo.to_go':'ancora da giocare',
     'howto.title':'Come si gioca',
+    'howto.p1':'<strong style="color:var(--text)">Scegli l\'era.</strong> Scegli tra 10 ere storiche (1961–2023) o All Time per il pool completo da 61 rose con 28 club leggendari. L\'era imposta gli avversari del torneo e il pool dal quale costruirai il tuo XI.',
+    'howto.p2':'<strong style="color:var(--text)">Imposta la difficoltà.</strong> Facile (5 reroll), Normale (3), Difficile (2). La difficoltà regola anche la forza degli avversari — Difficile più forti, Facile leggermente più deboli.',
+    'howto.p3':'<strong style="color:var(--text)">Scegli la formazione.</strong> Dieci opzioni: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Ogni slot ha un ruolo fisso — scegli bene prima che il draft inizi.',
+    'howto.p4':'<strong style="color:var(--text)">Drafta il tuo XI.</strong> Tre carte per volta. Scegli quella che vuoi — occupa automaticamente lo slot migliore. Non ti piacciono le opzioni? Usa <strong style="color:var(--gold)">↺ Reroll</strong> per tre nuove carte, ma i reroll sono scarsi. I giocatori leggendari (★ 9.5+) portano un bonus all\'attacco. Le carte senza slot libero vengono scartate automaticamente.',
+    'howto.p5':'<strong style="color:var(--text)">Tattica e report scout.</strong> Prima di ogni partita lo scout rivela lo stile probabile dell\'avversario — <em>Pressione Alta</em>, <em>Possesso</em> o <em>Blocco Basso</em>. Contrastare correttamente dà un vantaggio in xG: Pressione batte Blocco Basso, Possesso batte Pressione, Blocco Basso batte Possesso.',
+    'howto.p6':'<strong style="color:var(--text)">Momentum.</strong> Vincere accumula momentum (fino a +3), perdere lo erode (fino a −3). Ogni punto sposta il tuo xG di ±0.05 — una striscia vincente ti rende più difficile da fermare.',
+    'howto.p7':'<strong style="color:var(--text)">Fase a gironi.</strong> 3 partite. Vittoria = 3 pt, Pareggio = 1, Sconfitta = 0. Chiudi nelle prime 2 per avanzare. Le ultime due sono eliminate.',
+    'howto.p8':'<strong style="color:var(--text)">Playoff.</strong> Ottavi → Quarti → Semifinale → Finale. Una sconfitta chiude la campagna. I pareggi si risolvono ai rigori.',
+    'howto.p9':'<strong style="color:var(--text)">Stelle.</strong> Vinci con 2+ gol = ⭐⭐⭐ &nbsp;·&nbsp; Vinci di 1 = ⭐⭐ &nbsp;·&nbsp; Pareggio o rigori = ⭐ &nbsp;·&nbsp; Sconfitta = 0.',
+    'fmt.title':'Scegli il Formato',
+    'fmt.subtitle':'Ogni formato ha struttura, pool e numero di partite diversi.',
+    'fmt.coppa.meta':'5 partite<br>solo knockout',
+    'fmt.coppa.desc':'Eliminazione diretta dal primo turno — niente fase a gironi. Ogni partita è decisiva.',
+    'fmt.classic.meta':'7 partite<br>gironi + knockout',
+    'fmt.classic.desc':'3 partite a gironi per qualificarsi, poi Ottavi → QF → SF → Finale. Il formato classico.',
+    'fmt.nuovo.meta':'fino a 10 partite<br>lega + knockout',
+    'fmt.nuovo.desc':'6 partite di lega vs avversari dal pool completo. Servono ≥ 8 pt, poi Ottavi → QF → SF → Finale.',
+    'fmt.draft_pool':'Pool Draft',
+    'fmt.browse_era':'Sfoglia Era →',
+    'fmt.choose_formation':'Scegli Formazione →',
+    'fmt.difficulty':'Difficoltà',
+    'era.title':'Scegli un\'Era',
+    'era.subtitle':'Scegli un\'era specifica o All Time per il pool più ampio.',
+    'era.alltime_tag':'— 58 rose, tutte le ere, massimo caos',
+    'era.or_pick':'O scegli un\'era specifica',
+    'era.use_this':'Usa questa Era →',
+    'tourn.squads_in_pool':'Rose nel pool',
+    'form.title':'Formazione',
+    'form.subtitle':'Determina gli slot del draft',
+    'form.playing_style':'Stile di gioco',
+    'form.start_draft':'Inizia il Draft →',
+    'camp.knockout_stage':'Fase Playoff',
+    'pmp.tactic_label':'Tattica per questa partita',
+    'result.player_ratings':'Valutazioni Giocatori',
+    'form.desc.433':'Attacco bilanciato — 3 attaccanti diretti',
+    'form.desc.442':'Doppio attaccante classico — centrocampisti larghi',
+    'form.desc.4231':'Pressing moderno — doppio pivot, trequartista',
+    'form.desc.352':'Controllo di centrocampo — tre difensori centrali',
+    'form.desc.4141':'Solidità difensiva — pivot singolo',
+    'form.desc.343':'Attacco totale — tre attaccanti, medi larghi',
+    'form.desc.532':'Blocco difensivo compatto — due punte davanti',
+    'form.desc.451':'Sovraccarico di centrocampo — punta unica in contropiede',
+    'form.desc.541':'Ultra-difensivo — assorbi e colpisci in contropiede',
+    'form.desc.361':'Totale controllo del centrocampo — possesso estremo',
     'ui.back':'← Indietro',
   },
   en:{
@@ -1090,6 +1134,50 @@ const STRINGS={
     'nuovo.of6':'of 6 played ·',
     'nuovo.to_go':'to go',
     'howto.title':'How to Play',
+    'howto.p1':'<strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you\'ll build your XI from.',
+    'howto.p2':'<strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.',
+    'howto.p3':'<strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.',
+    'howto.p4':'<strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don\'t fit any open slot are skipped automatically.',
+    'howto.p5':'<strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent\'s likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.',
+    'howto.p6':'<strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.',
+    'howto.p7':'<strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.',
+    'howto.p8':'<strong style="color:var(--text)">Knockouts.</strong> Round of 16 → Quarter-Final → Semi-Final → Final. One loss ends the campaign. Draws go to penalties.',
+    'howto.p9':'<strong style="color:var(--text)">Stars.</strong> Win by 2+ goals = ⭐⭐⭐ &nbsp;·&nbsp; Win by 1 = ⭐⭐ &nbsp;·&nbsp; Draw or pens = ⭐ &nbsp;·&nbsp; Loss = 0.',
+    'fmt.title':'Choose Tournament Format',
+    'fmt.subtitle':'Each format has a different structure, era pool and number of matches.',
+    'fmt.coppa.meta':'5 matches<br>pure knockout',
+    'fmt.coppa.desc':'Pure knockout from round one — no group stage. Every match is do-or-die.',
+    'fmt.classic.meta':'7 matches<br>group + knockout',
+    'fmt.classic.desc':'3 group stage matches to qualify, then R16 → QF → SF → Final. The classic format.',
+    'fmt.nuovo.meta':'up to 10 matches<br>league + knockout',
+    'fmt.nuovo.desc':'6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.',
+    'fmt.draft_pool':'Draft Pool',
+    'fmt.browse_era':'Browse Era →',
+    'fmt.choose_formation':'Choose Formation →',
+    'fmt.difficulty':'Difficulty',
+    'era.title':'Choose an Era',
+    'era.subtitle':'Pick a specific era or go All Time for the widest possible draft pool.',
+    'era.alltime_tag':'— 58 squads, all eras, maximum chaos',
+    'era.or_pick':'Or pick a specific era',
+    'era.use_this':'Use this Era →',
+    'tourn.squads_in_pool':'Squads in pool',
+    'form.title':'Formation',
+    'form.subtitle':'Determines your draft slots',
+    'form.playing_style':'Playing Style',
+    'form.start_draft':'Start Draft →',
+    'camp.knockout_stage':'Knockout Stage',
+    'pmp.tactic_label':'Tactic for this match',
+    'result.player_ratings':'Player Ratings',
+    'form.desc.433':'Balanced attack — 3 direct forwards',
+    'form.desc.442':'Classic double striker — wide midfielders',
+    'form.desc.4231':'Modern pressing — double pivot, playmaker',
+    'form.desc.352':'Midfield control — three centre-backs',
+    'form.desc.4141':'Defensive solidity — single pivot',
+    'form.desc.343':'Total attack — three forwards, wide mids',
+    'form.desc.532':'Compact defensive block — two strikers up front',
+    'form.desc.451':'Midfield overload — lone striker on the break',
+    'form.desc.541':'Ultra-defensive — absorb and hit on the counter',
+    'form.desc.361':'Total midfield control — extreme possession game',
     'ui.back':'← Back',
   }
 };
@@ -1110,6 +1198,7 @@ function toggleLang(){
 }
 
 function applyLang(){
+  var fgrid=document.getElementById('form-grid');if(fgrid&&fgrid.children.length>0)renderFormationGrid();
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var k=el.getAttribute('data-i18n');
     var v=t(k);
@@ -1922,7 +2011,7 @@ function renderFormationGrid(){
     return '<div class="form-card" id="fc-'+safeKey+'" onclick="selectFormation(this,\''+key+'\')">'+
       '<div class="form-name">'+key+'</div>'+
       '<div class="form-pitch">'+dots+'</div>'+
-      '<div class="form-desc">'+f.desc+'</div></div>';
+      '<div class="form-desc">'+t('form.desc.'+key.replace(/-/g,''))+'</div></div>';
   }).join('');
 }
 
