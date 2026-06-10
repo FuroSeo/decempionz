@@ -486,7 +486,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <body><script>
 (function(){var t=localStorage.getItem('gl-theme');if(t==='light')document.body.setAttribute('data-theme','light');})();
 </script>
-<button id="theme-icon" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:10px;right:10px;z-index:9999;width:32px;height:32px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);color:var(--mut);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">☀️</button>
+<button id="theme-icon" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:10px;right:10px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);color:var(--mut);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">☀️</button>
 <div class="app">
 
 <!-- HOME -->
@@ -655,7 +655,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div style="font-weight:800;font-size:1.05rem" id="d-title"></div>
       <div class="draft-info" id="d-info"></div>
     </div>
-    <div>
+    <div style="padding-right:36px">
       <div class="draft-count" id="d-count"></div>
       <div class="draft-passes" id="d-passes"></div>
     </div>
@@ -1912,15 +1912,12 @@ function renderDraftPitch(currentPlayer){
 
 function drawDraftCards(){
   G.draftCards=[];
-  let drawn=0;
-  while(drawn<3 && G.draftIdx<G.draftPool.length){
-    G.draftCards.push(G.draftPool[G.draftIdx]);
+  // Only show compatible cards — incompatible are silently skipped
+  while(G.draftCards.length<3 && G.draftIdx<G.draftPool.length){
+    const p=G.draftPool[G.draftIdx];
     G.draftIdx++;
-    drawn++;
+    if(compatibleEmptySlots(p).length>0) G.draftCards.push(p);
   }
-  // if all are incompatible and pool has more, auto-advance to next batch
-  const hasCompat=G.draftCards.some(p=>compatibleEmptySlots(p).length>0);
-  if(!hasCompat && G.draftIdx<G.draftPool.length) drawDraftCards();
 }
 
 function updateDraftScreen(){
@@ -1959,37 +1956,33 @@ function updateDraftScreen(){
 function renderThreeCards(){
   const container=document.getElementById('d-reveal');
   if(!container)return;
-  container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0">'
+  const n=G.draftCards.length;
+  container.innerHTML='<div style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
     +G.draftCards.map(function(p,i){
       const empSlots=compatibleEmptySlots(p);
-      const compat=empSlots.length>0;
       const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
       const teamEntry=TEAMS[teamKey]||null;
       const season=teamEntry?teamEntry.season.slice(-2):'';
       const col=JERSEY_COLORS[p.teamId]||'#555';
       const tierCss=slotTierCss(p.r);
-      const targetSlot=compat?empSlots[0].pos:'';
+      const targetSlot=empSlots[0]?empSlots[0].pos:'';
       const star=p.r>=9.5?'★ ':'';
       const pg=posGroup(p.p);
       const posClass_=pgClass(pg);
       const ratingCol=p.r>=9.0?'#ffd700':p.r>=8.5?'#aaaaaa':'#8a7050';
-      return'<div'
-        +(compat?' onclick="draftPick('+i+')"':'')
+      const maxW=n===1?'260px':n===2?'180px':'140px';
+      return'<div onclick="draftPick('+i+')"'
         +' style="'+tierCss
-        +';border-radius:10px;padding:8px 5px 6px;display:flex;flex-direction:column;align-items:center;gap:2px'
-        +(compat?';cursor:pointer':'')
-        +(compat?'':';opacity:.35;pointer-events:none')
-        +';min-width:92px;flex:1;max-width:116px;text-align:center;transition:transform .08s;-webkit-tap-highlight-color:transparent">'
+        +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
+        +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent">'
         +playerSprite(col)
-        +'<div style="font-size:.52rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:1px">'+p.club+" '"+season+'</div>'
-        +'<div style="font-size:.7rem;font-weight:800;color:var(--text);line-height:1.15;max-width:108px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
-        +'<div style="display:flex;align-items:center;gap:3px;margin-top:1px">'
-          +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.5rem;padding:1px 4px">'+p.p+'</span>'
-          +'<span style="font-size:.68rem;font-weight:800;color:'+ratingCol+'">'+star+p.r+'</span>'
+        +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+p.club+" '"+season+'</div>'
+        +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
+        +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
+          +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
+          +'<span style="font-size:.75rem;font-weight:800;color:'+ratingCol+'">'+star+p.r+'</span>'
         +'</div>'
-        +(compat
-          ?'<div style="font-size:.52rem;color:var(--mut);margin-top:2px">→ '+targetSlot+' slot</div>'
-          :'<div style="font-size:.52rem;color:var(--red2)">✕ no slot</div>')
+        +'<div style="font-size:.58rem;color:var(--mut);margin-top:3px">→ '+targetSlot+' slot</div>'
         +'</div>';
     }).join('')
     +'</div>';
@@ -2058,7 +2051,7 @@ function finalizeDraft(){
     }
   }
   // Update pitch one last time so user sees the completed squad
-  renderPitch(null);
+  renderDraftPitch(null);
   setTimeout(function(){
     try{
       setupCampaign();
@@ -3204,4 +3197,4 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
