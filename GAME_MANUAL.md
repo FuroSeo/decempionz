@@ -1,8 +1,8 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.2.1  
+**Version:** 4.3.4  
 **Last updated:** 2026-06-10  
-**File:** `index.html` (single-file game, ~3400 lines)  
+**File:** `index.html` (single-file game, ~3700 lines)  
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)  
 **Repo:** [github.com/FuroSeo/decempionz](https://github.com/FuroSeo/decempionz)
 
@@ -12,15 +12,21 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 4.2.1 | 2026-06-10 | Dev Panel: quick draft, jump to round/screen, force score, stress test (trigger: click ×5 versione) |
-| 4.2.0 | 2026-06-10 | i18n IT/EN: lingua italiana default, switch 🇮🇹/🇬🇧, tutte le label dinamiche tradotte |
-| 4.1.3 | 2026-06-10 | Hotfix definitivo: CSS ripristinato da v4.1.0 (ultimo funzionante). v4.1.2 usava erroneamente HEAD~1 invece di HEAD~2 come base |
-| 4.1.1 | 2026-06-10 | Code cleanup: dead JS functions/constants rimossi. Null-byte corruption fixed, modal e banner ripristinati |
-| 4.1.0 | 2026-06-10 | Versioning introduced. Sprite graphics, 3-card draft polish, text overhaul, mobile fix, GAME_MANUAL |
-| 4.0.0 | 2026 | 3-card pick-1 draft + Reroll mechanic (full core overhaul) + Sensible Soccer sprites |
-| 3.0.0 | 2026 | Rebranding Golacticos → Decempionz, light/dark theme, compliance, trophy redesign |
-| 2.0.0 | 2026 | 3 tournament formats (Old Cup, Classic, New Format) + era picker + SLOT_COMPAT |
-| 1.0.0 | 2026 | First complete game: blind draft, position slots, formations, group + knockout |
+| 4.3.4 | 2026-06-10 | Manuale aggiornato, "Come si gioca" aggiornato con sezione allenatore |
+| 4.3.3 | 2026-06-10 | Share: lineup completa per reparto, allenatore, lingua, nessun doppio URL |
+| 4.3.2 | 2026-06-10 | Share text redesign: difficoltà, allenatore, i18n, rimosso doppio link |
+| 4.3.1 | 2026-06-10 | Fix coach cards non cliccabili (pitch svuotato, scroll corretto) |
+| 4.3.0 | 2026-06-10 | Sistema allenatore: coach draft post-XI, formDMA/coachCompat, boost xG |
+| 4.2.4 | 2026-06-10 | i18n completo: howto, format, formazioni, era, bottoni, favicon ⚽ |
+| 4.2.3 | 2026-06-10 | Fix Dev Panel: quick draft usa tutti i team, stress test fix, no blind nav |
+| 4.2.0 | 2026-06-10 | Sistema i18n IT/EN: STRINGS, t(), toggleLang(), data-i18n, default italiano |
+| 4.1.3 | 2026-06-10 | Hotfix definitivo: CSS ripristinato da v4.1.0 |
+| 4.1.1 | 2026-06-10 | Code cleanup: dead JS/CSS rimosso |
+| 4.1.0 | 2026-06-10 | Versioning, sprite grafici, draft polish, Dev Panel |
+| 4.0.0 | 2026 | Draft 3-card pick-1 + Reroll mechanic |
+| 3.0.0 | 2026 | Rebranding Golacticos → Decempionz, light/dark theme, compliance |
+| 2.0.0 | 2026 | 3 formati torneo + era picker + SLOT_COMPAT |
+| 1.0.0 | 2026 | Primo gioco completo: draft cieco, slot posizione, gironi + playoff |
 
 ---
 
@@ -32,7 +38,7 @@ Single HTML file. No build step, no dependencies, no backend. All game logic is 
 
 | Variable | Type | Purpose |
 |----------|------|---------|
-| `G` | Object | Persistent campaign state (squad, results, momentum, format…) |
+| `G` | Object | Persistent campaign state (squad, coach, results, momentum, format…) |
 | `M` | Object | Active match state (scores, log, xG, penalties…) |
 | `P` | Object | Penalty shootout state |
 | `_pendingMatch` | Object | Tactic + opponent data bridging `playRound()` → `_runMatch()` |
@@ -43,7 +49,7 @@ Single HTML file. No build step, no dependencies, no backend. All game logic is 
 
 ```
 Home → Format Picker → Era Picker (optional) → Formation/Difficulty
-     → Draft → Campaign screen → [Match loop] → Trophy / Elimination
+     → Draft (11 players) → Coach Draft → Campaign → [Match loop] → Trophy / Elimination
 ```
 
 **Format determines structure:**
@@ -116,7 +122,9 @@ draftPick(i)
   ↓ (fills best slot, draws next 3)
 repeat until filledCount() === 11
   ↓
-finalizeDraft() → 1.5s delay → setupCampaign() → showCampaign()
+finalizeDraft() → 1.5s delay → showCoachDraft()
+  ↓ (user picks coach)
+pickCoach(i) → setupCampaign() → showCampaign()
 ```
 
 `drawDraftCards()` only adds a card if `compatibleEmptySlots(p).length > 0`. Cards incompatible with all remaining empty slots are silently skipped. If fewer than 3 compatible cards remain in the pool, the hand may have 1 or 2 cards.
@@ -158,7 +166,49 @@ LWB → [LWB, LB, RB, RWB]
 
 ### Finalization
 
-If the pool is exhausted before 11 players are filled, `finalizeDraft()` force-fills remaining slots from the pool (position-preference order). The squad is then stored in `G.squad[]`.
+If the pool is exhausted before 11 players are filled, `finalizeDraft()` force-fills remaining slots from the pool (position-preference order). The squad is stored in `G.squad[]`. After 1.5s the coach draft phase begins.
+
+---
+
+## Coach System
+
+### Coach Draft (`showCoachDraft`)
+
+Triggered automatically after the 11th player is drafted. The pitch is cleared and 3 random coach cards are drawn from the `COACHES` array (30 historical managers). No rerolls — the player must pick one of the 3.
+
+Each coach has:
+```js
+{ n: 'Pep Guardiola', pref: '4-3-3' }
+```
+
+### Formation Matching
+
+`formDMA(key)` decomposes a formation string into `{d, m, a}`:
+- `d` = first number (defenders)
+- `m` = sum of middle numbers (midfielders)
+- `a` = last number (attackers)
+
+Examples: `4-3-3` → `{d:4, m:3, a:3}` · `4-2-3-1` → `{d:4, m:5, a:1}` · `4-1-4-1` → `{d:4, m:5, a:1}`
+
+`coachCompat(coachPref, chosenForm)` counts matching lines (0–3).
+
+### xG Boost
+
+`coachBoostMul(compat)` returns a multiplier applied to `myXG` in `_runMatch()`:
+
+| Matching lines | Boost |
+|---------------|-------|
+| 3/3 (perfect) | ×1.08 (+8%) |
+| 2/3 | ×1.05 (+5%) |
+| 1/3 | ×1.02 (+2%) |
+| 0/3 | ×1.00 (no boost) |
+
+The boost is applied after momentum and before the draw-pull:
+```js
+if (G.coach && G.coach.boost > 1) myXG = min(myXG * G.coach.boost, 2.6)
+```
+
+`G.coach` stores `{name, pref, compat, boost}`. Reset to `null` on `applyTournament()`.
 
 ---
 
@@ -200,21 +250,23 @@ oppXG = max(0.10, ((oppStr - def × 0.80) × 0.42 + 0.32)  × tactMod.oppXG × c
 ```
 
 **Star player bonus:**
-
 ```
 starBonus = max(0, (topPlayerRating - 8.5) × 0.06)
 myXG = min(myXG + starBonus, 2.6)
 ```
 
 **Momentum modifier** (G.momentum ranges −3 to +3):
-
 ```
 myXG  = clamp(myXG  + momentum × 0.03, 0.10, 2.6)
 oppXG = clamp(oppXG - momentum × 0.03 × 0.35, 0.08, 2.6)
 ```
 
-**Draw-pull** (reduces extreme scorelines when teams are evenly matched):
+**Coach boost** (applied after momentum):
+```
+if coach selected: myXG = min(myXG × coachBoostMul(compat), 2.6)
+```
 
+**Draw-pull** (reduces extreme scorelines when teams are evenly matched):
 ```
 if |myXG - oppXG| < 0.35:
   pull = 0.05 × (0.35 - diff) / 0.35
@@ -240,11 +292,11 @@ function poisson(lambda) {
 
 Three tactics; internal keys map to display labels:
 
-| Key | Label |
-|-----|-------|
-| `attack` | High Press |
-| `balanced` | Possession |
-| `defend` | Low Block |
+| Key | IT label | EN label |
+|-----|----------|---------|
+| `attack` | Pressione Alta | High Press |
+| `balanced` | Possesso Palla | Possession |
+| `defend` | Blocco Basso | Low Block |
 
 **Rock-paper-scissors counter logic:**
 
@@ -254,9 +306,7 @@ Three tactics; internal keys map to display labels:
 | Possession | High Press | Low Block |
 | Low Block | Possession | High Press |
 
-**Tactic modifiers** (applied multiplicatively to xG):
-
-Base (`TACT_MOD`):
+**Tactic modifiers** (`TACT_MOD`, multiplicative on xG):
 
 | Tactic | myXG | oppXG |
 |--------|------|-------|
@@ -297,10 +347,10 @@ Momentum carries across all matches in a campaign (group + knockouts).
 Triggered when a knockout match finishes level. Best of 5 rounds, alternating home/away. Each kick:
 
 ```
-P(score) = 0.76 − 0.04 × (round − 1)   (slightly harder as shootout progresses)
+P(score) = 0.76 − 0.04 × (round − 1)
 ```
 
-If still level after 5 rounds, sudden death continues with fixed P(score) = 0.76. Winner is the side with more successful kicks.
+If still level after 5 rounds, sudden death with fixed P(score) = 0.76.
 
 ---
 
@@ -308,24 +358,19 @@ If still level after 5 rounds, sudden death continues with fixed P(score) = 0.76
 
 ### Old Cup (coppa)
 
-Pure knockout, 5 rounds. Opponents drawn from `COPPA_OPPS` (era-appropriate historical squads). No group stage. Every match is elimination. `G.knockRound` indexes 0–4.
+Pure knockout, 5 rounds. Opponents from `COPPA_OPPS`. No group stage. Every match is elimination. `G.knockRound` indexes 0–4.
 
 ### Classic
 
-Group stage (3 matches) + knockout (4 rounds: R16 → QF → SF → Final).
-
-Group standings use W/D/L/GD/GF. User must finish top 2 out of 4 to advance.
-Simulated group matches (other teams) are generated via `calcStandings()` which fills in head-to-head results between non-user teams.
+Group stage (3 matches) + knockout (4 rounds: R16 → QF → SF → Final). User must finish top 2 of 4 to advance. Simulated group matches generated via `calcStandings()`.
 
 ### New Format (nuovo)
 
-League phase (6 matches, all vs. random teams from the full squad pool). User must reach ≥ 8 points to qualify. Then 4 knockout rounds.
+League phase (6 matches vs. random teams from full pool). User must reach ≥ 8 points to qualify. Then 4 knockout rounds.
 
 ---
 
 ## Scoring & Stars
-
-Per match:
 
 | Result | Stars |
 |--------|-------|
@@ -335,16 +380,13 @@ Per match:
 | Win on penalties | ⭐ |
 | Loss / eliminated | 0 |
 
-Match display stats (cosmetic — derived from xG, not simulation):
-- **Possession:** `round(myXG / (myXG + oppXG) × 100)` ± random noise, clamped 28–72%
-- **Shots:** xG-proportional random in range
-- **Shot on target:** subset of shots
+Match display stats (cosmetic — derived from xG):
+- **Possession:** `round(myXG / (myXG + oppXG) × 100)` ± noise, clamped 28–72%
+- **Shots / OT:** xG-proportional random ranges
 
 ---
 
 ## Campaign Stats
-
-Tracked in `G` throughout the run:
 
 | Field | Meaning |
 |-------|---------|
@@ -353,64 +395,111 @@ Tracked in `G` throughout the run:
 | `G.campaignBestWin` | Biggest winning margin |
 | `G.campaignScorers` | Map of player name → goal count |
 | `G.campaignMatchRatings` | Per-match player rating snapshots |
+| `G.coach` | `{name, pref, compat, boost}` — null if not yet picked |
+
+---
+
+## Internationalisation (i18n)
+
+Default language: **Italian**. Toggle via 🇮🇹/🇬🇧 button (top-right, fixed position).
+
+```js
+const STRINGS = { it: { 'key': 'valore' }, en: { 'key': 'value' } }
+function t(key) { return STRINGS[G.lang || 'it'][key] || STRINGS.it[key] || key }
+```
+
+Language stored in `G.lang` and `localStorage['dcz_lang']`. `applyLang()` updates all elements with `data-i18n` (textContent) or `data-i18n-html` (innerHTML) attributes, and re-renders the formation grid if visible.
+
+---
+
+## Share Feature
+
+`shareResult()` builds a multi-line text message:
+
+```
+✅ Grade B — Old Cup Winner!
+🟡 Normale · 4-3-3 · 👔 Guardiola
+                                    ← blank line
+🧤 Zoff
+🛡️ Cafu · Baresi · Maldini · R.Carlos
+⚙️ Zidane · Pirlo · Vieira
+⚡ Ronaldo · Van Basten · Cruyff
+                                    ← blank line
+⚽ 2V 3P 0S · 9-5 gol
+🌟 Capocannoniere: Ronaldo (2g)
+                                    ← blank line
+Puoi fare meglio? → decempionz.com
+```
+
+Uses `navigator.share({text, title})` on mobile (no `url` parameter to avoid double link). Falls back to clipboard copy on desktop. Language-aware (IT/EN).
+
+---
+
+## Dev Panel
+
+Triggered by **5 rapid clicks on the version number** (bottom of home screen). Hidden overlay accessible only to the developer.
+
+| Feature | Function | Notes |
+|---------|----------|-------|
+| Quick Draft — Top XI | `_devQuickDraft('top')` | Uses all TEAMS as pool, fills squad, shows in panel |
+| Quick Draft — Random XI | `_devQuickDraft('random')` | Same pool, random selection |
+| Jump to Round | buttons per round | Sets G.phase + round directly |
+| Force Score | `_DEV_FORCE_SCORE = [my, opp]` | Overrides next Poisson draw, cleared after use |
+| Stress Test | `_devStressTest()` | N simulated matches, W/D/L bar + avg goals |
+| Mock Screens | buttons | Navigate to result/trophy/gameover screens |
+
+Quick Draft does **not** navigate away — shows drafted squad in panel with "▶ Campagna" button. Dev panel bypasses the coach draft (calls `setupCampaign()` directly).
 
 ---
 
 ## Versioning
 
-The game version is defined in two places:
-
-1. **JS constant** at the top of the `<script>` block:
-   ```js
-   const GAME_VERSION = '1.0.0';
-   ```
-2. **Footer HTML** (displayed in-game):
-   ```html
-   <span id="game-version">v1.0.0</span>
-   ```
+The game version is defined in JS:
+```js
+const GAME_VERSION = '4.3.4';
+```
+Displayed on home screen via `<span class="gv"></span>` (populated on load) and triggers the dev panel on 5× click.
 
 **Bump rules:**
-- **Patch** (x.x.+1): bug fixes, text updates, balance tweaks
-- **Minor** (x.+1.0): new mechanics, new screens, significant UI changes
-- **Major** (+1.0.0): complete redesign or format change
-
-Update `GAME_VERSION`, the footer, and this manual's version table on every meaningful change.
+- **Patch** (x.x.+1): bug fixes, text/balance tweaks, minor UI
+- **Minor** (x.+1.0): new mechanics, new screens, significant features
+- **Major** (+1.0.0): complete redesign
 
 ---
 
 ## Development Workflow
 
 ```bash
-# Clone (or re-clone each session — /tmp is ephemeral)
+# Clone fresh each session (/tmp is ephemeral)
 cd /tmp && rm -rf decempionz
-git init decempionz && cd decempionz
-git remote add origin https://FuroSeo:<TOKEN>@github.com/FuroSeo/decempionz.git
-git fetch --depth=1 origin main && git checkout main
+git clone https://github.com/FuroSeo/decempionz.git decempionz
 
-# Edit the live file directly
-# C:\Users\furin\OneDrive\Desktop\Golacticos\index.html
-# (bash path: /sessions/epic-gracious-johnson/mnt/Golacticos/index.html)
+# Edit live file
+# Windows: C:\Users\furin\OneDrive\Desktop\Golacticos\index.html
+# Bash:    /sessions/epic-gracious-johnson/mnt/Golacticos/index.html
 
 # Validate JS syntax
 python3 -c "
-import re
-with open('index.html') as f: html = f.read()
-scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.DOTALL)
-js = '\n'.join(scripts)
-open('/tmp/check.js','w').write('const window={},document={getElementById:()=>({}),querySelectorAll:()=>([]),body:{getAttribute:()=>null,setAttribute:()=>{},classList:{add:()=>{},remove:()=>{}}},addEventListener:()=>{}},localStorage={getItem:()=>null,setItem:()=>{}},Math=globalThis.Math,console=globalThis.console;\n' + js)
+import re, subprocess
+with open('/sessions/epic-gracious-johnson/mnt/Golacticos/index.html','r') as f: html=f.read()
+scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.DOTALL)
+stubs='var document={querySelector:()=>null,querySelectorAll:()=>[],getElementById:()=>null,body:{classList:{add:()=>{},remove:()=>{},toggle:()=>{}},getAttribute:()=>null,style:{}},createElement:()=>({style:{},classList:{add:()=>{}},appendChild:()=>{}}),addEventListener:()=>{}};\nvar window={matchMedia:()=>({matches:false}),scrollTo:()=>{},location:{href:\"\"},addEventListener:()=>{}};\nvar localStorage={getItem:()=>null,setItem:()=>{}};\nvar navigator={share:()=>Promise.resolve(),clipboard:{writeText:()=>Promise.resolve()}};\n'
+open('/tmp/validate.js','w').write(stubs+'\n'.join(scripts))
+r=subprocess.run(['node','--check','/tmp/validate.js'],capture_output=True,text=True)
+print('JS valid' if r.returncode==0 else r.stderr)
 "
-node --check /tmp/check.js
 
-# Copy to repo and push
+# Copy and push
 cp /sessions/epic-gracious-johnson/mnt/Golacticos/index.html /tmp/decempionz/index.html
 cp /sessions/epic-gracious-johnson/mnt/Golacticos/GAME_MANUAL.md /tmp/decempionz/GAME_MANUAL.md
 cd /tmp/decempionz
+git config user.email "furini31@gmail.com" && git config user.name "Furo"
 git add index.html GAME_MANUAL.md
-git commit -m "description of change"
-git push origin main
+git commit -m "vX.X.X — description"
+git push https://furini31:<TOKEN>@github.com/FuroSeo/decempionz.git main
 ```
 
-**Cache:** GitHub Pages caches aggressively. After a push, users must hard-refresh (Ctrl+Shift+R) or use `?v=N` in the URL to bypass cache.
+**Cache:** GitHub Pages caches aggressively. Hard-refresh (Ctrl+Shift+R) or append `?v=N` to bypass.
 
 ---
 
@@ -418,13 +507,17 @@ git push origin main
 
 ```
 decempionz/
-├── index.html        ← entire game
+├── index.html        ← entire game (~3700 lines)
 ├── GAME_MANUAL.md    ← this file
-└── og-image.png      ← social preview image
+└── og-image.png      ← social preview image (1200×630)
 ```
 
 ---
 
 ## Known Constraints
 
--
+- Single file — no module system, no tree-shaking. Keep globals minimal.
+- `user-select: none` applied globally — intentional, prevents text cursor on tap.
+- `localStorage` used only for `dcz_lang` and `dcz_theme` — no save state.
+- GitHub Pages serves from `main` branch root. Deploy = push to main.
+- `navigator.share` unavailable on desktop — falls back to clipboard copy silently.

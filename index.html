@@ -877,6 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <p data-i18n-html="howto.p2" style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
     <p data-i18n-html="howto.p3" style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.</p>
     <p data-i18n-html="howto.p4" style="margin-bottom:11px"><strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don't fit any open slot are skipped automatically.</p>
+    <p data-i18n-html="howto.p_coach" style="margin-bottom:11px"></p>
     <p data-i18n-html="howto.p5" style="margin-bottom:11px"><strong style="color:var(--text)">Tactic & scout report.</strong> Before each match a scout report reveals the opponent's likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.</p>
     <p data-i18n-html="howto.p6" style="margin-bottom:11px"><strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.</p>
     <p data-i18n-html="howto.p7" style="margin-bottom:11px"><strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.</p>
@@ -888,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.3.3';
+const GAME_VERSION='4.3.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1000,6 +1001,7 @@ const STRINGS={
     'howto.p7':'<strong style="color:var(--text)">Fase a gironi.</strong> 3 partite. Vittoria = 3 pt, Pareggio = 1, Sconfitta = 0. Chiudi nelle prime 2 per avanzare. Le ultime due sono eliminate.',
     'howto.p8':'<strong style="color:var(--text)">Playoff.</strong> Ottavi → Quarti → Semifinale → Finale. Una sconfitta chiude la campagna. I pareggi si risolvono ai rigori.',
     'howto.p9':'<strong style="color:var(--text)">Stelle.</strong> Vinci con 2+ gol = ⭐⭐⭐ &nbsp;·&nbsp; Vinci di 1 = ⭐⭐ &nbsp;·&nbsp; Pareggio o rigori = ⭐ &nbsp;·&nbsp; Sconfitta = 0.',
+    'howto.p_coach':'<strong style="color:var(--text)">Allenatore.</strong> Dopo l\'undicesimo giocatore scegli il tuo allenatore tra 3 candidati. Ogni allenatore ha un modulo preferito: se coincide col tuo ottieni un bonus xG — perfetta corrispondenza +8%, due linee su tre +5%, una +2%, nessuna +0%. La scelta è definitiva, nessun reroll.',
     'fmt.title':'Scegli il Formato',
     'fmt.subtitle':'Ogni formato ha struttura, pool e numero di partite diversi.',
     'fmt.coppa.meta':'5 partite<br>solo knockout',
@@ -1147,6 +1149,7 @@ const STRINGS={
     'howto.p7':'<strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.',
     'howto.p8':'<strong style="color:var(--text)">Knockouts.</strong> Round of 16 → Quarter-Final → Semi-Final → Final. One loss ends the campaign. Draws go to penalties.',
     'howto.p9':'<strong style="color:var(--text)">Stars.</strong> Win by 2+ goals = ⭐⭐⭐ &nbsp;·&nbsp; Win by 1 = ⭐⭐ &nbsp;·&nbsp; Draw or pens = ⭐ &nbsp;·&nbsp; Loss = 0.',
+    'howto.p_coach':'<strong style="color:var(--text)">Manager.</strong> After the 11th player, choose your manager from 3 candidates. Each manager has a preferred formation — if it matches yours you get an xG bonus: perfect match +8%, two lines matching +5%, one +2%, none +0%. The choice is final, no rerolls.',
     'fmt.title':'Choose Tournament Format',
     'fmt.subtitle':'Each format has a different structure, era pool and number of matches.',
     'fmt.coppa.meta':'5 matches<br>pure knockout',
