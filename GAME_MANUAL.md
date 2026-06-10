@@ -1,6 +1,6 @@
 # Decempionz — Developer Manual
 
-**Version:** 1.0.0  
+**Version:** 4.1.0  
 **Last updated:** 2026-06-10  
 **File:** `index.html` (single-file game, ~3400 lines)  
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)  
@@ -12,7 +12,11 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 1.0.0 | 2026-06-10 | First versioned release. 3-card draft, sprite graphics, 3 formats, 61 squads |
+| 4.1.0 | 2026-06-10 | Versioning introduced. Sprite graphics, 3-card draft polish, text overhaul, mobile fix, GAME_MANUAL |
+| 4.0.0 | 2026 | 3-card pick-1 draft + Reroll mechanic (full core overhaul) + Sensible Soccer sprites |
+| 3.0.0 | 2026 | Rebranding Golacticos → Decempionz, light/dark theme, compliance, trophy redesign |
+| 2.0.0 | 2026 | 3 tournament formats (Old Cup, Classic, New Format) + era picker + SLOT_COMPAT |
+| 1.0.0 | 2026 | First complete game: blind draft, position slots, formations, group + knockout |
 
 ---
 
@@ -419,7 +423,4 @@ decempionz/
 
 ## Known Constraints
 
-- No localStorage for game state — campaigns do not persist on page reload
-- `btn-accept` CSS class is present but unused (legacy from Accept/Pass era — can be removed)
-- `G.squad` and `G.slotPlayers` are redundant after draft; simulation uses whichever is non-empty first
-- The `posGroup()` function classifies RWB/LWB as FWD (fallback), which means wing-backs contribute to attack rating — intentional but worth noting
+-
