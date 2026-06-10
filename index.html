@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.3';
+const GAME_VERSION='4.4.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1912,6 +1912,16 @@ const G = {
 ═══════════════════════════════════════ */
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+// Pick knockout opponents in sequence, never repeating a club already faced
+function pickKnockSeq(rounds,usedClubs){
+  var used=new Set(usedClubs||[]);
+  return rounds.map(function(pool){
+    var avail=pool.filter(function(o){return!used.has(TEAMS[o.id]?TEAMS[o.id].name:'');});
+    var chosen=avail.length?pick(avail):pick(pool); // graceful fallback if pool too small
+    if(TEAMS[chosen.id])used.add(TEAMS[chosen.id].name);
+    return chosen;
+  });
+}
 function avg(arr){return arr.length?arr.reduce((s,v)=>s+v,0)/arr.length:0}
 function poisson(l){let L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
 function sh(n){let h='';for(let i=0;i<3;i++)h+=i<n?'<span class="star">★</span>':'<span class="star-e">★</span>';return h}
@@ -2450,7 +2460,7 @@ function setupCampaign(){
   if(G.format==='coppa'){
     // Pure knockout — no group stage
     G.groupTeams=[];G.groupOppResults=[];
-    G.knockOpps=[pick(COPPA_OPPS.r1),pick(COPPA_OPPS.r2),pick(COPPA_OPPS.qf),pick(COPPA_OPPS.sf),pick(COPPA_OPPS.final)];
+    G.knockOpps=pickKnockSeq([COPPA_OPPS.r1,COPPA_OPPS.r2,COPPA_OPPS.qf,COPPA_OPPS.sf,COPPA_OPPS.final],[]);
     G.phase='knockout';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
     return;
   }
@@ -2463,7 +2473,8 @@ function setupCampaign(){
     for(const id of shuffledN){const club=TEAMS[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
     G.groupTeams=pickedN.map(id=>({id,team:TEAMS[id]}));
     G.groupOppResults=[]; // no inter-opponent simulation for league phase
-    G.knockOpps=[pick(KNOCKOUT_OPPS.r16),pick(KNOCKOUT_OPPS.qf),pick(KNOCKOUT_OPPS.sf),pick(KNOCKOUT_OPPS.final)];
+    var _nuovoUsed=G.groupTeams.map(function(g){return g.team.name;});
+    G.knockOpps=pickKnockSeq([KNOCKOUT_OPPS.r16,KNOCKOUT_OPPS.qf,KNOCKOUT_OPPS.sf,KNOCKOUT_OPPS.final],_nuovoUsed);
     G.phase='group';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
     return;
   }
@@ -2478,7 +2489,8 @@ function setupCampaign(){
     simGroupMatch(t1.id,t3.id),
     simGroupMatch(t2.id,t3.id),
   ];
-  G.knockOpps=[pick(KNOCKOUT_OPPS.r16),pick(KNOCKOUT_OPPS.qf),pick(KNOCKOUT_OPPS.sf),pick(KNOCKOUT_OPPS.final)];
+  var _classicUsed=G.groupTeams.map(function(g){return g.team.name;});
+  G.knockOpps=pickKnockSeq([KNOCKOUT_OPPS.r16,KNOCKOUT_OPPS.qf,KNOCKOUT_OPPS.sf,KNOCKOUT_OPPS.final],_classicUsed);
   G.phase='group';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
 }
 
