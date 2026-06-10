@@ -888,7 +888,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.3.0';
+const GAME_VERSION='4.3.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2367,26 +2367,30 @@ function finalizeDraft(){
    COACH DRAFT
 ═══════════════════════════════════════ */
 function showCoachDraft(){
-  showScreen('screen-draft');
+  // Already on screen-draft — don't call showScreen (avoids scroll-to-top burying cards)
   var pool=COACHES.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
   G._coachPool=pool;
+  // Clear pitch visualization to free vertical space
+  var pit=document.getElementById('draft-pitch');
+  if(pit)pit.innerHTML='';
   var ti=document.getElementById('d-title');
   var inf=document.getElementById('d-info');
   var cnt=document.getElementById('d-count');
   var pas=document.getElementById('d-passes');
   var bar=document.getElementById('d-bar');
   var pss=document.getElementById('btn-pss');
-  var newgame=document.querySelector('#screen-draft .btn-ghost');
   if(ti)ti.textContent=t('coach.pick_title');
   if(inf)inf.textContent=t('coach.pick_subtitle');
   if(cnt)cnt.textContent='';
   if(pas)pas.textContent='';
   if(bar)bar.style.width='100%';
-  if(pss)pss.style.display='none';
+  if(pss){pss.style.display='none';pss.disabled=false;}
   document.getElementById('d-force').style.display='none';
   document.getElementById('d-warn').style.display='none';
   document.getElementById('d-cant').style.display='none';
   renderCoachCards(pool);
+  // Scroll to top so cards are immediately visible
+  window.scrollTo(0,0);
 }
 
 function renderCoachCards(pool){
