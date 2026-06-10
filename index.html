@@ -888,7 +888,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.2.4';
+const GAME_VERSION='4.3.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1036,6 +1036,9 @@ const STRINGS={
     'form.desc.541':'Ultra-difensivo — assorbi e colpisci in contropiede',
     'form.desc.361':'Totale controllo del centrocampo — possesso estremo',
     'ui.back':'← Indietro',
+    'coach.pick_title':'Scegli il tuo Allenatore',
+    'coach.pick_subtitle':'Nessun reroll — scegli con saggezza.',
+    'coach.pref_form':'Modulo preferito:',
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
@@ -1180,6 +1183,9 @@ const STRINGS={
     'form.desc.541':'Ultra-defensive — absorb and hit on the counter',
     'form.desc.361':'Total midfield control — extreme possession game',
     'ui.back':'← Back',
+    'coach.pick_title':'Choose your Manager',
+    'coach.pick_subtitle':'No rerolls — choose wisely.',
+    'coach.pref_form':'Preferred formation:',
   }
 };
 
@@ -1289,6 +1295,54 @@ const FORMATIONS = {
   },
 };
 const FKEYS = Object.keys(FORMATIONS);
+
+/* ═══════════════════════════════════════
+   COACHES
+═══════════════════════════════════════ */
+const COACHES = [
+  {n:'Rinus Michels',      pref:'4-3-3'},
+  {n:'Helenio Herrera',    pref:'3-5-2'},
+  {n:'Nereo Rocco',        pref:'5-4-1'},
+  {n:'Ernst Happel',       pref:'4-4-2'},
+  {n:'Valeriy Lobanovskyi',pref:'4-4-2'},
+  {n:'Nils Liedholm',      pref:'4-3-3'},
+  {n:'Arrigo Sacchi',      pref:'4-4-2'},
+  {n:'Johan Cruyff',       pref:'3-4-3'},
+  {n:'Fabio Capello',      pref:'4-4-2'},
+  {n:'Giovanni Trapattoni',pref:'5-3-2'},
+  {n:'Marcello Lippi',     pref:'3-5-2'},
+  {n:'Louis van Gaal',     pref:'3-4-3'},
+  {n:'Sven-Göran Eriksson',pref:'4-4-2'},
+  {n:'Sir Alex Ferguson',  pref:'4-4-2'},
+  {n:'Ottmar Hitzfeld',    pref:'4-2-3-1'},
+  {n:'Carlo Ancelotti',    pref:'4-4-2'},
+  {n:'José Mourinho',      pref:'4-5-1'},
+  {n:'Rafael Benítez',     pref:'4-4-2'},
+  {n:'Guus Hiddink',       pref:'4-3-3'},
+  {n:'Vicente del Bosque', pref:'4-2-3-1'},
+  {n:'Luiz Felipe Scolari',pref:'4-2-3-1'},
+  {n:'Didier Deschamps',   pref:'4-5-1'},
+  {n:'Jupp Heynckes',      pref:'4-2-3-1'},
+  {n:'Pep Guardiola',      pref:'4-3-3'},
+  {n:'Jürgen Klopp',       pref:'4-3-3'},
+  {n:'Antonio Conte',      pref:'3-5-2'},
+  {n:'Zinedine Zidane',    pref:'4-3-3'},
+  {n:'Diego Simeone',      pref:'4-5-1'},
+  {n:'Roberto Mancini',    pref:'4-2-3-1'},
+  {n:'Claudio Ranieri',    pref:'4-4-2'},
+];
+
+function formDMA(key){
+  var p=key.split('-').map(Number);
+  return {d:p[0], m:p.slice(1,-1).reduce(function(a,b){return a+b;},0), a:p[p.length-1]};
+}
+function coachCompat(coachPref,chosenForm){
+  var c=formDMA(coachPref), f=formDMA(chosenForm), n=0;
+  if(c.d===f.d)n++; if(c.m===f.m)n++; if(c.a===f.a)n++;
+  return n;
+}
+function coachBoostMul(compat){return [1.00,1.02,1.05,1.08][compat]||1.00;}
+
 
 /* ═══════════════════════════════════════
    TEAMS
@@ -1836,6 +1890,8 @@ const G = {
   campaignScorers: {}, campaignMatchRatings: {},
   campaignGF: 0, campaignGA: 0, campaignCleanSheets: 0,
   campaignBestWin: null,
+  // coach
+  coach: null, _coachPool: [],
   // i18n
   lang: 'it',
 };
@@ -1923,7 +1979,7 @@ function applyTournament(t){
   G.phase = (G.format==='coppa')?'knockout':'group'; G.groupRound = 0; G.knockRound = 0;
   G.groupUserResults = []; G.knockResults = [];
   G.campaignScorers = {}; G.campaignMatchRatings = {};
-  G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null;
+  G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   renderTourCard();
 }
@@ -2301,22 +2357,77 @@ function finalizeDraft(){
   // Update pitch one last time so user sees the completed squad
   renderDraftPitch(null);
   setTimeout(function(){
-    try{
-      setupCampaign();
-      showCampaign();
-    }catch(e){
-      console.error('Campaign init error:',e);
-      G.draftFinalized=false;
-      G.draftLock=false;
-      const pb=document.getElementById('btn-pss');if(pb)pb.disabled=false;
-      try{showCampaign();}catch(e2){
-        console.error('showCampaign also failed:',e2);
-        showScreen('screen-campaign');
-      }
-    }
+    showCoachDraft();
   },1500);
 }
 
+
+
+/* ═══════════════════════════════════════
+   COACH DRAFT
+═══════════════════════════════════════ */
+function showCoachDraft(){
+  showScreen('screen-draft');
+  var pool=COACHES.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
+  G._coachPool=pool;
+  var ti=document.getElementById('d-title');
+  var inf=document.getElementById('d-info');
+  var cnt=document.getElementById('d-count');
+  var pas=document.getElementById('d-passes');
+  var bar=document.getElementById('d-bar');
+  var pss=document.getElementById('btn-pss');
+  var newgame=document.querySelector('#screen-draft .btn-ghost');
+  if(ti)ti.textContent=t('coach.pick_title');
+  if(inf)inf.textContent=t('coach.pick_subtitle');
+  if(cnt)cnt.textContent='';
+  if(pas)pas.textContent='';
+  if(bar)bar.style.width='100%';
+  if(pss)pss.style.display='none';
+  document.getElementById('d-force').style.display='none';
+  document.getElementById('d-warn').style.display='none';
+  document.getElementById('d-cant').style.display='none';
+  renderCoachCards(pool);
+}
+
+function renderCoachCards(pool){
+  var container=document.getElementById('d-reveal');
+  if(!container)return;
+  var light=document.body.getAttribute('data-theme')==='light';
+  container.innerHTML='<div style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
+    +pool.map(function(coach,i){
+      var compat=coachCompat(coach.pref,G.formation);
+      var boostPct=[0,2,5,8][compat];
+      var compatColor=compat===3?'var(--grn2)':compat===2?'#f59e0b':compat===1?'var(--mut)':'var(--red2)';
+      var compatEmoji=compat===3?'🟢':compat===2?'🟡':compat===1?'🟠':'🔴';
+      return '<div onclick="pickCoach('+i+')" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;'
+        +'padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;'
+        +'min-width:90px;flex:1;max-width:160px;text-align:center;-webkit-tap-highlight-color:transparent;transition:border-color .15s"'
+        +' onmouseover="this.style.borderColor=\''+compatColor+'\'" onmouseout="this.style.borderColor=\'var(--brd)\'">'
+        +'<div style="font-size:1.8rem;line-height:1;margin-bottom:2px">👔</div>'
+        +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.25;max-width:130px">'+coach.n+'</div>'
+        +'<div style="font-size:.62rem;color:var(--mut);margin-top:1px">'+t('coach.pref_form')+' <strong style="color:var(--text)">'+coach.pref+'</strong></div>'
+        +'<div style="font-size:.68rem;font-weight:700;color:'+compatColor+';margin-top:5px;padding:3px 9px;border-radius:20px;border:1.5px solid '+compatColor+'">'
+        +compatEmoji+' +'+boostPct+'% xG</div>'
+        +'</div>';
+    }).join('')
+    +'</div>';
+}
+
+function pickCoach(i){
+  var coach=G._coachPool[i];
+  if(!coach)return;
+  var compat=coachCompat(coach.pref,G.formation);
+  G.coach={name:coach.n,pref:coach.pref,compat:compat,boost:coachBoostMul(compat)};
+  var pss=document.getElementById('btn-pss');
+  if(pss)pss.style.display='';
+  try{
+    setupCampaign();
+    showCampaign();
+  }catch(e){
+    console.error('Campaign init error after coach pick:',e);
+    try{showCampaign();}catch(e2){showScreen('screen-campaign');}
+  }
+}
 
 function setupCampaign(){
   const t=G.tournament;
@@ -2395,7 +2506,7 @@ function calcStandings(){
 ═══════════════════════════════════════ */
 function showCampaign(){
   document.getElementById('camp-title').textContent = G.tournament.name;
-  document.getElementById('camp-sub').textContent = t('camp.formation')+' '+G.formation;
+  var coachTag=G.coach?(' · '+G.coach.name+' +'+(G.coach.compat===3?8:G.coach.compat===2?5:G.coach.compat===1?2:0)+'%'):''; document.getElementById('camp-sub').textContent=t('camp.formation')+' '+G.formation+coachTag;
 
   if(G.phase==='group'){
     document.getElementById('section-group').style.display='block';
@@ -2676,6 +2787,9 @@ function _runMatch(){
   const momMod=(G.momentum||0)*0.03;
   myXG=Math.max(.10,Math.min(myXG+momMod,2.6));
   oppXG=Math.max(.08,Math.min(oppXG-momMod*.35,2.6));
+
+  // Coach boost
+  if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
 
   // Draw-pull for evenly matched games
   const xgDiff=Math.abs(myXG-oppXG);
