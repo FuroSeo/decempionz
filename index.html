@@ -887,7 +887,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.2.2';
+const GAME_VERSION='4.2.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3377,48 +3377,93 @@ function _devQuickDraft(type){
   var diff=document.getElementById('dv-diff').value;
 
   // Pick a random tournament compatible with format
-  var pool=TOURNAMENTS.filter(function(t){
+  var trnPool=TOURNAMENTS.filter(function(t){
     if(fmt==='coppa') return t.id!=='alltime'&&parseInt(t.years)<1993;
     return true;
   });
-  if(!pool.length) pool=TOURNAMENTS;
-  var trn=pool[Math.floor(Math.random()*pool.length)];
+  if(!trnPool.length) trnPool=TOURNAMENTS;
+  var trn=trnPool[Math.floor(Math.random()*trnPool.length)];
 
-  // Reset state via applyTournament
   G.format=fmt;
-  applyTournament(trn);
+  applyTournament(trn);       // resets slotPlayers, squad, etc.
   G.formation=form;
   G.difficulty=diff;
   G.passes=DIFF_CFG[diff].passes;
 
-  // Build draft pool
+  // Build tournament draft pool (needed for campaign logic)
   initDraft();
 
-  // Sort pool
-  var sorted=type==='top'?[].concat(G.draftPool).sort(function(a,b){return b.r-a.r;}):
-                          [].concat(G.draftPool).sort(function(){return Math.random()-.5;});
+  // Use ALL teams as player source to guarantee full position coverage
+  var fullPool=[];
+  Object.keys(TEAMS).forEach(function(id){
+    var tm=TEAMS[id];
+    tm.players.forEach(function(p){
+      fullPool.push({n:p.n,p:p.p,r:p.r,club:tm.name,teamId:id});
+    });
+  });
+
+  var sorted=type==='top'
+    ? fullPool.sort(function(a,b){return b.r-a.r;})
+    : fullPool.sort(function(){return Math.random()-.5;});
+
   var usedSet=new Set();
   var formation=FORMATIONS[form];
 
   formation.positions.forEach(function(slot,idx){
     var compat=SLOT_COMPAT[slot]||[slot];
-    var match=null;
     for(var j=0;j<sorted.length;j++){
-      if(!usedSet.has(j)&&compat.includes(sorted[j].p)){match=sorted[j];usedSet.add(j);break;}
+      if(!usedSet.has(j)&&compat.includes(sorted[j].p)){
+        G.slotPlayers[idx]=sorted[j];
+        usedSet.add(j);
+        break;
+      }
     }
-    if(match) G.slotPlayers[idx]=match;
   });
 
   G.squad=G.slotPlayers.filter(Boolean);
   setupCampaign();
-  closeDevPanel();
-  showCampaign();
+
+  // Show squad in panel — don't navigate away
+  _devRenderSquad();
+}
+
+function _devRenderSquad(){
+  var sq=G.squad;
+  var box=document.getElementById('dv-squad-display');
+  if(!box) return;
+  if(!sq||!sq.length){
+    box.innerHTML='<div style="color:#ef4444;font-size:.72rem;margin-top:8px">⚠️ Squad non generata — riprova</div>';
+    return;
+  }
+  var grps={GK:[],DEF:[],MID:[],FWD:[]};
+  sq.forEach(function(p){grps[posGroup(p.p)].push(p);});
+  var avgR=(sq.reduce(function(s,p){return s+p.r;},0)/sq.length).toFixed(2);
+  var out='<div style="margin-top:10px;background:#111;border:1px solid #2a2a2a;border-radius:10px;padding:10px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+    +'<span style="color:#eab308;font-size:.72rem;font-weight:700">✅ Rosa '+sq.length+'/11 &nbsp;<span style="color:#555;font-weight:400">media '+avgR+'</span></span>'
+    +'<button onclick="closeDevPanel();showCampaign();" style="background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:6px;padding:4px 12px;font-size:.7rem;cursor:pointer">▶ Campagna</button>'
+    +'</div>';
+  ['GK','DEF','MID','FWD'].forEach(function(grp){
+    if(!grps[grp].length) return;
+    out+='<div style="margin-bottom:5px"><div style="font-size:.55rem;color:#444;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px">'+grp+'</div>';
+    grps[grp].sort(function(a,b){return b.r-a.r;}).forEach(function(p){
+      var star=p.r>=9.5?'★':' ';
+      var col=p.r>=9.5?'#eab308':p.r>=9.0?'#94a3b8':'#6b7280';
+      out+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #1a1a1a">'
+        +'<span style="font-size:.7rem"><span style="color:'+col+'">'+star+'</span> <span style="color:#ccc">'+p.n+'</span> <span style="color:#444;font-size:.6rem">'+p.p+'</span></span>'
+        +'<span style="font-size:.7rem;font-weight:700;color:'+col+'">'+p.r+'</span>'
+        +'</div>';
+    });
+    out+='</div>';
+  });
+  out+='</div>';
+  box.innerHTML=out;
 }
 
 /* ── Jump to Round ── */
 function _devJumpRound(phase,round){
-  if(!G.squad||G.squad.length<11){
-    document.getElementById('dv-force-status').textContent='⚠️ Esegui prima un Quick Draft';
+  if(!G.squad||G.squad.length<1){
+    document.getElementById('dv-force-status').textContent='⚠️ Clicca prima Top XI o Random XI';
     return;
   }
   if(phase==='group'){
@@ -3452,8 +3497,8 @@ function _devForceScore(myG,oppG){
 
 /* ── Stress Test ── */
 function _devStressTest(){
-  if(!G.squad||G.squad.length<11){
-    document.getElementById('dv-stress-result').innerHTML='<span style="color:#ef4444">⚠️ Esegui prima un Quick Draft</span>';
+  if(!G.squad||G.squad.length<1){
+    document.getElementById('dv-stress-result').innerHTML='<span style="color:#ef4444">⚠️ Clicca prima Top XI o Random XI</span>';
     return;
   }
   var N=Math.min(5000,Math.max(10,parseInt(document.getElementById('dv-stress-n').value)||500));
@@ -3519,10 +3564,14 @@ function _devStressTest(){
 
 /* ── Mock screens ── */
 function _devEnsureSquad(){
-  if(!G.squad||G.squad.length<11) _devQuickDraft('top');
+  if(!G.squad||G.squad.length<1){
+    _devQuickDraft('top');
+    return false;
+  }
+  return true;
 }
 function _devMockResult(){
-  _devEnsureSquad();
+  if(!_devEnsureSquad())return;
   M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;
   M.isKnockout=false;M.roundLabel='Dev Test';M.oppName='Dev FC';
   M.log=[];M.penResult=null;M.eliminated=false;
@@ -3530,7 +3579,7 @@ function _devMockResult(){
   closeDevPanel();showResult();
 }
 function _devMockTrophy(){
-  _devEnsureSquad();
+  if(!_devEnsureSquad())return;
   if(!G.groupUserResults.length)
     [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
   if(!G.knockResults.length)
@@ -3538,7 +3587,7 @@ function _devMockTrophy(){
   closeDevPanel();showTrophy();
 }
 function _devMockGameOver(){
-  _devEnsureSquad();
+  if(!_devEnsureSquad())return;
   G.phase='knockout';G.knockRound=1;
   if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
   if(!G.knockResults.length) G.knockResults.push({myG:0,oppG:2,stars:0,opp:'Dev FC'});
@@ -3632,6 +3681,7 @@ function _devMockGameOver(){
         <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">⭐ Top XI</button>
         <button onclick="_devQuickDraft('random')" style="flex:1;background:#1a1a1a;border:1px solid #555;color:#ccc;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🎲 Random XI</button>
       </div>
+      <div id="dv-squad-display"></div>
     </div>
 
     <!-- Jump to Round -->
