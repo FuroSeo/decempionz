@@ -1,6 +1,6 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.2.0  
+**Version:** 4.2.1  
 **Last updated:** 2026-06-10  
 **File:** `index.html` (single-file game, ~3400 lines)  
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)  
@@ -12,6 +12,7 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 4.2.1 | 2026-06-10 | Dev Panel: quick draft, jump to round/screen, force score, stress test (trigger: click ×5 versione) |
 | 4.2.0 | 2026-06-10 | i18n IT/EN: lingua italiana default, switch 🇮🇹/🇬🇧, tutte le label dinamiche tradotte |
 | 4.1.3 | 2026-06-10 | Hotfix definitivo: CSS ripristinato da v4.1.0 (ultimo funzionante). v4.1.2 usava erroneamente HEAD~1 invece di HEAD~2 come base |
 | 4.1.1 | 2026-06-10 | Code cleanup: dead JS functions/constants rimossi. Null-byte corruption fixed, modal e banner ripristinati |

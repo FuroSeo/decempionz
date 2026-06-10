@@ -529,7 +529,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <button class="btn btn-gold" onclick="startGame()" style="font-size:1rem;padding:17px;letter-spacing:.5px">🏆 Road to Glory</button>
   <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:8px">❓ How to play</button>
   <div class="legal-footer">
-    © 2026 Decempionz &nbsp;·&nbsp; <span style="color:var(--mut);font-size:.58rem">v<span id="game-version"></span></span> &nbsp;·&nbsp;
+    © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
     <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
     <a onclick="openLegal()">Privacy</a> &nbsp;·&nbsp;
     <a onclick="openLegal()">Terms</a>
@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.2.0';
+const GAME_VERSION='4.2.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2597,7 +2597,8 @@ function _runMatch(){
   const tacAdv=ct[0]>1.05?'advantage':ct[0]<0.95?'disadvantage':'neutral';
   _pendingMatch.tacAdv=tacAdv;_pendingMatch.oppTacticLabel=tacLabel(oppTactic);
 
-  const myG=poisson(myXG), oppG=poisson(oppXG);
+  let myG=poisson(myXG), oppG=poisson(oppXG);
+  if(_DEV_FORCE_SCORE){myG=_DEV_FORCE_SCORE[0];oppG=_DEV_FORCE_SCORE[1];_DEV_FORCE_SCORE=null;document.getElementById('dv-force-status').textContent='';}
 
   const scorers=[...grp.FWD,...grp.MID].filter(Boolean);
   // Opponent players for scorer names
@@ -3350,6 +3351,203 @@ function showShareToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
+
+/* ═══════════════════════════════════════
+   DEV PANEL — trigger: click ×5 sul numero versione in home
+═══════════════════════════════════════ */
+var _devClickCount=0,_devClickTimer=null;
+var _DEV_FORCE_SCORE=null;
+
+function _devClick(){
+  _devClickCount++;
+  clearTimeout(_devClickTimer);
+  _devClickTimer=setTimeout(function(){_devClickCount=0;},2000);
+  if(_devClickCount>=5){_devClickCount=0;openDevPanel();}
+}
+function openDevPanel(){
+  document.querySelectorAll('#dev-panel .gv').forEach(function(v){v.textContent=GAME_VERSION;});
+  document.getElementById('dev-panel').style.display='block';
+}
+function closeDevPanel(){
+  document.getElementById('dev-panel').style.display='none';
+}
+
+/* ── Quick Draft ── */
+function _devQuickDraft(type){
+  var fmt=document.getElementById('dv-format').value;
+  var form=document.getElementById('dv-form').value;
+  var diff=document.getElementById('dv-diff').value;
+
+  // Pick a random tournament compatible with format
+  var pool=TOURNAMENTS.filter(function(t){
+    if(fmt==='coppa') return t.id!=='alltime'&&parseInt(t.years)<1993;
+    return true;
+  });
+  if(!pool.length) pool=TOURNAMENTS;
+  var trn=pool[Math.floor(Math.random()*pool.length)];
+
+  // Reset state via applyTournament
+  G.format=fmt;
+  applyTournament(trn);
+  G.formation=form;
+  G.difficulty=diff;
+  G.passes=DIFF_CFG[diff].passes;
+
+  // Build draft pool
+  initDraft();
+
+  // Sort pool
+  var sorted=type==='top'?[].concat(G.draftPool).sort(function(a,b){return b.r-a.r;}):
+                          [].concat(G.draftPool).sort(function(){return Math.random()-.5;});
+  var usedSet=new Set();
+  var formation=FORMATIONS[form];
+
+  formation.positions.forEach(function(slot,idx){
+    var compat=SLOT_COMPAT[slot]||[slot];
+    var match=null;
+    for(var j=0;j<sorted.length;j++){
+      if(!usedSet.has(j)&&compat.includes(sorted[j].p)){match=sorted[j];usedSet.add(j);break;}
+    }
+    if(match) G.slotPlayers[idx]=match;
+  });
+
+  G.squad=G.slotPlayers.filter(Boolean);
+  setupCampaign();
+  closeDevPanel();
+  showCampaign();
+}
+
+/* ── Jump to Round ── */
+function _devJumpRound(phase,round){
+  if(!G.squad||G.squad.length<11){
+    document.getElementById('dv-force-status').textContent='⚠️ Esegui prima un Quick Draft';
+    return;
+  }
+  if(phase==='group'){
+    G.phase='group';
+    G.groupRound=round;
+  } else {
+    // Ensure group results exist (needed for standings)
+    if(!G.groupUserResults.length&&G.format!=='coppa'){
+      var n=G.format==='nuovo'?6:3;
+      for(var i=0;i<n;i++) G.groupUserResults.push({myG:2,oppG:0,stars:3,opp:'Dev FC '+(i+1)});
+    }
+    // Re-run setupCampaign to get fresh knockOpps if needed
+    if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
+    G.phase='knockout';
+    G.knockRound=round;
+  }
+  closeDevPanel();
+  showCampaign();
+}
+
+/* ── Force Score ── */
+function _devForceScore(myG,oppG){
+  if(myG===null){
+    _DEV_FORCE_SCORE=null;
+    document.getElementById('dv-force-status').textContent='Reset — simulazione normale';
+    return;
+  }
+  _DEV_FORCE_SCORE=[myG,oppG];
+  document.getElementById('dv-force-status').textContent='✅ Prossima partita forzata: '+myG+' – '+oppG;
+}
+
+/* ── Stress Test ── */
+function _devStressTest(){
+  if(!G.squad||G.squad.length<11){
+    document.getElementById('dv-stress-result').innerHTML='<span style="color:#ef4444">⚠️ Esegui prima un Quick Draft</span>';
+    return;
+  }
+  var N=Math.min(5000,Math.max(10,parseInt(document.getElementById('dv-stress-n').value)||500));
+  var oppStr=parseFloat(document.getElementById('dv-stress-opp').value)||8.0;
+  var extraMod=parseFloat(document.getElementById('dv-oppmod').value)||0;
+
+  var diffCfg=DIFF_CFG[G.difficulty||'normal'];
+  var effOppStr=Math.max(5,oppStr+diffCfg.oppMod+extraMod);
+
+  var pl=G.squad;
+  var grp2={GK:[],DEF:[],MID:[],FWD:[]};
+  pl.forEach(function(p){grp2[posGroup(p.p)].push(p);});
+  var gkR=avg(grp2.GK.map(function(p){return p.r;}))||6;
+  var defR=avg(grp2.DEF.map(function(p){return p.r;}))||6;
+  var midR=avg(grp2.MID.map(function(p){return p.r;}))||6;
+  var fwdR=avg(grp2.FWD.map(function(p){return p.r;}))||6;
+  var atk=fwdR*.65+midR*.35, def2=defR*.70+gkR*.30;
+  var topR=Math.max.apply(null,pl.map(function(p){return p.r;}));
+  var sb=Math.max(0,(topR-8.5)*.06);
+  var tac=G.tactic||'balanced';
+  var tm=TACT_MOD[tac]||TACT_MOD.balanced;
+  var mom=G.momentum||0;
+
+  var wins=0,draws=0,losses=0,gf=0,ga=0;
+  var ow=effOppStr>=8.5?[.50,.35,.15]:effOppStr<7?[.20,.40,.40]:[.33,.34,.33];
+
+  for(var i=0;i<N;i++){
+    var r=Math.random();
+    var ot=r<ow[0]?'attack':r<ow[0]+ow[1]?'balanced':'defend';
+    var ctKey=tac+'-'+ot;
+    var ct=COUNTER_MOD[ctKey]||[1,1];
+    var mxg=Math.max(0.13,((atk-effOppStr*.84)*.36+.56)*tm.myXG*ct[0]);
+    var oxg=Math.max(0.10,((effOppStr-def2*.80)*.42+.32)*tm.oppXG*ct[1]);
+    mxg=Math.min(mxg+sb,2.6);
+    mxg=Math.max(.10,Math.min(2.6,mxg+mom*.03));
+    oxg=Math.max(.08,Math.min(2.6,oxg-mom*.03*.35));
+    var diff3=Math.abs(mxg-oxg);
+    if(diff3<.35){var pull=.05*((.35-diff3)/.35);mxg-=pull;oxg-=pull;}
+    var mg=poisson(mxg),og=poisson(oxg);
+    gf+=mg;ga+=og;
+    if(mg>og)wins++;else if(mg===og)draws++;else losses++;
+  }
+  var p=function(v){return(v/N*100).toFixed(1);};
+  var wBar=Math.round(wins/N*100);
+  var dBar=Math.round(draws/N*100);
+  var lBar=100-wBar-dBar;
+  document.getElementById('dv-stress-result').innerHTML=
+    '<div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-top:4px">'
+    +'<div style="font-size:.7rem;color:#777;margin-bottom:8px"><strong style="color:#ccc">'+N+'</strong> partite vs opp <strong style="color:#ccc">'+effOppStr.toFixed(1)+'</strong>'+(extraMod?' (+'+extraMod+' mod)':'')+'</div>'
+    +'<div style="display:flex;border-radius:6px;overflow:hidden;height:18px;margin-bottom:8px">'
+    +'<div style="width:'+wBar+'%;background:#22c55e;transition:width .4s"></div>'
+    +'<div style="width:'+dBar+'%;background:#eab308"></div>'
+    +'<div style="width:'+lBar+'%;background:#ef4444"></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:.72rem">'
+    +'<span style="color:#22c55e">🟢 V '+wins+' ('+p(wins)+'%)</span>'
+    +'<span style="color:#eab308">P '+draws+' ('+p(draws)+'%)</span>'
+    +'<span style="color:#ef4444">🔴 S '+losses+' ('+p(losses)+'%)</span>'
+    +'</div>'
+    +'<div style="font-size:.65rem;color:#555;margin-top:6px">Media gol: <strong style="color:#999">'+(gf/N).toFixed(2)+'</strong> – <strong style="color:#999">'+(ga/N).toFixed(2)+'</strong> per partita &nbsp;·&nbsp; atk <strong style="color:#999">'+atk.toFixed(2)+'</strong> def <strong style="color:#999">'+def2.toFixed(2)+'</strong></div>'
+    +'</div>';
+}
+
+/* ── Mock screens ── */
+function _devEnsureSquad(){
+  if(!G.squad||G.squad.length<11) _devQuickDraft('top');
+}
+function _devMockResult(){
+  _devEnsureSquad();
+  M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;
+  M.isKnockout=false;M.roundLabel='Dev Test';M.oppName='Dev FC';
+  M.log=[];M.penResult=null;M.eliminated=false;
+  if(!G.groupUserResults)G.groupUserResults=[];
+  closeDevPanel();showResult();
+}
+function _devMockTrophy(){
+  _devEnsureSquad();
+  if(!G.groupUserResults.length)
+    [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
+  if(!G.knockResults.length)
+    ['R16','QF','SF','FIN'].forEach(function(r){G.knockResults.push({myG:1,oppG:0,stars:2,opp:'Dev '+r});});
+  closeDevPanel();showTrophy();
+}
+function _devMockGameOver(){
+  _devEnsureSquad();
+  G.phase='knockout';G.knockRound=1;
+  if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
+  if(!G.knockResults.length) G.knockResults.push({myG:0,oppG:2,stars:0,opp:'Dev FC'});
+  M.myG=0;M.oppG=2;M.oppName='Dev FC';
+  closeDevPanel();showGameOver();
+}
+
 </script>
 
 <div id="share-toast">📋 Copied to clipboard!</div>
@@ -3374,6 +3572,135 @@ function showShareToast(msg){
   <p>Decempionz is a fan project — not affiliated with UEFA, FIFA or any club. For entertainment only.</p>
   <button class="btn-ghost" style="font-size:.62rem;padding:5px 12px;flex-shrink:0" onclick="closeBanner()">Got it</button>
 </div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     DEV PANEL — riservato, trigger: click ×5 su versione
+═══════════════════════════════════════════════════ -->
+<div id="dev-panel" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.93);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 12px">
+  <div style="max-width:460px;margin:0 auto;background:#0d0d0d;border:2px solid #eab308;border-radius:16px;padding:20px">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;border-bottom:1px solid #222;padding-bottom:14px">
+      <div>
+        <div style="color:#eab308;font-weight:900;font-size:1rem;letter-spacing:1px">⚙️ DEV PANEL</div>
+        <div style="font-size:.6rem;color:#555;margin-top:2px">Decempionz v<span class="gv"></span> — solo per sviluppatori</div>
+      </div>
+      <button onclick="closeDevPanel()" style="background:#1a1a1a;border:1px solid #333;color:#aaa;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.8rem">✕ Chiudi</button>
+    </div>
+
+    <!-- Setup -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Setup rapido</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Formato</div>
+          <select id="dv-format" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
+            <option value="classic">Classic</option>
+            <option value="coppa">Old Cup</option>
+            <option value="nuovo">New Format</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Formazione</div>
+          <select id="dv-form" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
+            <option value="4-3-3">4-3-3</option>
+            <option value="4-4-2">4-4-2</option>
+            <option value="4-2-3-1">4-2-3-1</option>
+            <option value="3-5-2">3-5-2</option>
+            <option value="4-1-4-1">4-1-4-1</option>
+            <option value="3-4-3">3-4-3</option>
+            <option value="5-3-2">5-3-2</option>
+            <option value="4-5-1">4-5-1</option>
+            <option value="5-4-1">5-4-1</option>
+            <option value="3-6-1">3-6-1</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Difficoltà</div>
+          <select id="dv-diff" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
+            <option value="easy">Facile</option>
+            <option value="normal" selected>Normale</option>
+            <option value="hard">Difficile</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Draft -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Draft automatico</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">⭐ Top XI</button>
+        <button onclick="_devQuickDraft('random')" style="flex:1;background:#1a1a1a;border:1px solid #555;color:#ccc;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🎲 Random XI</button>
+      </div>
+    </div>
+
+    <!-- Jump to Round -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Salta al turno <span style="color:#444">(richiede draft)</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <button onclick="_devJumpRound('group',0)" class="dv-btn">Girone 1</button>
+        <button onclick="_devJumpRound('group',2)" class="dv-btn">Girone 3</button>
+        <button onclick="_devJumpRound('knockout',0)" class="dv-btn">R16/Turno 1</button>
+        <button onclick="_devJumpRound('knockout',1)" class="dv-btn">QF</button>
+        <button onclick="_devJumpRound('knockout',2)" class="dv-btn">SF</button>
+        <button onclick="_devJumpRound('knockout',3)" class="dv-btn">Finale</button>
+      </div>
+    </div>
+
+    <!-- Force Outcome -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Forza esito prossima partita</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">
+        <button onclick="_devForceScore(3,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">3–0</button>
+        <button onclick="_devForceScore(1,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">1–0</button>
+        <button onclick="_devForceScore(1,1)" class="dv-btn" style="border-color:#eab308;color:#eab308">1–1</button>
+        <button onclick="_devForceScore(0,1)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–1</button>
+        <button onclick="_devForceScore(0,3)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–3</button>
+        <button onclick="_devForceScore(null,null)" class="dv-btn" style="border-color:#555;color:#777">Reset</button>
+      </div>
+      <div id="dv-force-status" style="font-size:.68rem;color:#eab308;min-height:14px"></div>
+    </div>
+
+    <!-- Stress Test -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Stress test simulazione <span style="color:#444">(richiede draft)</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.7rem;color:#999">N partite</span>
+          <input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="width:70px;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:4px 6px;font-size:.75rem">
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.7rem;color:#999">Forza avv.</span>
+          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.1" style="width:60px;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:4px 6px;font-size:.75rem">
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:.7rem;color:#999">oppMod</span>
+          <input id="dv-oppmod" type="number" value="0" step="0.05" min="-1" max="2" style="width:55px;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:4px 6px;font-size:.75rem">
+        </div>
+      </div>
+      <button onclick="_devStressTest()" style="background:#111;border:1px solid #3b82f6;color:#3b82f6;border-radius:8px;padding:7px 16px;font-size:.78rem;cursor:pointer">▶ Esegui stress test</button>
+      <div id="dv-stress-result" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Jump to Screen (mock) -->
+    <div style="margin-bottom:4px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Salta a schermata (dati mock)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <button onclick="_devMockResult()" class="dv-btn">Risultato</button>
+        <button onclick="_devMockTrophy()" class="dv-btn">🏆 Trofeo</button>
+        <button onclick="_devMockGameOver()" class="dv-btn">Game Over</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.dv-btn{background:#111;border:1px solid #333;color:#ccc;border-radius:7px;padding:6px 10px;font-size:.72rem;cursor:pointer}
+.dv-btn:hover{border-color:#666;color:#fff}
+</style>
 
 </body>
 </html>
