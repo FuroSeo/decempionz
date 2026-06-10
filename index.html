@@ -520,12 +520,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- How it works -->
   <div class="card" style="margin-bottom:16px">
     <div style="font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">How it works</div>
-    <div class="step-row"><div class="sn">01</div><div class="st"><strong>Choose an era</strong> — 10 eras spanning 1961–2023, or All Time for the full 58-squad pool</div></div>
-    <div class="step-row"><div class="sn">02</div><div class="st"><strong>Set difficulty</strong> — Easy (10 skips), Normal (7), Hard (5). Also affects opponent strength</div></div>
-    <div class="step-row"><div class="sn">03</div><div class="st"><strong>Pick a formation</strong> — 10 options. Position slots are strict, so choose wisely before drafting</div></div>
-    <div class="step-row"><div class="sn">04</div><div class="st"><strong>Draft blind</strong> — one card at a time. Accept or skip. Star players (rated 8.5+) boost your attack</div></div>
-    <div class="step-row"><div class="sn">05</div><div class="st"><strong>Read the scout report</strong> — each opponent has a tactical style. Counter it to gain the edge</div></div>
-    <div class="step-row"><div class="sn">06</div><div class="st"><strong>Group stage + Knockouts</strong> — 7 matches total. Win builds momentum. Lose it and the odds turn</div></div>
+    <div class="step-row"><div class="sn">01</div><div class="st"><strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1000+ legendary players. Position slots are strict.</div></div>
+    <div class="step-row"><div class="sn">02</div><div class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.</div></div>
+    <div class="step-row"><div class="sn">03</div><div class="st"><strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.</div></div>
   </div>
 
   <button class="btn btn-gold" onclick="startGame()" style="font-size:1rem;padding:17px;letter-spacing:.5px">🏆 Road to Glory</button>
@@ -578,15 +575,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="diff-grid" style="margin-bottom:14px">
     <div class="diff-card diff-easy" id="dc-easy" onclick="selectDiff('easy',this)">
       <div class="diff-title">🟢 Easy</div>
-      <div class="diff-desc">10 skips · Opponents weaker</div>
+      <div class="diff-desc">5 rerolls · Opponents weaker</div>
     </div>
     <div class="diff-card diff-normal diff-sel" id="dc-normal" onclick="selectDiff('normal',this)">
       <div class="diff-title">🟡 Normal</div>
-      <div class="diff-desc">7 skips · Standard strength</div>
+      <div class="diff-desc">3 rerolls · Standard strength</div>
     </div>
     <div class="diff-card diff-hard" id="dc-hard" onclick="selectDiff('hard',this)">
       <div class="diff-title">🔴 Hard</div>
-      <div class="diff-desc">5 skips · Opponents stronger</div>
+      <div class="diff-desc">2 rerolls · Opponents stronger</div>
     </div>
   </div>
     <button id="btn-format-confirm" class="btn btn-gold" onclick="confirmFormat()">Choose Formation →</button>
@@ -876,10 +873,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <h2 style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 58-squad pool spanning 27 legendary clubs. Each era comes with its own tournament teams and draft pool.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (10 skips), Normal (7), Hard (5). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — plan ahead before drafting.</p>
-    <p style="margin-bottom:11px"><strong style="color:var(--text)">Blind draft.</strong> Players are revealed one at a time. Each card shows the club colors, rating, and position. <strong style="color:var(--grn2)">Accept</strong> to add them to your XI, or <strong style="color:var(--red2)">Pass</strong> to skip. Star players rated 8.5+ carry an individual attack bonus — prioritise them. Players that don't fit any open slot are auto-skipped.</p>
+    <p style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
+    <p style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
+    <p style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.</p>
+    <p style="margin-bottom:11px"><strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don't fit any open slot are skipped automatically.</p>
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Tactic & scout report.</strong> Before each match a scout report reveals the opponent's likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.</p>
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.</p>
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Group stage.</strong> 3 matches. Win = 3 pts, Draw = 1, Loss = 0. Finish in the top 2 to advance. Bottom two are eliminated.</p>
@@ -3199,4 +3196,4 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
