@@ -487,14 +487,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 (function(){var t=localStorage.getItem('gl-theme');if(t==='light')document.body.setAttribute('data-theme','light');})();
 </script>
 <button id="theme-icon" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:10px;right:10px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);color:var(--mut);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">☀️</button>
+<button id="lang-btn" onclick="toggleLang()" aria-label="Toggle language" style="position:fixed;top:10px;right:48px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">🇮🇹</button>
 <div class="app">
 
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div style="text-align:center;margin-bottom:24px;padding-top:16px">
-    <div style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
+    <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
     <h1 class="logo">Decempionz</h1>
-    <p style="color:var(--mut);margin-top:10px;font-size:.88rem;line-height:1.5">Draft iconic players. Build a legendary XI.<br>Conquer Europe across 3 decades of history.</p>
+    <p data-i18n-html="home.subtitle" style="color:var(--mut);margin-top:10px;font-size:.88rem;line-height:1.5">Draft iconic players. Build a legendary XI.<br>Conquer Europe across 3 decades of history.</p>
   </div>
 
   <!-- Stats bar -->
@@ -519,14 +520,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- How it works -->
   <div class="card" style="margin-bottom:16px">
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">How it works</div>
-    <div class="step-row"><div class="sn">01</div><div class="st"><strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1000+ legendary players. Position slots are strict.</div></div>
-    <div class="step-row"><div class="sn">02</div><div class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.</div></div>
-    <div class="step-row"><div class="sn">03</div><div class="st"><strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.</div></div>
+    <div data-i18n="home.how_it_works" style="font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">How it works</div>
+    <div class="step-row"><div class="sn">01</div><div data-i18n-html="home.step1" class="st"><strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1000+ legendary players. Position slots are strict.</div></div>
+    <div class="step-row"><div class="sn">02</div><div data-i18n-html="home.step2" class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.</div></div>
+    <div class="step-row"><div class="sn">03</div><div data-i18n-html="home.step3" class="st"><strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.</div></div>
   </div>
 
   <button class="btn btn-gold" onclick="startGame()" style="font-size:1rem;padding:17px;letter-spacing:.5px">🏆 Road to Glory</button>
-  <button class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:8px">❓ How to play</button>
+  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:8px">❓ How to play</button>
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span style="color:var(--mut);font-size:.58rem">v<span id="game-version"></span></span> &nbsp;·&nbsp;
     <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
@@ -574,16 +575,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Difficulty</div>
   <div class="diff-grid" style="margin-bottom:14px">
     <div class="diff-card diff-easy" id="dc-easy" onclick="selectDiff('easy',this)">
-      <div class="diff-title">🟢 Easy</div>
-      <div class="diff-desc">5 rerolls · Opponents weaker</div>
+      <div data-i18n="diff.easy" class="diff-title">🟢 Easy</div>
+      <div data-i18n="diff.easy_desc" class="diff-desc">5 rerolls · Opponents weaker</div>
     </div>
     <div class="diff-card diff-normal diff-sel" id="dc-normal" onclick="selectDiff('normal',this)">
-      <div class="diff-title">🟡 Normal</div>
-      <div class="diff-desc">3 rerolls · Standard strength</div>
+      <div data-i18n="diff.normal" class="diff-title">🟡 Normal</div>
+      <div data-i18n="diff.normal_desc" class="diff-desc">3 rerolls · Standard strength</div>
     </div>
     <div class="diff-card diff-hard" id="dc-hard" onclick="selectDiff('hard',this)">
-      <div class="diff-title">🔴 Hard</div>
-      <div class="diff-desc">2 rerolls · Opponents stronger</div>
+      <div data-i18n="diff.hard" class="diff-title">🔴 Hard</div>
+      <div data-i18n="diff.hard_desc" class="diff-desc">2 rerolls · Opponents stronger</div>
     </div>
   </div>
     <button id="btn-format-confirm" class="btn btn-gold" onclick="confirmFormat()">Choose Formation →</button>
@@ -633,9 +634,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div style="margin-top:10px;margin-bottom:10px">
     <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Playing Style</div>
     <div class="mini-tact-row">
-      <button class="mini-tact-btn" id="fmt-attack" onclick="selectFormTactic('attack',this)">⚔️ Attack</button>
-      <button class="mini-tact-btn tact-sel" id="fmt-balanced" onclick="selectFormTactic('balanced',this)">⚖️ Balanced</button>
-      <button class="mini-tact-btn" id="fmt-defend" onclick="selectFormTactic('defend',this)">🛡️ Defend</button>
+      <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="fmt-attack" onclick="selectFormTactic('attack',this)">⚔️ Attack</button>
+      <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="fmt-balanced" onclick="selectFormTactic('balanced',this)">⚖️ Balanced</button>
+      <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="fmt-defend" onclick="selectFormTactic('defend',this)">🛡️ Defend</button>
     </div>
   </div>
   <button id="btn-start-draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
@@ -701,9 +702,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="pmp-scout" id="pmp-scout"></div>
       <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
       <div class="mini-tact-row">
-        <button class="mini-tact-btn" id="pmt-attack" onclick="selectMatchTactic('attack',this)">⚔️ Attack</button>
-        <button class="mini-tact-btn tact-sel" id="pmt-balanced" onclick="selectMatchTactic('balanced',this)">⚖️ Balanced</button>
-        <button class="mini-tact-btn" id="pmt-defend" onclick="selectMatchTactic('defend',this)">🛡️ Defend</button>
+        <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="pmt-attack" onclick="selectMatchTactic('attack',this)">⚔️ Attack</button>
+        <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="pmt-balanced" onclick="selectMatchTactic('balanced',this)">⚖️ Balanced</button>
+        <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="pmt-defend" onclick="selectMatchTactic('defend',this)">🛡️ Defend</button>
       </div>
     </div>
   </div>
@@ -871,7 +872,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-howto">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <h2 style="margin-bottom:14px">How to Play</h2>
+  <h2 data-i18n="howto.title" style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
     <p style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
@@ -884,11 +885,245 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <p><strong style="color:var(--text)">Stars.</strong> Win by 2+ goals = ⭐⭐⭐ &nbsp;·&nbsp; Win by 1 = ⭐⭐ &nbsp;·&nbsp; Draw or pens = ⭐ &nbsp;·&nbsp; Loss = 0.</p>
   </div>
   <div style="font-size:.6rem;color:var(--mut);text-align:center;margin-top:18px">Decempionz v<span class="gv"></span></div>
-  <button class="btn btn-gold" onclick="showScreen('screen-home')" style="margin-top:8px">← Back</button>
+  <button data-i18n="ui.back" class="btn btn-gold" onclick="showScreen('screen-home')" style="margin-top:8px">← Back</button>
 </div>
 
 <script>
-const GAME_VERSION='4.1.3';
+const GAME_VERSION='4.2.0';
+/* ═══════════════════════════════════════
+   INTERNATIONALISATION (i18n)
+═══════════════════════════════════════ */
+const STRINGS={
+  it:{
+    'home.tagline':'Il Draft di Calcio Definitivo',
+    'home.subtitle':'Drafta campioni iconici. Costruisci un XI leggendario.<br>Conquista l\'Europa attraverso 3 decenni di storia.',
+    'home.how_it_works':'Come funziona',
+    'home.step1':'<strong>Scegli l\'era e la formazione</strong> — 10 ere, 1961–2023, 1000+ giocatori leggendari. Le posizioni sono fisse.',
+    'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. Non ti piacciono? Reroll — ma sono limitati.',
+    'home.step3':'<strong>Conquista l\'Europa</strong> — leggi il report dello scout, scegli la tattica e batti la fase a gironi e i playoff.',
+    'home.howtoplay_btn':'❓ Come si gioca',
+    'diff.easy':'🟢 Facile',
+    'diff.normal':'🟡 Normale',
+    'diff.hard':'🔴 Difficile',
+    'diff.easy_desc':'5 reroll · Avversari più deboli',
+    'diff.normal_desc':'3 reroll · Forza standard',
+    'diff.hard_desc':'2 reroll · Avversari più forti',
+    'tac.attack':'Pressione Alta',
+    'tac.balanced':'Possesso Palla',
+    'tac.defend':'Blocco Basso',
+    'tac.btn_attack':'⚔️ Attacco',
+    'tac.btn_balanced':'⚖️ Bilanciato',
+    'tac.btn_defend':'🛡️ Difesa',
+    'round.group_stage':'Fase a Gironi',
+    'round.r1':'Turno 1',
+    'round.r2':'Turno 2',
+    'round.r16':'Ottavi di Finale',
+    'round.qf':'Quarti di Finale',
+    'round.sf':'Semifinale',
+    'round.final':'Finale',
+    'result.win':'VITTORIA',
+    'result.win_pens':'VITTORIA (rig.)',
+    'result.draw':'PAREGGIO',
+    'result.loss':'SCONFITTA',
+    'result.out':'ELIMINATI',
+    'result.msg.clinical':'Dominante. Nessun dubbio.',
+    'result.msg.dominant':'Prestazione dominante.',
+    'result.msg.exactly':'Esattamente quello che serviva.',
+    'result.msg.hardfought':'Sofferta. Ma vinta.',
+    'result.msg.scrappy':'Brutta ma efficace.',
+    'result.msg.draw':'Un punto conquistato.',
+    'result.msg.pens_win':' ai rigori. Avanzati di misura.',
+    'result.msg.pens_loss':' ai rigori. Straziante.',
+    'result.msg.knocked':'Eliminati.',
+    'result.msg.defeat':'Sconfitta. Testa alta.',
+    'camp.formation':'Formazione',
+    'camp.group_stage':'Fase a Gironi',
+    'camp.league_phase':'Fase di Lega',
+    'camp.points':'Punti',
+    'camp.qualify_threshold':'Soglia qualifica',
+    'camp.of6_played':'di 6 giocate',
+    'camp.qualified':'✅ Qualificato',
+    'camp.on_track':'⚠️ In corsa',
+    'camp.at_risk':'❌ A rischio',
+    'camp.eliminated':'❌ Eliminato',
+    'camp.group_tag':'GIRONE',
+    'camp.league_tag':'LEGA',
+    'camp.group_match':'Partita di Girone',
+    'camp.league_match':'Partita di Lega',
+    'camp.kickoff':'Calcio d\'inizio →',
+    'scout.likely':'Scout: gioca probabilmente',
+    'scout.counter':'· Contromossa:',
+    'tac.edge':'🟢 Vantaggio tattico — tua',
+    'tac.mismatch':'🔴 Svantaggio tattico — tua',
+    'tac.balanced_msg':'🔵 Tattiche equilibrate — tua',
+    'tac.vs_their':'vs loro',
+    'go.eliminated_in':'Eliminati al',
+    'go.failed_qualify_pre':'Non qualificati — solo',
+    'go.failed_qualify_post':'punti in 6 partite (obiettivo: 8).',
+    'go.finished_pos_pre':'Terminati',
+    'go.finished_pos_post':'nel girone. Solo le prime 2 avanzano.',
+    'trophy.old_cup':'Campioni dell\'Old Cup',
+    'trophy.classic':'Campioni Classic',
+    'trophy.nuovo':'Campioni New Wave',
+    'grade.s':'Campagna perfetta!',
+    'grade.a':'Campioni d\'Europa',
+    'grade.b':'Campioni di carattere',
+    'grade.c':'Vinta a fatica',
+    'stats.top_scorer':'⚽ Capocannoniere',
+    'stats.best_player':'🏅 Miglior giocatore',
+    'stats.best_win':'💥 Miglior vittoria',
+    'trophy.lbl_top_scorer':'Capocannoniere',
+    'trophy.lbl_best_player':'Miglior Giocatore',
+    'trophy.lbl_best_win':'Miglior Vittoria',
+    'match.possession':'Possesso',
+    'match.shots_ot':'Tiri / In porta',
+    'match.xg':'xG',
+    'match.corners':'Calci d\'angolo',
+    'match.goals':'Gol',
+    'match.yellows':'Cartellini gialli',
+    'match.no_goals':'Nessun gol',
+    'btn.continue':'Continua →',
+    'btn.view_stats':'Vedi le Stats Finali →',
+    'btn.group_exit':'Uscita dal girone →',
+    'btn.knockouts':'Playoff →',
+    'btn.trophy':'🏆 Alza il trofeo!',
+    'nuovo.league_phase':'Fase di Lega',
+    'nuovo.qualify_at':'Soglia: 8 pt',
+    'nuovo.of6':'di 6 ·',
+    'nuovo.to_go':'ancora da giocare',
+    'howto.title':'Come si gioca',
+    'ui.back':'← Indietro',
+  },
+  en:{
+    'home.tagline':'The Ultimate Football Draft',
+    'home.subtitle':'Draft iconic players. Build a legendary XI.<br>Conquer Europe across 3 decades of history.',
+    'home.how_it_works':'How it works',
+    'home.step1':'<strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1000+ legendary players. Position slots are strict.',
+    'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.',
+    'home.step3':'<strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.',
+    'home.howtoplay_btn':'❓ How to play',
+    'diff.easy':'🟢 Easy',
+    'diff.normal':'🟡 Normal',
+    'diff.hard':'🔴 Hard',
+    'diff.easy_desc':'5 rerolls · Opponents weaker',
+    'diff.normal_desc':'3 rerolls · Standard strength',
+    'diff.hard_desc':'2 rerolls · Opponents stronger',
+    'tac.attack':'High Press',
+    'tac.balanced':'Possession',
+    'tac.defend':'Low Block',
+    'tac.btn_attack':'⚔️ Attack',
+    'tac.btn_balanced':'⚖️ Balanced',
+    'tac.btn_defend':'🛡️ Defend',
+    'round.group_stage':'Group Stage',
+    'round.r1':'Round 1',
+    'round.r2':'Round 2',
+    'round.r16':'Round of 16',
+    'round.qf':'Quarter-Final',
+    'round.sf':'Semi-Final',
+    'round.final':'Final',
+    'result.win':'WIN',
+    'result.win_pens':'WIN (pens)',
+    'result.draw':'DRAW',
+    'result.loss':'LOSS',
+    'result.out':'OUT',
+    'result.msg.clinical':'Clinical. No debate.',
+    'result.msg.dominant':'Dominant performance.',
+    'result.msg.exactly':'Exactly what was needed.',
+    'result.msg.hardfought':'Hard-fought. Job done.',
+    'result.msg.scrappy':'Scrappy but effective.',
+    'result.msg.draw':'One point on the board.',
+    'result.msg.pens_win':' on penalties. Barely through.',
+    'result.msg.pens_loss':' on penalties. Agonising.',
+    'result.msg.knocked':'Knocked out.',
+    'result.msg.defeat':'Defeat. Bounce back.',
+    'camp.formation':'Formation',
+    'camp.group_stage':'Group Stage',
+    'camp.league_phase':'League Phase',
+    'camp.points':'Points',
+    'camp.qualify_threshold':'Qualify threshold',
+    'camp.of6_played':'of 6 played',
+    'camp.qualified':'✅ Qualified',
+    'camp.on_track':'⚠️ On track',
+    'camp.at_risk':'❌ At risk',
+    'camp.eliminated':'❌ Eliminated',
+    'camp.group_tag':'GROUP',
+    'camp.league_tag':'LEAGUE',
+    'camp.group_match':'Group Match',
+    'camp.league_match':'League Match',
+    'camp.kickoff':'Kick Off →',
+    'scout.likely':'Scout: likely plays',
+    'scout.counter':'· Counter:',
+    'tac.edge':'🟢 Tactical edge — your',
+    'tac.mismatch':'🔴 Tactical mismatch — your',
+    'tac.balanced_msg':'🔵 Balanced tactics — your',
+    'tac.vs_their':'vs their',
+    'go.eliminated_in':'Eliminated in the',
+    'go.failed_qualify_pre':'Failed to qualify — only',
+    'go.failed_qualify_post':'pts from 6 matches (target: 8).',
+    'go.finished_pos_pre':'Finished',
+    'go.finished_pos_post':'in the group. Only the top 2 advance.',
+    'trophy.old_cup':'Old Cup Champions',
+    'trophy.classic':'Classic Champions',
+    'trophy.nuovo':'New Wave Champions',
+    'grade.s':'Perfect campaign!',
+    'grade.a':'Champions of Europe',
+    'grade.b':'Gritty champions',
+    'grade.c':'Won it the hard way',
+    'stats.top_scorer':'⚽ Top scorer',
+    'stats.best_player':'🏅 Best player',
+    'stats.best_win':'💥 Best win',
+    'trophy.lbl_top_scorer':'Top Scorer',
+    'trophy.lbl_best_player':'Best Player',
+    'trophy.lbl_best_win':'Best Win',
+    'match.possession':'Possession',
+    'match.shots_ot':'Shots / OT',
+    'match.xg':'xG',
+    'match.corners':'Corners',
+    'match.goals':'Goals',
+    'match.yellows':'Yellow cards',
+    'match.no_goals':'No goals',
+    'btn.continue':'Continue →',
+    'btn.view_stats':'View Final Stats →',
+    'btn.group_exit':'Group exit →',
+    'btn.knockouts':'Knockouts →',
+    'btn.trophy':'🏆 Lift the trophy!',
+    'nuovo.league_phase':'League Phase',
+    'nuovo.qualify_at':'Qualify at',
+    'nuovo.of6':'of 6 played ·',
+    'nuovo.to_go':'to go',
+    'howto.title':'How to Play',
+    'ui.back':'← Back',
+  }
+};
+
+function t(key){
+  var lang=(typeof G!=='undefined'&&G&&G.lang)?G.lang:'it';
+  return(STRINGS[lang]||STRINGS.it)[key]||(STRINGS.it[key])||key;
+}
+
+function toggleLang(){
+  var cur=(typeof G!=='undefined'&&G&&G.lang)?G.lang:'it';
+  var next=cur==='it'?'en':'it';
+  if(typeof G!=='undefined'&&G)G.lang=next;
+  try{localStorage.setItem('dcz_lang',next);}catch(e){}
+  var btn=document.getElementById('lang-btn');
+  if(btn)btn.textContent=next==='it'?'🇮🇹':'🇬🇧';
+  applyLang();
+}
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    var v=t(k);
+    if(v)el.textContent=v;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-html');
+    var v=t(k);
+    if(v)el.innerHTML=v;
+  });
+}
+
 /* ═══════════════════════════════════════
    FORMATIONS
 ═══════════════════════════════════════ */
@@ -1513,6 +1748,8 @@ const G = {
   campaignScorers: {}, campaignMatchRatings: {},
   campaignGF: 0, campaignGA: 0, campaignCleanSheets: 0,
   campaignBestWin: null,
+  // i18n
+  lang: 'it',
 };
 
 /* ═══════════════════════════════════════
@@ -2070,7 +2307,7 @@ function calcStandings(){
 ═══════════════════════════════════════ */
 function showCampaign(){
   document.getElementById('camp-title').textContent = G.tournament.name;
-  document.getElementById('camp-sub').textContent = `Formation ${G.formation}`;
+  document.getElementById('camp-sub').textContent = t('camp.formation')+' '+G.formation;
 
   if(G.phase==='group'){
     document.getElementById('section-group').style.display='block';
@@ -2095,7 +2332,7 @@ function renderGroupSection(){
   const isNuovo=G.format==='nuovo';
   const maxRounds=isNuovo?6:3;
   const lbl=document.getElementById('group-phase-label');
-  if(lbl)lbl.textContent=isNuovo?'League Phase':'Group Stage';
+  if(lbl)lbl.textContent=isNuovo?t('camp.league_phase'):t('camp.group_stage');
 
   if(isNuovo){
     // Simplified points tracker instead of full standings
@@ -2105,7 +2342,7 @@ function renderGroupSection(){
     const maxPts=pts+(remaining*3);
     const canQualify=maxPts>=8;
     const tbl=document.getElementById('standings-table');
-    const statusLabel=pts>=8?'✅ Qualified':remaining>0?(canQualify?'⚠️ On track':'❌ At risk'):'❌ Eliminated';
+    const statusLabel=pts>=8?t('camp.qualified'):remaining>0?(canQualify?t('camp.on_track'):t('camp.at_risk')):t('camp.eliminated');
     const statusColor=pts>=8?'#22c55e':canQualify?'#eab308':'#ef4444';
     const pct=Math.min(100,Math.round(pts/18*100));
     tbl.outerHTML='<div id="standings-table" style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;margin-bottom:10px">'
@@ -2118,7 +2355,7 @@ function renderGroupSection(){
       +'<div style="background:var(--s1);border-radius:4px;height:6px;margin-bottom:10px;overflow:hidden">'
       +'<div style="height:100%;border-radius:4px;background:'+statusColor+';width:'+pct+'%;transition:width .4s"></div></div>'
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
-      +'<div style="font-size:.72rem;color:var(--mut)">'+played+' of 6 played</div>'
+      +'<div style="font-size:.72rem;color:var(--mut)">'+played+' '+t('camp.of6_played')+'</div>'
       +'<div style="font-size:.78rem;font-weight:700;color:'+statusColor+'">'+statusLabel+'</div>'
       +'</div></div>';
   } else {
@@ -2133,7 +2370,7 @@ function renderGroupSection(){
     const res=G.groupUserResults[i];
     const isCur=i===G.groupRound, isDone=i<G.groupRound, isLock=i>G.groupRound;
     let cls='round-row'+(isCur?' cur':isDone?' done':' lock');
-    let right=`<span class="tag tag-group">${isNuovo?'LEAGUE':'GROUP'}</span>`;
+    let right=`<span class="tag tag-group">${isNuovo?t('camp.league_tag'):t('camp.group_tag')}</span>`;
     right+=res?`<div class="stars">${sh(res.stars)}</div>`:`<span style="color:var(--mut)">${isLock?'🔒':'▶'}</span>`;
     const teamLabel=res?`${team.name} — ${res.myG}–${res.oppG}`:(isCur?`${team.name} '${team.season.slice(-2)}`:'?');
     cont.innerHTML+=`<div class="${cls}"><div><div class="rr-name">${teamLabel}</div><div class="rr-sub">${isNuovo?'League Match':'Group Match'} ${i+1}</div></div><div class="rr-right">${right}</div></div>`;
@@ -2143,7 +2380,7 @@ function renderGroupSection(){
   const panel=document.getElementById('pre-match-panel');
   if(G.groupRound<maxRounds){
     btn.style.display='block';
-    btn.textContent='Kick Off →';
+    btn.textContent=t('camp.kickoff');
     _pendingMatch=null;
     const opp=G.groupTeams[G.groupRound];
     renderPreMatchPanel(opp.team.name+" '"+opp.team.season.slice(-2), teamStrength(opp.id));
@@ -2201,7 +2438,7 @@ function renderKnockoutSection(){
   const panelK=document.getElementById('pre-match-panel');
   if(G.knockRound<maxKnock){
     btn.style.display='block';
-    btn.textContent='Kick Off →';
+    btn.textContent=t('camp.kickoff');
     _pendingMatch=null;
     const oppK=G.knockOpps[G.knockRound];
     renderPreMatchPanel(oppK.name, oppK.str);
@@ -2236,7 +2473,7 @@ const COUNTER_MOD={
   'defend-balanced': [1.04,0.90],  // stifle possession
   'defend-defend':   [1.00,1.00],
 };
-const TACTIC_LABELS={attack:'High Press',balanced:'Possession',defend:'Low Block'};
+function tacLabel(k){return t('tac.'+k)||k;}
 const TACTIC_WINS={attack:'defend',balanced:'attack',defend:'balanced'};
 function selectFormTactic(t,el){
   G.tactic=t;
@@ -2264,12 +2501,12 @@ function renderPreMatchPanel(oppName,oppStr){
     _pendingMatch.oppTactic=ot;
   }
   const ot=_pendingMatch.oppTactic;
-  const label=TACTIC_LABELS[ot];
+  const label=tacLabel(ot);
   const beatsWith=Object.keys(TACTIC_WINS).find(k=>TACTIC_WINS[k]===ot);
   document.getElementById('pmp-scout').innerHTML=
     '🔍 <strong>vs '+oppName+'</strong><br>'
-    +'Scout: likely plays <strong>'+label+'</strong>'
-    +(beatsWith?' · Counter: <strong>'+TACTIC_LABELS[beatsWith]+'</strong>':'');
+    +t('scout.likely')+' <strong>'+label+'</strong>'
+    +(beatsWith?' '+t('scout.counter')+' <strong>'+tacLabel(beatsWith)+'</strong>':'');
   document.getElementById('pre-match-panel').style.display='block';
   syncMatchTacticUI();
 }
@@ -2282,11 +2519,11 @@ function playRound(){
     const opp=G.groupTeams[G.groupRound];
     oppName=opp.team.name+" '"+opp.team.season.slice(-2);
     oppStr=teamStrength(opp.id);
-    roundLabel=`Group Stage — Match ${G.groupRound+1}`;
+    roundLabel=t('round.group_stage')+' — Match '+(G.groupRound+1);
     roundTag='group';
   } else {
     const isCoppaR=G.format==='coppa';
-    const KNAMES=isCoppaR?['Round 1','Round 2','Quarter-Final','Semi-Final','Final']:['Round of 16','Quarter-Final','Semi-Final','Final'];
+    const KNAMES=isCoppaR?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
     const KTAGS=isCoppaR?['r1','r2','qf','sf','final']:['r16','qf','sf','final'];
     const opp=G.knockOpps[G.knockRound];
     oppName=opp.name;
@@ -2358,7 +2595,7 @@ function _runMatch(){
 
   // Store tactic matchup result for match log
   const tacAdv=ct[0]>1.05?'advantage':ct[0]<0.95?'disadvantage':'neutral';
-  _pendingMatch.tacAdv=tacAdv;_pendingMatch.oppTacticLabel=TACTIC_LABELS[oppTactic];
+  _pendingMatch.tacAdv=tacAdv;_pendingMatch.oppTacticLabel=tacLabel(oppTactic);
 
   const myG=poisson(myXG), oppG=poisson(oppXG);
 
@@ -2393,10 +2630,10 @@ function _runMatch(){
   document.getElementById('m-score').textContent='0 — 0';
   document.getElementById('m-score').className='m-score';
   const tacMsg=_pendingMatch.tacAdv==='advantage'
-    ?'🟢 Tactical edge — your '+TACTIC_LABELS[G.tactic||'balanced']+' vs their '+(_pendingMatch.oppTacticLabel||'?')
+    ?t('tac.edge')+' '+tacLabel(G.tactic||'balanced')+' '+t('tac.vs_their')+' '+(_pendingMatch.oppTacticLabel||'?')
     :_pendingMatch.tacAdv==='disadvantage'
-    ?'🔴 Tactical mismatch — your '+TACTIC_LABELS[G.tactic||'balanced']+' vs their '+(_pendingMatch.oppTacticLabel||'?')
-    :'🔵 Balanced tactics — your '+TACTIC_LABELS[G.tactic||'balanced']+' vs their '+(_pendingMatch.oppTacticLabel||'?');
+    ?t('tac.mismatch')+' '+tacLabel(G.tactic||'balanced')+' '+t('tac.vs_their')+' '+(_pendingMatch.oppTacticLabel||'?')
+    :t('tac.balanced_msg')+' '+tacLabel(G.tactic||'balanced')+' '+t('tac.vs_their')+' '+(_pendingMatch.oppTacticLabel||'?');
   document.getElementById('m-log').innerHTML='<span class="ln">⚽ Kick off!</span><span class="ln" style="font-size:.68rem;color:var(--mut)">'+tacMsg+'</span>';
   document.getElementById('btn-mact').style.display='none';
   document.getElementById('pen-zone').style.display='none';
@@ -2582,16 +2819,16 @@ function showResult(){
   const diff=myG-oppG;
   let outcome,cls,stars,msg;
   if(diff>0){
-    outcome='WIN';cls='ow';stars=diff>=2?3:2;
-    msg=diff>=2?pick(['Clinical. No debate.','Dominant performance.','Exactly what was needed.']):pick(['Hard-fought. Job done.','Scrappy but effective.']);
+    outcome=t('result.win');cls='ow';stars=diff>=2?3:2;
+    msg=diff>=2?pick([t('result.msg.clinical'),t('result.msg.dominant'),t('result.msg.exactly')]):pick([t('result.msg.hardfought'),t('result.msg.scrappy')]);
   } else if(diff===0){
     if(isKnockout){
       if(!M.penResult){startPenalties();return;}
       const {homeWon,pw,pl}=M.penResult;
-      if(homeWon){outcome='WIN (pens)';cls='ow';stars=1;msg=pw+'-'+pl+' on penalties. Barely through.';}
-      else{outcome='OUT';cls='ol';stars=0;msg=pl+'-'+pw+' on penalties. Agonising.';}
-    } else{outcome='DRAW';cls='od';stars=1;msg='One point on the board.';}
-  } else{outcome='LOSS';cls='ol';stars=0;msg=isKnockout?'Knocked out.':'Defeat. Bounce back.';}
+      if(homeWon){outcome=t('result.win_pens');cls='ow';stars=1;msg=pw+'-'+pl+t('result.msg.pens_win');}
+      else{outcome=t('result.out');cls='ol';stars=0;msg=pl+'-'+pw+t('result.msg.pens_loss');}
+    } else{outcome=t('result.draw');cls='od';stars=1;msg=t('result.msg.draw');}
+  } else{outcome=t('result.loss');cls='ol';stars=0;msg=isKnockout?t('result.msg.knocked'):t('result.msg.defeat');}
 
   const elim=stars===0&&isKnockout;
   if(G.phase==='group') G.groupUserResults.push({myG,oppG,stars,opp:oppName});
@@ -2665,13 +2902,13 @@ function showResult(){
     +'<div class="tcs-poss-h" style="width:'+poss+'%">'+poss+'%</div>'
     +'<div class="tcs-poss-a">'+(100-poss)+'%</div>'
     +'</div></td></tr>'
-    +'<tr style="font-size:.6rem;color:var(--mut)"><td style="text-align:right">Decempionz</td><td style="text-align:center">Possession</td><td>'+oppName+'</td></tr>'
+    +'<tr style="font-size:.6rem;color:var(--mut)"><td style="text-align:right">Decempionz</td><td style="text-align:center">'+t('match.possession')+'</td><td>'+oppName+'</td></tr>'
     +[
-      [shots+' / '+shotsOT,'Shots / OT',oppShots+' / '+oppShotsOT],
-      [myXG.toFixed(2),'xG',oppXG.toFixed(2)],
-      [corners,'Corners',oppCorners],
-      [myG,'Goals',oppG],
-      [yellowCards,'Yellow cards','—'],
+      [shots+' / '+shotsOT,t('match.shots_ot'),oppShots+' / '+oppShotsOT],
+      [myXG.toFixed(2),t('match.xg'),oppXG.toFixed(2)],
+      [corners,t('match.corners'),oppCorners],
+      [myG,t('match.goals'),oppG],
+      [yellowCards,t('match.yellows'),'—'],
     ].map(([h,l,a])=>'<tr><td class="tcs-home">'+h+'</td><td class="tcs-lbl">'+l+'</td><td class="tcs-away">'+a+'</td></tr>')
     .join('')+'</tbody></table>';
 
@@ -2692,7 +2929,7 @@ function showResult(){
       +(awayStr?'<div class="sc-row" style="margin-top:4px"><span class="sc-badge away">⚽</span><span style="color:var(--red2)">'+awayStr+'</span></div>':'');
     sDiv.style.display='block';
   } else {
-    sDiv.innerHTML='<span style="color:var(--mut);font-style:italic">No goals</span>';
+    sDiv.innerHTML='<span style="color:var(--mut);font-style:italic">'+t('match.no_goals')+'</span>';
     sDiv.style.display='block';
   }
 
@@ -2730,7 +2967,7 @@ function showResult(){
     const remaining=6-played;
     const maxPts=pts+(remaining*3);
     const canQualify=maxPts>=8;
-    const statusLabel=pts>=8?'✅ Qualified':remaining>0?(canQualify?'⚠️ On track':'❌ At risk'):'❌ Eliminated';
+    const statusLabel=pts>=8?t('camp.qualified'):remaining>0?(canQualify?t('camp.on_track'):t('camp.at_risk')):t('camp.eliminated');
     const statusColor=pts>=8?'#22c55e':canQualify?'#eab308':'#ef4444';
     const pct=Math.min(100,Math.round(pts/18*100));
     rNuovoBox.style.display='block';
@@ -2745,7 +2982,7 @@ function showResult(){
       +'<div style="background:var(--s1);border-radius:4px;height:6px;margin-bottom:10px;overflow:hidden">'
       +'<div style="height:100%;border-radius:4px;background:'+statusColor+';width:'+pct+'%;transition:width .4s"></div></div>'
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
-      +'<div style="font-size:.72rem;color:var(--mut)">'+played+' of 6 played · '+remaining+' to go</div>'
+      +'<div style="font-size:.72rem;color:var(--mut)">'+played+' '+t('nuovo.of6')+' '+remaining+' '+t('nuovo.to_go')+'</div>'
       +'<div style="font-size:.78rem;font-weight:700;color:'+statusColor+'">'+statusLabel+'</div>'
       +'</div></div>';
   } else if(rNuovoBox){
@@ -2756,10 +2993,10 @@ function showResult(){
   const maxGroupRounds=G.format==='nuovo'?6:3;
   const gDone=G.phase==='group'&&G.groupUserResults.length>=maxGroupRounds;
   let lbl;
-  if(elim)lbl='View Final Stats →';
-  else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?'Group exit →':'Knockouts →';}
-  else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl='🏆 Lift the trophy!';
-  else lbl='Continue →';
+  if(elim)lbl=t('btn.view_stats');
+  else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?t('btn.group_exit'):t('btn.knockouts');}
+  else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl=t('btn.trophy');
+  else lbl=t('btn.continue');
   const cb=document.getElementById('btn-rcont'); cb.textContent=lbl; cb.className='btn btn-gold';
   showScreen('screen-result');
 }
@@ -2799,8 +3036,8 @@ function showGroupElimination(pos,pts){
   const campD=allRes.filter(r=>r.myG===r.oppG).length;
   const campL=allRes.filter(r=>r.myG<r.oppG).length;
   const gf=allRes.reduce((s,r)=>s+r.myG,0), ga=allRes.reduce((s,r)=>s+r.oppG,0);
-  const nuovoMsg='Failed to qualify — only <strong>'+(pts||0)+' pts</strong> from 6 matches (target: 8).';
-  const classicMsg='Finished <strong>'+pos+(pos===3?'rd':'th')+'</strong> in the group. Only the top 2 advance.';
+  const nuovoMsg=t('go.failed_qualify_pre')+' <strong>'+(pts||0)+' pts</strong> '+t('go.failed_qualify_post');
+  const classicMsg=t('go.finished_pos_pre')+' <strong>'+pos+(pos===3?'rd':'th')+'</strong> '+t('go.finished_pos_post');
 
   document.getElementById('go-txt').innerHTML=
     (G.format==='nuovo'?nuovoMsg:classicMsg)
@@ -2819,8 +3056,8 @@ function showGroupElimination(pos,pts){
     const a=avg(r); if(a>mvpAvg){mvpAvg=a;mvpName=name;}
   });
   document.getElementById('go-extra-stats').innerHTML=
-    (topScorer?'<div class="go-extra-row"><span>⚽ Top scorer</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
-    +(mvpName?'<div class="go-extra-row"><span>🏅 Best player</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'');
+    (topScorer?'<div class="go-extra-row"><span>'+t('stats.top_scorer')+'</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
+    +(mvpName?'<div class="go-extra-row"><span>'+t('stats.best_player')+'</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'');
 
   // Match journey (group matches only)
   const gLabel=G.format==='nuovo'?'LG':'GP';
@@ -2838,7 +3075,7 @@ function showGroupElimination(pos,pts){
   showScreen('screen-gameover');
 }
 function showGameOver(){
-  const KNAMES=G.format==='coppa'?['Round 1','Round 2','Quarter-Final','Semi-Final','Final']:['Round of 16','Quarter-Final','Semi-Final','Final'];
+  const KNAMES=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
   const ri=Math.min(G.knockRound-1,KNAMES.length-1);
   const allRes=[...G.groupUserResults,...G.knockResults];
   const total=allRes.reduce((s,r)=>s+(r.stars||0),0);
@@ -2847,7 +3084,7 @@ function showGameOver(){
   const campL=allRes.filter(r=>r.myG<r.oppG).length;
 
   document.getElementById('go-txt').innerHTML=
-    'Eliminated in the <strong>'+(ri>=0?KNAMES[ri]:'Knockout Stage')+'</strong><br>'
+    t('go.eliminated_in')+' <strong>'+(ri>=0?KNAMES[ri]:t('round.r16'))+'</strong><br>'
     +'vs '+M.oppName
     +(total>0?'<br><span style="margin-top:4px;display:inline-block">⭐ '+total+' stars</span>':'');
   document.getElementById('go-sc').textContent=M.myG+' – '+M.oppG;
@@ -2868,9 +3105,9 @@ function showGameOver(){
   });
   const bw=G.campaignBestWin;
   document.getElementById('go-extra-stats').innerHTML=
-    (topScorer?'<div class="go-extra-row"><span>⚽ Top scorer</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
-    +(mvpName?'<div class="go-extra-row"><span>🏅 Best player</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'')
-    +(bw?'<div class="go-extra-row"><span>💥 Best win</span><strong>'+bw.myG+'–'+bw.oppG+' vs '+bw.opp+'</strong></div>':'');
+    (topScorer?'<div class="go-extra-row"><span>'+t('stats.top_scorer')+'</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
+    +(mvpName?'<div class="go-extra-row"><span>'+t('stats.best_player')+'</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'')
+    +(bw?'<div class="go-extra-row"><span>'+t('stats.best_win')+'</span><strong>'+bw.myG+'–'+bw.oppG+' vs '+bw.opp+'</strong></div>':'');
 
   // Match journey
   const gLabel=G.format==='nuovo'?'LG':'GP';
@@ -2941,8 +3178,8 @@ function renderTrophyPitch(){
 }
 
 function showTrophy(){
-  const formatTitle={coppa:'Old Cup Champions',classic:'Classic Champions',nuovo:'New Wave Champions'};
-  const KNAMES=G.format==='coppa'?['R1','R2','QF','SF','Final']:['R16','QF','SF','Final'];
+  const formatTitle={coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
+  const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
   const kTags=G.format==='coppa'?['r16','r16','qf','sf','final']:['r16','qf','sf','final'];
   const gLabel=G.format==='nuovo'?'LG':'GP';
 
@@ -2951,7 +3188,7 @@ function showTrophy(){
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
   const gradeClass={'S':'grade-s','A':'grade-a','B':'grade-b','C':'grade-c'}[grade];
-  const gradeMsg={'S':'Perfect campaign!','A':'Champions of Europe','B':'Gritty champions','C':'Won it the hard way'}[grade];
+  const gradeMsg={'S':t('grade.s'),'A':t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
 
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
@@ -2974,13 +3211,13 @@ function showTrophy(){
   document.getElementById('t-hero-cards').innerHTML=
     '<div class="t-hero-card"><div class="thc-ico">⚽</div>'
     +'<div class="thc-val">'+(topScorerT?topScorerT[0].split(' ').pop()+' ('+topScorerT[1]+')':'—')+'</div>'
-    +'<div class="thc-lbl">Top Scorer</div></div>'
+    +'<div class="thc-lbl">'+t('trophy.lbl_top_scorer')+'</div></div>'
     +'<div class="t-hero-card"><div class="thc-ico">🏅</div>'
     +'<div class="thc-val">'+(mvpName?mvpName.split(' ').pop()+' '+mvpAvg.toFixed(1):'—')+'</div>'
-    +'<div class="thc-lbl">Best Player</div></div>'
+    +'<div class="thc-lbl">'+t('trophy.lbl_best_player')+'</div></div>'
     +'<div class="t-hero-card"><div class="thc-ico">💥</div>'
     +'<div class="thc-val">'+(bw?bw.myG+'–'+bw.oppG+' '+bw.opp.split(' ')[0]:'—')+'</div>'
-    +'<div class="thc-lbl">Best Win</div></div>';
+    +'<div class="thc-lbl">'+t('trophy.lbl_best_win')+'</div></div>';
 
   // Record bar
   document.getElementById('t-record-row').innerHTML=
@@ -3037,7 +3274,17 @@ function syncThemeIcon(){
   if(icon)icon.textContent=document.body.getAttribute('data-theme')==='light'?'🌙':'☀️';
 }
 // Aggiorna icona al caricamento
-document.addEventListener('DOMContentLoaded',function(){syncThemeIcon();document.querySelectorAll('#game-version,.gv').forEach(function(v){v.textContent=GAME_VERSION;});});
+document.addEventListener('DOMContentLoaded',function(){
+  syncThemeIcon();
+  document.querySelectorAll('#game-version,.gv').forEach(function(v){v.textContent=GAME_VERSION;});
+  // Init language from localStorage, default Italian
+  var _initLang='it';
+  try{_initLang=localStorage.getItem('dcz_lang')||'it';}catch(e){}
+  if(typeof G!=='undefined'&&G)G.lang=_initLang;
+  var _lb=document.getElementById('lang-btn');
+  if(_lb)_lb.textContent=_initLang==='it'?'🇮🇹':'🇬🇧';
+  applyLang();
+});
 
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
 function openLegal(){document.getElementById('modal-legal').classList.add('open');}
