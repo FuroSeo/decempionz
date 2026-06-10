@@ -502,11 +502,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Stats bar -->
   <div style="display:flex;gap:0;margin-bottom:20px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
     <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">61</div>
+      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">62</div>
       <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">Squads</div>
     </div>
     <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">1083</div>
+      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">1102</div>
       <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">Players</div>
     </div>
     <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
@@ -598,7 +598,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <h2 data-i18n="era.title" style="margin-bottom:6px">Choose an Era</h2>
   <p data-i18n="era.subtitle" style="color:var(--mut);font-size:.82rem;margin-bottom:10px">Pick a specific era or go All Time for the widest possible draft pool.</p>
   <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-weight:700;border:none;padding:13px;border-radius:10px;font-size:.85rem;letter-spacing:.5px" onclick="selectAllTime()">
-    🌍 All Time &nbsp;<span data-i18n="era.alltime_tag" style="font-weight:400;font-size:.72rem;opacity:.85">— 58 squads, all eras, maximum chaos</span>
+    🌍 All Time &nbsp;<span data-i18n="era.alltime_tag" style="font-weight:400;font-size:.72rem;opacity:.85">— 62 squads, all eras, maximum chaos</span>
   </button>
   <div data-i18n="era.or_pick" style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:8px">Or pick a specific era</div>
   <div id="era-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
@@ -873,7 +873,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <h2 data-i18n="howto.title" style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">
-    <p data-i18n-html="howto.p1" style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
+    <p data-i18n-html="howto.p1" style="margin-bottom:11px"><strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 62-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you'll build your XI from.</p>
     <p data-i18n-html="howto.p2" style="margin-bottom:11px"><strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.</p>
     <p data-i18n-html="howto.p3" style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.</p>
     <p data-i18n-html="howto.p4" style="margin-bottom:11px"><strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don't fit any open slot are skipped automatically.</p>
@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.2';
+const GAME_VERSION='4.4.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -992,7 +992,7 @@ const STRINGS={
     'nuovo.of6':'di 6 ·',
     'nuovo.to_go':'ancora da giocare',
     'howto.title':'Come si gioca',
-    'howto.p1':'<strong style="color:var(--text)">Scegli l\'era.</strong> Scegli tra 10 ere storiche (1961–2023) o All Time per il pool completo da 61 rose con 28 club leggendari. L\'era imposta gli avversari del torneo e il pool dal quale costruirai il tuo XI.',
+    'howto.p1':'<strong style="color:var(--text)">Scegli l\'era.</strong> Scegli tra 10 ere storiche (1961–2023) o All Time per il pool completo da 62 rose con 28 club leggendari. L\'era imposta gli avversari del torneo e il pool dal quale costruirai il tuo XI.',
     'howto.p2':'<strong style="color:var(--text)">Imposta la difficoltà.</strong> Facile (5 reroll), Normale (3), Difficile (2). La difficoltà regola anche la forza degli avversari — Difficile più forti, Facile leggermente più deboli.',
     'howto.p3':'<strong style="color:var(--text)">Scegli la formazione.</strong> Dieci opzioni: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Ogni slot ha un ruolo fisso — scegli bene prima che il draft inizi.',
     'howto.p4':'<strong style="color:var(--text)">Drafta il tuo XI.</strong> Tre carte per volta. Scegli quella che vuoi — occupa automaticamente lo slot migliore. Non ti piacciono le opzioni? Usa <strong style="color:var(--gold)">↺ Reroll</strong> per tre nuove carte, ma i reroll sono scarsi. I giocatori leggendari (★ 9.5+) portano un bonus all\'attacco. Le carte senza slot libero vengono scartate automaticamente.',
@@ -1016,7 +1016,7 @@ const STRINGS={
     'fmt.difficulty':'Difficoltà',
     'era.title':'Scegli un\'Era',
     'era.subtitle':'Scegli un\'era specifica o All Time per il pool più ampio.',
-    'era.alltime_tag':'— 58 rose, tutte le ere, massimo caos',
+    'era.alltime_tag':'— 62 rose, tutte le ere, massimo caos',
     'era.or_pick':'O scegli un\'era specifica',
     'era.use_this':'Usa questa Era →',
     'tourn.squads_in_pool':'Rose nel pool',
@@ -1140,7 +1140,7 @@ const STRINGS={
     'nuovo.of6':'of 6 played ·',
     'nuovo.to_go':'to go',
     'howto.title':'How to Play',
-    'howto.p1':'<strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 61-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you\'ll build your XI from.',
+    'howto.p1':'<strong style="color:var(--text)">Choose your era.</strong> Pick from 10 historic eras (1961–2023) or go All Time for the complete 62-squad pool spanning 28 legendary clubs. Each era sets the tournament opponents and the draft pool you\'ll build your XI from.',
     'howto.p2':'<strong style="color:var(--text)">Set difficulty.</strong> Easy (5 rerolls), Normal (3), Hard (2). Difficulty also adjusts opponent strength — Hard opponents hit harder, Easy ones are slightly weakened.',
     'howto.p3':'<strong style="color:var(--text)">Pick a formation.</strong> Ten options: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each slot has a fixed position requirement — choose wisely before the draft begins.',
     'howto.p4':'<strong style="color:var(--text)">Draft your XI.</strong> Three cards are dealt at once. Tap the one you want — it fills the best available slot automatically. Not happy with the options? Hit <strong style="color:var(--gold)">↺ Reroll</strong> to get three new cards, but rerolls are scarce. Legendary players (★ rated 9.5+) carry a bonus to your attack. Cards that don\'t fit any open slot are skipped automatically.',
@@ -1164,7 +1164,7 @@ const STRINGS={
     'fmt.difficulty':'Difficulty',
     'era.title':'Choose an Era',
     'era.subtitle':'Pick a specific era or go All Time for the widest possible draft pool.',
-    'era.alltime_tag':'— 58 squads, all eras, maximum chaos',
+    'era.alltime_tag':'— 62 squads, all eras, maximum chaos',
     'era.or_pick':'Or pick a specific era',
     'era.use_this':'Use this Era →',
     'tourn.squads_in_pool':'Squads in pool',
