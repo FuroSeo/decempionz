@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.6';
+const GAME_VERSION='4.4.7';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2149,7 +2149,12 @@ function initDraft(){
     const shuffled=b.rest.sort(()=>Math.random()-.5);
     shuffled.slice(0,4).forEach(p=>all.push(p));
   });
-  G.draftPool = all.sort(()=>Math.random()-.5);
+  // Deduplicate by player name — same player can appear in multiple squad seasons
+  var _seenNames=new Set();
+  var _deduped=[];
+  all.sort(function(a,b){return b.r-a.r;}); // keep highest-rated version if dupes
+  all.forEach(function(p){if(!_seenNames.has(p.n)){_seenNames.add(p.n);_deduped.push(p);}});
+  G.draftPool = _deduped.sort(()=>Math.random()-.5);
   G.draftIdx = 0;
   G.draftCards = [];
   G.draftLock = false;
@@ -2361,16 +2366,18 @@ function finalizeDraft(){
   if(G.squad.length<11){
     // Force fill remaining from pool — prefer exact position match
     var i=0;
+    var _draftedNames=new Set(G.squad.map(function(p){return p.n;}));
     while(G.squad.length<11 && i<G.draftPool.length){
       var fp=G.draftPool[i];
       var slots=compatibleEmptySlots(fp);
-      if(slots.length>0){
+      if(slots.length>0 && !_draftedNames.has(fp.n)){
         var bestS=slots.slice().sort(function(a,b){
           var pref=function(s){return s.pos===fp.p?0:posGroup(s.pos)===posGroup(fp.p)?1:2;};
           return pref(a)-pref(b);
         })[0];
         G.slotPlayers[bestS.i]=fp;
         G.squad.push(fp);
+        _draftedNames.add(fp.n);
       }
       i++;
     }
