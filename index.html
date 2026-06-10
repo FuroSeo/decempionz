@@ -92,17 +92,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tcs-poss-h{background:var(--blue2);height:100%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;color:#fff}
 .tcs-poss-a{flex:1;display:flex;align-items:center;justify-content:flex-end;font-size:.6rem;color:var(--mut);padding-right:4px}
 
-/* Ratings strip — horizontal scroll */
-.ratings-strip{display:flex;gap:5px;overflow-x:scroll;-webkit-overflow-scrolling:touch;
-  padding-bottom:6px;scrollbar-width:thin;scrollbar-color:var(--brd) transparent;}
-.ratings-strip::-webkit-scrollbar{height:3px}
-.ratings-strip::-webkit-scrollbar-track{background:transparent}
-.ratings-strip::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
-.rs-chip{flex-shrink:0;background:var(--s2);border:1px solid var(--brd);border-radius:7px;padding:5px 7px;text-align:center;min-width:54px}
-.rs-pos{font-size:.58rem;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-.rs-name{font-size:.63rem;font-weight:700;white-space:nowrap;max-width:52px;overflow:hidden;text-overflow:ellipsis}
-.rs-mr{font-size:.88rem;font-weight:900}
-.rs-mr.h{color:#22c55e}.rs-mr.m{color:#fbbf24}.rs-mr.l{color:#f97316}
 
 /* Gameover stats grid */
 .go-stats-row{display:flex;gap:6px;flex-wrap:wrap}
@@ -763,11 +752,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="r-scorers-compact" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);font-size:.78rem;color:var(--mut);display:none"></div>
   </div>
 
-  <!-- Player ratings strip -->
-  <div class="card" style="margin-top:8px;padding:10px 12px;overflow:visible">
-    <div data-i18n="result.player_ratings" style="font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:8px">Player Ratings</div>
-    <div id="r-ratings-strip" style="overflow:hidden;overflow-x:scroll;-webkit-overflow-scrolling:touch"></div>
-  </div>
 
   <!-- Campaign totals - single row -->
   <div class="card" style="margin-top:8px;padding:10px 14px">
@@ -817,6 +801,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="card" style="padding:12px 14px;margin-bottom:10px" id="go-journey-card">
     <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">Campaign Journey</div>
     <div id="go-journey"></div>
+    <div id="go-ratings"></div>
   </div>
 
   <button class="btn btn-share" style="font-size:.9rem;margin-bottom:8px" onclick="shareResult()">📤 Share Run</button>
@@ -861,6 +846,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div id="t-journey"></div>
     </div>
 
+    <!-- Player ratings -->
+    <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
+
     <button class="btn btn-share" style="font-size:1rem;margin-bottom:8px" onclick="shareResult()">📤 Share Result</button>
     <button class="btn btn-gold" style="font-size:1rem" onclick="startGame()">🎲 Play Again</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
@@ -889,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.8';
+const GAME_VERSION='4.4.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1026,7 +1014,6 @@ const STRINGS={
     'form.start_draft':'Inizia il Draft →',
     'camp.knockout_stage':'Fase Playoff',
     'pmp.tactic_label':'Tattica per questa partita',
-    'result.player_ratings':'Valutazioni Giocatori',
     'form.desc.433':'Attacco bilanciato — 3 attaccanti diretti',
     'form.desc.442':'Doppio attaccante classico — centrocampisti larghi',
     'form.desc.4231':'Pressing moderno — doppio pivot, trequartista',
@@ -1174,7 +1161,6 @@ const STRINGS={
     'form.start_draft':'Start Draft →',
     'camp.knockout_stage':'Knockout Stage',
     'pmp.tactic_label':'Tactic for this match',
-    'result.player_ratings':'Player Ratings',
     'form.desc.433':'Balanced attack — 3 direct forwards',
     'form.desc.442':'Classic double striker — wide midfielders',
     'form.desc.4231':'Modern pressing — double pivot, playmaker',
@@ -3170,15 +3156,6 @@ function showResult(){
     sDiv.style.display='block';
   }
 
-  // Ratings strip (horizontal scroll)
-  document.getElementById('r-ratings-strip').innerHTML=
-    '<div class="ratings-strip">'+ratings.map(p=>{
-      const r=parseFloat(p.mr);
-      const rcls=r>=8?'h':r>=7?'m':'l';
-      return'<div class="rs-chip"><div class="rs-pos">'+p.p+'</div>'
-        +'<div class="rs-name">'+p.n+'</div>'
-        +'<div class="rs-mr '+rcls+'">'+p.mr+'</div></div>';
-    }).join('')+'</div>';
 
   // Campaign row
   document.getElementById('r-camp-row').innerHTML=
@@ -3304,6 +3281,8 @@ function showGroupElimination(pos,pts){
       +'<div style="display:flex;align-items:center;gap:7px">'+res+'<span style="color:var(--mut);min-width:30px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
   }).join('');
   document.getElementById('go-journey').innerHTML=gRows;
+  var goRatEl=document.getElementById('go-ratings');
+  if(goRatEl)goRatEl.innerHTML=buildRatingsGrid(G.campaignMatchRatings);
 
   // Hide pitch (no knockout win to show)
   const goWrap=document.getElementById('go-pitch-wrap');
@@ -3480,6 +3459,8 @@ function showTrophy(){
       +'<div style="display:flex;align-items:center;gap:8px">'+res+'<span style="color:var(--mut);min-width:32px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
   }).join('');
   document.getElementById('t-journey').innerHTML=gRows+kRows;
+  var tRatEl=document.getElementById('t-ratings');
+  if(tRatEl)tRatEl.innerHTML=buildRatingsGrid(G.campaignMatchRatings);
   renderTrophyPitch();
 
   // Confetti burst
