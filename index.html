@@ -48,6 +48,7 @@
 [data-theme="light"] .era-card,[data-theme="light"] .format-card,[data-theme="light"] .diff-card{background:var(--s1);border-color:var(--brd)}
 [data-theme="light"] .round-row{background:var(--s2);border-color:var(--brd)}
 [data-theme="light"] .round-row.cur{border-color:var(--gold)}
+[data-theme="light"] .fp-dot{background:rgba(0,0,0,.15)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -787,8 +788,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
 
-  <button class="btn btn-share" style="font-size:.82rem;margin-top:10px;margin-bottom:4px" onclick="shareResult()">📤 Share</button>
-  <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:6px"></button>
+  <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:10px"></button>
+  <button class="btn btn-share" style="font-size:.82rem;margin-top:6px;margin-bottom:4px" onclick="shareResult()">📤 Share</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
 </div>
 
@@ -811,7 +812,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Winning XI -->
-  <div style="margin-bottom:10px" id="go-pitch-wrap" style="display:none">
+  <div id="go-pitch-wrap" style="margin-bottom:10px;display:none">
     <div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px;text-align:center">Your XI</div>
     <div class="draft-pitch" id="go-pitch"></div>
   </div>
@@ -1459,8 +1460,8 @@ function teamDots(teamKey){
   const prefix=teamKey?teamKey.split('_')[0]:'';
   const c=TEAM_COLORS[prefix]||{a:'#888',b:'#444'};
   return '<span style="display:inline-flex;gap:3px;align-items:center;vertical-align:middle">'
-    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.a+';border:1px solid rgba(255,255,255,.25);display:inline-block"></span>'
-    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.b+';border:1px solid rgba(255,255,255,.25);display:inline-block"></span>'
+    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.a+';border:1px solid rgba(0,0,0,.2);display:inline-block"></span>'
+    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.b+';border:1px solid rgba(0,0,0,.2);display:inline-block"></span>'
     +'</span>';
 }
 const KNOCKOUT_OPPS = {
@@ -1478,6 +1479,58 @@ const COPPA_OPPS = {
   final:[{name:'Ajax 1971-72',str:9.0,id:'aja_7172'},{name:'Bayern Munich 1974-75',str:9.2,id:'bay_7475'},{name:'Barcelona 1991-92',str:9.1,id:'bar_9192'},{name:'Red Star 1990-91',str:8.9,id:'red_9091'}],
 };
 
+const JERSEY_COLORS={
+  por_8687:'#003087',rm_6566:'#f5f5f5',fey_6970:'#cc0000',
+  ben_6162:'#cc0000',int_6465:'#1c3fa8',cel_6667:'#1e8c1e',
+  mu_6768:'#cc0000',mil_6869:'#cc0000',aja_7172:'#cc0000',
+  bay_7475:'#cc0000',liv_7778:'#cc0000',not_7980:'#cc0000',
+  ham_8283:'#dcdcdc',liv_8384:'#cc0000',juv_8485:'#3a3a3a',
+  ste_8586:'#cc0000',red_9091:'#cc0000',bar_9192:'#a50044',
+  mars_9293:'#009fd4',aja_9495:'#cc0000',mil_9394:'#cc0000',
+  juv_9596:'#3a3a3a',bvb_9697:'#f5dc00',mu_9899:'#cc0000',
+  rm_9900:'#f5f5f5',val_0001:'#eeeeee',bay_0001:'#cc0000',
+  rm_0203:'#f5f5f5',mil_0203:'#cc0000',juve_0203:'#3a3a3a',
+  ars_0304:'#cc0000',mu_0203:'#cc0000',por_0304:'#003087',
+  liv_0405:'#cc0000',bar_0506:'#a50044',che_0506:'#034694',
+  mil_0607:'#cc0000',mu_0708:'#cc0000',bar_0809:'#a50044',
+  che_0809:'#034694',bay_0910:'#cc0000',int_0910:'#1c3fa8',
+  mu_1011:'#cc0000',bvb_1112:'#f5dc00',bay_1213:'#cc0000',
+  che_1112:'#034694',rm_1314:'#f5f5f5',atm_1314:'#cc0000',
+  bar_1415:'#a50044',mon_1617:'#cc0000',rm_1718:'#f5f5f5',
+  rom_1718:'#8b1a1a',tot_1819:'#eeeeee',liv_1819:'#cc0000',
+  mci_1819:'#6caddf',bay_1920:'#cc0000',psg_2021:'#004170',
+  che_2021:'#034694',rm_2122:'#f5f5f5',mci_2223:'#6caddf',
+  liv_2122:'#cc0000'
+};
+function playerSprite(col){
+  const c=col||'#555';
+  return'<svg width="18" height="22" viewBox="0 0 26 30" style="display:block;margin:0 auto 1px">'
+    +'<ellipse cx="13" cy="7" rx="5.5" ry="6" fill="#FFCC88"/>'
+    +'<rect x="8" y="13" width="10" height="8" rx="2" fill="'+c+'"/>'
+    +'<rect x="5" y="13" width="4" height="7" rx="1.5" fill="'+c+'"/>'
+    +'<rect x="17" y="13" width="4" height="7" rx="1.5" fill="'+c+'"/>'
+    +'<rect x="9" y="21" width="4" height="7" rx="1.5" fill="#e8e8e8"/>'
+    +'<rect x="13" y="21" width="4" height="7" rx="1.5" fill="#e8e8e8"/>'
+    +'<rect x="9" y="26" width="4" height="3" rx="1" fill="#1a1a1a"/>'
+    +'<rect x="13" y="26" width="4" height="3" rx="1" fill="#1a1a1a"/>'
+    +'</svg>';
+}
+function slotTierCss(r){
+  if(r>=9.5)return'border:2px solid #ffd700;background:rgba(22,12,0,.88)';
+  if(r>=9.0)return'border:1.5px solid #ffd700;background:rgba(16,8,0,.82)';
+  if(r>=8.5)return'border:1.5px solid #aaaaaa;background:rgba(10,10,16,.82)';
+  return'border:1px solid #7a6030;background:rgba(8,8,8,.75)';
+}
+function filledSlotHTML(player,grp){
+  const col=JERSEY_COLORS[player.teamId]||'#555555';
+  const tierCss=slotTierCss(player.r);
+  const star=player.r>=9.5?'\u2605 ':'';
+  return'<div class="dp-slot filled dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
+    +playerSprite(col)
+    +'<div class="dp-name">'+player.n+'</div>'
+    +'<div class="dp-rating">'+star+player.r+'</div>'
+    +'</div>';
+}
 /* ═══════════════════════════════════════
    STATE
 ═══════════════════════════════════════ */
@@ -1846,10 +1899,7 @@ function renderDraftPitch(currentPlayer){
         (SLOT_COMPAT[pos]||[]).includes(currentPlayer.p);
       if(player){
         const grp=slotGroup(pos);
-        return'<div class="dp-slot filled dp-'+grp+'">'
-          +'<div class="dp-name">'+player.n+'</div>'
-          +'<div class="dp-rating">'+player.r+'</div>'
-          +'</div>';
+        return filledSlotHTML(player,grp);
       }else if(isTarget){
         return'<div class="dp-slot target dp-'+slotGroup(pos)+'">'+pos+'</div>';
       }else{
@@ -2815,7 +2865,8 @@ function showResult(){
   }
 
   M.eliminated=elim;
-  const gDone=G.phase==='group'&&G.groupUserResults.length>=3;
+  const maxGroupRounds=G.format==='nuovo'?6:3;
+  const gDone=G.phase==='group'&&G.groupUserResults.length>=maxGroupRounds;
   let lbl;
   if(elim)lbl='View Final Stats →';
   else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?'Group exit →':'Knockouts →';}
@@ -2866,11 +2917,11 @@ function showGroupElimination(pos,pts){
   document.getElementById('go-txt').innerHTML=
     (G.format==='nuovo'?nuovoMsg:classicMsg)
     +(total?'<br><span>⭐ '+total+' stars</span>':'');
-  document.getElementById('go-sc').textContent=gf+' – '+ga+' (3 matches)';
+  document.getElementById('go-sc').textContent=gf+' – '+ga+' ('+allRes.length+' matches)';
 
   document.getElementById('go-stats-grid').innerHTML=
     '<div class="go-stats-row">'+
-    [['P',3],['W',campW],['D',campD],['L',campL],['GF',gf],['GA',ga],['CS',G.campaignCleanSheets||0]]
+    [['P',allRes.length],['W',campW],['D',campD],['L',campL],['GF',gf],['GA',ga],['CS',G.campaignCleanSheets||0]]
     .map(([l,v])=>'<div class="go-stat"><div class="go-stat-v">'+v+'</div><div class="go-stat-l">'+l+'</div></div>')
     .join('')+'</div>';
 
@@ -2882,6 +2933,19 @@ function showGroupElimination(pos,pts){
   document.getElementById('go-extra-stats').innerHTML=
     (topScorer?'<div class="go-extra-row"><span>⚽ Top scorer</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
     +(mvpName?'<div class="go-extra-row"><span>🏅 Best player</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'');
+
+  // Match journey (group matches only)
+  const gLabel=G.format==='nuovo'?'LG':'GP';
+  const gRows=allRes.map(function(r,i){
+    const res=r.myG>r.oppG?'<span style="color:#22c55e;font-weight:700">W</span>':r.myG===r.oppG?'<span style="color:#eab308;font-weight:700">D</span>':'<span style="color:#ef4444;font-weight:700">L</span>';
+    return '<div class="t-log-row"><div style="display:flex;align-items:center;gap:6px"><span class="tag tag-group">'+gLabel+(i+1)+'</span><span>'+r.opp+'</span></div>'
+      +'<div style="display:flex;align-items:center;gap:7px">'+res+'<span style="color:var(--mut);min-width:30px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
+  }).join('');
+  document.getElementById('go-journey').innerHTML=gRows;
+
+  // Hide pitch (no knockout win to show)
+  const goWrap=document.getElementById('go-pitch-wrap');
+  if(goWrap)goWrap.style.display='none';
 
   showScreen('screen-gameover');
 }
@@ -2952,7 +3016,7 @@ function showGameOver(){
         if(!used[pos])used[pos]=0;
         const slotIdx=(slotsByPos[pos]||[])[used[pos]];used[pos]++;
         const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
-        if(player){const grp=slotGroup(pos);return'<div class="dp-slot filled dp-'+grp+'"><div class="dp-name">'+player.n+'</div><div class="dp-rating">'+player.r+'</div></div>';}
+        if(player){const grp=slotGroup(pos);return filledSlotHTML(player,grp);}
         return'<div class="dp-slot empty">'+pos+'</div>';
       }).join('')+'</div>';
     }).join('');
@@ -2981,10 +3045,7 @@ function renderTrophyPitch(){
       const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
       if(player){
         const grp=slotGroup(pos);
-        return'<div class="dp-slot filled dp-'+grp+'">'
-          +'<div class="dp-name">'+player.n+'</div>'
-          +'<div class="dp-rating">'+player.r+'</div>'
-          +'</div>';
+        return filledSlotHTML(player,grp);
       }
       return'<div class="dp-slot empty">'+pos+'</div>';
     }).join('')+'</div>';
@@ -3166,19 +3227,4 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data. No cookies are used for tracking or advertising. The game runs entirely in your browser — no account registration, no analytics, no third-party trackers of any kind.</p>
-    <h3>Terms of Use</h3>
-    <p>This game is provided free of charge for personal, non-commercial use. It is offered "as is" without warranties of any kind. The creators accept no liability for any issues arising from use of the site. Commercial use, redistribution, or modification without permission is prohibited.</p>
-    <button class="modal-legal-close" onclick="closeLegal()">Close</button>
-  </div>
-</div>
-
-<!-- First-visit disclaimer banner -->
-<div id="banner-disclaimer" style="display:none">
-  <p>Decempionz is an independent fan project — not affiliated with UEFA, FIFA, or any club. No data collected. <a onclick="openLegal()" style="color:var(--gold);cursor:pointer;text-decoration:underline">Full disclaimer →</a></p>
-  <button class="btn-banner-legal" onclick="openLegal()">Legal</button>
-  <button class="btn-banner-ok" onclick="closeBanner()">Got it</button>
-</div>
-
-</body>
-</html>         
+    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                
