@@ -1515,10 +1515,11 @@ function playerSprite(col){
     +'</svg>';
 }
 function slotTierCss(r){
-  if(r>=9.5)return'border:2px solid #ffd700;background:rgba(22,12,0,.88)';
-  if(r>=9.0)return'border:1.5px solid #ffd700;background:rgba(16,8,0,.82)';
-  if(r>=8.5)return'border:1.5px solid #aaaaaa;background:rgba(10,10,16,.82)';
-  return'border:1px solid #7a6030;background:rgba(8,8,8,.75)';
+  const light=document.body.getAttribute('data-theme')==='light';
+  if(r>=9.5)return'border:2px solid #c8a000;background:'+(light?'rgba(255,248,210,.95)':'rgba(22,12,0,.88)');
+  if(r>=9.0)return'border:1.5px solid #c8a000;background:'+(light?'rgba(255,252,230,.9)':'rgba(16,8,0,.82)');
+  if(r>=8.5)return'border:1.5px solid #888888;background:'+(light?'rgba(235,235,245,.9)':'rgba(10,10,16,.82)');
+  return'border:1px solid #9a8a6a;background:'+(light?'rgba(240,237,228,.9)':'rgba(8,8,8,.75)');
 }
 function filledSlotHTML(player,grp){
   const col=JERSEY_COLORS[player.teamId]||'#555555';
@@ -1969,7 +1970,8 @@ function renderThreeCards(){
       const star=p.r>=9.5?'★ ':'';
       const pg=posGroup(p.p);
       const posClass_=pgClass(pg);
-      const ratingCol=p.r>=9.0?'#ffd700':p.r>=8.5?'#aaaaaa':'#8a7050';
+      const light=document.body.getAttribute('data-theme')==='light';
+      const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
       return'<div onclick="draftPick('+i+')"'
         +' style="'+tierCss
@@ -3197,4 +3199,4 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
