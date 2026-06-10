@@ -877,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.10';
+const GAME_VERSION='4.4.11';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2948,11 +2948,7 @@ function runPenaltyKick(){
   const name=isHome?(P.names[P.hKicks.length%P.names.length]||'Player'):(P.oppNames[P.aKicks.length%P.oppNames.length]||P.oppName);
   if(isHome){P.hKicks.push(scored);if(scored)P.h++;}
   else{P.aKicks.push(scored);if(scored)P.a++;}
-  // Use SD-specific containers if in sudden death, else default
-  const sdR=P.sdRound||0;
-  const baseCid=isHome?'pen-home-icons':'pen-away-icons';
-  const sdCid=isHome?'pen-home-sd-'+sdR:'pen-away-sd-'+sdR;
-  const cid=(sdR>0&&document.getElementById(sdCid))?sdCid:baseCid;
+  const cid=isHome?'pen-home-icons':'pen-away-icons';
   const ic=document.createElement('span');
   ic.title=lastName(name);
   ic.style='font-size:1.15rem;cursor:default;'+(!scored?'color:var(--red2)':'');
@@ -2976,27 +2972,15 @@ function checkPenDone(){
     if(h!==a){finishPenalties();return true;}
     P.maxRounds++;
     const sdRound=P.maxRounds-5; // how many SD rounds played
-    // Show SD banner separately — don't overwrite the kicker name in pen-msg
+    // Show SD banner
     const sdB=document.getElementById('pen-sd-banner');
     if(sdB){sdB.style.display='block';sdB.textContent=sdRound===1?'⚡ Sudden Death':'⚡ Sudden Death — Round '+sdRound;}
-    // Add visual separator for sudden death rounds
-    const rows=document.getElementById('pen-rows');
-    const sep=document.createElement('div');
-    sep.style='width:100%;text-align:center;font-size:.55rem;font-weight:700;color:var(--gold);'+
-      'letter-spacing:1px;text-transform:uppercase;margin:4px 0;border-top:1px dashed var(--brd);padding-top:4px';
-    sep.textContent='⚡ SD'+(sdRound>1?' '+sdRound:'');
-    rows.appendChild(sep);
-    // Add new icon containers for this SD round
-    const hRow=document.createElement('div');
-    hRow.style='display:flex;align-items:center;gap:6px';
-    hRow.innerHTML='<span style="font-size:.6rem;color:var(--gold);width:64px;font-weight:700;flex-shrink:0">Decempionz</span>'+
-      '<div id="pen-home-sd-'+sdRound+'" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
-    const aRow=document.createElement('div');
-    aRow.style='display:flex;align-items:center;gap:6px';
-    aRow.innerHTML='<span style="font-size:.6rem;color:var(--mut);width:64px;font-weight:700;flex-shrink:0">'+
-      M.oppName.split(' ')[0]+'</span>'+
-      '<div id="pen-away-sd-'+sdRound+'" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
-    rows.appendChild(hRow);rows.appendChild(aRow);
+    // Append inline separator to the existing icon rows (keeps display horizontal)
+    const mkSep=function(){var s=document.createElement('span');s.textContent=' | ';s.style='color:var(--gold);font-size:.8rem;font-weight:700;opacity:.6';return s;};
+    var hIcons=document.getElementById('pen-home-icons');
+    var aIcons=document.getElementById('pen-away-icons');
+    if(hIcons)hIcons.appendChild(mkSep());
+    if(aIcons)aIcons.appendChild(mkSep());
     P.sdRound=sdRound;
   }
   return false;
@@ -3215,6 +3199,21 @@ function showResult(){
   showScreen('screen-result');
 }
 
+
+function buildRatingsGrid(campaignMatchRatings){
+  var entries=Object.entries(campaignMatchRatings||{});
+  if(!entries.length)return'';
+  var rows=entries.map(function(e){
+    var a=avg(e[1]);
+    var cls=a>=8?'high':a>=7?'mid':'low';
+    return{n:e[0],a:a,cls:cls};
+  }).sort(function(a,b){return b.a-a.a;});
+  return'<div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin:14px 0 6px">Player Ratings</div>'
+    +'<div class="ratings-grid">'+rows.map(function(p){
+      return'<div class="rating-chip"><div style="font-size:.6rem;color:var(--mut)">'+p.n+'</div>'
+        +'<div class="rc-rating '+p.cls+'">'+p.a.toFixed(1)+'</div></div>';
+    }).join('')+'</div>';
+}
 
 function continueResult(){
   if(M.eliminated){showGameOver();return;}
@@ -3995,4 +3994,4 @@ function _devMockGameOver(){
 </style>
 
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                    
