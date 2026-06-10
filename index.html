@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.0';
+const GAME_VERSION='4.4.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1227,13 +1227,13 @@ function applyLang(){
 /* Slot-specific compatibility: which player positions can fill each slot */
 const SLOT_COMPAT = {
   GK:  ['GK'],
-  CB:  ['CB','RB','LB'],          // CB can cover emergency full-back
-  RB:  ['RB','LB','CB'],          // full-backs interchangeable
-  LB:  ['LB','RB','CB'],
-  RWB: ['RWB','RB','LB','LWB'],
-  LWB: ['LWB','LB','RB','RWB'],
+  CB:  ['CB'],                    // CB stays CB — no lateral shift
+  RB:  ['RB','CB'],               // RB can cover CB, not LB
+  LB:  ['LB','CB'],               // LB can cover CB, not RB
+  RWB: ['RWB','RB','LWB'],
+  LWB: ['LWB','LB','RWB'],
   CDM: ['CDM','CM'],
-  CM:  ['CM','CDM','CAM','RM','LM'],
+  CM:  ['CM','CDM','CAM'],        // CM no longer covers wide roles
   CAM: ['CAM','CM','SS'],
   RM:  ['RM','LM','RW','LW'],
   LM:  ['LM','RM','LW','RW'],
