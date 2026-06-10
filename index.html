@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.7';
+const GAME_VERSION='4.4.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3362,6 +3362,8 @@ function showGameOver(){
       +'<div style="display:flex;align-items:center;gap:7px">'+res+'<span style="color:var(--mut);min-width:30px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
   }).join('');
   document.getElementById('go-journey').innerHTML=gRows+kRows;
+  var goRatEl2=document.getElementById('go-ratings');
+  if(goRatEl2)goRatEl2.innerHTML=buildRatingsGrid(G.campaignMatchRatings);
 
   // Pitch
   const goWrap=document.getElementById('go-pitch-wrap');
