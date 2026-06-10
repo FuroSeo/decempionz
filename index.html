@@ -666,9 +666,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="force-banner" id="d-force">⚠️ No passes left — must accept all remaining</div>
   <div class="cant-banner" id="d-cant"></div>
   <div class="reveal-zone" id="d-reveal"></div>
-  <div class="draft-btns">
-    <button class="btn-accept" id="btn-acc" onclick="draftAccept()">✓ Accept</button>
-    <button class="btn-pass" id="btn-pss" onclick="draftPass()">✕ Pass <span id="d-pc"></span></button>
+  <div class="draft-btns" style="grid-template-columns:1fr">
+    <button class="btn-pass" id="btn-pss" onclick="draftReroll()" style="width:100%;font-size:.85rem">↺ Reroll <span id="d-pc"></span></button>
   </div>
 
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
@@ -1539,7 +1538,7 @@ const G = {
   format: 'classic',
   formation: null,
   // draft
-  draftPool: [], draftIdx: 0,
+  draftPool: [], draftIdx: 0, draftCards: [],
   slotPlayers: new Array(11).fill(null), // index = slot index in formation.positions
   accepted: [], passes: 6,
   // squad
@@ -1639,7 +1638,7 @@ function applyTournament(t){
   G.groupUserResults = []; G.knockResults = [];
   G.campaignScorers = {}; G.campaignMatchRatings = {};
   G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null;
-  G.slotPlayers = new Array(11).fill(null); G.accepted = [];
+  G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   renderTourCard();
 }
 
@@ -1749,7 +1748,7 @@ function selectFormation(el, key){
 
 /* difficulty */
 var selectedDiff='normal';
-const DIFF_CFG={easy:{passes:10,oppMod:-.20},normal:{passes:7,oppMod:.15},hard:{passes:5,oppMod:.40}};
+const DIFF_CFG={easy:{passes:5,oppMod:-.20},normal:{passes:3,oppMod:.15},hard:{passes:2,oppMod:.40}};
 function selectDiff(level,el){
   selectedDiff=level;
   document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
@@ -1794,6 +1793,7 @@ function initDraft(){
   });
   G.draftPool = all.sort(()=>Math.random()-.5);
   G.draftIdx = 0;
+  G.draftCards = [];
   G.draftLock = false;
   G.draftFinalized = false;
   G.slotPlayers = new Array(11).fill(null);
@@ -1802,6 +1802,7 @@ function initDraft(){
 
   document.getElementById('d-title').textContent = G.tournament.name;
   showScreen('screen-draft');
+  drawDraftCards();
   updateDraftScreen();
 
 }
@@ -1909,148 +1910,122 @@ function renderDraftPitch(currentPlayer){
   }).join('');
 }
 
+function drawDraftCards(){
+  G.draftCards=[];
+  let drawn=0;
+  while(drawn<3 && G.draftIdx<G.draftPool.length){
+    G.draftCards.push(G.draftPool[G.draftIdx]);
+    G.draftIdx++;
+    drawn++;
+  }
+  // if all are incompatible and pool has more, auto-advance to next batch
+  const hasCompat=G.draftCards.some(p=>compatibleEmptySlots(p).length>0);
+  if(!hasCompat && G.draftIdx<G.draftPool.length) drawDraftCards();
+}
+
 function updateDraftScreen(){
   if(filledCount()>=11){finalizeDraft();return;}
-  const total=G.draftPool.length;
-  const remaining=total-G.draftIdx;
+  if(!G.draftCards||G.draftCards.length===0){
+    if(G.draftIdx>=G.draftPool.length){finalizeDraft();return;}
+    drawDraftCards();
+  }
+  const hasCompat=G.draftCards.some(p=>compatibleEmptySlots(p).length>0);
+  if(!hasCompat){finalizeDraft();return;}
+
   const filled=filledCount();
-  const needed=11-filled;
-  const noPass=G.passes<=0;
+  const remaining=G.draftPool.length-G.draftIdx;
+  const noReroll=G.passes<=0;
 
   document.getElementById('d-info').textContent=
-    'Formation '+G.formation+' · '+remaining+' player'+(remaining!==1?'s':'')+' left';
+    'Formation '+G.formation+' · '+remaining+' in pool';
   document.getElementById('d-count').textContent=filled+'/11';
   document.getElementById('d-passes').innerHTML=
-    'Passes: <strong style="color:'+(G.passes<=2?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
+    'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
-  document.getElementById('d-force').style.display=noPass?'block':'none';
-  // pass pips rendered in renderCurrentCard
+  document.getElementById('d-force').style.display=noReroll?'block':'none';
+  document.getElementById('d-warn').style.display='none';
+  document.getElementById('d-cant').style.display='none';
 
-  advanceToNextValidPlayer();
+  const pssBtn=document.getElementById('btn-pss');
+  if(pssBtn){
+    pssBtn.disabled=noReroll;
+    pssBtn.innerHTML='↺ Reroll <span id="d-pc">('+G.passes+')</span>';
+  }
+
+  renderThreeCards();
+  renderDraftPitch(null);
 }
 
-function advanceToNextValidPlayer(){
-  const filled=filledCount();
-  if(filled>=11){finalizeDraft();return;}
-  if(G.draftIdx>=G.draftPool.length){finalizeDraft();return;}
-
-  // Auto-skip players with no compatible empty slot (free skip, no pass used)
-  while(G.draftIdx<G.draftPool.length){
-    const p=G.draftPool[G.draftIdx];
-    if(compatibleEmptySlots(p).length>0) break;
-    G.draftIdx++;
-  }
-  if(G.draftIdx>=G.draftPool.length){finalizeDraft();return;}
-
-  const p=G.draftPool[G.draftIdx];
-  const empSlots=compatibleEmptySlots(p);
-  const noPass=G.passes<=0;
-  const remaining=G.draftPool.length-G.draftIdx;
-  const needed=11-filledCount();
-
-  // Warn if accepting everything left barely fills us
-  const warnEl=document.getElementById('d-warn');
-  const cantEl=document.getElementById('d-cant');
-  warnEl.style.display='none'; cantEl.style.display='none';
-
-  if(remaining<=needed && !noPass){
-    warnEl.textContent='⚠️ Only '+remaining+' compatible player'+(remaining!==1?'s':'')+' left — must take all!';
-    warnEl.style.display='block';
-    document.getElementById('btn-pss').disabled=true;
-  } else {
-    document.getElementById('btn-pss').disabled=noPass;
-  }
-  document.getElementById('btn-acc').disabled=false;
-
-  renderCurrentCard(p, empSlots);
-  renderDraftPitch(p);
-}
-
-function renderCurrentCard(p, empSlots){
-  const pg=posGroup(p.p);
-  const targetSlot=empSlots.length>0?empSlots[0].pos:'?';
-  const tier=tierInfo(p.r);
-  const stars=ratingStars(p.r);
-  const posName=POS_NAMES[p.p]||p.p;
-  const posClass_=pgClass(pg);
-
-  // Count same-type players remaining in pool
-  const sameTypeLeft=G.draftPool.slice(G.draftIdx+1).filter(q=>posGroup(q.p)===pg).length;
-
-  // Get team colors and season — use teamId directly to avoid ambiguity (e.g. two Inter Milan seasons)
-  const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
-  const teamEntry=TEAMS[teamKey]||null;
-  const season=teamEntry?teamEntry.season:'';
-
-
-
-  document.getElementById('d-reveal').innerHTML=
-    '<div class="prc tier-'+tier.cls+'">'
-    +'<div class="prc-tier '+tier.cls+'">'+tier.label+'</div>'
-    +'<div class="prc-header">'
-      +'<div class="prc-team-flag">'+teamDots(teamKey)+'</div>'
-      +'<div class="prc-team-info">'
-        +'<div class="prc-team-name">'+p.club+'</div>'
-        +'<div class="prc-team-season">'+season+'</div>'
-      +'</div>'
-    +'</div>'
-    +'<div class="prc-stars">'+stars+'</div>'
-    +'<div class="prc-name">'+p.n+'</div>'
-    +'<div class="prc-pos-row">'
-      +'<span class="prc-pos-badge '+posClass_+'">'+p.p+'</span>'
-      +'<span class="prc-pos-full">'+posName+'</span>'
-    +'</div>'
-    +(empSlots.length>0
-      ?'<div class="prc-slot-hint">→ fills <strong>'+targetSlot+'</strong> slot</div>'
-      :'<div class="prc-slot-hint incomp">✗ No open slot for this position</div>')
-    +(sameTypeLeft>0
-      ?'<div class="prc-pool-hint">'+sameTypeLeft+' more '+pg.toLowerCase()+' in pool</div>'
-      :'<div class="prc-pool-hint" style="color:var(--red2)">Last '+pg.toLowerCase()+' in pool!</div>')
+function renderThreeCards(){
+  const container=document.getElementById('d-reveal');
+  if(!container)return;
+  container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0">'
+    +G.draftCards.map(function(p,i){
+      const empSlots=compatibleEmptySlots(p);
+      const compat=empSlots.length>0;
+      const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
+      const teamEntry=TEAMS[teamKey]||null;
+      const season=teamEntry?teamEntry.season.slice(-2):'';
+      const col=JERSEY_COLORS[p.teamId]||'#555';
+      const tierCss=slotTierCss(p.r);
+      const targetSlot=compat?empSlots[0].pos:'';
+      const star=p.r>=9.5?'★ ':'';
+      const pg=posGroup(p.p);
+      const posClass_=pgClass(pg);
+      const ratingCol=p.r>=9.0?'#ffd700':p.r>=8.5?'#aaaaaa':'#8a7050';
+      return'<div'
+        +(compat?' onclick="draftPick('+i+')" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform=''"':'')
+        +' style="'+tierCss
+        +';border-radius:10px;padding:8px 5px 6px;display:flex;flex-direction:column;align-items:center;gap:2px'
+        +(compat?';cursor:pointer':'')
+        +(compat?'':';opacity:.35;pointer-events:none')
+        +';min-width:92px;flex:1;max-width:116px;text-align:center;transition:transform .08s;-webkit-tap-highlight-color:transparent">'
+        +playerSprite(col)
+        +'<div style="font-size:.52rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:1px">'+p.club+' ''+season+'</div>'
+        +'<div style="font-size:.7rem;font-weight:800;color:var(--text);line-height:1.15;max-width:108px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
+        +'<div style="display:flex;align-items:center;gap:3px;margin-top:1px">'
+          +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.5rem;padding:1px 4px">'+p.p+'</span>'
+          +'<span style="font-size:.68rem;font-weight:800;color:'+ratingCol+'">'+star+p.r+'</span>'
+        +'</div>'
+        +(compat
+          ?'<div style="font-size:.52rem;color:var(--mut);margin-top:2px">→ '+targetSlot+' slot</div>'
+          :'<div style="font-size:.52rem;color:var(--red2)">✕ no slot</div>')
+        +'</div>';
+    }).join('')
     +'</div>';
-
-  // Update pass button — number + pips
-  const passPipsEl=document.getElementById('d-pc');
-  if(passPipsEl) passPipsEl.innerHTML='('+G.passes+')';
 }
 
-function draftAccept(){
+function draftPick(i){
   if(G.draftLock)return;
   G.draftLock=true;
   try{
-    const p=G.draftPool[G.draftIdx];
+    const p=G.draftCards[i];
+    if(!p){G.draftLock=false;return;}
     const empSlots=compatibleEmptySlots(p);
-    if(empSlots.length===0){G.draftIdx++;G.draftLock=false;updateDraftScreen();return;}
-    // Prefer exact position match, then same broad group, then first available
+    if(empSlots.length===0){G.draftLock=false;return;}
     const bestSlot=empSlots.slice().sort((a,b)=>{
       const pref=s=>s.pos===p.p?0:posGroup(s.pos)===posGroup(p.p)?1:2;
       return pref(a)-pref(b);
     })[0];
-    const slotIdx=bestSlot.i;
-    G.slotPlayers[slotIdx]=p;
+    G.slotPlayers[bestSlot.i]=p;
     G.accepted.push(p);
-    G.draftIdx++;
+    G.draftCards=[];
     if(filledCount()>=11){finalizeDraft();return;}
+    drawDraftCards();
     G.draftLock=false;
     updateDraftScreen();
   }catch(e){
-    console.error('draftAccept error:',e);
+    console.error('draftPick error:',e);
     G.draftLock=false;
-    const ab=document.getElementById('btn-acc');
-    if(ab)ab.disabled=false;
     try{updateDraftScreen();}catch(e2){console.error('recovery failed:',e2);}
   }
 }
 
-function draftPass(){
+function draftReroll(){
   if(G.passes<=0)return;
-  const p=G.draftPool[G.draftIdx];
-  const empSlots=compatibleEmptySlots(p);
-  if(empSlots.length===0){G.draftIdx++;updateDraftScreen();return;}
-  const remaining=G.draftPool.length-G.draftIdx;
-  const needed=11-filledCount();
-  if(remaining<=needed)return;
   G.passes--;
-  G.draftIdx++;
+  G.draftCards=[];
+  drawDraftCards();
   updateDraftScreen();
 }
 
