@@ -1,6 +1,6 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.1.2  
+**Version:** 4.1.3  
 **Last updated:** 2026-06-10  
 **File:** `index.html` (single-file game, ~3400 lines)  
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)  
@@ -12,7 +12,7 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 4.1.2 | 2026-06-10 | Hotfix: CSS regex aveva rimosso sub-selectors usati (sg-val.full, rc-rating.high, ecc.). CSS ripristinato con sole rimozioni chirurgiche sicure |
+| 4.1.3 | 2026-06-10 | Hotfix definitivo: CSS ripristinato da v4.1.0 (ultimo funzionante). v4.1.2 usava erroneamente HEAD~1 invece di HEAD~2 come base |
 | 4.1.1 | 2026-06-10 | Code cleanup: dead JS functions/constants rimossi. Null-byte corruption fixed, modal e banner ripristinati |
 | 4.1.0 | 2026-06-10 | Versioning introduced. Sprite graphics, 3-card draft polish, text overhaul, mobile fix, GAME_MANUAL |
 | 4.0.0 | 2026 | 3-card pick-1 draft + Reroll mechanic (full core overhaul) + Sensible Soccer sprites |
