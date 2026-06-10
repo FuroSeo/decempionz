@@ -44,13 +44,7 @@
 [data-theme="light"] .dp-fwd.filled{border-color:#b91c1c;background:rgba(185,28,28,.1)}
 [data-theme="light"] .btn-gold{color:#ffffff}
 [data-theme="light"] .prc{background:#ffffff;border-color:var(--brd)}
-[data-theme="light"] .prc-team-name,[data-theme="light"] .prc-name{color:#111827}
-[data-theme="light"] .era-card,[data-theme="light"] .format-card,[data-theme="light"] .diff-card{background:var(--s1);border-color:var(--brd)}
-[data-theme="light"] .round-row{background:var(--s2);border-color:var(--brd)}
-[data-theme="light"] .round-row.cur{border-color:var(--gold)}
-[data-theme="light"] .fp-dot{background:rgba(0,0,0,.15)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
+[data-theme="light"] 
 .app{width:100%;max-width:580px;padding:0 16px}
 .screen{display:none;padding-top:24px;animation:up .22s ease}
 .screen.active{display:block}
@@ -74,8 +68,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tag-qf{background:#2a1f00;color:#fbbf24}.tag-sf{background:#2a1000;color:#f97316}.tag-final{background:#2a0800;color:#f87171}
 .stars{display:flex;gap:3px}
 .star{color:var(--star);font-size:1.1rem}.star-e{color:var(--brd);font-size:1.1rem}
-.divider{height:1px;background:var(--brd);margin:14px 0}
-/* ── COMPACT RESULT ── */
 .res-header{text-align:center;padding:4px 0 8px}
 .res-header .ro{font-size:3rem;margin:4px 0 2px}
 .res-header .r-score{font-size:1.3rem;font-weight:700;color:var(--mut)}
@@ -117,34 +109,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .go-extra-row strong{color:var(--text)}
 
 /* ── MATCH STATS ── */
-.stats-panel{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:14px 16px;margin-top:14px}
-.stats-title{font-size:.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
-.poss-bar-wrap{background:var(--brd);border-radius:4px;height:20px;display:flex;overflow:hidden;margin-bottom:4px;position:relative}
-.poss-home{background:var(--blue2);height:100%;transition:width .6s ease;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff}
-.poss-away{background:#3a1a1a;height:100%;flex:1;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:.68rem;font-weight:800;color:var(--mut)}
-.stat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd);font-size:.82rem}
-.stat-row:last-child{border-bottom:none}
-.stat-val{font-weight:800;min-width:28px;text-align:center}
-.stat-label{color:var(--mut);font-size:.72rem;text-align:center;flex:1}
-.stat-bar-wrap{display:flex;gap:8px;align-items:center;width:100%}
-.stat-bar{height:4px;background:var(--brd);border-radius:2px;flex:1;overflow:hidden}
-.stat-bar-fill{height:100%;background:var(--blue2);border-radius:2px}
-.stat-bar-fill.opp{background:#4a2020}
-.scorers-list{margin-top:10px}
-.scorer-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.8rem}
-.scorer-min{color:var(--mut);font-size:.72rem;min-width:30px}
-.scorer-name{font-weight:600}
-.scorer-opp{color:var(--red2)}
-.ratings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px}
-.rating-chip{background:var(--s2);border:1px solid var(--brd);border-radius:7px;padding:6px 8px;text-align:center}
-.rc-name{font-size:.65rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rc-pos{font-size:.58rem;color:var(--mut);margin-bottom:2px}
-.rc-rating{font-size:.95rem;font-weight:900}
-.rc-rating.high{color:#22c55e}.rc-rating.mid{color:#fbbf24}.rc-rating.low{color:#f97316}
-.camp-totals{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.ct-item{background:var(--s2);border:1px solid var(--brd);border-radius:7px;padding:6px 10px;text-align:center;flex:1;min-width:45px}
-.ct-val{font-size:1.1rem;font-weight:900}
-.ct-lbl{font-size:.58rem;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
 
 /* ── ERA PICKER ── */
 .era-card{background:var(--s1);border:2px solid var(--brd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .13s}
@@ -156,7 +121,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .era-teams{display:flex;flex-wrap:wrap;gap:4px}
 .era-team-chip{background:var(--s2);border:1px solid var(--brd);border-radius:4px;padding:2px 7px;font-size:.65rem;color:var(--mut)}
 
-
 /* ── HOME ── */
 .logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .step-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--brd)}
@@ -165,15 +129,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .st{color:var(--mut);font-size:.87rem;line-height:1.5}.st strong{color:var(--text)}
 
 /* ── TOURNAMENT REVEAL ── */
-.tour-card{background:linear-gradient(145deg,#0f1a2e,#131f35);border:1px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;position:relative;overflow:hidden}
-.tour-card::before{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,162,39,.18),transparent 70%);pointer-events:none}
-.tc-badge{display:inline-block;background:var(--blue);color:#93c5fd;border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
-.tc-name{font-size:2rem;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
-.tc-years{color:var(--mut);font-size:.9rem;margin-bottom:18px}
-.tc-teams{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.tc-team{background:rgba(255,255,255,.04);border:1px solid var(--brd);border-radius:8px;padding:9px 11px;text-align:left}
-.tc-team-name{font-weight:700;font-size:.85rem}
-.tc-team-sub{color:var(--mut);font-size:.7rem;margin-top:1px}
 
 /* ── FORMATION PICK ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0}
@@ -189,7 +144,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* ── BLIND DRAFT ── */
 
-
 /* ── DRAFT CARD REDESIGN ── */
 .prc{
   background:linear-gradient(160deg,#131f35,#0f1a2e);
@@ -202,60 +156,27 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;
   background:linear-gradient(90deg,var(--tier-c,var(--gold)),var(--tier-c2,var(--gold2)))}
 /* Tier colors */
-.prc.tier-elite{--tier-c:#fbbf24;--tier-c2:#f59e0b;
-  border:2px solid #fbbf2466;box-shadow:0 0 20px rgba(251,191,36,.12);}
-.prc.tier-high {--tier-c:#94a3b8;--tier-c2:#64748b;
-  border:2px solid #94a3b840;}
-.prc.tier-low  {--tier-c:#78350f;--tier-c2:#92400e;
-  border:2px solid #78350f60;opacity:.9;}
+.prc
+.prc
+.prc
 
 /* Tier badge */
-.prc-tier{position:absolute;top:10px;right:10px;
-  font-size:.58rem;font-weight:900;letter-spacing:1.2px;padding:2px 7px;border-radius:4px;
-  text-transform:uppercase;}
-.prc-tier.elite{background:rgba(251,191,36,.18);color:#fbbf24}
-.prc-tier.high {background:rgba(148,163,184,.15);color:#94a3b8}
-.prc-tier.low  {background:rgba(120,53,15,.25);color:#d97706}
 
 /* Team + season header */
-.prc-header{display:flex;align-items:center;justify-content:center;gap:6px;
-  margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)}
-.prc-team-flag{font-size:.95rem}
-.prc-team-info{text-align:left}
-.prc-team-name{font-size:.75rem;font-weight:700;color:var(--text);line-height:1.2}
-.prc-team-season{font-size:.62rem;color:var(--mut);margin-top:1px}
 
 /* Stars rating */
-.prc-stars{font-size:1.5rem;letter-spacing:2px;margin-bottom:10px;line-height:1}
-.prc-stars .sf{color:#fbbf24}
-.prc-stars .sh{
-  background:linear-gradient(to right,#fbbf24 50%,#2a3040 50%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.prc-stars .se{color:#2a3040}
 
 /* Player name — larger */
-.prc-name{font-size:1.5rem;font-weight:900;letter-spacing:-.5px;margin-bottom:2px;line-height:1.1}
 
 /* Position full name */
-.prc-pos-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px}
 .prc-pos-badge{font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:4px;text-transform:uppercase}
-.prc-pos-full{font-size:.72rem;color:var(--mut)}
 
 /* Slot hint */
-.prc-slot-hint{font-size:.72rem;color:var(--mut);padding:6px 10px;border-radius:6px;
-  background:rgba(255,255,255,.04)}
-.prc-slot-hint strong{color:var(--gold)}
-.prc-slot-hint.incomp{color:var(--red2);background:rgba(220,38,38,.06)}
 
 /* Pool hint */
-.prc-pool-hint{font-size:.65rem;color:var(--mut);margin-top:6px;opacity:.7}
 
 /* ── BUTTONS REDESIGN ── */
 .draft-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
-.btn-accept{padding:14px;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;
-  border:2px solid var(--grn2);background:rgba(22,163,74,.15);color:var(--grn2);transition:all .13s}
-.btn-accept:hover:not(:disabled){background:rgba(22,163,74,.3);transform:translateY(-1px)}
-.btn-accept:disabled{opacity:.22;cursor:not-allowed;transform:none}
 .btn-pass{padding:14px;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;
   border:2px solid var(--red2);background:rgba(220,38,38,.1);color:var(--red2);transition:all .13s;
   display:flex;align-items:center;justify-content:center;gap:6px}
@@ -286,9 +207,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .dp-def.target{border-color:#34d399;color:#6ee7b7;background:rgba(0,35,28,.45);}
 .dp-mid.target{border-color:#fbbf24;color:#fde68a;background:rgba(42,30,0,.45);}
 .dp-fwd.target{border-color:#f87171;color:#fca5a5;background:rgba(55,5,5,.45);}
-.prc-slot-hint{font-size:.68rem;margin-top:8px;color:var(--mut);}
-.prc-slot-hint strong{color:var(--gold);}
-.prc-slot-hint.incomp{color:var(--red2);}
 .draft-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .draft-info{font-size:.82rem;color:var(--mut)}
 .draft-count{font-size:1rem;font-weight:900;text-align:right}
@@ -297,12 +215,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .pbar-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
 
 /* Slot tracker */
-.slot-tracker{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.slot-group{flex:1;min-width:55px;background:var(--s1);border:1px solid var(--brd);border-radius:8px;padding:7px 8px;text-align:center}
-.sg-label{font-size:.6rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut)}
-.sg-val{font-size:1rem;font-weight:900;margin-top:2px}
-.sg-val.full{color:var(--grn2)}.sg-val.partial{color:var(--gold)}.sg-val.empty{color:var(--mut)}
-.sg-val.needed{color:var(--red2)}
 
 .warn-banner{background:#2a1a00;border:1px solid #5a3a00;border-radius:8px;padding:9px 13px;font-size:.79rem;color:#fbbf24;margin-bottom:12px;display:none}
 .force-banner{background:#1a1400;border:1px solid #4a3800;border-radius:8px;padding:9px 13px;font-size:.79rem;color:var(--gold);text-align:center;margin-bottom:12px;display:none}
@@ -313,27 +225,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc{background:linear-gradient(145deg,#131f35,#0f1a2e);border:2px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
 @keyframes cardIn{from{opacity:0;transform:rotateY(-20deg) scale(.93)}to{opacity:1;transform:rotateY(0) scale(1)}}
-.prc-pg{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .pg-gk{background:#1a3a7a;color:#93c5fd}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
-.prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
-.prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px}
-.prc-name{font-size:1.25rem;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
 .prc-pos{font-size:.76rem;color:var(--mut)}
 
 .draft-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
-.btn-accept{padding:15px;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;border:2px solid var(--grn2);background:rgba(22,163,74,.12);color:var(--grn2);transition:all .13s}
-.btn-accept:hover:not(:disabled){background:rgba(22,163,74,.28)}
-.btn-accept:disabled{opacity:.25;cursor:not-allowed}
 .btn-pass{padding:15px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;border:2px solid var(--brd);background:transparent;color:var(--mut);transition:all .13s}
 .btn-pass:hover:not(:disabled){border-color:var(--mut);color:var(--text)}
 .btn-pass:disabled{opacity:.22;cursor:not-allowed}
 
-.squad-built{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:11px 13px}
-.chips-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;min-height:26px}
 .chip{background:var(--s2);border:1px solid var(--brd);border-radius:5px;padding:3px 8px;font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:5px;animation:chipIn .18s ease}
 @keyframes chipIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-.chip-r{font-size:.63rem;font-weight:800}
-.chip-empty{color:var(--mut);font-size:.76rem;font-style:italic}
 
 /* ── CAMPAIGN / GROUP ── */
 .camp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -382,9 +283,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* ── TROPHY / OVER ── */
 .trophy{font-size:6.5rem;animation:tp 1.4s ease-in-out infinite alternate;margin:4px 0 6px;filter:drop-shadow(0 0 18px #eab30880)}
 @keyframes tp{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.08) rotate(3deg)}}
-.sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--brd);font-size:.84rem}
-.sum-row:last-child{border-bottom:none}
-/* confetti */
 .confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0}
 .cf{position:absolute;width:7px;height:9px;opacity:0;animation:cf-fall linear forwards}
 @keyframes cf-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(540deg);opacity:0}}
@@ -415,20 +313,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .diff-hard .diff-title{color:#f97316}
 .diff-desc{font-size:.72rem;color:var(--mut)}
 /* ── Tactic screen ── */
-.tact-grid{display:flex;gap:10px;margin-bottom:16px}
 .mini-tact-row{display:flex;gap:7px;margin-bottom:0}
 .mini-tact-btn{flex:1;padding:8px 6px;border-radius:8px;border:1.5px solid var(--brd);background:var(--card);cursor:pointer;text-align:center;font-size:.72rem;font-weight:700;color:var(--mut);transition:.13s}
 .mini-tact-btn:hover{border-color:var(--gold);color:var(--text)}
 .mini-tact-btn.tact-sel{border-color:var(--gold);background:rgba(234,179,8,.10);color:var(--gold)}
 .pmp-box{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:11px 13px;margin-bottom:10px}
 .pmp-scout{font-size:.7rem;color:var(--mut);margin-bottom:9px;line-height:1.4}
-.tact-card{flex:1;padding:14px 10px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;text-align:center;transition:.15s}
-.tact-card:hover{border-color:var(--gold)}
-.tact-card.tact-sel{border-color:var(--gold);background:rgba(234,179,8,.08)}
-.tact-icon{font-size:1.6rem;margin-bottom:6px}
-.tact-name{font-size:.78rem;font-weight:700;margin-bottom:4px}
-.tact-desc{font-size:.62rem;color:var(--mut);line-height:1.35}
-.tact-mod{font-size:.62rem;margin-top:6px;font-weight:600}
 
   .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
   .format-card:hover{border-color:var(--acc)}
@@ -461,8 +351,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 #banner-disclaimer p{flex:1;font-size:.62rem;color:var(--mut);line-height:1.5;margin:0;min-width:180px}
 #banner-disclaimer button{font-size:.62rem;padding:6px 14px;border-radius:6px;
   cursor:pointer;white-space:nowrap;font-weight:700}
-.btn-banner-ok{background:var(--gold);color:#000;border:none}
-.btn-banner-legal{background:transparent;color:var(--mut);border:1px solid var(--brd)}
 
 /* ── Screen nav logo ── */
 .screen-logo{display:block;font-size:.65rem;font-weight:900;letter-spacing:2.5px;
@@ -888,7 +776,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.1.0';
+const GAME_VERSION='4.1.1';
 /* ═══════════════════════════════════════
    FORMATIONS
 ═══════════════════════════════════════ */
@@ -1424,44 +1312,6 @@ const TOURNAMENTS = [
 /* ═══════════════════════════════════════
    KNOCKOUT OPPONENTS (cross-era)
 ═══════════════════════════════════════ */
-const TEAM_COLORS={
-  rm:    {a:'#F5F5F5',b:'#A89555'},
-  bar:   {a:'#A50044',b:'#004D98'},
-  bay:   {a:'#DC052D',b:'#FFFFFF'},
-  mu:    {a:'#DA291C',b:'#FBE122'},
-  mil:   {a:'#FB090B',b:'#000000'},
-  int:   {a:'#003399',b:'#000000'},
-  juv:   {a:'#000000',b:'#F5F5F5'},
-  juve:  {a:'#000000',b:'#F5F5F5'},
-  liv:   {a:'#C8102E',b:'#00B2A9'},
-  ars:   {a:'#EF0107',b:'#9C824A'},
-  che:   {a:'#034694',b:'#DBA111'},
-  bvb:   {a:'#FDE100',b:'#000000'},
-  aja:   {a:'#D2001F',b:'#FFFFFF'},
-  ben:   {a:'#E52220',b:'#FFFFFF'},
-  cel:   {a:'#16A34A',b:'#FFFFFF'},
-  not:   {a:'#DD0000',b:'#FFFFFF'},
-  ham:   {a:'#E81922',b:'#003B8E'},
-  ste:   {a:'#DC0000',b:'#0000A0'},
-  red:   {a:'#DD0000',b:'#0000CD'},
-  mars:  {a:'#2CBFEF',b:'#FFFFFF'},
-  val:   {a:'#F4A623',b:'#000000'},
-  atm:   {a:'#CB3524',b:'#272E61'},
-  por:   {a:'#003087',b:'#FFFFFF'},
-  mon:   {a:'#E8002D',b:'#FFFFFF'},
-  psg:   {a:'#003170',b:'#D00000'},
-  rom:   {a:'#E07B39',b:'#FFD700'},
-  tot:   {a:'#132257',b:'#FFFFFF'},
-  mci:   {a:'#6CABDD',b:'#1C2C5B'},
-};
-function teamDots(teamKey){
-  const prefix=teamKey?teamKey.split('_')[0]:'';
-  const c=TEAM_COLORS[prefix]||{a:'#888',b:'#444'};
-  return '<span style="display:inline-flex;gap:3px;align-items:center;vertical-align:middle">'
-    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.a+';border:1px solid rgba(0,0,0,.2);display:inline-block"></span>'
-    +'<span style="width:9px;height:9px;border-radius:50%;background:'+c.b+';border:1px solid rgba(0,0,0,.2);display:inline-block"></span>'
-    +'</span>';
-}
 const KNOCKOUT_OPPS = {
   r16:  [{name:'Inter Milan 2009-10',str:8.1,id:'int_0910'},{name:'Porto 2003-04',str:7.8,id:'por_0304'},{name:'Valencia 2000-01',str:7.9,id:'val_0001'},{name:'Ajax 1994-95',str:7.8,id:'aja_9495'}],
   qf:   [{name:'Man United 1998-99',str:8.5,id:'mu_9899'},{name:'Dortmund 2012-13',str:8.4,id:'bvb_1112'},{name:'Atlético Madrid 2014',str:8.3,id:'atm_1314'},{name:'Liverpool 2004-05',str:8.2,id:'liv_0405'}],
@@ -1568,7 +1418,6 @@ function posGroup(pos){
   return'FWD';
 }
 function pgClass(pg){return{GK:'pg-gk',DEF:'pg-def',MID:'pg-mid',FWD:'pg-fwd'}[pg]}
-function rColor(r){if(r>=10)return'#22c55e';if(r>=9)return'#84cc16';if(r>=8)return'#eab308';if(r>=7)return'#f97316';return'#94a3b8'}
 function teamStrength(teamId){const t=TEAMS[teamId];return avg(t.players.map(p=>p.r))}
 function topPlayers(teamId,n){return [...TEAMS[teamId].players].sort((a,b)=>b.r-a.r).slice(0,n).map(p=>p.n).join(', ')}
 
@@ -1683,10 +1532,6 @@ function confirmFormat(){
   },0);
   showScreen('screen-formation');
 }
-function rerollSetup(){
-  const eras=TOURNAMENTS.filter(t=>!t.allTime);
-  applyTournament(pick(eras));
-}
 
 function renderTourCard(){
   const t=G.tournament;
@@ -1766,7 +1611,6 @@ function confirmSetup(){
   },0);
   showScreen('screen-formation');
 }
-function confirmDiff(){confirmSetup();}
 
 function initDraft(){
   if(!G.formation) return;
@@ -1830,27 +1674,7 @@ function filledCount(){
 }
 
 
-const POS_NAMES = {
-  GK:'Goalkeeper',RB:'Right Back',CB:'Centre Back',LB:'Left Back',
-  CDM:'Defensive Mid',CM:'Central Mid',CAM:'Attacking Mid',
-  RM:'Right Mid',LM:'Left Mid',RW:'Right Wing',LW:'Left Wing',
-  ST:'Striker',CF:'Centre Forward',
-};
 
-function ratingStars(r){
-  // 5→★★½ 6→★★★ 7→★★★½ 8→★★★★ 9→★★★★½ 10→★★★★★
-  const full=Math.floor((r-5)/1); // rough: 5→0,6→1,7→2,8→3,9→4,10→5
-  // Better: scale 5-10 → 0.5-5 stars
-  const val=Math.max(1, 2+(r-6)*0.75); // 6→2.0, 7→2.75, 8→3.5, 9→4.25, 10→5.0
-  const fullS=Math.floor(val), hasHalf=(val%1>=0.4);
-  let h='';
-  for(let i=1;i<=5;i++){
-    if(i<=fullS) h+='<span class="sf">★</span>';
-    else if(i===fullS+1&&hasHalf) h+='<span class="sh">★</span>';
-    else h+='<span class="se">★</span>';
-  }
-  return h;
-}
 
 function tierInfo(r){
   if(r>=9) return{cls:'elite',label:'ELITE'};
@@ -1858,18 +1682,6 @@ function tierInfo(r){
   return{cls:'low',label:'ROTATION'};
 }
 
-function countInPool(playerPos){
-  // Count compatible players for each slot still needing this position type
-  const sl=slotsLeft();
-  let count=0;
-  for(let i=G.draftIdx+1;i<G.draftPool.length;i++){
-    const p=G.draftPool[i];
-    if((SLOT_COMPAT[playerPos]||[]).some(slot=>sl[slot]>0&&(SLOT_COMPAT[slot]||[]).includes(p.p)))
-      count++;
-  }
-  // Simpler: just count remaining players of same position group
-  return G.draftPool.slice(G.draftIdx+1).filter(p=>posGroup(p.p)===posGroup(playerPos)).length;
-}
 /* ─── SLOT-BASED DRAFT HELPERS ─── */
 function slotGroup(pos){
   if(pos==='GK')return'gk';
@@ -1912,7 +1724,7 @@ function renderDraftPitch(currentPlayer){
 
 function drawDraftCards(){
   G.draftCards=[];
-  // Only show compatible cards — incompatible are silently skipped
+
   while(G.draftCards.length<3 && G.draftIdx<G.draftPool.length){
     const p=G.draftPool[G.draftIdx];
     G.draftIdx++;
@@ -2028,9 +1840,7 @@ function finalizeDraft(){
   G.draftFinalized=true;
   G.draftLock=true;
   // Disable buttons immediately
-  const accBtn=document.getElementById('btn-acc');
   const pssBtn=document.getElementById('btn-pss');
-  if(accBtn)accBtn.disabled=true;
   if(pssBtn)pssBtn.disabled=true;
 
   G.squad=G.slotPlayers.filter(function(p){return p!==null;});
@@ -2061,7 +1871,6 @@ function finalizeDraft(){
       console.error('Campaign init error:',e);
       G.draftFinalized=false;
       G.draftLock=false;
-      const ab=document.getElementById('btn-acc');if(ab)ab.disabled=false;
       const pb=document.getElementById('btn-pss');if(pb)pb.disabled=false;
       try{showCampaign();}catch(e2){
         console.error('showCampaign also failed:',e2);
@@ -2317,7 +2126,6 @@ const COUNTER_MOD={
 };
 const TACTIC_LABELS={attack:'High Press',balanced:'Possession',defend:'Low Block'};
 const TACTIC_WINS={attack:'defend',balanced:'attack',defend:'balanced'};
-const TACTIC_LOSES={attack:'balanced',balanced:'defend',defend:'attack'};
 function selectFormTactic(t,el){
   G.tactic=t;
   document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
@@ -2354,9 +2162,6 @@ function renderPreMatchPanel(oppName,oppStr){
   syncMatchTacticUI();
 }
 // Legacy stubs (no longer navigate to screen-tactic)
-function selectTactic(t,el){}
-function showTacticScreen(){}
-function confirmTactic(){}
 
 function playRound(){
   // Compute opponent info first so we can show the tactic screen
@@ -3198,4 +3003,18 @@ function showShareToast(msg){
     <h3>Copyright</h3>
     <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
     <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+    <p>Decempionz does not collect, store, or transmit any personal data. No cookies are used for tracking — only a localStorage key stores your theme preference. No analytics, no third-party scripts.</p>
+    <h3>Terms of Use</h3>
+    <p>For personal entertainment only. Do not redistribute or claim ownership of any content.</p>
+    <button class="modal-legal-close" onclick="closeLegal()">Close</button>
+  </div>
+</div>
+
+<!-- DISCLAIMER BANNER -->
+<div id="banner-disclaimer">
+  <p>Decempionz is a fan project — not affiliated with UEFA, FIFA or any club. For entertainment only.</p>
+  <button class="btn-ghost" style="font-size:.62rem;padding:5px 12px;flex-shrink:0" onclick="closeBanner()">Got it</button>
+</div>
+
+</body>
+</html>
