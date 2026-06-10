@@ -1,6 +1,6 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.1.1  
+**Version:** 4.1.2  
 **Last updated:** 2026-06-10  
 **File:** `index.html` (single-file game, ~3400 lines)  
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)  
@@ -12,7 +12,8 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 4.1.1 | 2026-06-10 | Code cleanup: 77 unused CSS classes, 11 dead JS functions, 3 unused constants removed. Null-byte corruption fixed, modal legale ricostruito, banner disclaimer ripristinato |
+| 4.1.2 | 2026-06-10 | Hotfix: CSS regex aveva rimosso sub-selectors usati (sg-val.full, rc-rating.high, ecc.). CSS ripristinato con sole rimozioni chirurgiche sicure |
+| 4.1.1 | 2026-06-10 | Code cleanup: dead JS functions/constants rimossi. Null-byte corruption fixed, modal e banner ripristinati |
 | 4.1.0 | 2026-06-10 | Versioning introduced. Sprite graphics, 3-card draft polish, text overhaul, mobile fix, GAME_MANUAL |
 | 4.0.0 | 2026 | 3-card pick-1 draft + Reroll mechanic (full core overhaul) + Sensible Soccer sprites |
 | 3.0.0 | 2026 | Rebranding Golacticos → Decempionz, light/dark theme, compliance, trophy redesign |
