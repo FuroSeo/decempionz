@@ -888,7 +888,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.3.2';
+const GAME_VERSION='4.3.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3535,9 +3535,22 @@ function shareResult(){
   const wdlLabel=isIt?(campW+'V '+campD+'P '+campL+'S'):(campW+'W '+campD+'D '+campL+'L');
   const goalLabel=isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
   const scorerLabel=isIt?'Capocannoniere: ':'Top scorer: ';
+  // Build lineup by role group
+  const sq=G.squad&&G.squad.length?G.squad:G.slotPlayers.filter(Boolean);
+  const grpMap={GK:[],DEF:[],MID:[],FWD:[]};
+  sq.forEach(function(p){grpMap[posGroup(p.p)].push(p.n);});
+  const lineupLines=[
+    grpMap.GK.length?'🧤 '+grpMap.GK.join(' · '):'',
+    grpMap.DEF.length?'🛡️ '+grpMap.DEF.join(' · '):'',
+    grpMap.MID.length?'⚙️ '+grpMap.MID.join(' · '):'',
+    grpMap.FWD.length?'⚡ '+grpMap.FWD.join(' · '):''
+  ].filter(Boolean).join('\n');
   const lines=[
     statusLine,
     diffLabel+' · '+G.formation+coachStr,
+    '',
+    lineupLines,
+    '',
     '⚽ '+wdlLabel+' · '+goalLabel,
     '🌟 '+scorerLabel+topScorerStr,
     '',
