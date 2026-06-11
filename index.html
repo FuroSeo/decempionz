@@ -6,7 +6,7 @@
 <meta name="description" content="Decempionz — Draft legendary football squads and conquer Europe. A blind draft card game spanning 60 years of Champions League history.">
 <meta name="author" content="Decempionz">
 <meta property="og:title" content="Decempionz — The Ultimate Football Draft">
-<meta property="og:description" content="Draft legendary players, build your XI and conquer Europe. 58 historic squads, 3 tournament formats.">
+<meta property="og:description" content="Draft legendary players, build your XI and conquer Europe. 66 historic squads, 3 tournament formats.">
 <meta property="og:image" content="https://decempionz.com/og-image.png">
 <meta property="og:url" content="https://decempionz.com">
 <meta property="og:type" content="website">
@@ -50,6 +50,14 @@
 [data-theme="light"] .round-row{background:var(--s2);border-color:var(--brd)}
 [data-theme="light"] .round-row.cur{border-color:var(--gold)}
 [data-theme="light"] .fp-dot{background:rgba(0,0,0,.15)}
+[data-theme="light"] .logo{background:linear-gradient(135deg,#1a3a7a,#8a6200 55%,#a87a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+[data-theme="light"] .screen-logo{background:linear-gradient(135deg,#1a3a7a,#8a6200 55%,#a87a00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+[data-theme="light"] .era-card.era-sel{background:rgba(26,58,122,.07);border-color:#1a3a7a}
+[data-theme="light"] .tour-card{background:linear-gradient(145deg,#eef2f8,#e4eaf4);border-color:#c0ccd8}
+[data-theme="light"] .tour-card::before{background:radial-gradient(circle,rgba(26,58,122,.12),transparent 70%)}
+[data-theme="light"] .tc-team{background:rgba(0,0,0,.03);border-color:#c0ccd8}
+[data-theme="light"] .tc-name{color:#111827}
+[data-theme="light"] .tc-badge{background:#1a3a7a;color:#93c5fd}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -138,7 +146,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* ── ERA PICKER ── */
 .era-card{background:var(--s1);border:2px solid var(--brd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .13s}
-.era-card:hover{border-color:var(--blue2);background:var(--s2)}
+.era-card:hover{border-color:var(--blue2);background:var(--s2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .era-card.era-sel{border-color:var(--gold);background:#1a1600}
 .era-name{font-size:1rem;font-weight:800;margin-bottom:2px}
 .era-years{font-size:.72rem;color:var(--mut);margin-bottom:6px}
@@ -300,6 +308,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* Reveal card */
 .reveal-zone{perspective:800px;min-height:210px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.draft-pick-card:active{transform:scale(.96);opacity:.88}
 .prc{background:linear-gradient(145deg,#131f35,#0f1a2e);border:2px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
 @keyframes cardIn{from{opacity:0;transform:rotateY(-20deg) scale(.93)}to{opacity:1;transform:rotateY(0) scale(1)}}
@@ -397,7 +406,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* ── Difficulty cards ── */
 .diff-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .diff-card{padding:14px 16px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s}
-.diff-card:hover{border-color:var(--gold)}
+.diff-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .diff-card.diff-sel{border-color:var(--gold);background:rgba(234,179,8,.08)}
 .diff-title{font-size:.9rem;font-weight:700;margin-bottom:3px}
 .diff-easy .diff-title{color:#4ade80}
@@ -421,7 +430,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tact-mod{font-size:.62rem;margin-top:6px;font-weight:600}
 
   .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
-  .format-card:hover{border-color:var(--acc)}
+  .format-card:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
   .format-card.fc-sel{border-color:var(--gold);background:rgba(234,179,8,.07)}
 
 /* ── Legal footer ── */
@@ -880,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.27';
+const GAME_VERSION='4.4.28';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2323,10 +2332,10 @@ function renderThreeCards(){
       const light=document.body.getAttribute('data-theme')==='light';
       const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
-      return'<div onclick="draftPick('+i+')"'
+      return'<div onclick="draftPick('+i+')" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
-        +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent">'
+        +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
         +playerSprite(col)
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
         +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
@@ -3974,18 +3983,4 @@ function _devMockGameOver(){
 
     <!-- Quick Draft -->
     <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Draft automatico</div>
-      <div style="display:flex;gap:8px">
-        <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">⭐ Top XI</button>
-        <button onclick="_devQuickDraft('random')" style="flex:1;background:#1a1a1a;border:1px solid #555;color:#ccc;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🎲 Random XI</button>
-      </div>
-      <div id="dv-squad-display"></div>
-    </div>
-
-    <!-- Jump to Round -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Salta al turno <span style="color:#444">(richiede draft)</span></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <button onclick="_devJumpRound('group',0)" class="dv-btn">Girone 1</button>
-        <button onclick="_devJumpRound('group',2)" class="dv-btn">Girone 3</button>
-        <button onclick="_devJumpRound(
+     
