@@ -829,6 +829,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <!-- Hero stat cards -->
     <div class="t-hero-cards" id="t-hero-cards"></div>
 
+    <!-- Top scorers -->
+    <div class="card" id="t-scorers" style="padding:10px 14px;margin-bottom:10px;display:none"></div>
+
     <!-- Campaign record -->
     <div class="card" style="padding:10px 14px;margin-bottom:10px">
       <div id="t-record-row"></div>
@@ -877,7 +880,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.25';
+const GAME_VERSION='4.4.26';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2309,7 +2312,8 @@ function renderThreeCards(){
       const empSlots=compatibleEmptySlots(p);
       const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
       const teamEntry=TEAMS[teamKey]||null;
-      const season=teamEntry?teamEntry.season.slice(-2):'';
+      const season=teamEntry?teamEntry.season.slice(2):'';
+      const displayClub=teamEntry?teamEntry.name:p.club;
       const col=JERSEY_COLORS[p.teamId]||'#555';
       const tierCss=slotTierCss(p.r);
       const targetSlot=empSlots[0]?empSlots[0].pos:'';
@@ -2324,7 +2328,7 @@ function renderThreeCards(){
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
         +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent">'
         +playerSprite(col)
-        +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+p.club+" '"+season+'</div>'
+        +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
         +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
@@ -3464,6 +3468,29 @@ function showTrophy(){
     +'<div class="thc-val">'+(bw?bw.myG+'–'+bw.oppG+' '+bw.opp.split(' ')[0]:'—')+'</div>'
     +'<div class="thc-lbl">'+t('trophy.lbl_best_win')+'</div></div>';
 
+  // Top scorers panel
+  const scorerEl=document.getElementById('t-scorers');
+  if(scorerEl){
+    const topScorers=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1]).slice(0,5).filter(s=>s[1]>0);
+    if(topScorers.length){
+      scorerEl.style.display='block';
+      scorerEl.innerHTML='<div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:8px">'+t('trophy.lbl_top_scorer')+'</div>'
+        +topScorers.map(function([name,goals],i){
+          const medal=i===0?'🥇':i===1?'🥈':'🥉';
+          const isFirst=i===0;
+          return'<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0'+(i<topScorers.length-1?';border-bottom:1px solid var(--brd)':'')+'">'
+            +'<div style="display:flex;align-items:center;gap:7px">'
+            +(i<3?'<span style="font-size:.8rem">'+medal+'</span>':'<span style="font-size:.65rem;color:var(--mut);min-width:16px;text-align:center">'+(i+1)+'.</span>')
+            +'<span style="font-size:'+(isFirst?'.82rem':'.76rem')+';font-weight:'+(isFirst?'800':'600')+';color:var(--text)">'+name+'</span>'
+            +'</div>'
+            +'<span style="font-size:'+(isFirst?'.82rem':'.76rem')+';font-weight:800;color:'+(isFirst?'#ffd700':'var(--text)')+'">'+goals+' ⚽</span>'
+            +'</div>';
+        }).join('');
+    } else {
+      scorerEl.style.display='none';
+    }
+  }
+
   // Record bar
   document.getElementById('t-record-row').innerHTML=
     '<div class="go-stats-row">'
@@ -3961,27 +3988,4 @@ function _devMockGameOver(){
       <div style="display:flex;flex-wrap:wrap;gap:6px">
         <button onclick="_devJumpRound('group',0)" class="dv-btn">Girone 1</button>
         <button onclick="_devJumpRound('group',2)" class="dv-btn">Girone 3</button>
-        <button onclick="_devJumpRound('knockout',0)" class="dv-btn">R16/Turno 1</button>
-        <button onclick="_devJumpRound('knockout',1)" class="dv-btn">QF</button>
-        <button onclick="_devJumpRound('knockout',2)" class="dv-btn">SF</button>
-        <button onclick="_devJumpRound('knockout',3)" class="dv-btn">Finale</button>
-      </div>
-    </div>
-
-    <!-- Force Outcome -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Forza esito prossima partita</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">
-        <button onclick="_devForceScore(3,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">3–0</button>
-        <button onclick="_devForceScore(1,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">1–0</button>
-        <button onclick="_devForceScore(1,1)" class="dv-btn" style="border-color:#eab308;color:#eab308">1–1</button>
-        <button onclick="_devForceScore(0,1)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–1</button>
-        <button onclick="_devForceScore(0,3)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–3</button>
-        <button onclick="_devForceScore(null,null)" class="dv-btn" style="border-color:#555;color:#777">Reset</button>
-      </div>
-      <div id="dv-force-status" style="font-size:.68rem;color:#eab308;min-height:14px"></div>
-    </div>
-
-    <!-- Stress Test -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin
+        <button onclick="_devJumpRound('kno
