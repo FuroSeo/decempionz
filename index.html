@@ -877,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.11';
+const GAME_VERSION='4.4.12';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2951,8 +2951,9 @@ function runPenaltyKick(){
   const cid=isHome?'pen-home-icons':'pen-away-icons';
   const ic=document.createElement('span');
   ic.title=lastName(name);
-  ic.style='font-size:1.15rem;cursor:default;'+(!scored?'color:var(--red2)':'');
-  ic.textContent=scored?'⚽':'✕';
+  ic.style='display:inline-block;width:14px;height:14px;border-radius:50%;flex-shrink:0;vertical-align:middle;'
+    +(scored?'background:#22c55e':'background:#ef4444');
+  ic.textContent='';
   document.getElementById(cid).appendChild(ic);
   document.getElementById('pen-score').textContent=P.h+' – '+P.a;
   document.getElementById('pen-msg').textContent=
@@ -3989,9 +3990,4 @@ function _devMockGameOver(){
 </div>
 
 <style>
-.dv-btn{background:#111;border:1px solid #333;color:#ccc;border-radius:7px;padding:6px 10px;font-size:.72rem;cursor:pointer}
-.dv-btn:hover{border-color:#666;color:#fff}
-</style>
-
-</body>
-</html>                                                                                                                                                                                                                                                                                                                                    
+.dv-btn{background:#111;border:1px solid #333;color:#ccc;border-radius:7px;padding:6px 10px;font-size:.72rem;cursor:pointe
