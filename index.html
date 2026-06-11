@@ -877,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.23';
+const GAME_VERSION='4.4.24';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2771,6 +2771,7 @@ const COUNTER_MOD={
   'balanced-defend': [0.90,1.06],  // deep block stifles build-up
   'defend-attack':   [1.06,0.88],  // absorb and hit on counter
   'defend-balanced': [1.04,0.90],  // stifle possession
+  'defend-defend':   [1.00,1.00],
 };
 function tacLabel(k){return t('tac.'+k)||k;}
 const TACTIC_WINS={attack:'defend',balanced:'attack',defend:'balanced'};
@@ -4037,4 +4038,4 @@ function _devMockGameOver(){
 
     <!-- Stress Test -->
     <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Stress test simulazio
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin
