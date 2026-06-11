@@ -877,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.24';
+const GAME_VERSION='4.4.25';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1338,8 +1338,7 @@ const COACHES = [
   {n:'Zinedine Zidane',    pref:'4-3-3'},
   {n:'Diego Simeone',      pref:'4-5-1'},
   {n:'Roberto Mancini',    pref:'4-2-3-1'},
-  {n:'Claudio Ranieri',    pref:'4-4-2'},
-];
+  {n:'Claudio Ranieri',    pref:'4-4-2'}];
 
 function formDMA(key){
   var p=key.split('-').map(Number);
@@ -1361,66 +1360,63 @@ const TEAMS = {
   por_8687:{name:'Porto',season:'1986-87',country:'🇵🇹',club:'porto',players:[
     {n:'Mlynarczyk',p:'GK',r:8},{n:'Joao Pinto',p:'RB',r:8},{n:'Eduardo Luis',p:'CB',r:8},{n:'Inacio',p:'CB',r:8},{n:'Celso',p:'LB',r:7},
     {n:'Andre',p:'CDM',r:8},{n:'Jaime Magalhaes',p:'CM',r:8},{n:'Sousa',p:'CM',r:7},{n:'Madjer',p:'LW',r:9},
-    {n:'Futre',p:'RM',r:10},{n:'Vermeersch',p:'ST',r:8},{n:'Lima Pereira',p:'CB',r:7},{n:'Frasco',p:'CAM',r:7},{n:'Rui Barros',p:'LM',r:7},{n:'Gomes',p:'ST',r:7},
-  ]},
+    {n:'Futre',p:'RM',r:10},{n:'Vermeersch',p:'ST',r:8},{n:'Lima Pereira',p:'CB',r:7},{n:'Frasco',p:'CAM',r:7},{n:'Rui Barros',p:'LM',r:7},{n:'Gomes',p:'ST',r:7}]},
   rm_6566:{name:'Real Madrid',season:'1965-66',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Araquistain',p:'GK',r:8},{n:'Pachin',p:'RB',r:7},{n:'De Felipe',p:'CB',r:8},{n:'Sanchis',p:'CB',r:8},{n:'Mazon',p:'LB',r:7},
     {n:'Zoco',p:'CDM',r:8},{n:'Pirri',p:'CM',r:9},{n:'Velazquez',p:'CM',r:8},{n:'Serena',p:'RW',r:8},
-    {n:'Amancio',p:'CAM',r:9},{n:'Grosso',p:'ST',r:8},{n:'Gento',p:'LW',r:10},{n:'Felix',p:'ST',r:7},{n:'Puskas',p:'ST',r:9},{n:'Sanchis Sr',p:'RM',r:7},{n:'Felo',p:'LM',r:7},{n:'Betancort',p:'GK',r:7},
-  ]},
+    {n:'Amancio',p:'CAM',r:9},{n:'Grosso',p:'ST',r:8},{n:'Gento',p:'LW',r:10},{n:'Felix',p:'ST',r:7},{n:'Puskas',p:'ST',r:9},{n:'Sanchis Sr',p:'RM',r:7},{n:'Felo',p:'LM',r:7},{n:'Betancort',p:'GK',r:7}]},
   fey_6970:{name:'Feyenoord',season:'1969-70',country:'🇳🇱',club:'feyenoord',players:[
     {n:'Pieters Graafland',p:'GK',r:8},{n:'Rijsbergen',p:'RB',r:7},{n:'Laseroms',p:'CB',r:8},{n:'Israel',p:'CB',r:9},{n:'Van Duivenbode',p:'LB',r:8},
     {n:'Hasil',p:'CDM',r:8},{n:'Jansen',p:'CM',r:9},{n:'Van Hanegem',p:'CAM',r:10},{n:'Wery',p:'RW',r:8},
-    {n:'Kindvall',p:'ST',r:9},{n:'Moulijn',p:'LW',r:9},{n:'Boskamp',p:'CM',r:7},{n:'Nijs',p:'CB',r:7},{n:'Van Daele',p:'RM',r:7},{n:'Romeijn',p:'LM',r:7},{n:'Vos',p:'ST',r:7},
-  ]},
+    {n:'Kindvall',p:'ST',r:9},{n:'Moulijn',p:'LW',r:9},{n:'Boskamp',p:'CM',r:7},{n:'Nijs',p:'CB',r:7},{n:'Van Daele',p:'RM',r:7},{n:'Romeijn',p:'LM',r:7},{n:'Vos',p:'ST',r:7}]},
   ben_6162:{name:'Benfica',season:'1961-62',country:'🇵🇹',club:'benfica',players:[
     {n:'Pereira',p:'GK',r:8},{n:'R.Coelho',p:'RB',r:7},{n:'Germano',p:'CB',r:8},{n:'Mario Joao',p:'CB',r:7},{n:'Humberto',p:'LB',r:7},
     {n:'Neto',p:'CDM',r:7},{n:'Coluna',p:'CM',r:9},{n:'Cruz',p:'CM',r:7},{n:'Jose Augusto',p:'RW',r:8},
     {n:'Simoes',p:'LW',r:8},{n:'Eusebio',p:'ST',r:10},{n:'Aguas',p:'ST',r:8},{n:'J.Torres',p:'CAM',r:7},
     {n:'Cavem',p:'RW',r:7},
-  ,{n:'Graca',p:'LM',r:7},{n:'Costa',p:'RB',r:7}]},
+  {n:'Graca',p:'LM',r:7},{n:'Costa',p:'RB',r:7}]},
   int_6465:{name:'Inter Milan',season:'1964-65',country:'🇮🇹',club:'inter',players:[
     {n:'Sarti',p:'GK',r:9},{n:'Burgnich',p:'RB',r:8},{n:'Guarneri',p:'CB',r:9},{n:'Picchi',p:'CB',r:8},{n:'Facchetti',p:'LB',r:10},
     {n:'L.Suarez',p:'CDM',r:9},{n:'Tagnin',p:'CDM',r:7},{n:'Bedin',p:'CM',r:7},{n:'Mazzola',p:'SS',r:10},
     {n:'Jair',p:'RW',r:8},{n:'Corso',p:'LW',r:9},{n:'Domenghini',p:'RW',r:8},{n:'Milani',p:'ST',r:7},
     {n:'Mori',p:'CB',r:6},
-  ,{n:'Peiro',p:'ST',r:7},{n:'Cappellini',p:'CM',r:7}]},
+  {n:'Peiro',p:'ST',r:7},{n:'Cappellini',p:'CM',r:7}]},
   cel_6667:{name:'Celtic',season:'1966-67',country:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',club:'celtic',players:[
     {n:'Simpson',p:'GK',r:8},{n:'Craig',p:'RB',r:7},{n:'McNeill',p:'CB',r:9},{n:'Clark',p:'CB',r:8},{n:'Gemmell',p:'LB',r:8},
     {n:'Murdoch',p:'CM',r:8},{n:'Auld',p:'CM',r:8},{n:'Gallagher',p:'CDM',r:7},{n:'Johnstone',p:'RM',r:10},
     {n:'Lennox',p:'LM',r:8},{n:'Wallace',p:'ST',r:8},{n:'Chalmers',p:'ST',r:8},{n:'Hood',p:'CAM',r:7},
     {n:'McBride',p:'ST',r:7},
-  ,{n:'J.Hughes',p:'LW',r:7},{n:'Brogan',p:'CB',r:6}]},
+  {n:'J.Hughes',p:'LW',r:7},{n:'Brogan',p:'CB',r:6}]},
   mu_6768:{name:'Man United',season:'1967-68',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_utd',players:[
     {n:'Stepney',p:'GK',r:8},{n:'Brennan',p:'RB',r:7},{n:'Foulkes',p:'CB',r:7},{n:'Sadler',p:'CB',r:8},{n:'Dunne',p:'LB',r:7},
     {n:'Stiles',p:'CDM',r:8},{n:'Charlton',p:'CM',r:10},{n:'Crerand',p:'CM',r:8},{n:'Best',p:'RW',r:10},
     {n:'Aston',p:'LW',r:7},{n:'Law',p:'ST',r:10},{n:'Kidd',p:'ST',r:7},{n:'Morgan',p:'RW',r:7},
     {n:'Burns',p:'LB',r:6},
-  ,{n:'Fitzpatrick',p:'CM',r:7},{n:'Sartori',p:'CM',r:6}]},
+  {n:'Fitzpatrick',p:'CM',r:7},{n:'Sartori',p:'CM',r:6}]},
   mil_6869:{name:'AC Milan',season:'1968-69',country:'🇮🇹',club:'ac_milan',players:[
     {n:'Cudicini F',p:'GK',r:8},{n:'Anquilletti',p:'RB',r:7},{n:'Schnellinger',p:'CB',r:8},{n:'Rosato',p:'CB',r:7},{n:'Maldini C',p:'LB',r:8},
     {n:'Trapattoni',p:'CDM',r:8},{n:'Lodetti',p:'CM',r:7},{n:'Rivera',p:'SS',r:10},{n:'Hamrin',p:'RW',r:8},
     {n:'Prati',p:'ST',r:9},{n:'Sormani',p:'ST',r:8},{n:'Combin',p:'ST',r:7},{n:'Rognoni',p:'CM',r:6},
     {n:'Scala',p:'CB',r:6},
-  ,{n:'Fogli',p:'RB',r:7},{n:'Mora',p:'LW',r:7}]},
+  {n:'Fogli',p:'RB',r:7},{n:'Mora',p:'LW',r:7}]},
   aja_7172:{name:'Ajax',season:'1971-72',country:'🇳🇱',club:'ajax',players:[
     {n:'Stuy',p:'GK',r:8},{n:'Suurbier',p:'RB',r:8},{n:'Hulshoff',p:'CB',r:8},{n:'Blankenburg',p:'CB',r:7},{n:'Krol',p:'LB',r:9},
     {n:'Neeskens',p:'CM',r:9},{n:'Haan',p:'CM',r:8},{n:'Muhren',p:'RM',r:7},{n:'Swart',p:'RW',r:7},
     {n:'Cruyff',p:'CAM',r:10},{n:'Keizer',p:'LW',r:8},{n:'Rep',p:'ST',r:8},{n:'Muller J',p:'ST',r:7},
     {n:'Vasovic',p:'CB',r:7},
-  ,{n:'B.Van Dijk',p:'CDM',r:7},{n:'Groot',p:'CM',r:7}]},
+  {n:'B.Van Dijk',p:'CDM',r:7},{n:'Groot',p:'CM',r:7}]},
   bay_7475:{name:'Bayern Munich',season:'1974-75',country:'🇩🇪',club:'bayern',players:[
     {n:'Maier',p:'GK',r:10},{n:'Andersson',p:'RB',r:7},{n:'Beckenbauer',p:'CB',r:10},{n:'Schwarzenbeck',p:'CB',r:8},{n:'Breitner',p:'LB',r:9},
     {n:'Roth',p:'CM',r:7},{n:'Zobel',p:'CM',r:7},{n:'Durnberger',p:'CM',r:7},{n:'Torstensson',p:'RW',r:7},
     {n:'Muller G',p:'ST',r:10},{n:'Hoeness',p:'ST',r:8},{n:'Kapellmann',p:'LW',r:6},{n:'Wunder',p:'ST',r:6},
     {n:'Horsmann',p:'CB',r:6},
-  ,{n:'Rummenigge',p:'RW',r:7},{n:'Lorenz',p:'LW',r:7}]},
+  {n:'Rummenigge',p:'RW',r:7},{n:'Lorenz',p:'LW',r:7}]},
   liv_7778:{name:'Liverpool',season:'1977-78',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'liverpool',players:[
     {n:'Clemence',p:'GK',r:9},{n:'Neal',p:'RB',r:8},{n:'Thompson',p:'CB',r:8},{n:'Hansen',p:'CB',r:8},{n:'Kennedy A',p:'LB',r:8},
     {n:'Souness',p:'CM',r:9},{n:'McDermott',p:'CM',r:8},{n:'Case',p:'CM',r:7},{n:'Callaghan',p:'CM',r:7},
     {n:'Dalglish',p:'ST',r:10},{n:'Heighway',p:'LW',r:8},{n:'Kennedy R',p:'ST',r:7},{n:'Johnson',p:'ST',r:7},
     {n:'Fairclough',p:'ST',r:7},
-  ,{n:'E.Hughes',p:'LB',r:9},{n:'Toshack',p:'ST',r:8}]},
+  {n:'E.Hughes',p:'LB',r:9},{n:'Toshack',p:'ST',r:8}]},
   /* ── The Golden 80s 1979-92 ── */
   not_7980:{name:'Nottm Forest',season:'1979-80',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'notts_forest',players:[
     {n:'Shilton',p:'GK',r:9},{n:'Anderson V',p:'RB',r:8},{n:'Needham',p:'CB',r:7},{n:'Lloyd',p:'CB',r:8},{n:'Gray',p:'LB',r:7},
@@ -1432,81 +1428,70 @@ const TEAMS = {
     {n:'Rolff',p:'CDM',r:7},{n:'Magath',p:'CM',r:9},{n:'Bastian',p:'CM',r:7},{n:'Hartwig',p:'CM',r:7},
     {n:'Hrubesch',p:'ST',r:9},{n:'Milewski',p:'LW',r:7},{n:'Groh',p:'RW',r:7},{n:'von Heesen',p:'RM',r:7},
     {n:'Jakobs',p:'LB',r:7},
-  ,{n:'Bastrup',p:'ST',r:7},{n:'Memering',p:'RW',r:7}]},
+  {n:'Bastrup',p:'ST',r:7},{n:'Memering',p:'RW',r:7}]},
   liv_8384:{name:'Liverpool',season:'1983-84',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'liverpool',players:[
     {n:'Grobbelaar',p:'GK',r:8},{n:'Neal',p:'RB',r:8},{n:'Nicol',p:'RB',r:7},{n:'Hansen',p:'CB',r:9},{n:'Lawrenson',p:'CB',r:9},
     {n:'Kennedy A',p:'LB',r:8},{n:'Souness',p:'CM',r:9},{n:'Lee',p:'CM',r:7},{n:'Whelan',p:'CM',r:7},{n:'Wark',p:'CM',r:7},
     {n:'Dalglish',p:'ST',r:9},{n:'Rush',p:'ST',r:10},{n:'Johnston',p:'LW',r:7},{n:'Gillespie',p:'RW',r:7},
     
-  ,{n:'Thompson P',p:'CB',r:7},{n:'M.Robinson',p:'ST',r:7}]},
+  {n:'Thompson P',p:'CB',r:7},{n:'M.Robinson',p:'ST',r:7}]},
   juv_8485:{name:'Juventus',season:'1984-85',country:'🇮🇹',club:'juventus',players:[
     {n:'Tacconi',p:'GK',r:8},{n:'Gentile',p:'RB',r:8},{n:'Scirea',p:'CB',r:10},{n:'Brio',p:'CB',r:8},{n:'Cabrini',p:'LB',r:9},
     {n:'Bonini',p:'CDM',r:7},{n:'Tardelli',p:'CM',r:9},{n:'Platini',p:'SS',r:10},{n:'Boniek',p:'RM',r:9},
     {n:'Rossi',p:'ST',r:9},{n:'Marocchino',p:'LM',r:7},{n:'Tricella',p:'CB',r:7},{n:'Prandelli',p:'CM',r:6},
     {n:'Vignola',p:'ST',r:6},
-  ,{n:'Laudrup',p:'CAM',r:9},{n:'Furino',p:'CDM',r:7}]},
+  {n:'Laudrup',p:'CAM',r:9},{n:'Furino',p:'CDM',r:7}]},
   ste_8586:{name:'Steaua Bucharest',season:'1985-86',country:'🇷🇴',club:'steaua',players:[
     {n:'Duckadam',p:'GK',r:9},{n:'Iovan',p:'RB',r:7},{n:'Bumbescu',p:'CB',r:8},{n:'Belodedici',p:'CB',r:8},{n:'Grigore',p:'LB',r:7},
     {n:'Minea',p:'CDM',r:7},{n:'Majearu',p:'CM',r:7},{n:'Boloni',p:'CM',r:8},{n:'Griga',p:'CM',r:7},
     {n:'Hagi',p:'CAM',r:8},{n:'Balaci',p:'LM',r:8},{n:'Piturca',p:'ST',r:8},{n:'Balint',p:'ST',r:8},{n:'Lacatus',p:'RM',r:8},
     
-  ,{n:'Andone',p:'ST',r:8},{n:'Rotariu',p:'CM',r:7}]},
+  {n:'Andone',p:'ST',r:8},{n:'Rotariu',p:'CM',r:7}]},
   red_9091:{name:'Red Star Belgrade',season:'1990-91',country:'🇷🇸',club:'red_star',players:[
     {n:'Stojanovic',p:'GK',r:8},{n:'Marovic',p:'RB',r:7},{n:'Belodedici',p:'CB',r:8},{n:'Sabanadzovic',p:'CB',r:7},{n:'Mihajlovic',p:'LB',r:8},
     {n:'Jugovic',p:'CDM',r:8},{n:'Stosic',p:'CM',r:7},{n:'Binovic',p:'CM',r:7},{n:'Prosinecki',p:'CAM',r:9},
     {n:'Savicevic',p:'SS',r:9},{n:'Pancev',p:'ST',r:9},{n:'Najdoski',p:'LW',r:7},{n:'Ljupko',p:'ST',r:7},
     {n:'Petrovic',p:'CB',r:6},
-  ,{n:'Cosic',p:'CM',r:7},{n:'Krstic',p:'RW',r:7}]},
+  {n:'Cosic',p:'CM',r:7},{n:'Krstic',p:'RW',r:7}]},
   bar_9192:{name:'Barcelona',season:'1991-92',country:'🇪🇸',club:'barcelona',players:[
     {n:'Zubizarreta',p:'GK',r:8},{n:'Ferrer',p:'RB',r:8},{n:'Koeman',p:'CB',r:9},{n:'Nando',p:'CB',r:7},{n:'J.Carlos',p:'LB',r:7},
     {n:'Guardiola',p:'CDM',r:9},{n:'Bakero',p:'CM',r:8},{n:'M.Laudrup',p:'RW',r:9},{n:'Stoichkov',p:'LW',r:10},{n:'Salinas',p:'ST',r:8},
     {n:'Txiki',p:'CAM',r:8},{n:'Nadal',p:'CB',r:8},{n:'Goikoetxea',p:'CM',r:7},{n:'E.Sacristan',p:'LM',r:7},{n:'Beguiristain',p:'RM',r:7},
-    {n:'Witschge',p:'CM',r:7},{n:'Sergi',p:'LB',r:7},{n:'Aloisio',p:'RB',r:6},{n:'Busquets Sr',p:'GK',r:7},
-    
-  ]},
+    {n:'Witschge',p:'CM',r:7},{n:'Sergi',p:'LB',r:7},{n:'Aloisio',p:'RB',r:6},{n:'Busquets Sr',p:'GK',r:7}]},
   /* ── Total Football Era 1992-99 ── */
   mars_9293:{name:'Marseille',season:'1992-93',country:'🇫🇷',club:'marseille',players:[
     {n:'Barthez',p:'GK',r:9},{n:'Angloma',p:'RB',r:8},{n:'Boli',p:'CB',r:8},{n:'Desailly',p:'CB',r:8},{n:'Di Meco',p:'LB',r:8},
     {n:'Deschamps',p:'CDM',r:9},{n:'Pele',p:'CM',r:8},{n:'Sauzee',p:'CM',r:8},{n:'Waddle',p:'RM',r:8},
     {n:'Boksic',p:'ST',r:9},{n:'Voller',p:'ST',r:8},{n:'Thomas',p:'LM',r:7},{n:'Abedi Pele',p:'RM',r:9},{n:'Eydelie',p:'CM',r:7},
-    {n:'Olmeta',p:'GK',r:7},{n:'Durand',p:'RB',r:6},
-  ]},
+    {n:'Olmeta',p:'GK',r:7},{n:'Durand',p:'RB',r:6}]},
   aja_9495:{name:'Ajax',season:'1994-95',country:'🇳🇱',club:'ajax',players:[
     {n:'Van der Sar',p:'GK',r:8},{n:'Reiziger',p:'RB',r:7},{n:'F.de Boer',p:'CB',r:9},{n:'Blind',p:'CB',r:8},{n:'Bogarde',p:'LB',r:7},
     {n:'Davids',p:'CDM',r:8},{n:'Seedorf',p:'CM',r:9},{n:'R.de Boer',p:'CM',r:8},{n:'Finidi',p:'RW',r:8},{n:'Kluivert',p:'ST',r:9},
     {n:'Overmars',p:'LW',r:9},{n:'Litmanen',p:'SS',r:8},{n:'Kanu',p:'ST',r:8},{n:'Scholten',p:'CB',r:7},{n:'Silooy',p:'RB',r:7},
-    {n:'Musampa',p:'CM',r:6},{n:'van Vossen',p:'ST',r:7},{n:'Babangida',p:'RW',r:7},{n:'Wouters',p:'CM',r:7},{n:'George',p:'LW',r:7},
-    
-  ]},
+    {n:'Musampa',p:'CM',r:6},{n:'van Vossen',p:'ST',r:7},{n:'Babangida',p:'RW',r:7},{n:'Wouters',p:'CM',r:7},{n:'George',p:'LW',r:7}]},
   mil_8889:{name:'AC Milan',season:'1988-89',country:'🇮🇹',club:'ac_milan',players:[
     {n:'G.Galli',p:'GK',r:7},{n:'S.Rossi',p:'GK',r:7},
     {n:'Tassotti',p:'RB',r:8},{n:'Baresi',p:'CB',r:10},{n:'Costacurta',p:'CB',r:8},{n:'Maldini',p:'LB',r:10},
     {n:'Rijkaard',p:'CDM',r:9},{n:'Ancelotti',p:'CM',r:8},{n:'Donadoni',p:'RM',r:7},{n:'Evani',p:'LM',r:7},
     {n:'van Basten',p:'ST',r:10},{n:'Gullit',p:'SS',r:9},
     {n:'Massaro',p:'ST',r:7},{n:'Virdis',p:'ST',r:7},{n:'F.Galli',p:'CB',r:7},
-    {n:'Battistini',p:'RB',r:6},{n:'Stroppa',p:'CM',r:6},
-  ]},
+    {n:'Battistini',p:'RB',r:6},{n:'Stroppa',p:'CM',r:6}]},
   mil_9394:{name:'AC Milan',season:'1993-94',country:'🇮🇹',club:'ac_milan',players:[
     {n:'S.Rossi',p:'GK',r:8},{n:'Tassotti',p:'RB',r:8},{n:'Baresi',p:'CB',r:10},{n:'Costacurta',p:'CB',r:9},{n:'Maldini',p:'LB',r:10},
     {n:'Desailly',p:'CDM',r:9},{n:'Boban',p:'CAM',r:9},{n:'Albertini',p:'CM',r:8},{n:'Donadoni',p:'CM',r:7},{n:'Savicevic',p:'SS',r:9},
     {n:'Massaro',p:'ST',r:8},{n:'Weah',p:'LW',r:8},{n:'Evani',p:'LM',r:7},{n:'Lentini',p:'RW',r:7},{n:'Panucci',p:'RB',r:7},
-    {n:'F.Galli',p:'CB',r:7},{n:'Raducioiu',p:'ST',r:7},{n:'Simone',p:'ST',r:7},{n:'Orlando',p:'CM',r:6},
-    
-  ]},
+    {n:'F.Galli',p:'CB',r:7},{n:'Raducioiu',p:'ST',r:7},{n:'Simone',p:'ST',r:7},{n:'Orlando',p:'CM',r:6}]},
   juv_9596:{name:'Juventus',season:'1995-96',country:'🇮🇹',club:'juventus',players:[
     {n:'Peruzzi',p:'GK',r:8},{n:'Torricelli',p:'RB',r:7},{n:'Ferrara',p:'CB',r:8},{n:'Montero',p:'CB',r:7},{n:'Pessotto',p:'LB',r:7},
     {n:'Deschamps',p:'CDM',r:9},{n:'Zidane',p:'CAM',r:9},{n:'Jugovic',p:'CM',r:7},{n:'Di Livio',p:'RM',r:7},{n:'Ravanelli',p:'ST',r:8},
     {n:'Del Piero',p:'SS',r:9},{n:'Vialli',p:'ST',r:9},{n:'Sousa',p:'CM',r:7},{n:'Conte',p:'CM',r:7},{n:'Tacchinardi',p:'CM',r:7},
     {n:'Vierchowod',p:'CB',r:7},{n:'Iuliano',p:'CB',r:6},{n:'Amoruso',p:'ST',r:7},{n:'Padovano',p:'ST',r:7},
-    {n:'Concetti',p:'CM',r:6},
-  ]},
+    {n:'Concetti',p:'CM',r:6}]},
   bvb_9697:{name:'Dortmund',season:'1996-97',country:'🇩🇪',club:'dortmund',players:[
     {n:'Klos',p:'GK',r:8},{n:'Reuter',p:'RB',r:7},{n:'Sammer',p:'CB',r:9},{n:'Kohler',p:'CB',r:8},{n:'Heinrich',p:'LB',r:7},
     {n:'Freund',p:'CDM',r:7},{n:'Moller',p:'SS',r:9},{n:'Zorc',p:'CM',r:7},{n:'Herrlich',p:'RW',r:7},{n:'Riedle',p:'ST',r:8},
     {n:'Chapuisat',p:'ST',r:8},{n:'Ricken',p:'CAM',r:8},{n:'Lambert',p:'CM',r:7},{n:'P.Sousa',p:'CM',r:7},{n:'Bobic',p:'ST',r:7},
-    {n:'Feiersinger',p:'CB',r:7},{n:'Beck',p:'LW',r:7},{n:'Lehmann',p:'GK',r:7},{n:'Tretschok',p:'CM',r:6},{n:'Stevovic',p:'CM',r:6},
-    {n:'Wosz',p:'CM',r:6},
-  ]},
+    {n:'Feiersinger',p:'CB',r:7},{n:'Beck',p:'LW',r:7},{n:'Lehmann',p:'GK',r:7}]},
   /* ── Millennium Masters 1998-2002 ── */
   mu_9899:{name:'Man United',season:'1998-99',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_utd',players:[
     {n:'Schmeichel',p:'GK',r:9},
@@ -1515,100 +1500,85 @@ const TEAMS = {
     {n:'Irwin',p:'LB',r:8},{n:'Silvestre',p:'LB',r:7},
     {n:'Keane',p:'CM',r:10},{n:'Scholes',p:'CM',r:9},{n:'N.Butt',p:'CM',r:7},
     {n:'Beckham',p:'RM',r:9},{n:'Giggs',p:'LM',r:9},{n:'Blomqvist',p:'LM',r:6},
-    {n:'Yorke',p:'ST',r:9},{n:'Cole',p:'ST',r:8},{n:'Sheringham',p:'ST',r:8},{n:'Solskjaer',p:'ST',r:8},
-  ]},
+    {n:'Yorke',p:'ST',r:9},{n:'Cole',p:'ST',r:8},{n:'Sheringham',p:'ST',r:8},{n:'Solskjaer',p:'ST',r:8}]},
   rm_9900:{name:'Real Madrid',season:'1999-00',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Casillas',p:'GK',r:8},
     {n:'Salgado',p:'RB',r:7},{n:'Hierro',p:'CB',r:9},{n:'Helguera',p:'CB',r:7},{n:'Karanka',p:'CB',r:6},
     {n:'Roberto Carlos',p:'LB',r:9},{n:'Savio',p:'LB',r:6},
     {n:'Redondo',p:'CDM',r:9},{n:'Makelele',p:'CDM',r:8},{n:'Guti',p:'CM',r:7},
     {n:'Raul',p:'ST',r:9},{n:'Morientes',p:'ST',r:8},{n:'Anelka',p:'ST',r:7},
-    {n:'McManaman',p:'LM',r:7},{n:'Figo',p:'RM',r:9},{n:'Munitis',p:'RW',r:6},
-  ]},
+    {n:'McManaman',p:'LM',r:7},{n:'Figo',p:'RM',r:9},{n:'Munitis',p:'RW',r:6}]},
   val_0001:{name:'Valencia',season:'2000-01',country:'🇪🇸',club:'valencia',players:[
     {n:'Canizares',p:'GK',r:9},
     {n:'Angloma',p:'RB',r:7},{n:'Pellegrino',p:'CB',r:7},{n:'Ayala',p:'CB',r:8},{n:'Carboni',p:'CB',r:7},
     {n:'Mendieta',p:'RM',r:9},{n:'Baraja',p:'CM',r:8},{n:'Albelda',p:'CDM',r:8},{n:'Vicente',p:'LM',r:8},
     {n:'Aimar',p:'CAM',r:8},{n:'Kily Gonzalez',p:'LW',r:7},
-    {n:'Carew',p:'ST',r:7},{n:'Angulo',p:'ST',r:7},{n:'Salvo',p:'ST',r:6},{n:'Djukic',p:'CB',r:6},
-  ]},
+    {n:'Carew',p:'ST',r:7},{n:'Angulo',p:'ST',r:7},{n:'Salvo',p:'ST',r:6},{n:'Djukic',p:'CB',r:6}]},
   bay_0001:{name:'Bayern Munich',season:'2000-01',country:'🇩🇪',club:'bayern',players:[
     {n:'Kahn',p:'GK',r:10},
     {n:'Sagnol',p:'RB',r:7},{n:'Linke',p:'CB',r:8},{n:'Kuffour',p:'CB',r:7},{n:'Lizarazu',p:'LB',r:8},
     {n:'Effenberg',p:'CM',r:9},{n:'Jeremies',p:'CDM',r:8},{n:'Scholl',p:'CAM',r:8},{n:'Salihamidzic',p:'RM',r:7},
     {n:'Zickler',p:'LW',r:7},{n:'Sergio',p:'CM',r:6},
-    {n:'Elber',p:'ST',r:8},{n:'Jancker',p:'ST',r:7},{n:'Tarnat',p:'LB',r:7},{n:'Nerlinger',p:'CM',r:6},
-  ]},
+    {n:'Elber',p:'ST',r:8},{n:'Jancker',p:'ST',r:7},{n:'Tarnat',p:'LB',r:7},{n:'Nerlinger',p:'CM',r:6}]},
   /* ── Los Galacticos 2001-07 ── */
   rm_0203:{name:'Real Madrid',season:'2002-03',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Casillas',p:'GK',r:9},{n:'Salgado',p:'RB',r:7},{n:'Helguera',p:'CB',r:7},{n:'Hierro',p:'CB',r:8},{n:'R.Carlos',p:'LB',r:9},
     {n:'Makelele',p:'CDM',r:9},{n:'Zidane',p:'CAM',r:10},{n:'Figo',p:'RM',r:9},{n:'Raul',p:'ST',r:9},{n:'Ronaldo',p:'ST',r:10},
     {n:'Morientes',p:'ST',r:8},{n:'Solari',p:'LW',r:7},{n:'Guti',p:'CM',r:7},{n:'F.Conceicao',p:'CM',r:7},{n:'Geremi',p:'RM',r:7},
-    {n:'Celades',p:'CM',r:6},{n:'Cesar',p:'GK',r:7},{n:'Pavon',p:'RB',r:6},{n:'McManaman',p:'LM',r:7},{n:'Portillo',p:'RW',r:6},
-    {n:'Borja',p:'ST',r:6},{n:'Mejia',p:'CB',r:6},{n:'Flavio',p:'CM',r:6},
-  ]},
+    {n:'Cesar',p:'GK',r:7},{n:'McManaman',p:'LM',r:7},
+    {n:'Flavio',p:'CM',r:6}]},
   mil_0203:{name:'AC Milan',season:'2002-03',country:'🇮🇹',club:'ac_milan',players:[
     {n:'Dida',p:'GK',r:8},{n:'Cafu',p:'RB',r:9},{n:'Nesta',p:'CB',r:10},{n:'Maldini',p:'LB',r:10},{n:'Costacurta',p:'CB',r:8},
     {n:'Gattuso',p:'CM',r:8},{n:'Pirlo',p:'CDM',r:9},{n:'Seedorf',p:'CM',r:9},{n:'Rui Costa',p:'SS',r:9},{n:'Shevchenko',p:'ST',r:10},
     {n:'Inzaghi',p:'ST',r:8},{n:'Rivaldo',p:'LW',r:8},{n:'Tomasson',p:'ST',r:7},{n:'Ambrosini',p:'CM',r:7},{n:'Serginho',p:'LM',r:7},
-    {n:'Kaladze',p:'CB',r:7},{n:'Abbiati',p:'GK',r:7},{n:'Simic',p:'CB',r:6},{n:'Borriello',p:'ST',r:6},{n:'Roque Jr',p:'CB',r:7},
-    {n:'Pancaro',p:'LB',r:6},{n:'Coco',p:'CM',r:6},{n:'Amoroso',p:'ST',r:6},{n:'Brocchi',p:'CM',r:6},
-  ]},
+    {n:'Kaladze',p:'CB',r:7},{n:'Abbiati',p:'GK',r:7},{n:'Roque Jr',p:'CB',r:7}]},
   juve_0203:{name:'Juventus',season:'2002-03',country:'🇮🇹',club:'juventus',players:[
     {n:'Buffon',p:'GK',r:10},{n:'Zambrotta',p:'RB',r:8},{n:'Thuram',p:'CB',r:9},{n:'Ferrara',p:'CB',r:7},{n:'Pessotto',p:'LB',r:7},
     {n:'Davids',p:'CDM',r:9},{n:'Nedved',p:'LW',r:9},{n:'Camoranesi',p:'RM',r:8},{n:'Trezeguet',p:'ST',r:9},{n:'Del Piero',p:'SS',r:9},
     {n:'Di Vaio',p:'ST',r:8},{n:'Montero',p:'CB',r:7},{n:'Birindelli',p:'RB',r:7},{n:'Conte',p:'CM',r:7},{n:'Tudor',p:'CB',r:7},
-    {n:'Salas',p:'ST',r:7},{n:'Miccoli',p:'LW',r:7},{n:'Appiah',p:'CM',r:6},{n:'Zalayeta',p:'ST',r:6},
-    {n:'Bonera',p:'CB',r:6},{n:'Maresca',p:'CM',r:6},{n:'Birindelli',p:'RB',r:6},
-  ]},
+    {n:'Salas',p:'ST',r:7},{n:'Miccoli',p:'LW',r:7},
+    {n:'Maresca',p:'CM',r:6}]},
   ars_0304:{name:'Arsenal',season:'2003-04',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'arsenal',players:[
     {n:'Lehmann',p:'GK',r:8},{n:'Lauren',p:'RB',r:8},{n:'Campbell',p:'CB',r:9},{n:'Toure',p:'CB',r:8},{n:'A.Cole',p:'LB',r:9},
     {n:'Vieira',p:'CM',r:9},{n:'Gilberto',p:'CDM',r:8},{n:'Ljungberg',p:'RM',r:8},{n:'Pires',p:'LM',r:9},{n:'Henry',p:'ST',r:10},
     {n:'Bergkamp',p:'SS',r:9},{n:'Reyes',p:'LW',r:8},{n:'Wiltord',p:'LW',r:7},{n:'Edu',p:'CM',r:7},{n:'Keown',p:'CB',r:7},
-    {n:'Parlour',p:'CM',r:7},{n:'Clichy',p:'LB',r:6},{n:'Cygan',p:'CB',r:6},{n:'Aliadiere',p:'ST',r:6},
-    {n:'Pennant',p:'RW',r:6},{n:'Svard',p:'CM',r:6},
-  ]},
+    {n:'Parlour',p:'CM',r:7},
+    {n:'Pennant',p:'RW',r:6},{n:'Svard',p:'CM',r:6}]},
   mu_0203:{name:'Man United',season:'2002-03',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_utd',players:[
     {n:'Barthez',p:'GK',r:7},{n:'G.Neville',p:'RB',r:8},{n:'Ferdinand',p:'CB',r:9},{n:'OShea',p:'CB',r:7},{n:'Silvestre',p:'LB',r:7},
     {n:'Keane',p:'CM',r:10},{n:'Scholes',p:'CM',r:9},{n:'Beckham',p:'RM',r:9},{n:'Giggs',p:'LM',r:9},{n:'Van Nistelrooy',p:'ST',r:10},
     {n:'Solskjaer',p:'ST',r:8},{n:'Veron',p:'CAM',r:8},{n:'N.Butt',p:'CM',r:7},{n:'P.Neville',p:'CM',r:7},{n:'Forlan',p:'ST',r:7},
-    {n:'Blanc',p:'CB',r:7},{n:'Fortune',p:'LM',r:6},{n:'Richardson',p:'LW',r:6},{n:'Howard',p:'GK',r:7},
-    {n:'Djemba-Djemba',p:'CM',r:6},{n:'Bellion',p:'LW',r:6},{n:'Pugh',p:'CB',r:6},{n:'Phil Neville',p:'CM',r:6},
-  ]},
+    {n:'Blanc',p:'CB',r:7},{n:'Howard',p:'GK',r:7},
+    {n:'Phil Neville',p:'CM',r:6}]},
   por_0304:{name:'Porto',season:'2003-04',country:'🇵🇹',club:'porto',players:[
     {n:'Baia',p:'GK',r:8},{n:'Paulo Ferreira',p:'RB',r:8},{n:'R.Carvalho',p:'CB',r:9},{n:'Jorge Costa',p:'CB',r:7},{n:'Nuno Valente',p:'LB',r:7},
     {n:'Costinha',p:'CDM',r:8},{n:'Maniche',p:'CM',r:8},{n:'Pedro Mendes',p:'CM',r:7},{n:'Deco',p:'CAM',r:9},
     {n:'McCarthy',p:'ST',r:8},{n:'Derlei',p:'ST',r:7},{n:'Alenichev',p:'LM',r:7},{n:'Postiga',p:'ST',r:7},
     {n:'Miguel',p:'RB',r:7},{n:'Nuno',p:'GK',r:7},
-  ,{n:'Bosingwa',p:'RB',r:7},{n:'Jankauskas',p:'ST',r:7}]},
+  {n:'Bosingwa',p:'RB',r:7},{n:'Jankauskas',p:'ST',r:7}]},
   liv_0405:{name:'Liverpool',season:'2004-05',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'liverpool',players:[
     {n:'Dudek',p:'GK',r:7},{n:'Finnan',p:'RB',r:7},{n:'Carragher',p:'CB',r:8},{n:'Hyypia',p:'CB',r:7},{n:'Riise',p:'LB',r:8},
     {n:'Alonso',p:'CM',r:9},{n:'Gerrard',p:'CM',r:10},{n:'Hamann',p:'CDM',r:8},{n:'Garcia',p:'CAM',r:7},{n:'Baros',p:'ST',r:7},
     {n:'Cisse',p:'ST',r:7},{n:'Kewell',p:'LW',r:7},{n:'Smicer',p:'RW',r:7},{n:'Biscan',p:'CM',r:6},{n:'Nunez',p:'ST',r:6},
     {n:'Josemi',p:'RB',r:6},{n:'Warnock',p:'LB',r:6},{n:'Traore',p:'LB',r:6},{n:'Welsh',p:'CB',r:6},
-    {n:'Le Tallec',p:'ST',r:6},
-  ]},
+    {n:'Le Tallec',p:'ST',r:6}]},
   bar_0506:{name:'Barcelona',season:'2005-06',country:'🇪🇸',club:'barcelona',players:[
     {n:'Valdes',p:'GK',r:8},{n:'Belletti',p:'RB',r:7},{n:'Puyol',p:'CB',r:9},{n:'Marquez',p:'CB',r:8},{n:'Van Bronckhorst',p:'LB',r:7},
     {n:'Edmilson',p:'CDM',r:7},{n:'Xavi',p:'CM',r:9},{n:'Deco',p:'CAM',r:9},{n:'Ronaldinho',p:'LW',r:10},{n:'Etoo',p:'ST',r:10},
     {n:'Larsson',p:'ST',r:8},{n:'Iniesta',p:'CM',r:8},{n:'Giuly',p:'RW',r:7},{n:'Sylvinho',p:'LB',r:7},{n:'Motta',p:'CM',r:7},
     {n:'Saviola',p:'ST',r:7},{n:'Oleguer',p:'RB',r:6},{n:'Albert',p:'CB',r:6},{n:'Ezquerro',p:'LW',r:6},
-    {n:'Diamanka',p:'CM',r:6},
-  ]},
+    {n:'Diamanka',p:'CM',r:6}]},
   che_0506:{name:'Chelsea',season:'2005-06',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'chelsea',players:[
-    {n:'Cech',p:'GK',r:9},{n:'Ferreira',p:'RB',r:7},{n:'Terry',p:'CB',r:9},{n:'Gallas',p:'CB',r:8},{n:'A.Cole',p:'LB',r:9},
+    {n:'Cech',p:'GK',r:9},{n:'Terry',p:'CB',r:9},{n:'Gallas',p:'CB',r:8},{n:'A.Cole',p:'LB',r:9},
     {n:'Makelele',p:'CDM',r:9},{n:'Lampard',p:'CM',r:9},{n:'Essien',p:'CM',r:8},{n:'Robben',p:'RM',r:8},{n:'Drogba',p:'ST',r:9},
     {n:'Duff',p:'LM',r:7},{n:'Wright-Phillips',p:'RW',r:7},{n:'Gudjohnsen',p:'ST',r:8},{n:'Del Horno',p:'LB',r:7},{n:'Huth',p:'CB',r:7},
-    {n:'Crespo',p:'ST',r:7},{n:'Bridge',p:'LB',r:7},{n:'Geremi',p:'RB',r:7},{n:'Kezman',p:'ST',r:6},{n:'Cudicini',p:'GK',r:7},
-    {n:'Tiago',p:'CM',r:6},
-  ]},
+    {n:'Crespo',p:'ST',r:7},{n:'Bridge',p:'LB',r:7},{n:'Geremi',p:'RB',r:7},{n:'Cudicini',p:'GK',r:7}]},
   mil_0607:{name:'AC Milan',season:'2006-07',country:'🇮🇹',club:'ac_milan',players:[
     {n:'Dida',p:'GK',r:8},{n:'Oddo',p:'RB',r:7},{n:'Nesta',p:'CB',r:10},{n:'Maldini',p:'CB',r:9},{n:'Jankulovski',p:'LB',r:7},
     {n:'Pirlo',p:'CDM',r:9},{n:'Gattuso',p:'CM',r:8},{n:'Seedorf',p:'CM',r:8},{n:'Kaka',p:'SS',r:10},{n:'Inzaghi',p:'ST',r:8},
     {n:'Gilardino',p:'ST',r:7},{n:'Cafu',p:'RB',r:7},{n:'Ambrosini',p:'CM',r:7},{n:'Emerson',p:'CDM',r:7},{n:'Rui Costa',p:'CAM',r:7},
-    {n:'Vogel',p:'CDM',r:6},{n:'Simic',p:'CB',r:6},{n:'Borriello',p:'ST',r:6},{n:'Abbiati',p:'GK',r:7},{n:'Favalli',p:'LB',r:6},
-    {n:'Bonera',p:'CB',r:6},{n:'Brocchi',p:'CM',r:6},
-  ]},
+    {n:'Abbiati',p:'GK',r:7},
+    {n:'Bonera',p:'CB',r:6},{n:'Brocchi',p:'CM',r:6}]},
   /* ── CR7 & Pep Era 2007-12 ── */
   mu_0708:{name:'Man United',season:'2007-08',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_utd',players:[
     {n:'Van der Sar',p:'GK',r:9},
@@ -1616,8 +1586,7 @@ const TEAMS = {
     {n:'Evra',p:'LB',r:8},{n:'Silvestre',p:'LB',r:6},
     {n:'Carrick',p:'CM',r:8},{n:'Hargreaves',p:'CDM',r:8},{n:'Anderson',p:'CM',r:7},{n:'Fletcher',p:'CM',r:7},
     {n:'Ronaldo',p:'RW',r:10},{n:'Nani',p:'LW',r:7},{n:'Giggs',p:'LW',r:8},{n:'Park',p:'RW',r:7},
-    {n:'Rooney',p:'ST',r:9},{n:'Tevez',p:'ST',r:9},{n:'Saha',p:'ST',r:7},
-  ]},
+    {n:'Rooney',p:'ST',r:9},{n:'Tevez',p:'ST',r:9},{n:'Saha',p:'ST',r:7}]},
   bar_0809:{name:'Barcelona',season:'2008-09',country:'🇪🇸',club:'barcelona',players:[
     {n:'Valdes',p:'GK',r:8},
     {n:'Alves',p:'RB',r:9},{n:'Puyol',p:'CB',r:9},{n:'Pique',p:'CB',r:8},{n:'Marquez',p:'CB',r:7},
@@ -1625,158 +1594,139 @@ const TEAMS = {
     {n:'Busquets',p:'CDM',r:8},{n:'Toure',p:'CDM',r:8},
     {n:'Xavi',p:'CM',r:10},{n:'Iniesta',p:'CM',r:10},{n:'Keita',p:'CM',r:7},
     {n:'Messi',p:'RW',r:10},{n:'Pedro',p:'RW',r:8},{n:'Henry',p:'LW',r:8},
-    {n:'Etoo',p:'ST',r:9},{n:'Bojan',p:'ST',r:6},
-  ]},
+    {n:'Etoo',p:'ST',r:9},{n:'Bojan',p:'ST',r:6}]},
   che_0809:{name:'Chelsea',season:'2008-09',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'chelsea',players:[
     {n:'Cech',p:'GK',r:9},{n:'Ivanovic',p:'RB',r:8},{n:'Terry',p:'CB',r:9},{n:'Alex',p:'CB',r:8},{n:'Cole A',p:'LB',r:8},
     {n:'Essien',p:'CDM',r:8},{n:'Mikel',p:'CDM',r:7},{n:'Ballack',p:'CM',r:9},{n:'Lampard',p:'CM',r:9},
     {n:'Anelka',p:'ST',r:9},{n:'Drogba',p:'ST',r:9},{n:'Malouda',p:'LW',r:7},{n:'Belletti',p:'RB',r:7},
     {n:'Bosingwa',p:'RB',r:7},{n:'Cudicini',p:'GK',r:7},
-  ,{n:'Kalou',p:'LW',r:7},{n:'J.Cole',p:'CAM',r:8}]},
+  {n:'Kalou',p:'LW',r:7},{n:'J.Cole',p:'CAM',r:8}]},
   bay_0910:{name:'Bayern Munich',season:'2009-10',country:'🇩🇪',club:'bayern',players:[
     {n:'H.Butt',p:'GK',r:7},{n:'Lahm',p:'RB',r:9},{n:'Van Buyten',p:'CB',r:8},{n:'Demichelis',p:'CB',r:7},{n:'Badstuber',p:'LB',r:7},
     {n:'Schweinsteiger',p:'CM',r:9},{n:'van Bommel',p:'CDM',r:8},{n:'Altintop',p:'CM',r:7},{n:'Muller',p:'RW',r:9},
     {n:'Robben',p:'RM',r:9},{n:'Ribery',p:'LM',r:9},{n:'Gomez',p:'ST',r:8},{n:'Olic',p:'ST',r:8},
     {n:'Sagnol',p:'RB',r:6},
-  ,{n:'Klose',p:'ST',r:8},{n:'Pranjic',p:'LB',r:7}]},
+  {n:'Klose',p:'ST',r:8},{n:'Pranjic',p:'LB',r:7}]},
   int_0910:{name:'Inter Milan',season:'2009-10',country:'🇮🇹',club:'inter',players:[
     {n:'Julio Cesar',p:'GK',r:9},{n:'Maicon',p:'RB',r:9},{n:'Lucio',p:'CB',r:8},{n:'Samuel',p:'CB',r:8},{n:'Zanetti',p:'LB',r:8},
     {n:'Cambiasso',p:'CDM',r:9},{n:'Sneijder',p:'SS',r:10},{n:'Thiago Motta',p:'CM',r:7},{n:'Etoo',p:'RW',r:9},{n:'Milito',p:'ST',r:9},
     {n:'Pandev',p:'LW',r:7},{n:'Stankovic',p:'CM',r:8},{n:'Muntari',p:'CM',r:7},{n:'Chivu',p:'LB',r:7},{n:'Balotelli',p:'ST',r:7},
-    {n:'Cordoba',p:'CB',r:7},{n:'Materazzi',p:'CB',r:7},{n:'Quaresma',p:'RW',r:6},{n:'Crespo',p:'ST',r:7},
-    {n:'Santon',p:'LB',r:6},{n:'Kharja',p:'CM',r:6},
-  ]},
+    {n:'Cordoba',p:'CB',r:7},{n:'Materazzi',p:'CB',r:7},{n:'Crespo',p:'ST',r:7}]},
   mu_1011:{name:'Man United',season:'2010-11',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_utd',players:[
     {n:'Van der Sar',p:'GK',r:8},{n:'Rafael',p:'RB',r:7},{n:'Ferdinand',p:'CB',r:9},{n:'Evans',p:'CB',r:7},{n:'Evra',p:'LB',r:8},
     {n:'Carrick',p:'CDM',r:8},{n:'Scholes',p:'CM',r:9},{n:'Valencia',p:'RM',r:8},{n:'Rooney',p:'SS',r:9},{n:'Berbatov',p:'ST',r:8},
     {n:'Hernandez',p:'ST',r:7},{n:'Giggs',p:'LM',r:8},{n:'Park',p:'RM',r:7},{n:'Nani',p:'LW',r:8},{n:'OShea',p:'CB',r:7},
     {n:'Smalling',p:'CB',r:7},{n:'Fletcher',p:'CM',r:7},{n:'Gibson',p:'CM',r:6},{n:'Fabio',p:'LB',r:6},
-    {n:'Obertan',p:'RW',r:6},
-  ]},
+    {n:'Obertan',p:'RW',r:6}]},
   bvb_1112:{name:'Dortmund',season:'2011-12',country:'🇩🇪',club:'dortmund',players:[
     {n:'Weidenfeller',p:'GK',r:8},{n:'Piszczek',p:'RB',r:8},{n:'Subotic',p:'CB',r:8},{n:'Hummels',p:'CB',r:9},{n:'Schmelzer',p:'LB',r:8},
     {n:'Kehl',p:'CDM',r:7},{n:'Bender',p:'CDM',r:7},{n:'Gundogan',p:'CM',r:8},{n:'Kagawa',p:'CAM',r:8},{n:'Lewandowski',p:'ST',r:9},
     {n:'Reus',p:'LM',r:9},{n:'Gotze',p:'CAM',r:9},{n:'Blaszczykowski',p:'RM',r:8},{n:'Grosskreutz',p:'RW',r:7},{n:'F.Santana',p:'CB',r:7},
-    {n:'Perisic',p:'LW',r:7},{n:'Kirch',p:'CM',r:6},{n:'Leitner',p:'CM',r:6},{n:'Schieber',p:'ST',r:6},
-  ]},
+    {n:'Perisic',p:'LW',r:7},{n:'Kirch',p:'CM',r:6},{n:'Leitner',p:'CM',r:6},{n:'Schieber',p:'ST',r:6}]},
   /* ── La Decima Era 2012-15 ── */
   bay_1213:{name:'Bayern Munich',season:'2012-13',country:'🇩🇪',club:'bayern',players:[
     {n:'Neuer',p:'GK',r:10},{n:'Lahm',p:'RB',r:9},{n:'Boateng',p:'CB',r:9},{n:'Dante',p:'CB',r:8},{n:'Alaba',p:'LB',r:8},
     {n:'Schweinsteiger',p:'CM',r:9},{n:'Martinez',p:'CDM',r:8},{n:'Kroos',p:'CM',r:9},{n:'Robben',p:'RM',r:9},{n:'Muller',p:'ST',r:9},
     {n:'Ribery',p:'LM',r:9},{n:'Mandzukic',p:'ST',r:8},{n:'Gomez',p:'ST',r:8},{n:'van Buyten',p:'CB',r:7},{n:'Rafinha',p:'RB',r:7},
-    {n:'Shaqiri',p:'RW',r:7},{n:'Pizarro',p:'ST',r:7},{n:'Kirchhoff',p:'CB',r:6},{n:'Olic',p:'ST',r:7},
-    {n:'Luiz Gustavo',p:'CDM',r:6},{n:'Petersen',p:'ST',r:6},
-  ]},
+    {n:'Shaqiri',p:'RW',r:7},{n:'Pizarro',p:'ST',r:7},{n:'Olic',p:'ST',r:7}]},
   che_1112:{name:'Chelsea',season:'2011-12',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'chelsea',players:[
     {n:'Cech',p:'GK',r:9},{n:'Ivanovic',p:'RB',r:8},{n:'Terry',p:'CB',r:9},{n:'Cahill',p:'CB',r:8},{n:'A.Cole',p:'LB',r:9},
     {n:'Mikel',p:'CDM',r:7},{n:'Lampard',p:'CM',r:9},{n:'Ramires',p:'CM',r:8},{n:'Mata',p:'CAM',r:9},{n:'Drogba',p:'ST',r:10},
     {n:'Kalou',p:'RW',r:7},{n:'Malouda',p:'LW',r:7},{n:'Torres',p:'ST',r:7},{n:'Sturridge',p:'ST',r:7},{n:'Bosingwa',p:'RB',r:7},
     {n:'Bertrand',p:'LB',r:6},{n:'McEachran',p:'CM',r:6},{n:'Ferreira',p:'RB',r:7},{n:'Romeu',p:'CDM',r:6},
-    {n:'Ake',p:'CB',r:6},
-  ]},
+    {n:'Ake',p:'CB',r:6}]},
   rm_1314:{name:'Real Madrid',season:'2013-14',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Casillas',p:'GK',r:8},{n:'Diego Lopez',p:'GK',r:7},
     {n:'Carvajal',p:'RB',r:8},{n:'Arbeloa',p:'RB',r:6},{n:'Varane',p:'CB',r:8},{n:'Ramos',p:'CB',r:9},{n:'Pepe',p:'CB',r:8},
     {n:'Marcelo',p:'LB',r:9},{n:'Coentrao',p:'LB',r:7},
     {n:'Alonso',p:'CDM',r:9},{n:'Khedira',p:'CDM',r:8},{n:'Modric',p:'CM',r:10},{n:'Isco',p:'CAM',r:8},
-    {n:'Ronaldo',p:'LW',r:10},{n:'Di Maria',p:'RM',r:9},{n:'Bale',p:'LW',r:9},{n:'Benzema',p:'ST',r:8},
-  ]},
+    {n:'Ronaldo',p:'LW',r:10},{n:'Di Maria',p:'RM',r:9},{n:'Bale',p:'LW',r:9},{n:'Benzema',p:'ST',r:8}]},
   atm_1314:{name:'Atletico Madrid',season:'2013-14',country:'🇪🇸',club:'atletico',players:[
     {n:'Courtois',p:'GK',r:9},{n:'Moya',p:'GK',r:7},
     {n:'Juanfran',p:'RB',r:8},{n:'Miranda',p:'CB',r:8},{n:'Godin',p:'CB',r:10},{n:'Alderweireld',p:'CB',r:7},
     {n:'Filipe Luis',p:'LB',r:8},{n:'Siqueira',p:'LB',r:6},
     {n:'Gabi',p:'CDM',r:8},{n:'Tiago',p:'CDM',r:8},{n:'Koke',p:'RM',r:8},{n:'Arda Turan',p:'LM',r:8},
-    {n:'Diego Costa',p:'ST',r:9},{n:'Villa',p:'ST',r:8},{n:'Griezmann',p:'LW',r:8},{n:'Adrian',p:'ST',r:6},
-  ]},
+    {n:'Diego Costa',p:'ST',r:9},{n:'Villa',p:'ST',r:8},{n:'Griezmann',p:'LW',r:8},{n:'Adrian',p:'ST',r:6}]},
   bar_1415:{name:'Barcelona',season:'2014-15',country:'🇪🇸',club:'barcelona',players:[
     {n:'Ter Stegen',p:'GK',r:8},{n:'Bravo',p:'GK',r:7},
     {n:'Alves',p:'RB',r:8},{n:'Puyol',p:'CB',r:7},{n:'Pique',p:'CB',r:8},{n:'Mascherano',p:'CB',r:8},
     {n:'Alba',p:'LB',r:9},{n:'Adriano',p:'LB',r:7},
     {n:'Busquets',p:'CDM',r:9},{n:'Rakitic',p:'CM',r:8},{n:'Iniesta',p:'CM',r:10},{n:'Xavi',p:'CM',r:9},
-    {n:'Messi',p:'SS',r:10},{n:'Neymar',p:'LW',r:9},{n:'Suarez',p:'ST',r:10},{n:'Pedro',p:'RW',r:7},
-  ]},
+    {n:'Messi',p:'SS',r:10},{n:'Neymar',p:'LW',r:9},{n:'Suarez',p:'ST',r:10},{n:'Pedro',p:'RW',r:7}]},
   /* ── Modern Masters 2015-20 ── */
   mon_1617:{name:'Monaco',season:'2016-17',country:'🇲🇨',club:'monaco',players:[
     {n:'Subasic',p:'GK',r:8},{n:'Sidibe',p:'RB',r:7},{n:'Jemerson',p:'CB',r:7},{n:'Glik',p:'CB',r:8},{n:'B.Mendy',p:'LB',r:8},
     {n:'Fabinho',p:'CDM',r:9},{n:'Bakayoko',p:'CDM',r:7},{n:'Bernardo Silva',p:'CM',r:9},{n:'Lemar',p:'LW',r:8},
     {n:'Mbappe',p:'RW',r:10},{n:'Falcao',p:'ST',r:9},{n:'Raggi',p:'CB',r:7},{n:'Jorge',p:'LB',r:7},
     {n:'Boschilia',p:'CM',r:6},
-  ,{n:'Moutinho',p:'CM',r:8},{n:'Germain',p:'ST',r:7}]},
+  {n:'Moutinho',p:'CM',r:8},{n:'Germain',p:'ST',r:7}]},
   rm_1718:{name:'Real Madrid',season:'2017-18',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Navas',p:'GK',r:8},{n:'Carvajal',p:'RB',r:9},{n:'Ramos',p:'CB',r:9},{n:'Varane',p:'CB',r:9},{n:'Marcelo',p:'LB',r:9},
     {n:'Casemiro',p:'CDM',r:9},{n:'Modric',p:'CM',r:10},{n:'Kroos',p:'CM',r:9},{n:'Isco',p:'CAM',r:8},
     {n:'Ronaldo',p:'LW',r:10},{n:'Benzema',p:'ST',r:8},{n:'Bale',p:'RW',r:8},{n:'Asensio',p:'RW',r:7},
     {n:'Nacho',p:'CB',r:7},{n:'Lucas V',p:'CB',r:7},
-  ,{n:'Kovacic',p:'CM',r:8}]},
+  {n:'Kovacic',p:'CM',r:8}]},
   rom_1718:{name:'Roma',season:'2017-18',country:'🇮🇹',club:'roma',players:[
     {n:'Alisson',p:'GK',r:9},{n:'Florenzi',p:'RB',r:8},{n:'Fazio',p:'CB',r:7},{n:'Manolas',p:'CB',r:8},{n:'Kolarov',p:'LB',r:8},
     {n:'De Rossi',p:'CDM',r:8},{n:'Strootman',p:'CM',r:7},{n:'Nainggolan',p:'CM',r:9},{n:'Under',p:'RW',r:8},
     {n:'El Shaarawy',p:'LW',r:8},{n:'Dzeko',p:'ST',r:9},{n:'Schick',p:'ST',r:7},{n:'Perotti',p:'LW',r:7},
     {n:'Juan Jesus',p:'CB',r:7},
-  ,{n:'Pellegrini',p:'CM',r:8},{n:'Karsdorp',p:'RB',r:7}]},
+  {n:'Pellegrini',p:'CM',r:8},{n:'Karsdorp',p:'RB',r:7}]},
   tot_1819:{name:'Tottenham',season:'2018-19',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'tottenham',players:[
     {n:'Lloris',p:'GK',r:9},{n:'Trippier',p:'RB',r:8},{n:'Alderweireld',p:'CB',r:8},{n:'Vertonghen',p:'CB',r:8},{n:'Rose',p:'LB',r:7},
     {n:'Sissoko',p:'CDM',r:7},{n:'Winks',p:'CM',r:7},{n:'Eriksen',p:'CAM',r:9},{n:'Dembele',p:'CM',r:8},
     {n:'Son',p:'LW',r:9},{n:'Kane',p:'ST',r:10},{n:'Lucas Moura',p:'RW',r:8},{n:'Llorente',p:'ST',r:7},
     {n:'Foyth',p:'CB',r:6},
-  ,{n:'Davies B',p:'LB',r:7},{n:'Aurier',p:'RB',r:7}]},
+  {n:'Davies B',p:'LB',r:7},{n:'Aurier',p:'RB',r:7}]},
   liv_1819:{name:'Liverpool',season:'2018-19',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'liverpool',players:[
     {n:'Alisson',p:'GK',r:9},{n:'TAA',p:'RB',r:9},{n:'Matip',p:'CB',r:8},{n:'Van Dijk',p:'CB',r:10},{n:'Robertson',p:'LB',r:9},
     {n:'Henderson',p:'CM',r:8},{n:'Fabinho',p:'CDM',r:8},{n:'Wijnaldum',p:'CM',r:8},{n:'Salah',p:'RW',r:10},{n:'Firmino',p:'ST',r:9},
     {n:'Mane',p:'LW',r:9},{n:'Milner',p:'CM',r:7},{n:'Shaqiri',p:'RW',r:7},{n:'Lallana',p:'CM',r:7},{n:'Origi',p:'ST',r:7},
-    {n:'Lovren',p:'CB',r:7},{n:'Gomez',p:'CB',r:7},{n:'Keita',p:'CM',r:7},{n:'Moreno',p:'LB',r:6},{n:'Mignolet',p:'GK',r:7},
-  ]},
+    {n:'Lovren',p:'CB',r:7},{n:'Gomez',p:'CB',r:7},{n:'Keita',p:'CM',r:7},{n:'Moreno',p:'LB',r:6},{n:'Mignolet',p:'GK',r:7}]},
   mci_1819:{name:'Man City',season:'2018-19',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_city',players:[
-    {n:'Ederson',p:'GK',r:9},{n:'C.Bravo',p:'GK',r:7},{n:'Walker',p:'RB',r:8},{n:'Stones',p:'CB',r:8},{n:'Laporte',p:'CB',r:9},{n:'B.Mendy',p:'LB',r:8},
+    {n:'Ederson',p:'GK',r:9},{n:'Walker',p:'RB',r:8},{n:'Stones',p:'CB',r:8},{n:'Laporte',p:'CB',r:9},{n:'B.Mendy',p:'LB',r:8},
     {n:'Fernandinho',p:'CDM',r:8},{n:'De Bruyne',p:'CM',r:10},{n:'D.Silva',p:'CAM',r:9},{n:'B.Silva',p:'RW',r:8},{n:'Aguero',p:'ST',r:10},
     {n:'Sterling',p:'LW',r:9},{n:'Gundogan',p:'CM',r:8},{n:'Sane',p:'LW',r:9},{n:'Mahrez',p:'RW',r:8},{n:'Jesus',p:'ST',r:8},
-    {n:'Danilo',p:'RB',r:7},{n:'Kompany',p:'CB',r:7},{n:'Otamendi',p:'CB',r:7},{n:'Delph',p:'LB',r:6},{n:'Zinchenko',p:'LB',r:7},
-    {n:'Danilo B',p:'RB',r:6},
-  ]},
+    {n:'Kompany',p:'CB',r:7},{n:'Otamendi',p:'CB',r:7},{n:'Zinchenko',p:'LB',r:7}]},
   bay_1920:{name:'Bayern Munich',season:'2019-20',country:'🇩🇪',club:'bayern',players:[
     {n:'Neuer',p:'GK',r:10},
     {n:'Kimmich',p:'RB',r:9},{n:'Boateng',p:'CB',r:8},{n:'Alaba',p:'CB',r:9},{n:'Sule',p:'CB',r:7},
     {n:'Davies',p:'LB',r:9},{n:'Hernandez',p:'LB',r:7},
     {n:'Goretzka',p:'CM',r:8},{n:'Thiago',p:'CM',r:9},{n:'Martinez',p:'CDM',r:7},
     {n:'Gnabry',p:'RW',r:9},{n:'Coman',p:'LW',r:8},{n:'Perisic',p:'LW',r:7},{n:'Muller',p:'SS',r:9},
-    {n:'Lewandowski',p:'ST',r:10},{n:'Tolisso',p:'CM',r:7},
-  ]},
+    {n:'Lewandowski',p:'ST',r:10},{n:'Tolisso',p:'CM',r:7}]},
   /* ── New Era 2020-23 ── */
   psg_2021:{name:'PSG',season:'2020-21',country:'🇫🇷',club:'psg',players:[
     {n:'Navas',p:'GK',r:9},{n:'Florenzi',p:'RB',r:7},{n:'Marquinhos',p:'CB',r:10},{n:'Kimpembe',p:'CB',r:8},{n:'Kurzawa',p:'LB',r:7},
     {n:'Herrera',p:'CDM',r:7},{n:'Paredes',p:'CDM',r:7},{n:'Verratti',p:'CM',r:9},{n:'Di Maria',p:'RW',r:8},
     {n:'Neymar',p:'SS',r:9},{n:'Mbappe',p:'LW',r:10},{n:'Icardi',p:'ST',r:7},{n:'Draxler',p:'LW',r:7},
     {n:'Bakker',p:'LB',r:7},
-  ,{n:'Gueye',p:'CDM',r:8},{n:'Danilo',p:'CB',r:7}]},
+  {n:'Gueye',p:'CDM',r:8},{n:'Danilo',p:'CB',r:7}]},
   che_2021:{name:'Chelsea',season:'2020-21',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'chelsea',players:[
     {n:'E.Mendy',p:'GK',r:8},
     {n:'James',p:'RB',r:8},{n:'Azpilicueta',p:'RB',r:8},{n:'Thiago Silva',p:'CB',r:9},{n:'Christensen',p:'CB',r:8},{n:'Zouma',p:'CB',r:7},
     {n:'Chilwell',p:'LB',r:8},{n:'Marcos Alonso',p:'LB',r:7},
     {n:'Kante',p:'CDM',r:10},{n:'Jorginho',p:'CDM',r:8},{n:'Kovacic',p:'CM',r:7},{n:'Mount',p:'CM',r:8},
-    {n:'Havertz',p:'SS',r:8},{n:'Werner',p:'ST',r:7},{n:'Pulisic',p:'LW',r:7},{n:'Ziyech',p:'RW',r:7},
-  ]},
+    {n:'Havertz',p:'SS',r:8},{n:'Werner',p:'ST',r:7},{n:'Pulisic',p:'LW',r:7},{n:'Ziyech',p:'RW',r:7}]},
   rm_2122:{name:'Real Madrid',season:'2021-22',country:'🇪🇸',club:'real_madrid',players:[
     {n:'Courtois',p:'GK',r:10},
     {n:'Carvajal',p:'RB',r:8},{n:'Lucas',p:'RB',r:7},{n:'Militao',p:'CB',r:9},{n:'Alaba',p:'CB',r:9},{n:'Nacho',p:'CB',r:7},
     {n:'F.Mendy',p:'LB',r:8},{n:'Camavinga',p:'LB',r:8},
     {n:'Casemiro',p:'CDM',r:9},{n:'Modric',p:'CM',r:9},{n:'Kroos',p:'CM',r:9},{n:'Valverde',p:'CM',r:8},
-    {n:'Benzema',p:'ST',r:10},{n:'Vinicius',p:'LW',r:9},{n:'Asensio',p:'RW',r:7},
-  ]},
+    {n:'Benzema',p:'ST',r:10},{n:'Vinicius',p:'LW',r:9},{n:'Asensio',p:'RW',r:7}]},
   mci_2223:{name:'Man City',season:'2022-23',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_city',players:[
     {n:'Ederson',p:'GK',r:9},{n:'Ortega',p:'GK',r:7},
     {n:'Walker',p:'RB',r:8},{n:'Stones',p:'CB',r:8},{n:'Dias',p:'CB',r:9},{n:'Akanji',p:'CB',r:7},
     {n:'Cancelo',p:'LB',r:8},{n:'S.Gomez',p:'LB',r:7},
     {n:'Rodri',p:'CDM',r:10},{n:'De Bruyne',p:'CM',r:10},{n:'Bernardo',p:'CM',r:9},{n:'Gundogan',p:'CM',r:7},
     {n:'Mahrez',p:'RW',r:8},{n:'Grealish',p:'LW',r:7},{n:'Foden',p:'LW',r:9},
-    {n:'Haaland',p:'ST',r:10},{n:'Alvarez',p:'ST',r:7},
-  ]},
+    {n:'Haaland',p:'ST',r:10},{n:'Alvarez',p:'ST',r:7}]},
   liv_2122:{name:'Liverpool',season:'2021-22',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'liverpool',players:[
     {n:'Alisson',p:'GK',r:10},
     {n:'Alexander-Arnold',p:'RB',r:10},{n:'Milner',p:'RB',r:7},{n:'Konate',p:'CB',r:8},{n:'Van Dijk',p:'CB',r:9},{n:'Matip',p:'CB',r:7},
     {n:'Robertson',p:'LB',r:9},{n:'Tsimikas',p:'LB',r:6},
     {n:'Fabinho',p:'CDM',r:9},{n:'Henderson',p:'CM',r:8},{n:'Thiago',p:'CM',r:8},{n:'Jones',p:'CM',r:7},
-    {n:'Salah',p:'RW',r:10},{n:'Mane',p:'LW',r:9},{n:'Diaz',p:'LW',r:8},{n:'Firmino',p:'ST',r:8},
-  ]},
+    {n:'Salah',p:'RW',r:10},{n:'Mane',p:'LW',r:9},{n:'Diaz',p:'LW',r:8},{n:'Firmino',p:'ST',r:8}]},
   rm_9798:{name:'Real Madrid',season:'1997-98',country:'ESP',club:'real_madrid',players:[
     {n:'Illgner',p:'GK',r:8},
     {n:'Panucci',p:'RB',r:7},{n:'Chendo',p:'RB',r:6},
@@ -1857,8 +1807,7 @@ const TOURNAMENTS = [
   {id:'alltime', name:'All Time', years:'1961–2023', emoji:'🌍',
    desc:'Every legendary squad. No era limits. The ultimate Decempionz draft pool.',
    teams:['ben_6162','int_6465','rm_6566','cel_6667','mu_6768','mil_6869','fey_6970','aja_7172','bay_7475','liv_7778','not_7980','ham_8283','liv_8384','juv_8485','ste_8586','por_8687','mil_8889','red_9091','bar_9192','mars_9293','aja_9495','mil_9394','juv_9596','bvb_9697','mu_9899','rm_9900','val_0001','bay_0001','rm_0203','mil_0203','juve_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','che_0506','mil_0607','mu_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','bvb_1112','bay_1213','che_1112','rm_1314','atm_1314','bar_1415','mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','bay_1920','psg_2021','che_2021','rm_2122','mci_2223','liv_2122','rm_9798','juv_9798','bay_9899','gal_9900'],
-   allTime:true},
-];
+   allTime:true}];
 
 /* ═══════════════════════════════════════
    KNOCKOUT OPPONENTS (cross-era)
@@ -2561,8 +2510,7 @@ function setupCampaign(){
   G.groupOppResults = [
     simGroupMatch(t1.id,t2.id),
     simGroupMatch(t1.id,t3.id),
-    simGroupMatch(t2.id,t3.id),
-  ];
+    simGroupMatch(t2.id,t3.id)];
   var _classicUsed=G.groupTeams.map(function(g){return g.team.name;});
   G.knockOpps=pickKnockSeq([KNOCKOUT_OPPS.r16,KNOCKOUT_OPPS.qf,KNOCKOUT_OPPS.sf,KNOCKOUT_OPPS.final],_classicUsed);
   G.phase='group';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
@@ -2954,8 +2902,7 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   myMins.sort((a,b)=>a-b);oppMins.sort((a,b)=>a-b);
   const nTpls=[
     m=>`${m}' 🟡 Yellow card`,m=>`${m}' 💫 Stunning save`,
-    m=>`${m}' 🎯 Off the post!`,m=>`${m}' ↔️ Substitution`,m=>`${m}' ⚠️ VAR — play on`,
-  ];
+    m=>`${m}' 🎯 Off the post!`,m=>`${m}' ↔️ Substitution`,m=>`${m}' ⚠️ VAR — play on`];
   const nMins=[];
   for(let i=0;i<3;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
   let ms=0,os=0;
@@ -3197,8 +3144,7 @@ function showResult(){
       [myXG.toFixed(2),t('match.xg'),oppXG.toFixed(2)],
       [corners,t('match.corners'),oppCorners],
       [myG,t('match.goals'),oppG],
-      [yellowCards,t('match.yellows'),'—'],
-    ].map(([h,l,a])=>'<tr><td class="tcs-home">'+h+'</td><td class="tcs-lbl">'+l+'</td><td class="tcs-away">'+a+'</td></tr>')
+      [yellowCards,t('match.yellows'),'—']].map(([h,l,a])=>'<tr><td class="tcs-home">'+h+'</td><td class="tcs-lbl">'+l+'</td><td class="tcs-away">'+a+'</td></tr>')
     .join('')+'</tbody></table>';
 
   // Scorers compact — show both sides
