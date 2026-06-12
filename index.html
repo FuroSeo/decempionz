@@ -889,7 +889,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.4.28';
+const GAME_VERSION='4.5.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3902,6 +3902,43 @@ function _devMockGameOver(){
   closeDevPanel();showGameOver();
 }
 
+/* ── Dev: Coach Assignment ── */
+function _devAssignCoach(){
+  var idx=parseInt(document.getElementById('dv-coach-sel').value)||0;
+  var customPct=parseFloat(document.getElementById('dv-coach-boost').value)||0;
+  var coach=COACHES[Math.max(0,Math.min(COACHES.length-1,idx))];
+  if(!coach)return;
+  customPct=Math.min(20,Math.max(0,customPct));
+  var compat=customPct>0?3:coachCompat(coach.pref,G.formation||'4-3-3');
+  var boost=customPct>0?1+(customPct/100):coachBoostMul(compat);
+  G.coach={name:coach.n,pref:coach.pref,compat:compat,boost:boost};
+  G._coachPool=[coach];
+  var st=document.getElementById('dv-coach-status');
+  var pct=((boost-1)*100).toFixed(1);
+  if(st)st.innerHTML='✅ <strong style="color:#eab308">'+coach.n+'</strong> — boost: <strong style="color:#22c55e">+'+(pct>0?pct:'0')+'%</strong>';
+}
+/* ── Dev: Toggle Language ── */
+function _devToggleLang(){
+  toggleLang();
+  var b=document.getElementById('dv-lang-btn');
+  if(b)b.textContent='🌐 Lingua: '+(G.lang||'it').toUpperCase();
+}
+/* ── Dev: Set Tactic ── */
+function _devSetTactic(t){
+  G.tactic=t;
+  document.querySelectorAll('.dv-tact-btn').forEach(function(b){
+    var on=b.dataset.t===t;
+    b.style.opacity=on?'1':'.4';
+    b.style.fontWeight=on?'700':'400';
+  });
+}
+/* ── Dev: Set Momentum ── */
+function _devSetMom(v){
+  G.momentum=parseInt(v)||0;
+  var l=document.getElementById('dv-mom-lbl');
+  if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
+}
+
 </script>
 
 <div id="share-toast">📋 Copied to clipboard!</div>
@@ -3983,4 +4020,138 @@ function _devMockGameOver(){
 
     <!-- Quick Draft -->
     <div style="margin-bottom:16px">
-     
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Draft automatico</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">⭐ Top XI</button>
+        <button onclick="_devQuickDraft('random')" style="flex:1;background:#1a1a1a;border:1px solid #555;color:#ccc;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🎲 Random XI</button>
+      </div>
+      <div id="dv-squad-display"></div>
+    </div>
+
+    <!-- Jump to Round -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Salta al turno <span style="color:#444">(richiede draft)</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <button onclick="_devJumpRound('group',0)" class="dv-btn">Girone 1</button>
+        <button onclick="_devJumpRound('group',2)" class="dv-btn">Girone 3</button>
+        <button onclick="_devJumpRound('knockout',0)" class="dv-btn">R16/Turno 1</button>
+        <button onclick="_devJumpRound('knockout',1)" class="dv-btn">QF</button>
+        <button onclick="_devJumpRound('knockout',2)" class="dv-btn">SF</button>
+        <button onclick="_devJumpRound('knockout',3)" class="dv-btn">Finale</button>
+      </div>
+    </div>
+
+    <!-- Force Outcome -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Forza esito prossima partita</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">
+        <button onclick="_devForceScore(3,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">3–0</button>
+        <button onclick="_devForceScore(1,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">1–0</button>
+        <button onclick="_devForceScore(1,1)" class="dv-btn" style="border-color:#eab308;color:#eab308">1–1</button>
+        <button onclick="_devForceScore(0,1)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–1</button>
+        <button onclick="_devForceScore(0,3)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–3</button>
+        <button onclick="_devForceScore(null,null)" class="dv-btn" style="border-color:#555;color:#777">Reset</button>
+      </div>
+      <div id="dv-force-status" style="font-size:.68rem;color:#eab308;min-height:14px"></div>
+    </div>
+
+    <!-- Stress Test -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Stress test simulazione</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px">
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">N partite</div>
+          <input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Forza avv.</div>
+          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Mod extra</div>
+          <input id="dv-oppmod" type="number" value="0" min="-3" max="3" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
+        </div>
+      </div>
+      <button onclick="_devStressTest()" style="width:100%;background:#1a1a2a;border:1px solid #3b82f6;color:#60a5fa;border-radius:8px;padding:9px;font-size:.78rem;cursor:pointer;font-weight:600">▶ Esegui Stress Test</button>
+      <div id="dv-stress-result" style="margin-top:6px;min-height:14px"></div>
+    </div>
+
+    <!-- Coach Assignment -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Assegna allenatore</div>
+      <div style="display:grid;grid-template-columns:1fr 86px;gap:7px;margin-bottom:7px">
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Allenatore</div>
+          <select id="dv-coach-sel" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.68rem">
+            <option value="0">Rinus Michels (4-3-3)</option>
+            <option value="1">Helenio Herrera (3-5-2)</option>
+            <option value="2">Nereo Rocco (5-4-1)</option>
+            <option value="3">Ernst Happel (4-4-2)</option>
+            <option value="4">Valeriy Lobanovskyi (4-4-2)</option>
+            <option value="5">Nils Liedholm (4-3-3)</option>
+            <option value="6">Arrigo Sacchi (4-4-2)</option>
+            <option value="7">Johan Cruyff (3-4-3)</option>
+            <option value="8">Fabio Capello (4-4-2)</option>
+            <option value="9">G. Trapattoni (5-3-2)</option>
+            <option value="10">Marcello Lippi (3-5-2)</option>
+            <option value="11">Louis van Gaal (3-4-3)</option>
+            <option value="12">S-G Eriksson (4-4-2)</option>
+            <option value="13">Sir Alex Ferguson (4-4-2)</option>
+            <option value="14">Ottmar Hitzfeld (4-2-3-1)</option>
+            <option value="15">Carlo Ancelotti (4-4-2)</option>
+            <option value="16">José Mourinho (4-5-1)</option>
+            <option value="17">Rafael Benítez (4-4-2)</option>
+            <option value="18">Guus Hiddink (4-3-3)</option>
+            <option value="19">V. del Bosque (4-2-3-1)</option>
+            <option value="20">L.F. Scolari (4-2-3-1)</option>
+            <option value="21">Didier Deschamps (4-5-1)</option>
+            <option value="22">Jupp Heynckes (4-2-3-1)</option>
+            <option value="23">Pep Guardiola (4-3-3)</option>
+            <option value="24">Jürgen Klopp (4-3-3)</option>
+            <option value="25">Antonio Conte (3-5-2)</option>
+            <option value="26">Zinedine Zidane (4-3-3)</option>
+            <option value="27">Diego Simeone (4-5-1)</option>
+            <option value="28">Roberto Mancini (4-2-3-1)</option>
+            <option value="29">Claudio Ranieri (4-4-2)</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Boost % (0=auto)</div>
+          <input id="dv-coach-boost" type="number" value="0" min="0" max="20" step="1" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
+        </div>
+      </div>
+      <button onclick="_devAssignCoach()" style="width:100%;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:9px;font-size:.78rem;cursor:pointer;font-weight:600">👔 Assegna Allenatore</button>
+      <div id="dv-coach-status" style="font-size:.68rem;color:#888;min-height:14px;margin-top:5px"></div>
+    </div>
+
+    <!-- Tactic & Momentum -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Tattica &amp; Momentum</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button data-t="attack" class="dv-tact-btn dv-btn" onclick="_devSetTactic('attack')" style="flex:1;border-color:#ef4444;color:#ef4444">⚔️ Attack</button>
+        <button data-t="balanced" class="dv-tact-btn dv-btn" onclick="_devSetTactic('balanced')" style="flex:1;border-color:#3b82f6;color:#60a5fa;font-weight:700">⚖️ Balanced</button>
+        <button data-t="defend" class="dv-tact-btn dv-btn" onclick="_devSetTactic('defend')" style="flex:1;border-color:#22c55e;color:#22c55e">🛡 Defend</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:.62rem;color:#666;white-space:nowrap">Momentum:</div>
+        <input type="range" min="-5" max="5" value="0" oninput="_devSetMom(this.value)" style="flex:1;accent-color:#eab308;cursor:pointer">
+        <div id="dv-mom-lbl" style="font-size:.78rem;font-weight:700;color:#eab308;min-width:24px;text-align:right">0</div>
+      </div>
+    </div>
+
+    <!-- Mock Screens & Utility -->
+    <div style="margin-bottom:4px">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Mock schermate &amp; utility</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        <button onclick="_devMockResult()" class="dv-btn">📊 Risultato</button>
+        <button onclick="_devMockTrophy()" class="dv-btn">🏆 Trofeo</button>
+        <button onclick="_devMockGameOver()" class="dv-btn">💀 Game Over</button>
+      </div>
+      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🌐 Lingua: IT</button>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
