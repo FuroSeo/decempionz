@@ -525,8 +525,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="step-row"><div class="sn">03</div><div data-i18n-html="home.step3" class="st"><strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.</div></div>
   </div>
 
-  <button class="btn btn-gold" onclick="startGame()" style="font-size:1rem;padding:17px;letter-spacing:.5px">🏆 Road to Glory</button>
-  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:8px">❓ How to play</button>
+  <button class="btn btn-gold" onclick="quickStart()" style="font-size:1.05rem;padding:17px;letter-spacing:.5px">
+    <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
+    <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.6rem;font-weight:400;opacity:.75;letter-spacing:.3px;margin-top:3px">Classic · All Time · Normale</span>
+  </button>
+  <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
+  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;opacity:.7;font-size:.82rem">❓ Come si gioca</button>
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
     <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
@@ -889,7 +893,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.0';
+const GAME_VERSION='4.5.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -901,6 +905,9 @@ const STRINGS={
     'home.step1':'<strong>Scegli l\'era e la formazione</strong> — 10 ere, 1961–2023, 1123 giocatori leggendari. Le posizioni sono fisse.',
     'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. Non ti piacciono? Reroll — ma sono limitati.',
     'home.step3':'<strong>Conquista l\'Europa</strong> — leggi il report dello scout, scegli la tattica e batti la fase a gironi e i playoff.',
+    'home.btn_quick':'⚽ Gioca subito',
+    'home.btn_quick_sub':'Classic · All Time · Normale',
+    'home.btn_custom':'⚙️ Personalizza',
     'home.howtoplay_btn':'❓ Come si gioca',
     'diff.easy':'🟢 Facile',
     'diff.normal':'🟡 Normale',
@@ -1058,6 +1065,9 @@ const STRINGS={
     'home.step1':'<strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1123 legendary players. Position slots are strict.',
     'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.',
     'home.step3':'<strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.',
+    'home.btn_quick':'⚽ Play Now',
+    'home.btn_quick_sub':'Classic · All Time · Normal',
+    'home.btn_custom':'⚙️ Customize',
     'home.howtoplay_btn':'❓ How to play',
     'diff.easy':'🟢 Easy',
     'diff.normal':'🟡 Normal',
@@ -2039,6 +2049,22 @@ function startGame(){
   const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
+}
+function quickStart(){
+  selectedFormat='classic';
+  selectedEraT=null;
+  selectedDiff='normal';
+  G.format='classic';
+  G.difficulty='normal';
+  const era=TOURNAMENTS.find(function(t){return t.id==='alltime';});
+  applyTournament(era);
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  showScreen('screen-formation');
 }
 function selectFormat(f,el){
   selectedFormat=f;
