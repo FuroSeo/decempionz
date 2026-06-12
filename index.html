@@ -514,7 +514,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div style="text-align:center;margin-bottom:20px;padding-top:16px">
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
     <h1 class="logo">Decempionz</h1>
-    <p data-i18n-html="home.subtitle" style="color:var(--text);margin-top:12px;font-size:1rem;line-height:1.55;font-weight:600;letter-spacing:-.01em">Zidane. Maldini. Ronaldo R9.<br>Insieme, una volta sola.</p>
+    <p data-i18n-html="home.subtitle" style="color:var(--text);margin-top:12px;font-size:1rem;line-height:1.55;font-weight:600;letter-spacing:-.01em">I Campioni che hanno fatto la storia</p>
   </div>
 
   <!-- CTA -->
@@ -927,14 +927,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.6.3';
+const GAME_VERSION='4.6.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
 const STRINGS={
   it:{
     'home.tagline':'Il Draft di Calcio Definitivo',
-    'home.subtitle':'Zidane. Maldini. Ronaldo R9.<br>Insieme, una volta sola.',
+    'home.subtitle':'I Campioni che hanno fatto la storia',
     'home.how_it_works':'Come funziona',
     'home.step1':'<strong>Scegli la formazione</strong> — o parti subito con i default. 10 ere, 1961–2023, 1123 campioni.',
     'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. I reroll sono limitati — scegli con cura.',
@@ -1116,7 +1116,7 @@ const STRINGS={
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
-    'home.subtitle':'Zidane. Maldini. Ronaldo R9.<br>Together, just once.',
+    'home.subtitle':'The Legends Who Made History',
     'home.how_it_works':'How it works',
     'home.step1':'<strong>Pick your formation</strong> — or jump straight in with defaults. 10 eras, 1961–2023, 1123 legends.',
     'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Rerolls are limited — choose wisely.',
@@ -4163,4 +4163,110 @@ function _devStressTest(){
     +'<div style="width:'+dBar+'%;background:#eab308"></div>'
     +'<div style="width:'+lBar+'%;background:#ef4444"></div>'
     +'</div>'
-    +'<div style="display:flex;justify-content:space-between;font-
+    +'<div style="display:flex;justify-content:space-between;font-size:.72rem">'
+    +'<span style="color:#22c55e">🟢 V '+wins+' ('+p(wins)+'%)</span>'
+    +'<span style="color:#eab308">P '+draws+' ('+p(draws)+'%)</span>'
+    +'<span style="color:#ef4444">🔴 S '+losses+' ('+p(losses)+'%)</span>'
+    +'</div>'
+    +'<div style="font-size:.65rem;color:#555;margin-top:6px">Media gol: <strong style="color:#999">'+(gf/N).toFixed(2)+'</strong> – <strong style="color:#999">'+(ga/N).toFixed(2)+'</strong> per partita &nbsp;·&nbsp; atk <strong style="color:#999">'+atk.toFixed(2)+'</strong> def <strong style="color:#999">'+def2.toFixed(2)+'</strong></div>'
+    +'</div>';
+}
+
+/* ── Mock screens ── */
+function _devEnsureSquad(){
+  if(!G.squad||G.squad.length<1){
+    _devQuickDraft('top');
+    return false;
+  }
+  return true;
+}
+function _devMockResult(){
+  if(!_devEnsureSquad())return;
+  M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;
+  M.isKnockout=false;M.roundLabel='Dev Test';M.oppName='Dev FC';
+  M.log=[];M.penResult=null;M.eliminated=false;
+  if(!G.groupUserResults)G.groupUserResults=[];
+  closeDevPanel();showResult();
+}
+function _devMockTrophy(){
+  if(!_devEnsureSquad())return;
+  if(!G.groupUserResults.length)
+    [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
+  if(!G.knockResults.length)
+    ['R16','QF','SF','FIN'].forEach(function(r){G.knockResults.push({myG:1,oppG:0,stars:2,opp:'Dev '+r});});
+  closeDevPanel();showTrophy();
+}
+function _devMockGameOver(){
+  if(!_devEnsureSquad())return;
+  G.phase='knockout';G.knockRound=1;
+  if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
+  if(!G.knockResults.length) G.knockResults.push({myG:0,oppG:2,stars:0,opp:'Dev FC'});
+  M.myG=0;M.oppG=2;M.oppName='Dev FC';
+  closeDevPanel();showGameOver();
+}
+
+/* ── Dev: Coach Assignment ── */
+function _devAssignCoach(){
+  var idx=parseInt(document.getElementById('dv-coach-sel').value)||0;
+  var customPct=parseFloat(document.getElementById('dv-coach-boost').value)||0;
+  var coach=COACHES[Math.max(0,Math.min(COACHES.length-1,idx))];
+  if(!coach)return;
+  customPct=Math.min(20,Math.max(0,customPct));
+  var compat=customPct>0?3:coachCompat(coach.pref,G.formation||'4-3-3');
+  var boost=customPct>0?1+(customPct/100):coachBoostMul(compat);
+  G.coach={name:coach.n,pref:coach.pref,compat:compat,boost:boost};
+  G._coachPool=[coach];
+  var st=document.getElementById('dv-coach-status');
+  var pct=((boost-1)*100).toFixed(1);
+  if(st)st.innerHTML='✅ <strong style="color:#eab308">'+coach.n+'</strong> — boost: <strong style="color:#22c55e">+'+(pct>0?pct:'0')+'%</strong>';
+}
+/* ── Dev: Toggle Language ── */
+function _devToggleLang(){
+  toggleLang();
+  var b=document.getElementById('dv-lang-btn');
+  if(b)b.textContent='🌐 Lingua: '+(G.lang||'it').toUpperCase();
+}
+/* ── Dev: Set Tactic ── */
+function _devSetTactic(t){
+  G.tactic=t;
+  document.querySelectorAll('.dv-tact-btn').forEach(function(b){
+    var on=b.dataset.t===t;
+    b.style.opacity=on?'1':'.4';
+    b.style.fontWeight=on?'700':'400';
+  });
+}
+/* ── Dev: Set Momentum ── */
+function _devSetMom(v){
+  G.momentum=parseInt(v)||0;
+  var l=document.getElementById('dv-mom-lbl');
+  if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
+}
+
+</script>
+
+<div id="share-toast">📋 Copied to clipboard!</div>
+<!-- Legal modal -->
+<!-- Fan Project modal -->
+<div id="modal-fanproject" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div class="modal-legal-box">
+    <h2>Fan Project</h2>
+    <h3 data-i18n="fp.h_disclaimer">Disclaimer</h3>
+    <p data-i18n-html="fp.p_disclaimer"></p>
+    <h3 data-i18n="fp.h_copyright">Copyright</h3>
+    <p data-i18n-html="fp.p_copyright"></p>
+    <h3 data-i18n="fp.h_terms">Termini di utilizzo</h3>
+    <p data-i18n-html="fp.p_terms"></p>
+    <button class="modal-legal-close" onclick="closeFanProject()" data-i18n="modal.close">Chiudi</button>
+  </div>
+</div>
+
+<!-- Privacy modal -->
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div class="modal-legal-box">
+    <h2>Privacy Policy</h2>
+    <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
+    <p data-i18n-html="priv.p_data"></p>
+    <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
+    <p data-i18n-html="priv.p_cookies"></p>
+    <h3 data-i18n="priv.h_scripts">Script   <h3 data-i18n="priv.h_gdpr">I tuoi diritti (GDPR)</h3>
+    <p
