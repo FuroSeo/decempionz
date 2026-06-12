@@ -834,8 +834,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <button class="btn btn-share" style="font-size:.9rem;margin-bottom:8px" onclick="shareResult()">📤 Share Run</button>
-  <button class="btn btn-gold" onclick="startGame()">🎲 Try Again</button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-gold" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
 </div>
 
 <!-- TROPHY -->
@@ -882,8 +882,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
 
     <button class="btn btn-share" style="font-size:1rem;margin-bottom:8px" onclick="shareResult()">📤 Share Result</button>
-    <button class="btn btn-gold" style="font-size:1rem" onclick="startGame()">🎲 Play Again</button>
-    <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+    <button class="btn btn-gold" style="font-size:1rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Play Again</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
   </div>
 </div>
 
@@ -1027,6 +1027,8 @@ const STRINGS={
     'btn.group_exit':'Uscita dal girone →',
     'btn.knockouts':'Playoff →',
     'btn.trophy':'🏆 Alza il trofeo!',
+    'btn.replay':'⚽ Nuova Partita',
+    'btn.change_rules':'⚙️ Cambia regole',
     'nuovo.league_phase':'Fase di Lega',
     'nuovo.qualify_at':'Soglia: 8 pt',
     'nuovo.of6':'di 6 ·',
@@ -1204,6 +1206,8 @@ const STRINGS={
     'btn.group_exit':'Group exit →',
     'btn.knockouts':'Knockouts →',
     'btn.trophy':'🏆 Lift the trophy!',
+    'btn.replay':'⚽ Play Again',
+    'btn.change_rules':'⚙️ Change Rules',
     'nuovo.league_phase':'League Phase',
     'nuovo.qualify_at':'Qualify at',
     'nuovo.of6':'of 6 played ·',
@@ -2101,6 +2105,24 @@ function startGame(){
   showScreen('screen-format');
   updateEraDisplay();
 }
+function replayGame(){
+  // Keep current era (G.tournament), format (G.format), difficulty (G.difficulty)
+  // Reset all match/campaign state
+  var era=G.tournament;
+  var fmt=G.format;
+  var diff=G.difficulty||'normal';
+  applyTournament(era);
+  G.format=fmt;G.difficulty=diff;
+  G.phase=(fmt==='coppa')?'knockout':'group';
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  showScreen('screen-formation');
+}
+
 function quickStart(){
   selectedFormat='classic';
   selectedEraT=null;
@@ -4159,24 +4181,4 @@ function _devSetMom(v){
           <select id="dv-format" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
             <option value="classic">Classic</option>
             <option value="coppa">Old Cup</option>
-            <option value="nuovo">New Format</option>
-          </select>
-        </div>
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Formazione</div>
-          <select id="dv-form" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
-            <option value="4-3-3">4-3-3</option>
-            <option value="4-4-2">4-4-2</option>
-            <option value="4-2-3-1">4-2-3-1</option>
-            <option value="3-5-2">3-5-2</option>
-            <option value="4-1-4-1">4-1-4-1</option>
-            <option value="3-4-3">3-4-3</option>
-            <option value="5-3-2">5-3-2</option>
-            <option value="4-5-1">4-5-1</option>
-            <option value="5-4-1">5-4-1</option>
-            <option value="3-6-1">3-6-1</option>
-          </select>
-        </div>
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Difficoltà</div>
-          <selec
+            <option value="nuovo">New Forma
