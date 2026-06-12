@@ -446,12 +446,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px 20px}
 .modal-legal-box h2{font-size:.95rem;font-weight:900;color:var(--gold);margin-bottom:18px;
   letter-spacing:.5px;text-align:center}
-.modal-legal-box h3{font-size:.72rem;font-weight:700;color:#eef2ff;margin:16px 0 6px;
+.modal-legal-box h3{font-size:.72rem;font-weight:700;color:var(--text);margin:16px 0 6px;
   text-transform:uppercase;letter-spacing:.8px}
 .modal-legal-box p{font-size:.68rem;color:var(--mut);line-height:1.65;margin:0}
 .modal-legal-close{display:block;width:100%;margin-top:22px;padding:10px;
   background:var(--s2);border:1px solid var(--brd);border-radius:8px;
-  color:#eef2ff;font-size:.72rem;font-weight:700;cursor:pointer;text-align:center}
+  color:var(--text);font-size:.72rem;font-weight:700;cursor:pointer;text-align:center}
 .modal-legal-close:hover{background:var(--gold);color:#000}
 /* ── First-visit banner ── */
 #banner-disclaimer{position:fixed;bottom:0;left:0;right:0;background:var(--s1);
@@ -537,9 +537,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
-    <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
-    <a onclick="openLegal()">Privacy</a> &nbsp;·&nbsp;
-    <a href="https://ko-fi.com/decempionz" target="_blank" rel="noopener">☕ Support</a>
+    <a onclick="openFanProject()">Fan Project</a> &nbsp;·&nbsp;
+    <a onclick="openPrivacy()">Privacy</a>
   </div>
 </div>
 
@@ -897,7 +896,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.3';
+const GAME_VERSION='4.5.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3603,6 +3602,10 @@ document.addEventListener('DOMContentLoaded',function(){
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
 function openLegal(){document.getElementById('modal-legal').classList.add('open');}
 function closeLegal(){document.getElementById('modal-legal').classList.remove('open');}
+function openFanProject(){var m=document.getElementById('modal-fanproject');m.style.display='flex';}
+function closeFanProject(){document.getElementById('modal-fanproject').style.display='none';}
+function openPrivacy(){var m=document.getElementById('modal-privacy');m.style.display='flex';}
+function closePrivacy(){document.getElementById('modal-privacy').style.display='none';}
 function closeBanner(){
   document.getElementById('banner-disclaimer').style.display='none';
   try{localStorage.setItem('dcz_disclaimer','1');}catch(e){}
@@ -3974,20 +3977,40 @@ function _devSetMom(v){
 
 <div id="share-toast">📋 Copied to clipboard!</div>
 <!-- Legal modal -->
-<div id="modal-legal">
+<!-- Fan Project modal -->
+<div id="modal-fanproject" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
   <div class="modal-legal-box">
-    <h2>Legal &amp; Disclaimers</h2>
-    <h3>Fan Project Disclaimer</h3>
-    <p>Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club. Player names, team names, and historical references are used purely for recreational purposes under fan creativity principles.</p>
+    <h2>Fan Project</h2>
+    <h3>Disclaimer</h3>
+    <p>Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.</p>
     <h3>Copyright</h3>
-    <p>© 2026 Decempionz. All original game design, code, and creative content are the property of Decempionz. Historical football data is used for non-commercial fan purposes only.</p>
-    <h3>Privacy &amp; Cookies</h3>
-    <p>Decempionz does not collect, store, or transmit any personal data. No cookies are used for tracking — only a localStorage key stores your theme preference. No analytics, no third-party scripts.</p>
+    <p>© 2026 Decempionz. All original game design, code, mechanics, and creative content are the intellectual property of Decempionz. Historical football data is used for non-commercial fan purposes only. Redistribution or commercial use of any part of this project is not permitted without explicit written consent.</p>
     <h3>Terms of Use</h3>
-    <p>For personal entertainment only. Do not redistribute or claim ownership of any content.</p>
-    <button class="modal-legal-close" onclick="closeLegal()">Close</button>
+    <p>Decempionz is provided free of charge for personal entertainment only. By playing you agree not to redistribute, clone, or commercialise any part of this project. The author reserves the right to modify or discontinue the game at any time without notice.</p>
+    <button class="modal-legal-close" onclick="closeFanProject()">Chiudi / Close</button>
   </div>
 </div>
+
+<!-- Privacy modal -->
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div class="modal-legal-box">
+    <h2>Privacy Policy</h2>
+    <h3>Nessuna raccolta di dati</h3>
+    <p>Decempionz non raccoglie, non archivia e non trasmette alcun dato personale. Non è richiesta registrazione. Non vengono richiesti nome, email, indirizzo o qualsiasi altro dato identificativo.</p>
+    <h3>Cookie e archiviazione locale</h3>
+    <p>Nessun cookie di tracciamento o profilazione viene utilizzato. L'unico dato salvato sul tuo dispositivo è la preferenza tema (chiaro/scuro), archiviata tramite <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. Puoi cancellarlo in qualsiasi momento svuotando la cache del browser.</p>
+    <h3>Script di terze parti</h3>
+    <p>Decempionz non carica script analytics (Google Analytics, Matomo o simili), pixel di tracciamento, CDN esterne o qualsiasi risorsa di terze parti. Il gioco funziona interamente lato client, in un singolo file HTML.</p>
+    <h3>I tuoi diritti (GDPR)</h3>
+    <p>Non essendo raccolto alcun dato personale, non vi sono dati da consultare, modificare o cancellare. Se hai domande contatta l'autore tramite i canali ufficiali del progetto.</p>
+    <h3>Aggiornamenti</h3>
+    <p>Questa policy può essere aggiornata in seguito a modifiche tecniche del progetto. La versione attiva è sempre quella visibile in questa schermata.</p>
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi / Close</button>
+  </div>
+</div>
+
+<!-- Legacy modal (kept for backward compat, hidden) -->
+<div id="modal-legal" style="display:none"></div>
 
 <!-- DISCLAIMER BANNER -->
 <div id="banner-disclaimer">
@@ -4151,32 +4174,4 @@ function _devSetMom(v){
           <input id="dv-coach-boost" type="number" value="0" min="0" max="20" step="1" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
         </div>
       </div>
-      <button onclick="_devAssignCoach()" style="width:100%;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:9px;font-size:.78rem;cursor:pointer;font-weight:600">👔 Assegna Allenatore</button>
-      <div id="dv-coach-status" style="font-size:.68rem;color:#888;min-height:14px;margin-top:5px"></div>
-    </div>
-
-    <!-- Tactic & Momentum -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Tattica &amp; Momentum</div>
-      <div style="display:flex;gap:6px;margin-bottom:10px">
-        <button data-t="attack" class="dv-tact-btn dv-btn" onclick="_devSetTactic('attack')" style="flex:1;border-color:#ef4444;color:#ef4444">⚔️ Attack</button>
-        <button data-t="balanced" class="dv-tact-btn dv-btn" onclick="_devSetTactic('balanced')" style="flex:1;border-color:#3b82f6;color:#60a5fa;font-weight:700">⚖️ Balanced</button>
-        <button data-t="defend" class="dv-tact-btn dv-btn" onclick="_devSetTactic('defend')" style="flex:1;border-color:#22c55e;color:#22c55e">🛡 Defend</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:.62rem;color:#666;white-space:nowrap">Momentum:</div>
-        <input type="range" min="-5" max="5" value="0" oninput="_devSetMom(this.value)" style="flex:1;accent-color:#eab308;cursor:pointer">
-        <div id="dv-mom-lbl" style="font-size:.78rem;font-weight:700;color:#eab308;min-width:24px;text-align:right">0</div>
-      </div>
-    </div>
-
-    <!-- Mock Screens & Utility -->
-    <div style="margin-bottom:4px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Mock schermate &amp; utility</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-        <button onclick="_devMockResult()" class="dv-btn">📊 Risultato</button>
-        <button onclick="_devMockTrophy()" class="dv-btn">🏆 Trofeo</button>
-        <button onclick="_devMockGameOver()" class="dv-btn">💀 Game Over</button>
-      </div>
-      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🌐 Lingua: IT</button>
-    <
+      <
