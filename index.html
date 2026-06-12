@@ -290,25 +290,21 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   display:flex;flex-direction:column;gap:8px;min-height:190px;}
 .dp-row{display:flex;justify-content:center;gap:8px;align-items:center;}
 /* Base */
-.dp-slot{border-radius:50%;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;transition:all .2s;flex-shrink:0;border:2px solid transparent;}
-/* Empty: small dot, no text shown via CSS */
-.dp-slot.empty{width:26px;height:26px;font-size:0;background:rgba(0,0,0,.35);}
-.dp-gk.empty{background:rgba(96,165,250,.22);border-color:rgba(96,165,250,.45);}
-.dp-def.empty{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.4);}
-.dp-mid.empty{background:rgba(251,191,36,.18);border-color:rgba(251,191,36,.4);}
-.dp-fwd.empty{background:rgba(248,113,113,.18);border-color:rgba(248,113,113,.4);}
-/* Target: expands + shows label + glows */
-.dp-slot.target{
-  width:42px;height:42px;font-size:.52rem;font-weight:800;
-  text-transform:uppercase;letter-spacing:.2px;
-  animation:tpulse 1s ease-in-out infinite alternate;}
-@keyframes tpulse{from{opacity:.75;transform:scale(.96)}to{opacity:1;transform:scale(1.06)}}
+.dp-slot{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;transition:all .2s;flex-shrink:0;}
+/* Empty: ghost sprite, no background */
+.dp-slot.empty{background:none;border:none;}
+/* Target: sprite with group color, pulse animation */
+.dp-slot.target{animation:tpulse 1s ease-in-out infinite alternate;}
+@keyframes tpulse{from{opacity:.75;transform:scale(.93)}to{opacity:1;transform:scale(1.07)}}
 @keyframes eliteGlow{0%,100%{box-shadow:0 0 6px rgba(200,160,0,.3)}50%{box-shadow:0 0 18px rgba(200,160,0,.7)}}
-.dp-gk.target{border-color:#60a5fa;color:#93c5fd;background:rgba(10,22,65,.7);box-shadow:0 0 10px rgba(96,165,250,.5);}
-.dp-def.target{border-color:#34d399;color:#6ee7b7;background:rgba(0,35,28,.7);box-shadow:0 0 10px rgba(52,211,153,.5);}
-.dp-mid.target{border-color:#fbbf24;color:#fde68a;background:rgba(42,30,0,.7);box-shadow:0 0 10px rgba(251,191,36,.5);}
-.dp-fwd.target{border-color:#f87171;color:#fca5a5;background:rgba(55,5,5,.7);box-shadow:0 0 10px rgba(248,113,113,.5);}
+/* Slot position label */
+.dp-slot-pos{font-size:.5rem;font-weight:700;text-transform:uppercase;line-height:1;margin-top:1px;letter-spacing:.2px}
+.dp-slot.empty .dp-slot-pos{color:rgba(255,255,255,.2);}
+.dp-gk.target .dp-slot-pos{color:#93c5fd;}
+.dp-def.target .dp-slot-pos{color:#6ee7b7;}
+.dp-mid.target .dp-slot-pos{color:#fde68a;}
+.dp-fwd.target .dp-slot-pos{color:#fca5a5;}
 /* Filled: compact rounded card */
 .dp-slot.filled{
   width:50px;height:50px;border:2px solid rgba(255,255,255,.3);
@@ -2078,6 +2074,32 @@ function playerSprite(col){
     +'<rect x="13" y="26" width="4" height="3" rx="1" fill="#1a1a1a"/>'
     +'</svg>';
 }
+function ghostSprite(){
+  return'<svg width="16" height="19" viewBox="0 0 26 30" style="display:block;margin:0 auto;opacity:.3">'
+    +'<ellipse cx="13" cy="7" rx="5.5" ry="6" fill="#aaa"/>'
+    +'<rect x="8" y="13" width="10" height="8" rx="2" fill="#777"/>'
+    +'<rect x="5" y="13" width="4" height="7" rx="1.5" fill="#777"/>'
+    +'<rect x="17" y="13" width="4" height="7" rx="1.5" fill="#777"/>'
+    +'<rect x="9" y="21" width="4" height="7" rx="1.5" fill="#555"/>'
+    +'<rect x="13" y="21" width="4" height="7" rx="1.5" fill="#555"/>'
+    +'<rect x="9" y="26" width="4" height="3" rx="1" fill="#333"/>'
+    +'<rect x="13" y="26" width="4" height="3" rx="1" fill="#333"/>'
+    +'</svg>';
+}
+const GROUP_SPRITE_COLORS={gk:'#60a5fa',def:'#34d399',mid:'#fbbf24',fwd:'#f87171'};
+function targetSprite(grp){
+  const c=GROUP_SPRITE_COLORS[grp]||'#aaa';
+  return'<svg width="20" height="24" viewBox="0 0 26 30" style="display:block;margin:0 auto">'
+    +'<ellipse cx="13" cy="7" rx="5.5" ry="6" fill="#FFCC88"/>'
+    +'<rect x="8" y="13" width="10" height="8" rx="2" fill="'+c+'"/>'
+    +'<rect x="5" y="13" width="4" height="7" rx="1.5" fill="'+c+'"/>'
+    +'<rect x="17" y="13" width="4" height="7" rx="1.5" fill="'+c+'"/>'
+    +'<rect x="9" y="21" width="4" height="7" rx="1.5" fill="#e8e8e8"/>'
+    +'<rect x="13" y="21" width="4" height="7" rx="1.5" fill="#e8e8e8"/>'
+    +'<rect x="9" y="26" width="4" height="3" rx="1" fill="#1a1a1a"/>'
+    +'<rect x="13" y="26" width="4" height="3" rx="1" fill="#1a1a1a"/>'
+    +'</svg>';
+}
 function slotTierCss(r){
   const light=document.body.getAttribute('data-theme')==='light';
   if(r>=9.5)return'border:2px solid #d4a800;background:'+(light?'rgba(255,248,200,.97)':'rgba(28,16,0,.92)')+';box-shadow:0 0 10px rgba(212,168,0,'+(light?'.25':'.45')+');animation:eliteGlow 2.5s ease-in-out infinite';
@@ -2499,9 +2521,16 @@ function renderDraftPitch(currentPlayer){
         const grp=slotGroup(pos);
         return filledSlotHTML(player,grp);
       }else if(isTarget){
-        return'<div class="dp-slot target dp-'+slotGroup(pos)+'">'+pos+'</div>';
+        const grp=slotGroup(pos);
+        return'<div class="dp-slot target dp-'+grp+'">'
+          +targetSprite(grp)
+          +'<div class="dp-slot-pos">'+pos+'</div>'
+          +'</div>';
       }else{
-        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+pos+'</div>';
+        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'
+          +ghostSprite()
+          +'<div class="dp-slot-pos">'+pos+'</div>'
+          +'</div>';
       }
     }).join('')+'</div>';
   }).join('');
