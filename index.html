@@ -927,7 +927,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.6.2';
+const GAME_VERSION='4.6.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1341,69 +1341,159 @@ const SLOT_COMPAT = {
   CDM: ['CDM','CM'],
   CM:  ['CM','CDM','CAM'],        // CM no longer covers wide roles
   CAM: ['CAM','CM','SS'],
-  RM:  ['RM','LM','RW','LW'],
-  LM:  ['LM','RM','LW','RW'],
-  RW:  ['RW','LW','RM','LM','CAM'],
-  LW:  ['LW','RW','LM','RM','CAM'],
+  RM:  ['RM','LM'],                 // wide mids only — no wingers
+  LM:  ['LM','RM'],
+  RW:  ['RW','LW','CAM'],          // wingers + creative CAM
+  LW:  ['LW','RW','CAM'],
   ST:  ['ST','CF','SS'],
   CF:  ['CF','ST','SS'],
   SS:  ['SS','ST','CF','CAM'],
 };
 
-/* Each formation defines ordered positions (for logic) and rows (for visual) */
+/* Each formation defines positions and rows per tactic variant */
 const FORMATIONS = {
   '4-3-3':{
     desc:'Balanced attack — 3 direct forwards',
-    positions:['GK','LB','CB','CB','RB','CM','CM','CM','LW','ST','RW'],
-    rows:[['LW','ST','RW'],['CM','CM','CM'],['LB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','RB','CM','CAM','CM','LW','ST','RW'],
+      balanced:['GK','LB','CB','CB','RB','CM','CM','CM','LW','ST','RW'],
+      defend:  ['GK','LB','CB','CB','RB','CDM','CM','CM','LM','ST','RM'],
+    },
+    rows:{
+      attack:  [['LW','ST','RW'],['CM','CAM','CM'],['LB','CB','CB','RB'],['GK']],
+      balanced:[['LW','ST','RW'],['CM','CM','CM'],['LB','CB','CB','RB'],['GK']],
+      defend:  [['LM','ST','RM'],['CDM','CM','CM'],['LB','CB','CB','RB'],['GK']],
+    },
   },
   '4-4-2':{
     desc:'Classic double striker — wide midfielders',
-    positions:['GK','LB','CB','CB','RB','LM','CM','CM','RM','ST','ST'],
-    rows:[['ST','ST'],['LM','CM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','RB','LW','CM','CM','RW','ST','ST'],
+      balanced:['GK','LB','CB','CB','RB','LM','CM','CM','RM','ST','ST'],
+      defend:  ['GK','LB','CB','CB','RB','LM','CDM','CM','RM','ST','ST'],
+    },
+    rows:{
+      attack:  [['ST','ST'],['LW','CM','CM','RW'],['LB','CB','CB','RB'],['GK']],
+      balanced:[['ST','ST'],['LM','CM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+      defend:  [['ST','ST'],['LM','CDM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+    },
   },
   '4-2-3-1':{
     desc:'Modern pressing — double pivot, playmaker',
-    positions:['GK','LB','CB','CB','RB','CDM','CDM','LW','CAM','RW','ST'],
-    rows:[['ST'],['LW','CAM','RW'],['CDM','CDM'],['LB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','RB','CM','CDM','LW','CAM','RW','ST'],
+      balanced:['GK','LB','CB','CB','RB','CDM','CDM','LW','CAM','RW','ST'],
+      defend:  ['GK','LB','CB','CB','RB','CDM','CDM','LM','CM','RM','ST'],
+    },
+    rows:{
+      attack:  [['ST'],['LW','CAM','RW'],['CM','CDM'],['LB','CB','CB','RB'],['GK']],
+      balanced:[['ST'],['LW','CAM','RW'],['CDM','CDM'],['LB','CB','CB','RB'],['GK']],
+      defend:  [['ST'],['LM','CM','RM'],['CDM','CDM'],['LB','CB','CB','RB'],['GK']],
+    },
   },
   '3-5-2':{
     desc:'Midfield control — three centre-backs',
-    positions:['GK','CB','CB','CB','LM','CDM','CM','CM','RM','ST','ST'],
-    rows:[['ST','ST'],['LM','CM','CDM','CM','RM'],['CB','CB','CB'],['GK']],
+    positions:{
+      attack:  ['GK','CB','CB','CB','LM','CM','CAM','CM','RM','ST','ST'],
+      balanced:['GK','CB','CB','CB','LM','CDM','CM','CM','RM','ST','ST'],
+      defend:  ['GK','CB','CB','CB','LM','CDM','CDM','CM','RM','ST','ST'],
+    },
+    rows:{
+      attack:  [['ST','ST'],['LM','CM','CAM','CM','RM'],['CB','CB','CB'],['GK']],
+      balanced:[['ST','ST'],['LM','CM','CDM','CM','RM'],['CB','CB','CB'],['GK']],
+      defend:  [['ST','ST'],['LM','CDM','CDM','CM','RM'],['CB','CB','CB'],['GK']],
+    },
   },
   '4-1-4-1':{
     desc:'Defensive solidity — single pivot',
-    positions:['GK','LB','CB','CB','RB','CDM','LM','CM','CM','RM','ST'],
-    rows:[['ST'],['LM','CM','CM','RM'],['CDM'],['LB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','RB','CDM','LW','CM','CM','RW','ST'],
+      balanced:['GK','LB','CB','CB','RB','CDM','LM','CM','CM','RM','ST'],
+      defend:  ['GK','LB','CB','CB','RB','CDM','CDM','LM','CM','RM','ST'],
+    },
+    rows:{
+      attack:  [['ST'],['LW','CM','CM','RW'],['CDM'],['LB','CB','CB','RB'],['GK']],
+      balanced:[['ST'],['LM','CM','CM','RM'],['CDM'],['LB','CB','CB','RB'],['GK']],
+      defend:  [['ST'],['LM','CM','RM'],['CDM','CDM'],['LB','CB','CB','RB'],['GK']],
+    },
   },
   '3-4-3':{
     desc:'Total attack — three forwards, wide mids',
-    positions:['GK','CB','CB','CB','LM','CM','CM','RM','LW','ST','RW'],
-    rows:[['LW','ST','RW'],['LM','CM','CM','RM'],['CB','CB','CB'],['GK']],
+    positions:{
+      attack:  ['GK','CB','CB','CB','LM','CM','CAM','RM','LW','ST','RW'],
+      balanced:['GK','CB','CB','CB','LM','CM','CM','RM','LW','ST','RW'],
+      defend:  ['GK','CB','CB','CB','LM','CDM','CM','RM','LW','ST','RW'],
+    },
+    rows:{
+      attack:  [['LW','ST','RW'],['LM','CM','CAM','RM'],['CB','CB','CB'],['GK']],
+      balanced:[['LW','ST','RW'],['LM','CM','CM','RM'],['CB','CB','CB'],['GK']],
+      defend:  [['LW','ST','RW'],['LM','CDM','CM','RM'],['CB','CB','CB'],['GK']],
+    },
   },
   '5-3-2':{
     desc:'Compact defensive block — two strikers up front',
-    positions:['GK','LB','CB','CB','CB','RB','CM','CM','CM','ST','ST'],
-    rows:[['ST','ST'],['CM','CM','CM'],['LB','CB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','CB','RB','CM','CAM','CM','ST','ST'],
+      balanced:['GK','LB','CB','CB','CB','RB','CM','CM','CM','ST','ST'],
+      defend:  ['GK','LB','CB','CB','CB','RB','CDM','CM','CM','ST','ST'],
+    },
+    rows:{
+      attack:  [['ST','ST'],['CM','CAM','CM'],['LB','CB','CB','CB','RB'],['GK']],
+      balanced:[['ST','ST'],['CM','CM','CM'],['LB','CB','CB','CB','RB'],['GK']],
+      defend:  [['ST','ST'],['CDM','CM','CM'],['LB','CB','CB','CB','RB'],['GK']],
+    },
   },
   '4-5-1':{
     desc:'Midfield overload — lone striker on the break',
-    positions:['GK','LB','CB','CB','RB','LM','CM','CDM','CM','RM','ST'],
-    rows:[['ST'],['LM','CM','CDM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','RB','LW','CM','CM','CM','RW','ST'],
+      balanced:['GK','LB','CB','CB','RB','LM','CM','CDM','CM','RM','ST'],
+      defend:  ['GK','LB','CB','CB','RB','LM','CDM','CDM','CM','RM','ST'],
+    },
+    rows:{
+      attack:  [['ST'],['LW','CM','CM','CM','RW'],['LB','CB','CB','RB'],['GK']],
+      balanced:[['ST'],['LM','CM','CDM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+      defend:  [['ST'],['LM','CDM','CDM','CM','RM'],['LB','CB','CB','RB'],['GK']],
+    },
   },
   '5-4-1':{
     desc:'Ultra-defensive — absorb and hit on the counter',
-    positions:['GK','LB','CB','CB','CB','RB','LM','CM','CM','RM','ST'],
-    rows:[['ST'],['LM','CM','CM','RM'],['LB','CB','CB','CB','RB'],['GK']],
+    positions:{
+      attack:  ['GK','LB','CB','CB','CB','RB','LW','CM','CAM','RW','ST'],
+      balanced:['GK','LB','CB','CB','CB','RB','LM','CM','CM','RM','ST'],
+      defend:  ['GK','LB','CB','CB','CB','RB','LM','CDM','CM','RM','ST'],
+    },
+    rows:{
+      attack:  [['ST'],['LW','CM','CAM','RW'],['LB','CB','CB','CB','RB'],['GK']],
+      balanced:[['ST'],['LM','CM','CM','RM'],['LB','CB','CB','CB','RB'],['GK']],
+      defend:  [['ST'],['LM','CDM','CM','RM'],['LB','CB','CB','CB','RB'],['GK']],
+    },
   },
   '3-6-1':{
     desc:'Total midfield control — extreme possession game',
-    positions:['GK','CB','CB','CB','LM','CDM','CM','CM','CAM','RM','ST'],
-    rows:[['ST'],['LM','CAM','RM'],['CDM','CM','CM'],['CB','CB','CB'],['GK']],
+    positions:{
+      attack:  ['GK','CB','CB','CB','LM','CM','CM','CM','CAM','RM','ST'],
+      balanced:['GK','CB','CB','CB','LM','CDM','CM','CM','CAM','RM','ST'],
+      defend:  ['GK','CB','CB','CB','LM','CDM','CDM','CM','CM','RM','ST'],
+    },
+    rows:{
+      attack:  [['ST'],['LM','CAM','RM'],['CM','CM','CM'],['CB','CB','CB'],['GK']],
+      balanced:[['ST'],['LM','CAM','RM'],['CDM','CM','CM'],['CB','CB','CB'],['GK']],
+      defend:  [['ST'],['LM','CM','RM'],['CDM','CDM','CM'],['CB','CB','CB'],['GK']],
+    },
   },
 };
 const FKEYS = Object.keys(FORMATIONS);
+function fmtPositions(formation, tactic){
+  var f=FORMATIONS[formation]; if(!f)return[];
+  var t=tactic||'balanced';
+  return f.positions[t]||f.positions.balanced;
+}
+function fmtRows(formation, tactic){
+  var f=FORMATIONS[formation]; if(!f)return[];
+  var t=tactic||'balanced';
+  return f.rows[t]||f.rows.balanced;
+}
 
 /* ═══════════════════════════════════════
    COACHES
@@ -2219,7 +2309,7 @@ function renderFormationGrid(){
   grid.innerHTML=FKEYS.map(function(key){
     var f=FORMATIONS[key];
     var safeKey=key.replace(/[^a-z0-9]/gi,'-');
-    var dots=f.rows.map(function(row){
+    var dots=fmtRows(key,G.tactic||'balanced').map(function(row){
       return '<div class="fp-row">'+row.map(function(pos){
         return '<div class="fp-dot '+slotGroup(pos)+'"></div>';
       }).join('')+'</div>';
@@ -2325,8 +2415,7 @@ function initDraft(){
 }
 
 function slotsLeft(){
-  // Returns { pos: remainingCount } for unfilled slots
-  const positions=FORMATIONS[G.formation].positions;
+  const positions=fmtPositions(G.formation,G.tactic);
   const left={};
   positions.forEach(function(pos,i){
     if(!G.slotPlayers[i]) left[pos]=(left[pos]||0)+1;
@@ -2334,8 +2423,7 @@ function slotsLeft(){
   return left;
 }
 function compatibleEmptySlots(player){
-  const positions=FORMATIONS[G.formation].positions;
-  const compat=SLOT_COMPAT[positions[0]]||[]; // placeholder
+  const positions=fmtPositions(G.formation,G.tactic);
   return positions.map(function(pos,i){
     return {i:i,pos:pos};
   }).filter(function(s){
@@ -2365,8 +2453,8 @@ function slotGroup(pos){
 }
 
 function renderDraftPitch(currentPlayer){
-  const formation=FORMATIONS[G.formation];
-  const {rows,positions}=formation;
+  const positions=fmtPositions(G.formation,G.tactic);
+  const rows=fmtRows(G.formation,G.tactic);
   const slotsByPos={};
   positions.forEach(function(pos,i){
     if(!slotsByPos[pos])slotsByPos[pos]=[];
@@ -2868,6 +2956,19 @@ function selectFormTactic(t,el){
   G.tactic=t;
   document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
   el.classList.add('tact-sel');
+  // Refresh formation dots to reflect new tactic variant
+  FKEYS.forEach(function(key){
+    var safeKey=key.replace(/[^a-z0-9]/gi,'-');
+    var card=document.getElementById('fc-'+safeKey);
+    if(!card)return;
+    var pitchDiv=card.querySelector('.form-pitch');
+    if(!pitchDiv)return;
+    pitchDiv.innerHTML=fmtRows(key,t).map(function(row){
+      return '<div class="fp-row">'+row.map(function(pos){
+        return '<div class="fp-dot '+slotGroup(pos)+'"></div>';
+      }).join('')+'</div>';
+    }).join('');
+  });
 }
 function selectMatchTactic(t,el){
   G.tactic=t;
@@ -3587,8 +3688,8 @@ function showGameOver(){
   const goPitch=document.getElementById('go-pitch');
   if(goWrap&&goPitch&&G.formation&&FORMATIONS[G.formation]){
     goWrap.style.display='block';
-    const formation=FORMATIONS[G.formation];
-    const {rows,positions}=formation;
+    const positions=fmtPositions(G.formation,G.tactic);
+    const rows=fmtRows(G.formation,G.tactic);
     const slotsByPos={};
     positions.forEach(function(pos,i){if(!slotsByPos[pos])slotsByPos[pos]=[];slotsByPos[pos].push(i);});
     const used={};
@@ -3607,9 +3708,9 @@ function showGameOver(){
 }
 
 function renderTrophyPitch(){
-  const formation=FORMATIONS[G.formation];
-  if(!formation)return;
-  const {rows,positions}=formation;
+  if(!FORMATIONS[G.formation])return;
+  const positions=fmtPositions(G.formation,G.tactic);
+  const rows=fmtRows(G.formation,G.tactic);
   const slotsByPos={};
   positions.forEach(function(pos,i){
     if(!slotsByPos[pos])slotsByPos[pos]=[];
@@ -3916,9 +4017,9 @@ function _devQuickDraft(type){
     : fullPool.sort(function(){return Math.random()-.5;});
 
   var usedSet=new Set();
-  var formation=FORMATIONS[form];
+  var tacticForTest=G.tactic||'balanced';
 
-  formation.positions.forEach(function(slot,idx){
+  fmtPositions(form,tacticForTest).forEach(function(slot,idx){
     var compat=SLOT_COMPAT[slot]||[slot];
     for(var j=0;j<sorted.length;j++){
       if(!usedSet.has(j)&&compat.includes(sorted[j].p)){
@@ -4062,109 +4163,4 @@ function _devStressTest(){
     +'<div style="width:'+dBar+'%;background:#eab308"></div>'
     +'<div style="width:'+lBar+'%;background:#ef4444"></div>'
     +'</div>'
-    +'<div style="display:flex;justify-content:space-between;font-size:.72rem">'
-    +'<span style="color:#22c55e">🟢 V '+wins+' ('+p(wins)+'%)</span>'
-    +'<span style="color:#eab308">P '+draws+' ('+p(draws)+'%)</span>'
-    +'<span style="color:#ef4444">🔴 S '+losses+' ('+p(losses)+'%)</span>'
-    +'</div>'
-    +'<div style="font-size:.65rem;color:#555;margin-top:6px">Media gol: <strong style="color:#999">'+(gf/N).toFixed(2)+'</strong> – <strong style="color:#999">'+(ga/N).toFixed(2)+'</strong> per partita &nbsp;·&nbsp; atk <strong style="color:#999">'+atk.toFixed(2)+'</strong> def <strong style="color:#999">'+def2.toFixed(2)+'</strong></div>'
-    +'</div>';
-}
-
-/* ── Mock screens ── */
-function _devEnsureSquad(){
-  if(!G.squad||G.squad.length<1){
-    _devQuickDraft('top');
-    return false;
-  }
-  return true;
-}
-function _devMockResult(){
-  if(!_devEnsureSquad())return;
-  M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;
-  M.isKnockout=false;M.roundLabel='Dev Test';M.oppName='Dev FC';
-  M.log=[];M.penResult=null;M.eliminated=false;
-  if(!G.groupUserResults)G.groupUserResults=[];
-  closeDevPanel();showResult();
-}
-function _devMockTrophy(){
-  if(!_devEnsureSquad())return;
-  if(!G.groupUserResults.length)
-    [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
-  if(!G.knockResults.length)
-    ['R16','QF','SF','FIN'].forEach(function(r){G.knockResults.push({myG:1,oppG:0,stars:2,opp:'Dev '+r});});
-  closeDevPanel();showTrophy();
-}
-function _devMockGameOver(){
-  if(!_devEnsureSquad())return;
-  G.phase='knockout';G.knockRound=1;
-  if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
-  if(!G.knockResults.length) G.knockResults.push({myG:0,oppG:2,stars:0,opp:'Dev FC'});
-  M.myG=0;M.oppG=2;M.oppName='Dev FC';
-  closeDevPanel();showGameOver();
-}
-
-/* ── Dev: Coach Assignment ── */
-function _devAssignCoach(){
-  var idx=parseInt(document.getElementById('dv-coach-sel').value)||0;
-  var customPct=parseFloat(document.getElementById('dv-coach-boost').value)||0;
-  var coach=COACHES[Math.max(0,Math.min(COACHES.length-1,idx))];
-  if(!coach)return;
-  customPct=Math.min(20,Math.max(0,customPct));
-  var compat=customPct>0?3:coachCompat(coach.pref,G.formation||'4-3-3');
-  var boost=customPct>0?1+(customPct/100):coachBoostMul(compat);
-  G.coach={name:coach.n,pref:coach.pref,compat:compat,boost:boost};
-  G._coachPool=[coach];
-  var st=document.getElementById('dv-coach-status');
-  var pct=((boost-1)*100).toFixed(1);
-  if(st)st.innerHTML='✅ <strong style="color:#eab308">'+coach.n+'</strong> — boost: <strong style="color:#22c55e">+'+(pct>0?pct:'0')+'%</strong>';
-}
-/* ── Dev: Toggle Language ── */
-function _devToggleLang(){
-  toggleLang();
-  var b=document.getElementById('dv-lang-btn');
-  if(b)b.textContent='🌐 Lingua: '+(G.lang||'it').toUpperCase();
-}
-/* ── Dev: Set Tactic ── */
-function _devSetTactic(t){
-  G.tactic=t;
-  document.querySelectorAll('.dv-tact-btn').forEach(function(b){
-    var on=b.dataset.t===t;
-    b.style.opacity=on?'1':'.4';
-    b.style.fontWeight=on?'700':'400';
-  });
-}
-/* ── Dev: Set Momentum ── */
-function _devSetMom(v){
-  G.momentum=parseInt(v)||0;
-  var l=document.getElementById('dv-mom-lbl');
-  if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
-}
-
-</script>
-
-<div id="share-toast">📋 Copied to clipboard!</div>
-<!-- Legal modal -->
-<!-- Fan Project modal -->
-<div id="modal-fanproject" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
-  <div class="modal-legal-box">
-    <h2>Fan Project</h2>
-    <h3 data-i18n="fp.h_disclaimer">Disclaimer</h3>
-    <p data-i18n-html="fp.p_disclaimer"></p>
-    <h3 data-i18n="fp.h_copyright">Copyright</h3>
-    <p data-i18n-html="fp.p_copyright"></p>
-    <h3 data-i18n="fp.h_terms">Termini di utilizzo</h3>
-    <p data-i18n-html="fp.p_terms"></p>
-    <button class="modal-legal-close" onclick="closeFanProject()" data-i18n="modal.close">Chiudi</button>
-  </div>
-</div>
-
-<!-- Privacy modal -->
-<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
-  <div class="modal-legal-box">
-    <h2>Privacy Policy</h2>
-    <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
-    <p data-i18n-html="priv.p_data"></p>
-    <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
-    <p data-i18n-html="priv.p_cookies"></p>
-    <h3 data-i18n="priv.h_scripts">Script
+    +'<div style="display:flex;justify-content:space-between;font-
