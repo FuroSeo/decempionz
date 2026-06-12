@@ -893,7 +893,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.1';
+const GAME_VERSION='4.5.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1367,9 +1367,10 @@ function formDMA(key){
   return {d:p[0], m:p.slice(1,-1).reduce(function(a,b){return a+b;},0), a:p[p.length-1]};
 }
 function coachCompat(coachPref,chosenForm){
+  if(coachPref===chosenForm)return 3; // match esatto → +8%
   var c=formDMA(coachPref), f=formDMA(chosenForm), n=0;
   if(c.d===f.d)n++; if(c.m===f.m)n++; if(c.a===f.a)n++;
-  return n;
+  return Math.min(n,2); // DMA full match → max compat 2 (+5%)
 }
 function coachBoostMul(compat){return [1.00,1.02,1.05,1.08][compat]||1.00;}
 
@@ -4173,11 +4174,4 @@ function _devSetMom(v){
         <button onclick="_devMockTrophy()" class="dv-btn">🏆 Trofeo</button>
         <button onclick="_devMockGameOver()" class="dv-btn">💀 Game Over</button>
       </div>
-      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🌐 Lingua: IT</button>
-    </div>
-
-  </div>
-</div>
-
-</body>
-</html>
+      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px
