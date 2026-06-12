@@ -61,6 +61,11 @@
 [data-theme="light"] .prc{background:#ffffff;border-color:var(--brd)}
 [data-theme="light"] .prc-team-name,[data-theme="light"] .prc-name{color:#111827}
 [data-theme="light"] .era-card,[data-theme="light"] .format-card,[data-theme="light"] .diff-card{background:var(--s1);border-color:var(--brd)}
+[data-theme="light"] .form-card{background:#dde6f0;border-color:#a8b8cc;}
+[data-theme="light"] .form-card:hover{border-color:var(--blue2);background:#d0dcea;}
+[data-theme="light"] .form-card.sel{background:#1a3a7a;border-color:#1a3a7a;}
+[data-theme="light"] .form-card.sel .form-name{color:#ffffff;}
+[data-theme="light"] .form-card.sel .form-desc{color:rgba(255,255,255,.75);}
 [data-theme="light"] .round-row{background:var(--s2);border-color:var(--brd)}
 [data-theme="light"] .round-row.cur{border-color:var(--gold)}
 [data-theme="light"] .form-pitch{background:#0c300c;border-radius:6px;padding:5px 4px;}
@@ -4244,19 +4249,4 @@ function _devToggleLang(){
 /* ── Dev: Set Tactic ── */
 function _devSetTactic(t){
   G.tactic=t;
-  document.querySelectorAll('.dv-tact-btn').forEach(function(b){
-    var on=b.dataset.t===t;
-    b.style.opacity=on?'1':'.4';
-    b.style.fontWeight=on?'700':'400';
-  });
-}
-/* ── Dev: Set Momentum ── */
-function _devSetMom(v){
-  G.momentum=parseInt(v)||0;
-  var l=document.getElementById('dv-mom-lbl');
-  if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
-}
-
-</script>
-
-<div id="share-toast">📋
+  document.querySelectorAll('.dv-tact-btn')
