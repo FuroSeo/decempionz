@@ -896,7 +896,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.4';
+const GAME_VERSION='4.5.5';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -912,6 +912,23 @@ const STRINGS={
     'home.btn_quick_sub':'Classic · All Time · Normale',
     'home.btn_custom':'⚙️ Personalizza',
     'home.howtoplay_btn':'❓ Come si gioca',
+    'modal.close':'Chiudi',
+    'fp.h_disclaimer':'Disclaimer',
+    'fp.p_disclaimer':'Decempionz è un progetto fan indipendente creato esclusivamente a scopo di intrattenimento. Non è affiliato, approvato né connesso a UEFA, FIFA, alcun club calcistico, giocatore o agente. I nomi dei giocatori, delle squadre e i riferimenti storici sono usati a puro scopo ricreativo ed educativo nel rispetto dei principi della fan creativity. Tutti i marchi registrati rimangono di proprietà dei rispettivi titolari.',
+    'fp.h_copyright':'Copyright',
+    'fp.p_copyright':'© 2026 Decempionz. Il design originale del gioco, il codice, le meccaniche e i contenuti creativi sono di proprietà intellettuale di Decempionz. I dati storici sul calcio sono utilizzati esclusivamente per scopi non commerciali. La redistribuzione o l\'uso commerciale di qualsiasi parte di questo progetto non è consentita senza esplicito consenso scritto.',
+    'fp.h_terms':'Termini di utilizzo',
+    'fp.p_terms':'Decempionz è fornito gratuitamente esclusivamente per intrattenimento personale. Giocando accetti di non ridistribuire, clonare o commercializzare alcuna parte di questo progetto. L\'autore si riserva il diritto di modificare o interrompere il gioco in qualsiasi momento senza preavviso.',
+    'priv.h_data':'Nessuna raccolta di dati',
+    'priv.p_data':'Decempionz non raccoglie, non archivia e non trasmette alcun dato personale. Non è richiesta registrazione. Non vengono richiesti nome, email, indirizzo o qualsiasi altro dato identificativo.',
+    'priv.h_cookies':'Cookie e archiviazione locale',
+    'priv.p_cookies':'Nessun cookie di tracciamento o profilazione viene utilizzato. L\'unico dato salvato sul tuo dispositivo è la preferenza tema (chiaro/scuro), tramite <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. Puoi cancellarlo in qualsiasi momento svuotando la cache del browser.',
+    'priv.h_scripts':'Script di terze parti',
+    'priv.p_scripts':'Decempionz non carica script analytics, pixel di tracciamento, CDN esterne o qualsiasi risorsa di terze parti. Il gioco funziona interamente lato client, in un singolo file HTML.',
+    'priv.h_gdpr':'I tuoi diritti (GDPR)',
+    'priv.p_gdpr':'Non essendo raccolto alcun dato personale, non vi sono dati da consultare, modificare o cancellare. Per qualsiasi domanda contatta l\'autore tramite i canali ufficiali del progetto.',
+    'priv.h_updates':'Aggiornamenti',
+    'priv.p_updates':'Questa policy può essere aggiornata in seguito a modifiche tecniche del progetto. La versione attiva è sempre quella visibile in questa schermata.',
     'diff.easy':'🟢 Facile',
     'diff.normal':'🟡 Normale',
     'diff.hard':'🔴 Difficile',
@@ -1072,6 +1089,23 @@ const STRINGS={
     'home.btn_quick_sub':'Classic · All Time · Normal',
     'home.btn_custom':'⚙️ Customize',
     'home.howtoplay_btn':'❓ How to play',
+    'modal.close':'Close',
+    'fp.h_disclaimer':'Disclaimer',
+    'fp.p_disclaimer':'Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.',
+    'fp.h_copyright':'Copyright',
+    'fp.p_copyright':'© 2026 Decempionz. All original game design, code, mechanics, and creative content are the intellectual property of Decempionz. Historical football data is used for non-commercial fan purposes only. Redistribution or commercial use of any part of this project is not permitted without explicit written consent.',
+    'fp.h_terms':'Terms of Use',
+    'fp.p_terms':'Decempionz is provided free of charge for personal entertainment only. By playing you agree not to redistribute, clone, or commercialise any part of this project. The author reserves the right to modify or discontinue the game at any time without notice.',
+    'priv.h_data':'No Data Collection',
+    'priv.p_data':'Decempionz does not collect, store, or transmit any personal data. No registration is required. No name, email, address, or any other identifying information is requested.',
+    'priv.h_cookies':'Cookies & Local Storage',
+    'priv.p_cookies':'No tracking or profiling cookies are used. The only data saved on your device is the theme preference (light/dark), stored via <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. You can delete it at any time by clearing your browser cache.',
+    'priv.h_scripts':'Third-party Scripts',
+    'priv.p_scripts':'Decempionz does not load any analytics scripts, tracking pixels, external CDNs, or third-party resources. The game runs entirely client-side in a single HTML file.',
+    'priv.h_gdpr':'Your Rights (GDPR)',
+    'priv.p_gdpr':'Since no personal data is collected, there is no data to view, edit, or delete. If you have any questions, contact the author through the official project channels.',
+    'priv.h_updates':'Updates',
+    'priv.p_updates':'This policy may be updated following technical changes to the project. The active version is always the one visible on this screen.',
     'diff.easy':'🟢 Easy',
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Hard',
@@ -3602,9 +3636,9 @@ document.addEventListener('DOMContentLoaded',function(){
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
 function openLegal(){document.getElementById('modal-legal').classList.add('open');}
 function closeLegal(){document.getElementById('modal-legal').classList.remove('open');}
-function openFanProject(){var m=document.getElementById('modal-fanproject');m.style.display='flex';}
+function openFanProject(){applyLang();document.getElementById('modal-fanproject').style.display='flex';}
 function closeFanProject(){document.getElementById('modal-fanproject').style.display='none';}
-function openPrivacy(){var m=document.getElementById('modal-privacy');m.style.display='flex';}
+function openPrivacy(){applyLang();document.getElementById('modal-privacy').style.display='flex';}
 function closePrivacy(){document.getElementById('modal-privacy').style.display='none';}
 function closeBanner(){
   document.getElementById('banner-disclaimer').style.display='none';
@@ -3981,13 +4015,13 @@ function _devSetMom(v){
 <div id="modal-fanproject" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
   <div class="modal-legal-box">
     <h2>Fan Project</h2>
-    <h3>Disclaimer</h3>
-    <p>Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.</p>
-    <h3>Copyright</h3>
-    <p>© 2026 Decempionz. All original game design, code, mechanics, and creative content are the intellectual property of Decempionz. Historical football data is used for non-commercial fan purposes only. Redistribution or commercial use of any part of this project is not permitted without explicit written consent.</p>
-    <h3>Terms of Use</h3>
-    <p>Decempionz is provided free of charge for personal entertainment only. By playing you agree not to redistribute, clone, or commercialise any part of this project. The author reserves the right to modify or discontinue the game at any time without notice.</p>
-    <button class="modal-legal-close" onclick="closeFanProject()">Chiudi / Close</button>
+    <h3 data-i18n="fp.h_disclaimer">Disclaimer</h3>
+    <p data-i18n-html="fp.p_disclaimer"></p>
+    <h3 data-i18n="fp.h_copyright">Copyright</h3>
+    <p data-i18n-html="fp.p_copyright"></p>
+    <h3 data-i18n="fp.h_terms">Termini di utilizzo</h3>
+    <p data-i18n-html="fp.p_terms"></p>
+    <button class="modal-legal-close" onclick="closeFanProject()" data-i18n="modal.close">Chiudi</button>
   </div>
 </div>
 
@@ -3995,17 +4029,17 @@ function _devSetMom(v){
 <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center;padding:16px">
   <div class="modal-legal-box">
     <h2>Privacy Policy</h2>
-    <h3>Nessuna raccolta di dati</h3>
-    <p>Decempionz non raccoglie, non archivia e non trasmette alcun dato personale. Non è richiesta registrazione. Non vengono richiesti nome, email, indirizzo o qualsiasi altro dato identificativo.</p>
-    <h3>Cookie e archiviazione locale</h3>
-    <p>Nessun cookie di tracciamento o profilazione viene utilizzato. L'unico dato salvato sul tuo dispositivo è la preferenza tema (chiaro/scuro), archiviata tramite <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. Puoi cancellarlo in qualsiasi momento svuotando la cache del browser.</p>
-    <h3>Script di terze parti</h3>
-    <p>Decempionz non carica script analytics (Google Analytics, Matomo o simili), pixel di tracciamento, CDN esterne o qualsiasi risorsa di terze parti. Il gioco funziona interamente lato client, in un singolo file HTML.</p>
-    <h3>I tuoi diritti (GDPR)</h3>
-    <p>Non essendo raccolto alcun dato personale, non vi sono dati da consultare, modificare o cancellare. Se hai domande contatta l'autore tramite i canali ufficiali del progetto.</p>
-    <h3>Aggiornamenti</h3>
-    <p>Questa policy può essere aggiornata in seguito a modifiche tecniche del progetto. La versione attiva è sempre quella visibile in questa schermata.</p>
-    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi / Close</button>
+    <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
+    <p data-i18n-html="priv.p_data"></p>
+    <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
+    <p data-i18n-html="priv.p_cookies"></p>
+    <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
+    <p data-i18n-html="priv.p_scripts"></p>
+    <h3 data-i18n="priv.h_gdpr">I tuoi diritti (GDPR)</h3>
+    <p data-i18n-html="priv.p_gdpr"></p>
+    <h3 data-i18n="priv.h_updates">Aggiornamenti</h3>
+    <p data-i18n-html="priv.p_updates"></p>
+    <button class="modal-legal-close" onclick="closePrivacy()" data-i18n="modal.close">Chiudi</button>
   </div>
 </div>
 
@@ -4119,59 +4153,4 @@ function _devSetMom(v){
         </div>
         <div>
           <div style="font-size:.58rem;color:#666;margin-bottom:3px">Forza avv.</div>
-          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
-        </div>
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Mod extra</div>
-          <input id="dv-oppmod" type="number" value="0" min="-3" max="3" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
-        </div>
-      </div>
-      <button onclick="_devStressTest()" style="width:100%;background:#1a1a2a;border:1px solid #3b82f6;color:#60a5fa;border-radius:8px;padding:9px;font-size:.78rem;cursor:pointer;font-weight:600">▶ Esegui Stress Test</button>
-      <div id="dv-stress-result" style="margin-top:6px;min-height:14px"></div>
-    </div>
-
-    <!-- Coach Assignment -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Assegna allenatore</div>
-      <div style="display:grid;grid-template-columns:1fr 86px;gap:7px;margin-bottom:7px">
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Allenatore</div>
-          <select id="dv-coach-sel" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.68rem">
-            <option value="0">Rinus Michels (4-3-3)</option>
-            <option value="1">Helenio Herrera (3-5-2)</option>
-            <option value="2">Nereo Rocco (5-4-1)</option>
-            <option value="3">Ernst Happel (4-4-2)</option>
-            <option value="4">Valeriy Lobanovskyi (4-4-2)</option>
-            <option value="5">Nils Liedholm (4-3-3)</option>
-            <option value="6">Arrigo Sacchi (4-4-2)</option>
-            <option value="7">Johan Cruyff (3-4-3)</option>
-            <option value="8">Fabio Capello (4-4-2)</option>
-            <option value="9">G. Trapattoni (5-3-2)</option>
-            <option value="10">Marcello Lippi (3-5-2)</option>
-            <option value="11">Louis van Gaal (3-4-3)</option>
-            <option value="12">S-G Eriksson (4-4-2)</option>
-            <option value="13">Sir Alex Ferguson (4-4-2)</option>
-            <option value="14">Ottmar Hitzfeld (4-2-3-1)</option>
-            <option value="15">Carlo Ancelotti (4-4-2)</option>
-            <option value="16">José Mourinho (4-5-1)</option>
-            <option value="17">Rafael Benítez (4-4-2)</option>
-            <option value="18">Guus Hiddink (4-3-3)</option>
-            <option value="19">V. del Bosque (4-2-3-1)</option>
-            <option value="20">L.F. Scolari (4-2-3-1)</option>
-            <option value="21">Didier Deschamps (4-5-1)</option>
-            <option value="22">Jupp Heynckes (4-2-3-1)</option>
-            <option value="23">Pep Guardiola (4-3-3)</option>
-            <option value="24">Jürgen Klopp (4-3-3)</option>
-            <option value="25">Antonio Conte (3-5-2)</option>
-            <option value="26">Zinedine Zidane (4-3-3)</option>
-            <option value="27">Diego Simeone (4-5-1)</option>
-            <option value="28">Roberto Mancini (4-2-3-1)</option>
-            <option value="29">Claudio Ranieri (4-4-2)</option>
-          </select>
-        </div>
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Boost % (0=auto)</div>
-          <input id="dv-coach-boost" type="number" value="0" min="0" max="20" step="1" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
-        </div>
-      </div>
-      <
+          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:b
