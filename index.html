@@ -784,6 +784,19 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
 
+  <!-- Next match preview (tactic selector) -->
+  <div id="r-next-match" style="display:none;margin-top:8px">
+    <div class="pmp-box">
+      <div class="pmp-scout" id="r-next-scout"></div>
+      <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
+      <div class="mini-tact-row">
+        <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="rmt-attack" onclick="selectResultTactic('attack',this)">⚔️ Attack</button>
+        <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="rmt-balanced" onclick="selectResultTactic('balanced',this)">⚖️ Balanced</button>
+        <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="rmt-defend" onclick="selectResultTactic('defend',this)">🛡️ Defend</button>
+      </div>
+    </div>
+  </div>
+
   <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:10px"></button>
   <button class="btn btn-share" style="font-size:.82rem;margin-top:6px;margin-bottom:4px" onclick="shareResult()">📤 Share</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
@@ -896,7 +909,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.5';
+const GAME_VERSION='4.6.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2491,9 +2504,7 @@ function showCoachDraft(){
   // Already on screen-draft — don't call showScreen (avoids scroll-to-top burying cards)
   var pool=COACHES.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
   G._coachPool=pool;
-  // Clear pitch visualization to free vertical space
-  var pit=document.getElementById('draft-pitch');
-  if(pit)pit.innerHTML='';
+  // Keep the pitch visible — just update the header and hide draft controls
   var ti=document.getElementById('d-title');
   var inf=document.getElementById('d-info');
   var cnt=document.getElementById('d-count');
@@ -2547,10 +2558,11 @@ function pickCoach(i){
   if(pss)pss.style.display='';
   try{
     setupCampaign();
-    showCampaign();
+    _pendingMatch=null;
+    playRound();
   }catch(e){
     console.error('Campaign init error after coach pick:',e);
-    try{showCampaign();}catch(e2){showScreen('screen-campaign');}
+    try{_pendingMatch=null;playRound();}catch(e2){showCampaign();}
   }
 }
 
@@ -3295,11 +3307,37 @@ function showResult(){
   M.eliminated=elim;
   const maxGroupRounds=G.format==='nuovo'?6:3;
   const gDone=G.phase==='group'&&G.groupUserResults.length>=maxGroupRounds;
+
+  // Next-match preview panel
+  var _nextInfo=elim?null:getNextMatchInfo();
+  var _rNextPanel=document.getElementById('r-next-match');
+  if(_nextInfo&&_rNextPanel){
+    // Pre-assign opponent tactic for next match (user sees scout hint, playRound reuses it)
+    var _nRoll=Math.random();
+    var _nW=_nextInfo.oppStr>=8.5?[0.50,0.35,0.15]:_nextInfo.oppStr<7?[0.20,0.40,0.40]:[0.33,0.34,0.33];
+    var _nOt=_nRoll<_nW[0]?'attack':_nRoll<_nW[0]+_nW[1]?'balanced':'defend';
+    _pendingMatch={oppTactic:_nOt};  // playRound() will pick this up
+    var _nBeats=Object.keys(TACTIC_WINS).find(function(k){return TACTIC_WINS[k]===_nOt;});
+    var _rNextScout=document.getElementById('r-next-scout');
+    if(_rNextScout)_rNextScout.innerHTML='🔍 <strong>vs '+_nextInfo.oppName+'</strong><br>'
+      +t('scout.likely')+' <strong>'+tacLabel(_nOt)+'</strong>'
+      +(_nBeats?' '+t('scout.counter')+' <strong>'+tacLabel(_nBeats)+'</strong>':'');
+    // Sync tactic buttons to current G.tactic
+    var _rCurTact=G.tactic||'balanced';
+    document.querySelectorAll('#rmt-attack,#rmt-balanced,#rmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var _rmtBtn=document.getElementById('rmt-'+_rCurTact);
+    if(_rmtBtn)_rmtBtn.classList.add('tact-sel');
+    _rNextPanel.style.display='block';
+  } else {
+    if(_rNextPanel)_rNextPanel.style.display='none';
+    if(!elim)_pendingMatch=null;  // no next match — clean up
+  }
+
   let lbl;
   if(elim)lbl=t('btn.view_stats');
-  else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?t('btn.group_exit'):t('btn.knockouts');}
+  else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?t('btn.group_exit'):(_nextInfo?t('camp.kickoff'):t('btn.knockouts'));}
   else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl=t('btn.trophy');
-  else lbl=t('btn.continue');
+  else lbl=_nextInfo?t('camp.kickoff'):t('btn.continue');
   const cb=document.getElementById('btn-rcont'); cb.textContent=lbl; cb.className='btn btn-gold';
   showScreen('screen-result');
 }
@@ -3338,13 +3376,57 @@ function continueResult(){
       }
       G.phase='knockout';
     }
-    showCampaign();
+    playRound();
   } else {
     G.knockRound++;
     const maxKnock=G.format==='coppa'?5:4;
     if(G.knockRound>=maxKnock){showTrophy();return;}
-    showCampaign();
+    playRound();
   }
+}
+
+/* Returns {oppName, oppStr} for the NEXT match, or null if no next match.
+   Called from showResult() — G.groupRound/knockRound not yet incremented. */
+function getNextMatchInfo(){
+  const maxGroupRounds=G.format==='nuovo'?6:3;
+  const maxKnock=G.format==='coppa'?5:4;
+  if(G.phase==='group'){
+    const groupDone=G.groupUserResults.length>=maxGroupRounds;
+    if(!groupDone){
+      // Next group match — continueResult will increment groupRound, then play groupTeams[groupRound]
+      const nextIdx=G.groupRound+1;
+      if(nextIdx<G.groupTeams.length){
+        var nt=G.groupTeams[nextIdx];
+        return{oppName:nt.team.name+" '"+nt.team.season.slice(-2),oppStr:teamStrength(nt.id)};
+      }
+    } else {
+      // Group done — check if player qualifies for knockout
+      var qualifies=false;
+      if(G.format==='nuovo'){
+        var pts=G.groupUserResults.reduce(function(s,r){return s+(r.myG>r.oppG?3:r.myG===r.oppG?1:0);},0);
+        qualifies=pts>=8;
+      } else {
+        var st=calcStandings();
+        qualifies=st.findIndex(function(s){return s.id==='user';})<2;
+      }
+      if(qualifies&&G.knockOpps&&G.knockOpps[0]){
+        return{oppName:G.knockOpps[0].name,oppStr:G.knockOpps[0].str};
+      }
+    }
+  } else {
+    // Knockout phase
+    if(G.knockRound+1<maxKnock&&G.knockOpps){
+      var nk=G.knockOpps[G.knockRound+1];
+      if(nk)return{oppName:nk.name,oppStr:nk.str};
+    }
+  }
+  return null;
+}
+
+function selectResultTactic(tactic,el){
+  G.tactic=tactic;
+  document.querySelectorAll('#rmt-attack,#rmt-balanced,#rmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+  el.classList.add('tact-sel');
 }
 
 function showGroupElimination(pos,pts){
@@ -4097,60 +4179,4 @@ function _devSetMom(v){
         </div>
         <div>
           <div style="font-size:.58rem;color:#666;margin-bottom:3px">Difficoltà</div>
-          <select id="dv-diff" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem">
-            <option value="easy">Facile</option>
-            <option value="normal" selected>Normale</option>
-            <option value="hard">Difficile</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Draft -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Draft automatico</div>
-      <div style="display:flex;gap:8px">
-        <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">⭐ Top XI</button>
-        <button onclick="_devQuickDraft('random')" style="flex:1;background:#1a1a1a;border:1px solid #555;color:#ccc;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🎲 Random XI</button>
-      </div>
-      <div id="dv-squad-display"></div>
-    </div>
-
-    <!-- Jump to Round -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Salta al turno <span style="color:#444">(richiede draft)</span></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <button onclick="_devJumpRound('group',0)" class="dv-btn">Girone 1</button>
-        <button onclick="_devJumpRound('group',2)" class="dv-btn">Girone 3</button>
-        <button onclick="_devJumpRound('knockout',0)" class="dv-btn">R16/Turno 1</button>
-        <button onclick="_devJumpRound('knockout',1)" class="dv-btn">QF</button>
-        <button onclick="_devJumpRound('knockout',2)" class="dv-btn">SF</button>
-        <button onclick="_devJumpRound('knockout',3)" class="dv-btn">Finale</button>
-      </div>
-    </div>
-
-    <!-- Force Outcome -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Forza esito prossima partita</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">
-        <button onclick="_devForceScore(3,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">3–0</button>
-        <button onclick="_devForceScore(1,0)" class="dv-btn" style="border-color:#22c55e;color:#22c55e">1–0</button>
-        <button onclick="_devForceScore(1,1)" class="dv-btn" style="border-color:#eab308;color:#eab308">1–1</button>
-        <button onclick="_devForceScore(0,1)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–1</button>
-        <button onclick="_devForceScore(0,3)" class="dv-btn" style="border-color:#ef4444;color:#ef4444">0–3</button>
-        <button onclick="_devForceScore(null,null)" class="dv-btn" style="border-color:#555;color:#777">Reset</button>
-      </div>
-      <div id="dv-force-status" style="font-size:.68rem;color:#eab308;min-height:14px"></div>
-    </div>
-
-    <!-- Stress Test -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px">Stress test simulazione</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px">
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">N partite</div>
-          <input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:border-box">
-        </div>
-        <div>
-          <div style="font-size:.58rem;color:#666;margin-bottom:3px">Forza avv.</div>
-          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:100%;background:#111;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.72rem;box-sizing:b
+          <selec
