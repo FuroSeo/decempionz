@@ -2583,7 +2583,7 @@ function renderThreeCards(){
   const container=document.getElementById('d-reveal');
   if(!container)return;
   const n=G.draftCards.length;
-  container.innerHTML='<div style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
+  container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0;overflow:hidden">'
     +G.draftCards.map(function(p,i){
       const empSlots=compatibleEmptySlots(p);
       const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
@@ -2604,11 +2604,11 @@ function renderThreeCards(){
       return'<div onclick="draftPick('+i+')" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
-        +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
+        +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
         +playerSprite(col)
         +starBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
-        +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
+        +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.2;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
           +'<span style="font-size:'+(isElite?'.85':'.75')+'rem;font-weight:900;color:'+ratingCol+'">'+p.r+'</span>'
