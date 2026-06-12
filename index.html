@@ -4249,4 +4249,19 @@ function _devToggleLang(){
 /* ── Dev: Set Tactic ── */
 function _devSetTactic(t){
   G.tactic=t;
-  document.querySelectorAll('.dv-tact-btn')
+  document.querySelectorAll('.dv-tact-btn').forEach(function(b){
+    var on=b.dataset.t===t;
+    b.style.opacity=on?'1':'.4';
+    b.style.fontWeight=on?'700':'400';
+  });
+}
+/* ── Dev: Set Momentum ── */
+function _devSetMom(v){
+  G.momentum=parseInt(v)||0;
+  var l=document.getElementById('dv-mom-lbl');
+  if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
+}
+
+</script>
+
+<div id="share-toast">📋
