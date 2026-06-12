@@ -34,7 +34,13 @@
 }
 [data-theme="light"] body{background:var(--bg);color:var(--text)}
 [data-theme="light"] .card{background:var(--s1);border-color:var(--brd)}
-[data-theme="light"] .draft-pitch{background:linear-gradient(180deg,#2d6a2d,#357a35 50%,#2d6a2d)}
+[data-theme="light"] .draft-pitch{
+  background:
+    radial-gradient(ellipse 62% 22% at 50% 100%, rgba(0,0,0,.06) 0%, transparent 100%),
+    radial-gradient(ellipse 62% 22% at 50% 0%,   rgba(0,0,0,.06) 0%, transparent 100%),
+    linear-gradient(180deg, transparent calc(50% - .5px), rgba(0,0,0,.1) calc(50% - .5px), rgba(0,0,0,.1) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(180deg,#2d6a2d,#357a35 50%,#2d6a2d);
+  border-color:#2a5e2a;}
 [data-theme="light"] .dp-slot.empty{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.18)}
 [data-theme="light"] .dp-slot.filled{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.25)}
 [data-theme="light"] .dp-slot.filled .dp-name{color:#111827}
@@ -261,17 +267,23 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .btn-pass:disabled{opacity:.22;cursor:not-allowed;transform:none;border-color:var(--brd);color:var(--mut);background:transparent}
 
 /* ── DRAFT PITCH ── */
-.draft-pitch{background:linear-gradient(180deg,#0d3a0d,#0f480f 50%,#0d3a0d);
-  border:1px solid #1a4a1a;border-radius:12px;padding:10px 8px;margin-bottom:14px;
+.draft-pitch{
+  background:
+    radial-gradient(ellipse 62% 22% at 50% 100%, rgba(255,255,255,.055) 0%, transparent 100%),
+    radial-gradient(ellipse 62% 22% at 50% 0%,   rgba(255,255,255,.055) 0%, transparent 100%),
+    linear-gradient(180deg, transparent calc(50% - .5px), rgba(255,255,255,.09) calc(50% - .5px), rgba(255,255,255,.09) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(180deg,#0b350b,#114d11 50%,#0b350b);
+  border:1px solid #1d541d;border-radius:12px;padding:10px 8px;margin-bottom:14px;
   display:flex;flex-direction:column;gap:7px;min-height:180px;}
 .dp-row{display:flex;justify-content:center;gap:5px;}
 .dp-slot{border-radius:8px;padding:4px 6px;text-align:center;min-width:50px;max-width:72px;
   font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
   transition:all .18s;}
-.dp-slot.empty{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-  color:rgba(255,255,255,.22);}
+.dp-slot.empty{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.3);}
 .dp-slot.target{border:1.5px solid;animation:tpulse 1s ease-in-out infinite alternate;}
 @keyframes tpulse{from{opacity:.75;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@keyframes eliteGlow{0%,100%{box-shadow:0 0 6px rgba(200,160,0,.3)}50%{box-shadow:0 0 16px rgba(200,160,0,.65)}}
 .dp-slot.filled{border:1.5px solid rgba(255,255,255,.28);background:rgba(5,8,20,.72);}
 .dp-slot.filled .dp-name{font-size:.54rem;font-weight:700;white-space:normal;
   line-height:1.2;color:#eef2ff;}
@@ -915,7 +927,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.6.1';
+const GAME_VERSION='4.6.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1954,7 +1966,7 @@ function playerSprite(col){
 }
 function slotTierCss(r){
   const light=document.body.getAttribute('data-theme')==='light';
-  if(r>=9.5)return'border:2px solid #c8a000;background:'+(light?'rgba(255,248,210,.95)':'rgba(22,12,0,.88)');
+  if(r>=9.5)return'border:2px solid #d4a800;background:'+(light?'rgba(255,248,200,.97)':'rgba(28,16,0,.92)')+';box-shadow:0 0 10px rgba(212,168,0,'+(light?'.25':'.45')+');animation:eliteGlow 2.5s ease-in-out infinite';
   if(r>=9.0)return'border:1.5px solid #c8a000;background:'+(light?'rgba(255,252,230,.9)':'rgba(16,8,0,.82)');
   if(r>=8.5)return'border:1.5px solid #888888;background:'+(light?'rgba(235,235,245,.9)':'rgba(10,10,16,.82)');
   return'border:1px solid #9a8a6a;background:'+(light?'rgba(240,237,228,.9)':'rgba(8,8,8,.75)');
@@ -1962,11 +1974,14 @@ function slotTierCss(r){
 function filledSlotHTML(player,grp){
   const col=JERSEY_COLORS[player.teamId]||'#555555';
   const tierCss=slotTierCss(player.r);
-  const star=player.r>=9.5?'\u2605 ':'';
+  const isElite=player.r>=9.5;
+  const ratingLine=isElite
+    ?'<div class="dp-rating" style="color:#d4a800;font-weight:900">\u2605'+player.r+'</div>'
+    :'<div class="dp-rating">'+player.r+'</div>';
   return'<div class="dp-slot filled dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
     +playerSprite(col)
-    +'<div class="dp-name">'+player.n+'</div>'
-    +'<div class="dp-rating">'+star+player.r+'</div>'
+    +'<div class="dp-name"'+(isElite?' style="font-weight:900"':'')+'>'+player.n+'</div>'
+    +ratingLine
     +'</div>';
 }
 /* ═══════════════════════════════════════
@@ -2437,22 +2452,25 @@ function renderThreeCards(){
       const col=JERSEY_COLORS[p.teamId]||'#555';
       const tierCss=slotTierCss(p.r);
       const targetSlot=empSlots[0]?empSlots[0].pos:'';
-      const star=p.r>=9.5?'★ ':'';
+      const isElite=p.r>=9.5;
       const pg=posGroup(p.p);
       const posClass_=pgClass(pg);
       const light=document.body.getAttribute('data-theme')==='light';
       const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
+      const nameSz=isElite?'.92rem':'.8rem';
+      const starBadge=isElite?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
       return'<div onclick="draftPick('+i+')" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
         +';cursor:pointer;min-width:100px;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
         +playerSprite(col)
+        +starBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
-        +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
+        +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.2;max-width:130px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
-          +'<span style="font-size:.75rem;font-weight:800;color:'+ratingCol+'">'+star+p.r+'</span>'
+          +'<span style="font-size:'+(isElite?'.85':'.75')+'rem;font-weight:900;color:'+ratingCol+'">'+p.r+'</span>'
         +'</div>'
         +'<div style="font-size:.58rem;color:var(--mut);margin-top:3px">→ '+targetSlot+' slot</div>'
         +'</div>';
@@ -4149,28 +4167,4 @@ function _devSetMom(v){
     <p data-i18n-html="priv.p_data"></p>
     <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
     <p data-i18n-html="priv.p_cookies"></p>
-    <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
-    <p data-i18n-html="priv.p_scripts"></p>
-    <h3 data-i18n="priv.h_gdpr">I tuoi diritti (GDPR)</h3>
-    <p data-i18n-html="priv.p_gdpr"></p>
-    <h3 data-i18n="priv.h_updates">Aggiornamenti</h3>
-    <p data-i18n-html="priv.p_updates"></p>
-    <button class="modal-legal-close" onclick="closePrivacy()" data-i18n="modal.close">Chiudi</button>
-  </div>
-</div>
-
-<!-- Legacy modal (kept for backward compat, hidden) -->
-<div id="modal-legal" style="display:none"></div>
-
-<!-- DISCLAIMER BANNER -->
-<div id="banner-disclaimer">
-  <p>Decempionz is a fan project — not affiliated with UEFA, FIFA or any club. For entertainment only.</p>
-  <button class="btn-ghost" style="font-size:.62rem;padding:5px 12px;flex-shrink:0" onclick="closeBanner()">Got it</button>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════
-     DEV PANEL — riservato, trigger: click ×5 su versione
-═══════════════════════════════════════════════════ -->
-<div id="dev-panel" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.93);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 12px">
-  <div style="max-width:460px;margin:0 auto;background:#0d0d0d;border:2
+    <h3 data-i18n="priv.h_scripts">Script
