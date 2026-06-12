@@ -491,14 +491,24 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- HOME -->
 <div class="screen active" id="screen-home">
-  <div style="text-align:center;margin-bottom:24px;padding-top:16px">
+
+  <!-- Hero -->
+  <div style="text-align:center;margin-bottom:20px;padding-top:16px">
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
     <h1 class="logo">Decempionz</h1>
-    <p data-i18n-html="home.subtitle" style="color:var(--mut);margin-top:10px;font-size:.88rem;line-height:1.5">Draft iconic players. Build a legendary XI.<br>Conquer Europe across 6 decades of history.</p>
+    <p data-i18n-html="home.subtitle" style="color:var(--text);margin-top:12px;font-size:1rem;line-height:1.55;font-weight:600;letter-spacing:-.01em">Zidane. Maldini. Ronaldo R9.<br>Insieme, una volta sola.</p>
   </div>
 
+  <!-- CTA -->
+  <button class="btn btn-gold" onclick="quickStart()" style="font-size:1.05rem;padding:17px;letter-spacing:.5px">
+    <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
+    <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.6rem;font-weight:400;opacity:.75;letter-spacing:.3px;margin-top:3px">Classic · All Time · Normale</span>
+  </button>
+  <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
+  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;opacity:.7;font-size:.82rem">❓ Come si gioca</button>
+
   <!-- Stats bar -->
-  <div style="display:flex;gap:0;margin-bottom:20px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
+  <div style="display:flex;gap:0;margin-top:20px;margin-bottom:16px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
     <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
       <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">66</div>
       <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">Squads</div>
@@ -520,22 +530,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- How it works -->
   <div class="card" style="margin-bottom:16px">
     <div data-i18n="home.how_it_works" style="font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">How it works</div>
-    <div class="step-row"><div class="sn">01</div><div data-i18n-html="home.step1" class="st"><strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1123 legendary players. Position slots are strict.</div></div>
-    <div class="step-row"><div class="sn">02</div><div data-i18n-html="home.step2" class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.</div></div>
-    <div class="step-row"><div class="sn">03</div><div data-i18n-html="home.step3" class="st"><strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.</div></div>
+    <div class="step-row"><div class="sn">01</div><div data-i18n-html="home.step1" class="st"><strong>Pick your formation</strong> — or jump straight in with defaults. 10 eras, 1961–2023, 1123 legends.</div></div>
+    <div class="step-row"><div class="sn">02</div><div data-i18n-html="home.step2" class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Rerolls are limited — choose wisely.</div></div>
+    <div class="step-row"><div class="sn">03</div><div data-i18n-html="home.step3" class="st"><strong>Conquer Europe</strong> — scout report, tactics, group stage &amp; knockouts. No two runs are the same.</div></div>
   </div>
 
-  <button class="btn btn-gold" onclick="quickStart()" style="font-size:1.05rem;padding:17px;letter-spacing:.5px">
-    <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
-    <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.6rem;font-weight:400;opacity:.75;letter-spacing:.3px;margin-top:3px">Classic · All Time · Normale</span>
-  </button>
-  <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
-  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;opacity:.7;font-size:.82rem">❓ Come si gioca</button>
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
     <a onclick="openLegal()">Fan Project</a> &nbsp;·&nbsp;
     <a onclick="openLegal()">Privacy</a> &nbsp;·&nbsp;
-    <a onclick="openLegal()">Terms</a>
+    <a href="https://ko-fi.com/decempionz" target="_blank" rel="noopener">☕ Support</a>
   </div>
 </div>
 
@@ -893,18 +897,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.5.2';
+const GAME_VERSION='4.5.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
 const STRINGS={
   it:{
     'home.tagline':'Il Draft di Calcio Definitivo',
-    'home.subtitle':'Drafta campioni iconici. Costruisci un XI leggendario.<br>Conquista l\'Europa attraverso 6 decenni di storia.',
+    'home.subtitle':'Zidane. Maldini. Ronaldo R9.<br>Insieme, una volta sola.',
     'home.how_it_works':'Come funziona',
-    'home.step1':'<strong>Scegli l\'era e la formazione</strong> — 10 ere, 1961–2023, 1123 giocatori leggendari. Le posizioni sono fisse.',
-    'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. Non ti piacciono? Reroll — ma sono limitati.',
-    'home.step3':'<strong>Conquista l\'Europa</strong> — leggi il report dello scout, scegli la tattica e batti la fase a gironi e i playoff.',
+    'home.step1':'<strong>Scegli la formazione</strong> — o parti subito con i default. 10 ere, 1961–2023, 1123 campioni.',
+    'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. I reroll sono limitati — scegli con cura.',
+    'home.step3':'<strong>Conquista l\'Europa</strong> — scout report, tattica, gironi e knockout. Nessun run è uguale all\'altro.',
     'home.btn_quick':'⚽ Gioca subito',
     'home.btn_quick_sub':'Classic · All Time · Normale',
     'home.btn_custom':'⚙️ Personalizza',
@@ -1060,11 +1064,11 @@ const STRINGS={
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
-    'home.subtitle':'Draft iconic players. Build a legendary XI.<br>Conquer Europe across 6 decades of history.',
+    'home.subtitle':'Zidane. Maldini. Ronaldo R9.<br>Together, just once.',
     'home.how_it_works':'How it works',
-    'home.step1':'<strong>Pick your era &amp; formation</strong> — 10 eras, 1961–2023, 1123 legendary players. Position slots are strict.',
-    'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Not happy? Reroll — but rerolls are limited.',
-    'home.step3':'<strong>Conquer Europe</strong> — read the scout report, pick your tactic, and grind through group stage &amp; knockouts.',
+    'home.step1':'<strong>Pick your formation</strong> — or jump straight in with defaults. 10 eras, 1961–2023, 1123 legends.',
+    'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Rerolls are limited — choose wisely.',
+    'home.step3':'<strong>Conquer Europe</strong> — scout report, tactics, group stage &amp; knockouts. No two runs are the same.',
     'home.btn_quick':'⚽ Play Now',
     'home.btn_quick_sub':'Classic · All Time · Normal',
     'home.btn_custom':'⚙️ Customize',
@@ -4174,4 +4178,5 @@ function _devSetMom(v){
         <button onclick="_devMockTrophy()" class="dv-btn">🏆 Trofeo</button>
         <button onclick="_devMockGameOver()" class="dv-btn">💀 Game Over</button>
       </div>
-      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px
+      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#111;border:1px solid #444;color:#aaa;border-radius:8px;padding:8px;font-size:.78rem;cursor:pointer">🌐 Lingua: IT</button>
+    <
