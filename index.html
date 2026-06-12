@@ -41,15 +41,15 @@
     linear-gradient(180deg, transparent calc(50% - .5px), rgba(0,0,0,.1) calc(50% - .5px), rgba(0,0,0,.1) calc(50% + .5px), transparent calc(50% + .5px)),
     linear-gradient(180deg,#2d6a2d,#357a35 50%,#2d6a2d);
   border-color:#2a5e2a;}
-[data-theme="light"] .dp-slot.empty{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.15);color:rgba(0,0,0,.25)}
-[data-theme="light"] .dp-gk.empty{border-color:rgba(29,78,216,.45);color:rgba(29,78,216,.65)}
-[data-theme="light"] .dp-def.empty{border-color:rgba(21,128,61,.45);color:rgba(21,128,61,.65)}
-[data-theme="light"] .dp-mid.empty{border-color:rgba(146,64,14,.45);color:rgba(146,64,14,.65)}
-[data-theme="light"] .dp-fwd.empty{border-color:rgba(185,28,28,.45);color:rgba(185,28,28,.65)}
-[data-theme="light"] .dp-gk.target{border-color:#1d4ed8;color:#1d4ed8;background:rgba(29,78,216,.1)}
-[data-theme="light"] .dp-def.target{border-color:#15803d;color:#15803d;background:rgba(21,128,61,.1)}
-[data-theme="light"] .dp-mid.target{border-color:#92400e;color:#92400e;background:rgba(146,64,14,.1)}
-[data-theme="light"] .dp-fwd.target{border-color:#b91c1c;color:#b91c1c;background:rgba(185,28,28,.1)}
+[data-theme="light"] .dp-slot.empty{background:rgba(0,0,0,.12);border-color:rgba(0,0,0,.1);color:rgba(0,0,0,.4)}
+[data-theme="light"] .dp-gk.empty{color:rgba(29,78,216,.75)}
+[data-theme="light"] .dp-def.empty{color:rgba(21,128,61,.75)}
+[data-theme="light"] .dp-mid.empty{color:rgba(146,64,14,.75)}
+[data-theme="light"] .dp-fwd.empty{color:rgba(185,28,28,.75)}
+[data-theme="light"] .dp-gk.target{border-color:#1d4ed8;color:#1d4ed8;background:rgba(29,78,216,.12)}
+[data-theme="light"] .dp-def.target{border-color:#15803d;color:#15803d;background:rgba(21,128,61,.12)}
+[data-theme="light"] .dp-mid.target{border-color:#92400e;color:#92400e;background:rgba(146,64,14,.12)}
+[data-theme="light"] .dp-fwd.target{border-color:#b91c1c;color:#b91c1c;background:rgba(185,28,28,.12)}
 [data-theme="light"] .dp-slot.filled{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.25)}
 [data-theme="light"] .dp-slot.filled .dp-name{color:#111827}
 [data-theme="light"] .dp-slot.filled .dp-rating{color:#8a6200}
@@ -292,21 +292,20 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .dp-slot{border-radius:8px;padding:4px 6px;text-align:center;min-width:50px;max-width:72px;
   font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
   transition:all .18s;}
-.dp-slot.empty{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.22);}
-/* Empty slots — coloured by group */
-.dp-gk.empty{border-color:rgba(96,165,250,.35);color:rgba(147,197,253,.55);}
-.dp-def.empty{border-color:rgba(52,211,153,.35);color:rgba(110,231,183,.55);}
-.dp-mid.empty{border-color:rgba(251,191,36,.35);color:rgba(253,230,138,.55);}
-.dp-fwd.empty{border-color:rgba(248,113,113,.35);color:rgba(252,165,165,.55);}
-/* Target slots (compatible with current card) */
+/* Empty slots — minimal, pitch-friendly */
+.dp-slot.empty{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.45);}
+.dp-gk.empty{color:rgba(147,197,253,.7);}
+.dp-def.empty{color:rgba(110,231,183,.7);}
+.dp-mid.empty{color:rgba(253,230,138,.7);}
+.dp-fwd.empty{color:rgba(252,165,165,.7);}
+/* Target slots — pulsing highlight */
 .dp-slot.target{border:1.5px solid;animation:tpulse 1s ease-in-out infinite alternate;}
 @keyframes tpulse{from{opacity:.75;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 @keyframes eliteGlow{0%,100%{box-shadow:0 0 6px rgba(200,160,0,.3)}50%{box-shadow:0 0 16px rgba(200,160,0,.65)}}
-.dp-gk.target{border-color:#60a5fa;color:#93c5fd;background:rgba(10,22,65,.5);}
-.dp-def.target{border-color:#34d399;color:#6ee7b7;background:rgba(0,35,28,.5);}
-.dp-mid.target{border-color:#fbbf24;color:#fde68a;background:rgba(42,30,0,.5);}
-.dp-fwd.target{border-color:#f87171;color:#fca5a5;background:rgba(55,5,5,.5);}
+.dp-gk.target{border-color:#60a5fa;color:#93c5fd;background:rgba(10,22,65,.55);}
+.dp-def.target{border-color:#34d399;color:#6ee7b7;background:rgba(0,35,28,.55);}
+.dp-mid.target{border-color:#fbbf24;color:#fde68a;background:rgba(42,30,0,.55);}
+.dp-fwd.target{border-color:#f87171;color:#fca5a5;background:rgba(55,5,5,.55);}
 /* Filled slots */
 .dp-slot.filled{border:1.5px solid rgba(255,255,255,.28);background:rgba(5,8,20,.72);}
 .dp-slot.filled .dp-name{font-size:.54rem;font-weight:700;white-space:normal;
