@@ -948,7 +948,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.6.4';
+const GAME_VERSION='4.6.6';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4297,5 +4297,128 @@ function _devSetMom(v){
 }
 
 </script>
+
+
+<div id="dev-panel" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);z-index:9999;overflow-y:auto;padding:16px;font-family:monospace">
+  <div style="max-width:480px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="color:#eab308;font-weight:700;font-size:.85rem">⚙️ DEV PANEL — v<span class="gv"></span></div>
+      <button onclick="closeDevPanel()" style="background:#333;border:none;color:#ccc;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:.8rem">✕ Chiudi</button>
+    </div>
+
+    <!-- Quick Draft -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#60a5fa;font-size:.72rem;font-weight:700;margin-bottom:8px">⚡ QUICK DRAFT</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <select id="dv-format" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem">
+          <option value="classic">Classic CL</option>
+          <option value="nuovo">New Format</option>
+          <option value="coppa">Copa</option>
+        </select>
+        <select id="dv-form" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem">
+          <option value="4-3-3">4-3-3</option>
+          <option value="4-4-2">4-4-2</option>
+          <option value="4-2-3-1">4-2-3-1</option>
+          <option value="3-5-2">3-5-2</option>
+          <option value="4-1-4-1">4-1-4-1</option>
+          <option value="3-4-3">3-4-3</option>
+          <option value="5-3-2">5-3-2</option>
+        </select>
+        <select id="dv-diff" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem">
+          <option value="normal">Normal</option>
+          <option value="easy">Easy</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="_devQuickDraft('top')" style="flex:1;background:#1a3a1a;border:1px solid #22c55e;color:#22c55e;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer">⭐ Top XI</button>
+        <button onclick="_devQuickDraft('rand')" style="flex:1;background:#1a1a3a;border:1px solid #60a5fa;color:#60a5fa;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer">🎲 Random XI</button>
+      </div>
+      <div id="dv-squad-display"></div>
+    </div>
+
+    <!-- Tactic -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#fbbf24;font-size:.72rem;font-weight:700;margin-bottom:8px">🎯 TATTICA</div>
+      <div style="display:flex;gap:6px">
+        <button class="dv-tact-btn" data-t="attack" onclick="_devSetTactic('attack')" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#f87171;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer;opacity:.4">⚔️ Attack</button>
+        <button class="dv-tact-btn" data-t="balanced" onclick="_devSetTactic('balanced')" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer;font-weight:700">⚖️ Balanced</button>
+        <button class="dv-tact-btn" data-t="defend" onclick="_devSetTactic('defend')" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#60a5fa;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer;opacity:.4">🛡️ Defend</button>
+      </div>
+    </div>
+
+    <!-- Momentum -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#a78bfa;font-size:.72rem;font-weight:700;margin-bottom:8px">📈 MOMENTUM: <span id="dv-mom-lbl">0</span></div>
+      <input type="range" min="-5" max="5" value="0" oninput="_devSetMom(this.value)" style="width:100%">
+    </div>
+
+    <!-- Jump to Round -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#34d399;font-size:.72rem;font-weight:700;margin-bottom:8px">⏭️ JUMP TO ROUND</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        <button onclick="_devJumpRound('group',0)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G1</button>
+        <button onclick="_devJumpRound('group',1)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G2</button>
+        <button onclick="_devJumpRound('group',2)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G3</button>
+        <button onclick="_devJumpRound('knockout',0)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">R16</button>
+        <button onclick="_devJumpRound('knockout',1)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">QF</button>
+        <button onclick="_devJumpRound('knockout',2)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">SF</button>
+        <button onclick="_devJumpRound('knockout',3)" style="background:#1a1a1a;border:1px solid #f87171;color:#f87171;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer;font-weight:700">FIN</button>
+      </div>
+      <div id="dv-force-status" style="font-size:.65rem;color:#555;margin-top:6px"></div>
+    </div>
+
+    <!-- Force Score -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#f97316;font-size:.72rem;font-weight:700;margin-bottom:8px">⚽ FORZA RISULTATO</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        <button onclick="_devForceScore(3,0)" style="background:#1a1a1a;border:1px solid #333;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">3-0</button>
+        <button onclick="_devForceScore(2,1)" style="background:#1a1a1a;border:1px solid #333;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">2-1</button>
+        <button onclick="_devForceScore(1,1)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">1-1</button>
+        <button onclick="_devForceScore(0,1)" style="background:#1a1a1a;border:1px solid #333;color:#ef4444;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-1</button>
+        <button onclick="_devForceScore(0,3)" style="background:#1a1a1a;border:1px solid #333;color:#ef4444;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-3</button>
+        <button onclick="_devForceScore(null,null)" style="background:#1a1a1a;border:1px solid #555;color:#777;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">Reset</button>
+      </div>
+    </div>
+
+    <!-- Stress Test -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#818cf8;font-size:.72rem;font-weight:700;margin-bottom:8px">🧪 STRESS TEST</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+        <label style="color:#666;font-size:.65rem">N sim:<input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="width:60px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+        <label style="color:#666;font-size:.65rem">Opp str:<input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:48px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+        <label style="color:#666;font-size:.65rem">Mod:<input id="dv-oppmod" type="number" value="0" min="-2" max="2" step="0.1" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+      </div>
+      <button onclick="_devStressTest()" style="width:100%;background:#1a1a3a;border:1px solid #818cf8;color:#818cf8;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer">▶ Esegui simulazione</button>
+      <div id="dv-stress-result"></div>
+    </div>
+
+    <!-- Mock Screens -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#e879f9;font-size:.72rem;font-weight:700;margin-bottom:8px">🖥️ MOCK SCREENS</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="_devMockResult()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Result</button>
+        <button onclick="_devMockTrophy()" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Trophy</button>
+        <button onclick="_devMockGameOver()" style="flex:1;background:#1a0a0a;border:1px solid #ef4444;color:#ef4444;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Game Over</button>
+      </div>
+    </div>
+
+    <!-- Coach -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#fcd34d;font-size:.72rem;font-weight:700;margin-bottom:8px">🧑‍💼 COACH</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+        <label style="color:#666;font-size:.65rem">Idx:<input id="dv-coach-sel" type="number" value="0" min="0" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+        <label style="color:#666;font-size:.65rem">Boost%:<input id="dv-coach-boost" type="number" value="0" min="0" max="20" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+        <button onclick="_devAssignCoach()" style="background:#1a1a0a;border:1px solid #fcd34d;color:#fcd34d;border-radius:4px;padding:3px 10px;font-size:.65rem;cursor:pointer">Apply</button>
+      </div>
+      <div id="dv-coach-status" style="font-size:.65rem;color:#555"></div>
+    </div>
+
+    <!-- Language -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:24px">
+      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:6px;font-size:.7rem;cursor:pointer">🌐 Lingua: IT</button>
+    </div>
+  </div>
+</div>
 
 <div id="share-toast">📋
