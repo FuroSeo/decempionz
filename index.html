@@ -50,7 +50,7 @@
 [data-theme="light"] .dp-def.target{border-color:#15803d;color:#15803d;background:rgba(21,128,61,.12)}
 [data-theme="light"] .dp-mid.target{border-color:#92400e;color:#92400e;background:rgba(146,64,14,.12)}
 [data-theme="light"] .dp-fwd.target{border-color:#b91c1c;color:#b91c1c;background:rgba(185,28,28,.12)}
-[data-theme="light"] .dp-slot.filled{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.25)}
+[data-theme="light"] .dp-slot.filled{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.25)}[data-theme="light"] .dp-slot.tier-elite{background:rgba(255,248,200,.97);}[data-theme="light"] .dp-slot.tier-high{background:rgba(255,252,230,.9);}[data-theme="light"] .dp-slot.tier-mid{background:rgba(235,235,245,.9);}[data-theme="light"] .dp-slot.tier-low{background:rgba(240,237,228,.9);}
 [data-theme="light"] .dp-slot.filled .dp-name{color:#111827}
 [data-theme="light"] .dp-slot.filled .dp-rating{color:#8a6200}
 [data-theme="light"] .dp-gk.filled{border-color:#1d4ed8;background:rgba(29,78,216,.1)}
@@ -313,7 +313,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   background:rgba(5,8,20,.85);border-radius:10px;gap:1px;}
 .dp-slot.filled .dp-name{font-size:.48rem;font-weight:800;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;max-width:46px;color:#eef2ff;text-align:center;line-height:1.1;}
-.dp-slot.filled .dp-rating{font-size:.62rem;font-weight:900;color:var(--gold);line-height:1;}
+.dp-slot.filled .dp-rating{font-size:.62rem;font-weight:900;color:var(--gold);line-height:1;}.dp-slot.tier-elite{background:rgba(28,16,0,.92);}.dp-slot.tier-high{background:rgba(16,8,0,.82);}.dp-slot.tier-mid{background:rgba(10,10,16,.82);}.dp-slot.tier-low{background:rgba(8,8,8,.75);}
 .dp-gk.filled{border-color:rgba(96,165,250,.9);background:rgba(10,22,65,.9);}
 .dp-def.filled{border-color:rgba(52,211,153,.85);background:rgba(0,35,28,.9);}
 .dp-mid.filled{border-color:rgba(251,191,36,.9);background:rgba(42,30,0,.9);}
@@ -938,7 +938,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.8';
+const GAME_VERSION='4.8.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2139,20 +2139,26 @@ function targetSprite(grp){
     +'</svg>';
 }
 function slotTierCss(r){
-  const light=document.body.getAttribute('data-theme')==='light';
-  if(r>=9.5)return'border:2px solid #d4a800;background:'+(light?'rgba(255,248,200,.97)':'rgba(28,16,0,.92)')+';box-shadow:0 0 10px rgba(212,168,0,'+(light?'.25':'.45')+');animation:eliteGlow 2.5s ease-in-out infinite';
-  if(r>=9.0)return'border:1.5px solid #c8a000;background:'+(light?'rgba(255,252,230,.9)':'rgba(16,8,0,.82)');
-  if(r>=8.5)return'border:1.5px solid #888888;background:'+(light?'rgba(235,235,245,.9)':'rgba(10,10,16,.82)');
-  return'border:1px solid #9a8a6a;background:'+(light?'rgba(240,237,228,.9)':'rgba(8,8,8,.75)');
+  if(r>=9.5)return'border:2px solid #d4a800;box-shadow:0 0 10px rgba(212,168,0,.45);animation:eliteGlow 2.5s ease-in-out infinite';
+  if(r>=9.0)return'border:1.5px solid #c8a000';
+  if(r>=8.5)return'border:1.5px solid #888888';
+  return'border:1px solid #9a8a6a';
+}
+function slotTierClass(r){
+  if(r>=9.5)return'tier-elite';
+  if(r>=9.0)return'tier-high';
+  if(r>=8.5)return'tier-mid';
+  return'tier-low';
 }
 function filledSlotHTML(player,grp){
   const col=JERSEY_COLORS[player.teamId]||'#555555';
   const tierCss=slotTierCss(player.r);
+  const tierCls=slotTierClass(player.r);
   const isElite=player.r>=9.5;
   const ratingLine=isElite
     ?'<div class="dp-rating" style="color:#d4a800;font-weight:900">\u2605'+player.r+'</div>'
     :'<div class="dp-rating">'+player.r+'</div>';
-  return'<div class="dp-slot filled dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
+  return'<div class="dp-slot filled '+tierCls+' dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
     +playerSprite(col)
     +'<div class="dp-name"'+(isElite?' style="font-weight:900"':'')+'>'+player.n+'</div>'
     +ratingLine
