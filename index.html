@@ -929,7 +929,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.2';
+const GAME_VERSION='4.7.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2247,7 +2247,9 @@ function applyTournament(t){
   G.campaignScorers = {}; G.campaignMatchRatings = {};
   G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
-  renderTourCard();
+  selectedDiff='normal';
+  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
+  const dc=document.getElementById('dc-normal');if(dc)dc.classList.add('diff-sel');
 }
 
 var selectedFormat='classic';
@@ -2326,28 +2328,6 @@ function confirmFormat(){
   showScreen('screen-formation');
 }
 
-function renderTourCard(){
-  const trn=G.tournament;
-  document.getElementById('st-badge').textContent=trn.allTime?'🌍 All Time':'⏱ '+trn.years;
-  document.getElementById('st-name').textContent=trn.name;
-  document.getElementById('st-years').textContent=trn.years;
-  document.getElementById('st-desc').textContent=t('era.'+trn.id+'.desc')||trn.desc;
-  // Squad preview — show up to 6 random, or all if <=6
-  const ids=[...trn.teams].sort(()=>Math.random()-.5).slice(0,trn.allTime?8:trn.teams.length);
-  const more=trn.teams.length-ids.length;
-  document.getElementById('st-preview').innerHTML=
-    ids.map(id=>{
-      const tm=TEAMS[id];
-      return '<div style="background:var(--s2);border:1px solid var(--brd);border-radius:6px;padding:4px 9px;font-size:.67rem;white-space:nowrap">'
-        +tm.country+' <strong>'+tm.name+'</strong> <span style="color:var(--mut)">'+tm.season+'</span></div>';
-    }).join('')
-    +(more>0?'<div style="background:var(--s2);border:1px dashed var(--brd);border-radius:6px;padding:4px 9px;font-size:.67rem;color:var(--mut)">+'+more+' more</div>':'');
-  // Reset difficulty to normal default
-  selectedDiff='normal';
-  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
-  const dc=document.getElementById('dc-normal');
-  if(dc)dc.classList.add('diff-sel');
-}
 
 /* ═══════════════════════════════════════
    FORMATION PICKER
