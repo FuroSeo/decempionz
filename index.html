@@ -937,7 +937,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.2';
+const GAME_VERSION='4.8.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3679,6 +3679,7 @@ function showGroupElimination(pos,pts){
   showScreen('screen-gameover');
 }
 
+function _diffLabel(){const isIt=(G.lang||'it')=='it';return isIt?{'easy':'Facile','normal':'Normale','hard':'Difficile'}[G.difficulty||'normal']||'Normale':{'easy':'Easy','normal':'Normal','hard':'Hard'}[G.difficulty||'normal']||'Normal';}
 function showGameOver(){
   const KNAMES=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
   const KNAMES2=G.format==='coppa'?['R1','R2','QF','SF','Final']:['R16','QF','SF','Final'];
