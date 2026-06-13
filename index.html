@@ -931,7 +931,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.6';
+const GAME_VERSION='4.7.7';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3651,7 +3651,7 @@ function showGroupElimination(pos,pts){
 }
 function showGameOver(){
   const KNAMES=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
-  const ri=Math.min(G.knockRound-1,KNAMES.length-1);
+  const ri=Math.min(G.knockRound,KNAMES.length-1);
   const allRes=[...G.groupUserResults,...G.knockResults];
   const total=allRes.reduce((s,r)=>s+(r.stars||0),0);
   const campW=allRes.filter(r=>r.myG>r.oppG).length;
