@@ -34,7 +34,7 @@
 }
 [data-theme="light"] body{background:var(--bg);color:var(--text)}
 [data-theme="light"] .card{background:var(--s1);border-color:var(--brd)}
-[data-theme="light"] [data-theme="light"] .draft-pitch{
+[data-theme="light"] .draft-pitch{
   background:
     radial-gradient(ellipse 62% 22% at 50% 100%, rgba(0,0,0,.06) 0%, transparent 100%),
     radial-gradient(ellipse 62% 22% at 50% 0%,   rgba(0,0,0,.06) 0%, transparent 100%),
@@ -938,7 +938,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.7';
+const GAME_VERSION='4.8.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3896,114 +3896,6 @@ function renderTrophyPitch(){
   }).join('');
 }
 
-function showTrophy(){
-  const formatTitle={coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
-  const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
-  const kTags=G.format==='coppa'?['r16','r16','qf','sf','final']:['r16','qf','sf','final'];
-  const gLabel=G.format==='nuovo'?'LG':'GP';
-
-  const all=[...G.groupUserResults,...G.knockResults];
-  const total=all.reduce((s,r)=>s+(r.stars||0),0), max=all.length*3;
-  const pct=max>0?total/max:0;
-  const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
-  const gradeClass={'S':'grade-s','A':'grade-a','B':'grade-b','C':'grade-c'}[grade];
-  const gradeMsg={'S':t('grade.s'),'A':t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
-
-  const campW=all.filter(r=>r.myG>r.oppG).length;
-  const campD=all.filter(r=>r.myG===r.oppG).length;
-  const campL=all.filter(r=>r.myG<r.oppG).length;
-
-  const topScorerT=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
-  let mvpName='',mvpAvg=0;
-  Object.entries(G.campaignMatchRatings||{}).forEach(([n,r])=>{const a=avg(r);if(a>mvpAvg){mvpAvg=a;mvpName=n;}});
-  const bw=G.campaignBestWin;
-
-  // Hero
-  document.getElementById('t-grade').textContent=grade;
-  document.getElementById('t-grade').className='grade-badge '+gradeClass;
-  document.getElementById('t-title').textContent=formatTitle[G.format]||'Champions!';
-  document.getElementById('t-club').textContent=G.tournament.name+' · '+G.formation;
-  document.getElementById('t-stars').innerHTML=sh(Math.round(total/all.length));
-  document.getElementById('t-rec').textContent=total+'/'+max+' stars — '+gradeMsg;
-
-  // Hero cards
-  document.getElementById('t-hero-cards').innerHTML=
-    '<div class="t-hero-card"><div class="thc-ico">⚽</div>'
-    +'<div class="thc-val">'+(topScorerT?topScorerT[0].split(' ').pop()+' ('+topScorerT[1]+')':'—')+'</div>'
-    +'<div class="thc-lbl">'+t('trophy.lbl_top_scorer')+'</div></div>'
-    +'<div class="t-hero-card"><div class="thc-ico">🏅</div>'
-    +'<div class="thc-val">'+(mvpName?mvpName.split(' ').pop()+' '+mvpAvg.toFixed(1):'—')+'</div>'
-    +'<div class="thc-lbl">'+t('trophy.lbl_best_player')+'</div></div>'
-    +'<div class="t-hero-card"><div class="thc-ico">💥</div>'
-    +'<div class="thc-val">'+(bw?bw.myG+'–'+bw.oppG+' '+bw.opp.split(' ')[0]:'—')+'</div>'
-    +'<div class="thc-lbl">'+t('trophy.lbl_best_win')+'</div></div>';
-
-  // Top scorers panel
-  const scorerEl=document.getElementById('t-scorers');
-  if(scorerEl){
-    const topScorers=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1]).slice(0,5).filter(s=>s[1]>0);
-    if(topScorers.length){
-      scorerEl.style.display='block';
-      scorerEl.innerHTML='<div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:8px">'+t('trophy.lbl_top_scorer')+'</div>'
-        +topScorers.map(function([name,goals],i){
-          const medal=i===0?'🥇':i===1?'🥈':'🥉';
-          const isFirst=i===0;
-          return'<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0'+(i<topScorers.length-1?';border-bottom:1px solid var(--brd)':'')+'">'
-            +'<div style="display:flex;align-items:center;gap:7px">'
-            +(i<3?'<span style="font-size:.8rem">'+medal+'</span>':'<span style="font-size:.65rem;color:var(--mut);min-width:16px;text-align:center">'+(i+1)+'.</span>')
-            +'<span style="font-size:'+(isFirst?'.82rem':'.76rem')+';font-weight:'+(isFirst?'800':'600')+';color:var(--text)">'+name+'</span>'
-            +'</div>'
-            +'<span style="font-size:'+(isFirst?'.82rem':'.76rem')+';font-weight:800;color:'+(isFirst?'#ffd700':'var(--text)')+'">'+goals+' ⚽</span>'
-            +'</div>';
-        }).join('');
-    } else {
-      scorerEl.style.display='none';
-    }
-  }
-
-  // Record bar
-  document.getElementById('t-record-row').innerHTML=
-    '<div class="go-stats-row">'
-    +[['P',all.length],['W',campW],['D',campD],['L',campL],['GF',G.campaignGF||0],['GA',G.campaignGA||0],['CS',G.campaignCleanSheets||0]]
-    .map(([l,v])=>'<div class="go-stat"><div class="go-stat-v">'+v+'</div><div class="go-stat-l">'+l+'</div></div>').join('')
-    +'</div>';
-
-  // Journey
-  const gRows=G.groupUserResults.map(function(r,i){
-    const res=r.myG>r.oppG?'<span style="color:#22c55e;font-weight:700">W</span>':r.myG===r.oppG?'<span style="color:#eab308;font-weight:700">D</span>':'<span style="color:#ef4444;font-weight:700">L</span>';
-    return '<div class="t-log-row">'
-      +'<div style="display:flex;align-items:center;gap:7px"><span class="tag tag-group">'+gLabel+(i+1)+'</span><span>'+r.opp+'</span></div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'+res+'<span style="color:var(--mut);min-width:32px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
-  }).join('');
-  const kRows=G.knockResults.map(function(r,i){
-    const res=r.myG>r.oppG?'<span style="color:#22c55e;font-weight:700">W</span>':r.myG===r.oppG?'<span style="color:#eab308;font-weight:700">D</span>':'<span style="color:#ef4444;font-weight:700">L</span>';
-    const tag=kTags[Math.min(i,kTags.length-1)];
-    return '<div class="t-log-row">'
-      +'<div style="display:flex;align-items:center;gap:7px"><span class="tag tag-'+tag+'">'+KNAMES[i]+'</span><span>'+r.opp+'</span></div>'
-      +'<div style="display:flex;align-items:center;gap:8px">'+res+'<span style="color:var(--mut);min-width:32px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
-  }).join('');
-  document.getElementById('t-journey').innerHTML=gRows+kRows;
-  var tRatEl=document.getElementById('t-ratings');
-  if(tRatEl)tRatEl.innerHTML=buildRatingsGrid(G.campaignMatchRatings);
-  renderTrophyPitch();
-
-  // Confetti burst
-  const wrap=document.getElementById('t-confetti');
-  wrap.innerHTML='';
-  const cols=['#eab308','#22c55e','#3b82f6','#ef4444','#a855f7','#f97316','#ffffff'];
-  for(let i=0;i<55;i++){
-    const el=document.createElement('div');
-    el.className='cf';
-    el.style.cssText='left:'+(Math.random()*100)+'%;top:-10px;background:'+cols[i%cols.length]
-      +';width:'+(5+Math.random()*5)+'px;height:'+(7+Math.random()*6)+'px'
-      +';border-radius:'+(Math.random()>.5?'50%':'2px')
-      +';animation-duration:'+(1.8+Math.random()*2.5)+'s'
-      +';animation-delay:'+(Math.random()*1.2)+'s';
-    wrap.appendChild(el);
-  }
-
-  showScreen('screen-trophy');
-}
 
 /* ── THEME ── */
 function toggleTheme(){
