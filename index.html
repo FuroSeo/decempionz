@@ -3189,8 +3189,10 @@ function _runMatch(){
   const homeKeys=pl.slice().sort((a,b)=>b.r-a.r).slice(0,3).map(p=>p.n).join(', ');
 
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
+  const _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
+  const _oppCol=(_oppTid&&JERSEY_COLORS[_oppTid])||'#888';
   document.getElementById('m-home').textContent='Decempionz';
-  document.getElementById('m-away').textContent=oppName;
+  document.getElementById('m-away').innerHTML='<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:'+_oppCol+';opacity:.85;margin-right:5px;vertical-align:middle;flex-shrink:0"></span>'+oppName;
   document.getElementById('m-sq-home').textContent=homeKeys;
   document.getElementById('m-sq-away').textContent=awayKeys;
   document.getElementById('m-score').textContent='0 — 0';
