@@ -797,7 +797,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-result">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-
   <!-- Compact header -->
   <div class="res-header">
     <div class="label" id="r-rnd"></div>
@@ -809,30 +808,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="r-msg" id="r-msg"></div>
   </div>
 
-  <!-- Compact 2-col stats + scorers in one card -->
-  <div class="card" style="margin-top:10px;padding:12px 14px">
-    <div id="r-two-col-stats"></div>
-    <div id="r-scorers-compact" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);font-size:.78rem;color:var(--mut);display:none"></div>
-  </div>
-
-
-  <!-- Campaign totals - single row -->
-  <div class="card" style="margin-top:8px;padding:10px 14px">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-      <div id="r-camp-row" style="font-size:.78rem;color:var(--mut)"></div>
-      <div id="r-top-scorer" style="font-size:.75rem;color:var(--mut)"></div>
-    </div>
-  </div>
-
-  <!-- Standings (group only) - collapsed by default -->
-  <div id="r-standings" style="margin-top:8px;display:none">
-    <div class="phase-label" style="margin-bottom:6px">Standings</div>
-    <table class="standings" id="r-standings-table"></table>
-  </div>
-  <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
-
-  <!-- Next match preview (tactic selector) -->
-  <div id="r-next-match" style="display:none;margin-top:8px">
+  <!-- Next match: opponent + tactic — top priority on mobile -->
+  <div id="r-next-match" style="display:none;margin-top:10px">
     <div class="pmp-box">
       <div class="pmp-scout" id="r-next-scout"></div>
       <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
@@ -844,10 +821,32 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
 
+  <!-- Primary CTA — immediately after next-match panel -->
   <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:10px"></button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
-</div>
 
+  <!-- Match stats + scorers -->
+  <div class="card" style="margin-top:10px;padding:12px 14px">
+    <div id="r-two-col-stats"></div>
+    <div id="r-scorers-compact" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);font-size:.78rem;color:var(--mut);display:none"></div>
+  </div>
+
+  <!-- Campaign totals -->
+  <div class="card" style="margin-top:8px;padding:10px 14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+      <div id="r-camp-row" style="font-size:.78rem;color:var(--mut)"></div>
+      <div id="r-top-scorer" style="font-size:.75rem;color:var(--mut)"></div>
+    </div>
+  </div>
+
+  <!-- Standings (group only) -->
+  <div id="r-standings" style="margin-top:8px;display:none">
+    <div class="phase-label" style="margin-bottom:6px">Standings</div>
+    <table class="standings" id="r-standings-table"></table>
+  </div>
+  <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
+
+  <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+</div>
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
