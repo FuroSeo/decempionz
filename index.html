@@ -781,6 +781,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
     <!-- Next match: opponent + tactic -->
     <div id="r-next-match" style="display:none;margin-bottom:10px">
+      <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
       <div class="pmp-box">
         <div class="pmp-scout" id="r-next-scout"></div>
         <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
@@ -793,6 +794,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
 
     <!-- Primary CTA -->
+    <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
     <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-bottom:10px"></button>
 
     <!-- Stats toggle -->
@@ -929,7 +931,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.3';
+const GAME_VERSION='4.7.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1017,7 +1019,7 @@ const STRINGS={
     'camp.league_tag':'LEGA',
     'camp.group_match':'Partita di Girone',
     'camp.league_match':'Partita di Lega',
-    'camp.kickoff':'Calcio d\'inizio →',
+    'camp.kickoff':'⚽ Calcio d\'inizio →',
     'scout.likely':'Scout: gioca probabilmente',
     'scout.counter':'· Contromossa:',
     'tac.edge':'🟢 Vantaggio tattico — tua',
@@ -1206,7 +1208,7 @@ const STRINGS={
     'camp.league_tag':'LEAGUE',
     'camp.group_match':'Group Match',
     'camp.league_match':'League Match',
-    'camp.kickoff':'Kick Off →',
+    'camp.kickoff':'⚽ Kick Off →',
     'scout.likely':'Scout: likely plays',
     'scout.counter':'· Counter:',
     'tac.edge':'🟢 Tactical edge — your',
