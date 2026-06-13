@@ -992,7 +992,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.0';
+const GAME_VERSION='4.7.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3680,8 +3680,20 @@ function showResult(){
   const maxGroupRounds=G.format==='nuovo'?6:3;
   const gDone=G.phase==='group'&&G.groupUserResults.length>=maxGroupRounds;
 
+  // Detect group-stage elimination (distinct from knockout elim)
+  var groupElim=false;
+  if(!elim&&gDone){
+    if(G.format==='nuovo'){
+      var _gePts=G.groupUserResults.reduce(function(s,r){return s+(r.myG>r.oppG?3:r.myG===r.oppG?1:0);},0);
+      groupElim=_gePts<8;
+    } else {
+      var _geSt=calcStandings();
+      groupElim=_geSt.findIndex(function(s){return s.id==='user';})>=2;
+    }
+  }
+
   // Next-match preview panel
-  var _nextInfo=elim?null:getNextMatchInfo();
+  var _nextInfo=(elim||groupElim)?null:getNextMatchInfo();
   var _rNextPanel=document.getElementById('r-next-match');
   if(_nextInfo&&_rNextPanel){
     // Pre-assign opponent tactic for next match (user sees scout hint, playRound reuses it)
@@ -3711,7 +3723,8 @@ function showResult(){
 
   let lbl;
   if(elim)lbl=t('btn.view_stats');
-  else if(gDone){const st=calcStandings();lbl=st.findIndex(s=>s.id==='user')>=2?t('btn.group_exit'):(_nextInfo?t('camp.kickoff'):t('btn.knockouts'));}
+  else if(groupElim)lbl=t('btn.group_exit');
+  else if(gDone)lbl=_nextInfo?t('camp.kickoff'):t('btn.knockouts');
   else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl=t('btn.trophy');
   else lbl=_nextInfo?t('camp.kickoff'):t('btn.continue');
   const cb=document.getElementById('btn-rcont'); cb.textContent=lbl; cb.className='btn btn-gold';
