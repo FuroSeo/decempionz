@@ -3490,7 +3490,7 @@ function runLog(){
     renderMatchLineups();
   }
 
-  if(ev.final){setTimeout(showResult,4000);return;}
+  if(ev.final){setTimeout(showResult,1000);return;}
 
   var delay=M.speedKey==='slow'?2400:M.speedKey==='fast'?200:(700+Math.random()*600);
   setTimeout(runLog,delay);
