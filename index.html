@@ -535,7 +535,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div style="text-align:center;margin-bottom:20px;padding-top:16px">
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
     <h1 class="logo">Decempionz</h1>
-    <p data-i18n-html="home.subtitle" style="color:var(--text);margin-top:12px;font-size:1rem;line-height:1.55;font-weight:600;letter-spacing:-.01em">I Campioni che hanno fatto la storia</p>
+    <p data-i18n-html="home.subtitle" style="color:var(--mut);margin-top:10px;font-size:.95rem;line-height:1.5;font-style:italic;letter-spacing:.01em">I Campioni che hanno fatto la storia</p>
   </div>
 
   <!-- CTA -->
@@ -837,7 +837,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:10px"></button>
-  <button class="btn btn-share" style="font-size:.82rem;margin-top:6px;margin-bottom:4px" onclick="shareResult()">📤 Share</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
 </div>
 
@@ -872,7 +871,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="go-ratings"></div>
   </div>
 
-  <button class="btn btn-share" style="font-size:.9rem;margin-bottom:8px" onclick="shareResult()">📤 Share Run</button>
   <button class="btn btn-gold" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
 </div>
@@ -920,7 +918,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <!-- Player ratings -->
     <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
 
-    <button class="btn btn-share" style="font-size:1rem;margin-bottom:8px" onclick="shareResult()">📤 Share Result</button>
     <button class="btn btn-gold" style="font-size:1rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Play Again</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
   </div>
@@ -948,7 +945,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.6.6';
+const GAME_VERSION='4.6.7';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1134,6 +1131,8 @@ const STRINGS={
     'coach.pick_title':'Scegli il tuo Allenatore',
     'coach.pick_subtitle':'Nessun reroll — scegli con saggezza.',
     'coach.pref_form':'Modulo preferito:',
+    'pen.win':'Vinci ai rigori! 🎉',
+    'pen.loss':'Eliminati ai rigori. 💔',
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
@@ -1316,6 +1315,8 @@ const STRINGS={
     'coach.pick_title':'Choose your Manager',
     'coach.pick_subtitle':'No rerolls — choose wisely.',
     'coach.pref_form':'Preferred formation:',
+    'pen.win':'You win on penalties! 🎉',
+    'pen.loss':'Eliminated on penalties. 💔',
   }
 };
 
@@ -2404,6 +2405,7 @@ function confirmSetup(){
 function initDraft(){
   if(!G.formation) return;
   const f = FORMATIONS[G.formation];
+  G.draftTactic = G.tactic || 'balanced';
   // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
   // Key by teamId (not club name) so multiple seasons of the same club each get fair representation
   // AllTime cap: max 3 versions per club (top avg rating)
@@ -2904,7 +2906,7 @@ function renderGroupSection(){
     let right=`<span class="tag tag-group">${isNuovo?t('camp.league_tag'):t('camp.group_tag')}</span>`;
     right+=res?`<div class="stars">${sh(res.stars)}</div>`:`<span style="color:var(--mut)">${isLock?'🔒':'▶'}</span>`;
     const teamLabel=res?`${team.name} — ${res.myG}–${res.oppG}`:(isCur?`${team.name} '${team.season.slice(-2)}`:'?');
-    cont.innerHTML+=`<div class="${cls}"><div><div class="rr-name">${teamLabel}</div><div class="rr-sub">${isNuovo?'League Match':'Group Match'} ${i+1}</div></div><div class="rr-right">${right}</div></div>`;
+    cont.innerHTML+=`<div class="${cls}"><div><div class="rr-name">${teamLabel}</div><div class="rr-sub">${isNuovo?t('camp.league_match'):t('camp.group_match')} ${i+1}</div></div><div class="rr-right">${right}</div></div>`;
   });
 
   const btn=document.getElementById('btn-play');
@@ -3314,7 +3316,7 @@ function checkPenDone(){
 function finishPenalties(){
   P.done=true;
   const won=P.h>P.a;
-  document.getElementById('pen-msg').textContent=won?'You win on penalties! 🎉':'Eliminated on penalties. 💔';
+  document.getElementById('pen-msg').textContent=won?t('pen.win'):t('pen.loss');
   M.penResult={homeWon:won,pw:Math.max(P.h,P.a),pl:Math.min(P.h,P.a)};
   setTimeout(showResult,2200);
 }
@@ -3379,7 +3381,7 @@ function showResult(){
   const myScorers=[], oppScorers=[];
   M.log.forEach(ev=>{
     if(ev.cls==='lg'&&ev.goal){
-      const m=ev.text.match(/^(\d+)' ⚽ (.+?) (fires|scores|makes|from)/);
+      const m=ev.text.match(/^(\d+)' ⚽ (.+?) —/);
       if(m) myScorers.push({min:m[1],name:m[2]});
     }
     if(ev.cls==='lc'&&ev.goal) oppScorers.push({min:ev.min,name:ev.scorer||oppName});
@@ -3742,8 +3744,9 @@ function showGameOver(){
   const goPitch=document.getElementById('go-pitch');
   if(goWrap&&goPitch&&G.formation&&FORMATIONS[G.formation]){
     goWrap.style.display='block';
-    const positions=fmtPositions(G.formation,G.tactic);
-    const rows=fmtRows(G.formation,G.tactic);
+    const _goTac=G.draftTactic||G.tactic||'balanced';
+    const positions=fmtPositions(G.formation,_goTac);
+    const rows=fmtRows(G.formation,_goTac);
     const slotsByPos={};
     positions.forEach(function(pos,i){if(!slotsByPos[pos])slotsByPos[pos]=[];slotsByPos[pos].push(i);});
     const used={};
@@ -3753,7 +3756,7 @@ function showGameOver(){
         const slotIdx=(slotsByPos[pos]||[])[used[pos]];used[pos]++;
         const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
         if(player){const grp=slotGroup(pos);return filledSlotHTML(player,grp);}
-        return'<div class="dp-slot empty">'+pos+'</div>';
+        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
       }).join('')+'</div>';
     }).join('');
   }
@@ -3763,8 +3766,9 @@ function showGameOver(){
 
 function renderTrophyPitch(){
   if(!FORMATIONS[G.formation])return;
-  const positions=fmtPositions(G.formation,G.tactic);
-  const rows=fmtRows(G.formation,G.tactic);
+  const _tac=G.draftTactic||G.tactic||'balanced';
+  const positions=fmtPositions(G.formation,_tac);
+  const rows=fmtRows(G.formation,_tac);
   const slotsByPos={};
   positions.forEach(function(pos,i){
     if(!slotsByPos[pos])slotsByPos[pos]=[];
@@ -3783,7 +3787,7 @@ function renderTrophyPitch(){
         const grp=slotGroup(pos);
         return filledSlotHTML(player,grp);
       }
-      return'<div class="dp-slot empty">'+pos+'</div>';
+      return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
     }).join('')+'</div>';
   }).join('');
 }
