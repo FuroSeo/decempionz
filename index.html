@@ -92,8 +92,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .btn{width:100%;padding:15px;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .13s;display:block;margin-top:10px;text-align:center}
 .btn-gold{background:var(--gold);color:#07090f}
 .btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
-.btn-ghost{background:transparent;color:var(--mut);border:1px solid var(--brd)}
-.btn-ghost:hover{color:var(--text);border-color:var(--mut)}
+.btn-ghost{background:var(--s1);color:var(--text);border:1.5px solid var(--mut)}
+.btn-ghost:hover{background:var(--s2);border-color:var(--text)}
 .btn:disabled{opacity:.32;cursor:not-allowed;transform:none!important}
 .btn-inactive{opacity:.35;cursor:not-allowed;pointer-events:none}
 #btn-start-draft{position:sticky;bottom:16px;z-index:10;box-shadow:0 -4px 16px var(--bg);}
@@ -563,7 +563,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.6rem;font-weight:400;opacity:.75;letter-spacing:.3px;margin-top:3px">Classic · All Time · Normale</span>
   </button>
   <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
-  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;opacity:.7;font-size:.82rem">❓ Come si gioca</button>
+  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;font-size:.82rem">❓ Come si gioca</button>
 
   <!-- Stats bar -->
   <div style="display:flex;gap:0;margin-top:20px;margin-bottom:16px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
@@ -705,7 +705,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <button id="btn-start-draft" data-i18n="form.start_draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
   <button class="btn btn-ghost" onclick="showScreen('screen-format')">← Back</button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
 </div>
 
 <!-- BLIND DRAFT -->
@@ -732,7 +732,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button class="btn-pass" id="btn-pss" onclick="draftReroll()" style="width:100%;font-size:.85rem">↺ Reroll <span id="d-pc"></span></button>
   </div>
 
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
 </div>
 
 <!-- CAMPAIGN -->
@@ -879,7 +879,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
 
-  <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.55" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
 </div>
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
@@ -913,7 +913,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <button class="btn btn-gold" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.85" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
 </div>
 
 <!-- TROPHY -->
@@ -960,7 +960,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
 
     <button class="btn btn-gold" style="font-size:1rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Play Again</button>
-    <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.7" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.85" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
   </div>
 </div>
 
