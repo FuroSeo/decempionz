@@ -2835,7 +2835,7 @@ function simGroupMatch(homeId,awayId){
 }
 
 function calcStandings(){
-  const userEntry={id:'user',name:'Decempionz',P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};
+  const userEntry={id:'user',name:'Decempionz FC',P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0};
   const entries={user:userEntry};
   G.groupTeams.forEach(({id,team})=>entries[id]={id,name:`${team.name} '${team.season.slice(-2)}`,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0});
 
@@ -3186,7 +3186,7 @@ function _runMatch(){
     if(koOpp&&koOpp.id&&TEAMS[koOpp.id])
       oppPlayerPool=[...TEAMS[koOpp.id].players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
   }
-  const log=buildMatchLog(myG,oppG,'Decempionz',oppName,scorers,oppPlayerPool);
+  const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
   M={myG,oppG,myXG,oppXG,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
 
@@ -3201,7 +3201,7 @@ function _runMatch(){
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
   const _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
   const _oppCol=(_oppTid&&JERSEY_COLORS[_oppTid])||'#888';
-  document.getElementById('m-home').textContent='Decempionz';
+  document.getElementById('m-home').textContent='Decempionz FC';
   document.getElementById('m-away').innerHTML=jerseyIcon(_oppCol,18)+'<span style="margin-left:5px">'+oppName+'</span>';
   document.getElementById('m-sq-home').textContent=homeKeys;
   document.getElementById('m-sq-away').textContent=awayKeys;
@@ -3464,7 +3464,7 @@ function showResult(){
     +'<div class="tcs-poss-h" style="width:'+poss+'%">'+poss+'%</div>'
     +'<div class="tcs-poss-a">'+(100-poss)+'%</div>'
     +'</div></td></tr>'
-    +'<tr style="font-size:.6rem;color:var(--mut)"><td style="text-align:right">Decempionz</td><td style="text-align:center">'+t('match.possession')+'</td><td>'+oppName+'</td></tr>'
+    +'<tr style="font-size:.6rem;color:var(--mut)"><td style="text-align:right">Decempionz FC</td><td style="text-align:center">'+t('match.possession')+'</td><td>'+oppName+'</td></tr>'
     +[
       [shots+' / '+shotsOT,t('match.shots_ot'),oppShots+' / '+oppShotsOT],
       [myXG.toFixed(2),t('match.xg'),oppXG.toFixed(2)],
@@ -3480,7 +3480,7 @@ function showResult(){
   // Penalty result block
   if(M.penResult){
     const {homeWon,pw,pl}=M.penResult;
-    const penStr=homeWon?`Decempionz ${pw}–${pl} ${oppName}`:`${oppName} ${pw}–${pl} Decempionz`;
+    const penStr=homeWon?`Decempionz FC ${pw}–${pl} ${oppName}`:`${oppName} ${pw}–${pl} Decempionz FC`;
     sDiv.innerHTML='<div class="sc-row" style="justify-content:center;color:var(--mut);font-size:.72rem">'
       +'<span style="margin-right:6px">🥅</span><span>Penalties: '+penStr+'</span></div>';
     sDiv.style.display='block';
