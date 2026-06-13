@@ -931,7 +931,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.7';
+const GAME_VERSION='4.7.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1056,6 +1056,16 @@ const STRINGS={
     'btn.group_exit':'Uscita dal girone →',
     'btn.knockouts':'Playoff →',
     'btn.trophy':'🏆 Alza il trofeo!',
+    'ev.yellow':'🟡 Cartellino giallo',
+    'ev.save':'💫 Parata strepitosa',
+    'ev.post':'🎯 Palo!',
+    'ev.corner':'📐 Corner pericoloso',
+    'ev.var':'⚠️ VAR — gioco regolare',
+    'ev.longshot':'🚀 Tiro da fuori area',
+    'ev.clearance':'🛡️ Chiusura difensiva',
+    'ev.offside':'⛓️ Fuorigioco annullato',
+    'ev.freekick':'🤕 Calcio di punizione',
+    'ev.protests':'📣 Proteste in campo',
     'btn.replay':'⚽ Nuova Partita',
     'btn.change_rules':'⚙️ Cambia regole',
     'nuovo.league_phase':'Fase di Lega',
@@ -1245,6 +1255,16 @@ const STRINGS={
     'btn.group_exit':'Group exit →',
     'btn.knockouts':'Knockouts →',
     'btn.trophy':'🏆 Lift the trophy!',
+    'ev.yellow':'🟡 Yellow card',
+    'ev.save':'💫 Stunning save',
+    'ev.post':'🎯 Off the post!',
+    'ev.corner':'📐 Dangerous corner',
+    'ev.var':'⚠️ VAR — play on',
+    'ev.longshot':'🚀 Long-range effort',
+    'ev.clearance':'🛡️ Last-ditch clearance',
+    'ev.offside':'⛓️ Offside — flag up',
+    'ev.freekick':'🤕 Free kick conceded',
+    'ev.protests':'📣 Players surround referee',
     'btn.replay':'⚽ Play Again',
     'btn.change_rules':'⚙️ Change Rules',
     'nuovo.league_phase':'League Phase',
@@ -3007,7 +3027,10 @@ function _runMatch(){
   var _awayXI=[];
   var _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
   if(_oppTid&&TEAMS[_oppTid]){
-    _awayXI=[...TEAMS[_oppTid].players].sort(function(a,b){return b.r-a.r;}).slice(0,11).map(function(p){return{n:p.n,p:p.p};});
+    const _posW={GK:0,CB:1,LB:1,RB:1,DM:2,CM:2,AM:2,RM:2,LM:2,RW:3,LW:3,ST:4,CF:4,SS:4};
+    _awayXI=[...TEAMS[_oppTid].players].sort(function(a,b){return b.r-a.r;}).slice(0,11)
+      .sort(function(a,b){return(_posW[a.p]??3)-(_posW[b.p]??3);})
+      .map(function(p){return{n:p.n,p:p.p};});
   } else {
     _awayXI=oppPlayerPool.slice(0,11).map(function(p){return{n:p.n,p:p.p};});
   }
@@ -3051,9 +3074,8 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   for(let i=0;i<myG;i++)myMins.push(Math.floor(Math.random()*87)+3);
   for(let i=0;i<oppG;i++)oppMins.push(Math.floor(Math.random()*87)+3);
   myMins.sort((a,b)=>a-b);oppMins.sort((a,b)=>a-b);
-  const nTpls=[
-    m=>`${m}' 🟡 Yellow card`,m=>`${m}' 💫 Stunning save`,
-    m=>`${m}' 🎯 Off the post!`,m=>`${m}' ↔️ Substitution`,m=>`${m}' ⚠️ VAR — play on`];
+  const _evKeys=['ev.yellow','ev.save','ev.post','ev.corner','ev.var','ev.longshot','ev.clearance','ev.offside','ev.freekick','ev.protests'];
+  const nTpls=_evKeys.map(function(k){return function(m){return m+"' "+t(k);};});
   const nMins=[];
   for(let i=0;i<3;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
   let ms=0,os=0;
