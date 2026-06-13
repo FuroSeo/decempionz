@@ -512,8 +512,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 
 /* ── Modals ── */
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:8000;align-items:flex-end;justify-content:center}
-.modal-sheet{background:var(--s1);border-radius:18px 18px 0 0;padding:20px 18px 32px;max-height:80vh;overflow-y:auto;width:100%;max-width:480px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;align-items:flex-end;justify-content:center;overflow:hidden}
+.modal-sheet{background:var(--s1);border-radius:18px 18px 0 0;padding:20px 18px 32px;height:80dvh;overflow-y:auto;overflow-x:hidden;width:100%;max-width:480px;-webkit-overflow-scrolling:touch}
 .modal-title{font-size:1rem;font-weight:800;margin-bottom:14px;color:var(--text)}
 .modal-section h3{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin:14px 0 4px}
 .modal-section p{font-size:.8rem;color:var(--mut);line-height:1.55;margin:0}
