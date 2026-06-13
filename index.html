@@ -399,13 +399,17 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .m-score{font-size:4.5rem;font-weight:900;letter-spacing:-4px;margin:6px 0 12px;font-variant-numeric:tabular-nums}
 .m-score.flash{color:var(--gold)}
 .m-lineup-row{display:flex;align-items:center;padding:2.5px 0;border-bottom:.5px solid var(--brd);font-size:.58rem;gap:3px}
+.m-lineup-row:nth-child(even){background:rgba(255,255,255,.03)}
 .m-lineup-row:last-child{border-bottom:none}
 .m-lp-pos{color:var(--mut);font-weight:700;font-size:.5rem;flex-shrink:0;min-width:22px}
 .m-lp-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .m-lp-goals{font-size:.6rem;flex-shrink:0;min-width:14px;text-align:right}
 .m-lineup-row.away{flex-direction:row-reverse;text-align:right}
 .m-lineup-row.away .m-lp-pos{text-align:right}
-.m-ev-goal{color:var(--text)!important;font-weight:700}
+.m-ev-goal{color:var(--gold)!important;font-weight:700}
+.m-ev-opp-goal{color:var(--red2)!important;font-weight:700}
+.m-ev-goal-row{border-left:2px solid var(--gold);padding-left:6px;margin-left:-2px}
+.m-ev-opp-goal-row{border-left:2px solid var(--red2);padding-left:6px;margin-left:-2px}
 .m-ev-opp{color:var(--red2)!important}
 .spd-ico{width:26px;height:26px;border-radius:6px;border:1px solid var(--brd);background:var(--s1);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;padding:0;color:var(--mut);flex-shrink:0;transition:all .13s}
 .spd-ico.spd-ico-active{border-color:var(--gold);background:rgba(201,162,39,.15);color:var(--gold)}
@@ -3466,13 +3470,17 @@ function runLog(){
   var ev1min=document.getElementById('m-ev1-min');
   var ev1txt=document.getElementById('m-ev1-txt');
   if(ev1txt){
+    var ev1row=document.getElementById('m-ev1');
+    var ev2row=document.getElementById('m-ev2');
     if(ev2min)ev2min.textContent=ev1min?ev1min.textContent:'';
     if(ev2txt){ev2txt.textContent=ev1txt.textContent;ev2txt.className=ev1txt.className;}
+    if(ev2row&&ev1row)ev2row.className='';
     if(ev1min)ev1min.textContent=ev.min?(ev.min+"'"):'';
     ev1txt.textContent=ev.text||(ev.cls==='ln'?'—':ev.text);
     var cls='';
-    if(ev.goal){cls=ev.mine?'m-ev-goal':'m-ev-goal m-ev-opp';}
+    if(ev.goal){cls=ev.mine?'m-ev-goal':'m-ev-opp-goal';}
     ev1txt.className=cls;
+    if(ev1row){var rowCls=ev.goal?(ev.mine?'m-ev-goal-row':'m-ev-opp-goal-row'):'';ev1row.className=rowCls;}
   }
 
   // Score + goal tracking
