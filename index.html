@@ -940,7 +940,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.5';
+const GAME_VERSION='4.8.6';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3104,10 +3104,10 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
       const scName=oppSc?(oppSc.n||oppSc):oppName;
       evs.push({min:ev.m,scorer:scName,text:`${ev.m}' ⚽ ${scName} (${oppName}) — `+pick(['levels it!','responds!','scores!'])+` ${ms}–${os}`,cls:'lc',goal:true,mine:false});
     } else {
-      evs.push({text:ev.tpl(ev.m),cls:'ln',goal:false});
+      evs.push({min:ev.m,text:ev.tpl(ev.m),cls:'ln',goal:false});
     }
   });
-  evs.push({text:`90' 🔔 Full time — ${myG}–${oppG}`,cls:'lw',final:true});
+  evs.push({min:90,text:`90' 🔔 Full time — ${myG}–${oppG}`,cls:'lw',final:true});
   return evs;
 }
 
@@ -3677,8 +3677,7 @@ function showGroupElimination(pos,pts){
       +'<span class="end-j-score">'+r.myG+'–'+r.oppG+'</span>'
       +'<span class="end-j-res" style="'+rc+'">'+rv+'</span></div>';
   }).join('');
-  // No pitch for group exit
-  document.getElementById('go-pitch').innerHTML='';
+  renderGameOverPitch();
   showScreen('screen-gameover');
 }
 
