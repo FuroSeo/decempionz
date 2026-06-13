@@ -407,8 +407,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .m-lineup-row.away .m-lp-pos{text-align:right}
 .m-ev-goal{color:var(--text)!important;font-weight:700}
 .m-ev-opp{color:var(--red2)!important}
-.speed-btn{flex:1;padding:6px 3px;font-size:.6rem;font-weight:700;background:var(--s2);border:1px solid var(--brd);border-radius:6px;color:var(--mut);cursor:pointer;transition:all .15s;white-space:nowrap}
-.speed-btn.spd-active{background:var(--gold);color:#1a0f00;border-color:var(--gold)}
+.spd-ico{width:26px;height:26px;border-radius:6px;border:1px solid var(--brd);background:var(--s1);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;padding:0;color:var(--mut);flex-shrink:0;transition:all .13s}
+.spd-ico.spd-ico-active{border-color:var(--gold);background:rgba(201,162,39,.15);color:var(--gold)}
+[data-theme="light"] #m-timer{color:var(--red)}
 .m-squads{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut);margin-bottom:12px;gap:8px}
 .m-squad-names{flex:1;line-height:1.6}
 .m-squad-names.r{text-align:right}
@@ -780,10 +781,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-match">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <!-- Tag + timer -->
+  <!-- Top bar: tag + speed icons + timer -->
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div id="m-tag"></div>
-    <div id="m-timer" style="font-size:.88rem;font-weight:800;color:var(--gold);letter-spacing:.5px;min-width:32px;text-align:right">—</div>
+    <div style="display:flex;align-items:center;gap:5px">
+      <div id="m-speed-icons" style="display:flex;gap:3px">
+        <button class="spd-ico" id="spd-slow" onclick="setMatchSpeed('slow')" title="Lento">🐢</button>
+        <button class="spd-ico spd-ico-active" id="spd-normal" onclick="setMatchSpeed('normal')" title="Normale">▶</button>
+        <button class="spd-ico" id="spd-fast" onclick="setMatchSpeed('fast')" title="Veloce">⚡</button>
+        <button class="spd-ico" id="spd-skip" onclick="skipToResult()" title="Salta al risultato">⏭</button>
+      </div>
+      <div id="m-timer" style="font-size:.88rem;font-weight:800;color:var(--gold);letter-spacing:.5px;min-width:28px;text-align:right">—</div>
+    </div>
   </div>
 
   <!-- Score bar -->
@@ -809,77 +818,70 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="m-ev2" style="font-size:.68rem;color:var(--mut);line-height:1.7;display:flex;gap:8px;align-items:flex-start;opacity:.4"><span id="m-ev2-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev2-txt"></span></div>
   </div>
 
-  <!-- Speed controls -->
-  <div style="display:flex;gap:5px;margin-bottom:10px">
-    <button class="speed-btn" id="spd-slow" onclick="setMatchSpeed('slow')">🐢</button>
-    <button class="speed-btn spd-active" id="spd-normal" onclick="setMatchSpeed('normal')">▶ Normale</button>
-    <button class="speed-btn" id="spd-fast" onclick="setMatchSpeed('fast')">⚡ Veloce</button>
-    <button class="speed-btn" id="spd-skip" onclick="skipToResult()">⏭ Risultato</button>
-  </div>
-
   <button class="btn btn-gold" id="btn-mact" onclick="matchNext()" style="margin-top:4px;display:none"></button>
-  <div id="pen-zone" style="display:none;margin-top:16px;padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid var(--brd)">
+  <div id="pen-zone" style="display:none;margin-top:8px;padding:12px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid var(--brd)">
     <div style="text-align:center;font-size:.68rem;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px">⚽ PENALTY SHOOTOUT</div>
     <div id="pen-score" style="text-align:center;font-size:1.6rem;font-weight:800;letter-spacing:2px;margin-bottom:10px">0 – 0</div>
     <div id="pen-rows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
     <div id="pen-msg" style="text-align:center;font-size:.68rem;color:var(--mut);min-height:16px"></div>
     <div id="pen-sd-banner" style="display:none;text-align:center;font-size:.65rem;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px"></div>
   </div>
-</div>
 
-<!-- RESULT -->
-<div class="screen" id="screen-result">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <!-- RESULT ZONE — revealed after match ends -->
+  <div id="m-result-zone" style="display:none">
+    <div style="border-top:1px solid var(--brd);margin:10px 0 10px"></div>
 
-  <!-- Compact header -->
-  <div class="res-header">
-    <div class="label" id="r-rnd"></div>
-    <div class="ro" id="r-out"></div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin:4px 0">
-      <div class="r-score" id="r-sc" style="margin:0"></div>
-      <div class="stars" id="r-stars" style="font-size:1.2rem"></div>
+    <!-- Outcome row: result + stars + comment (horizontal) -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+      <div class="ro" id="r-out" style="flex-shrink:0;font-size:1.1rem"></div>
+      <div class="stars" id="r-stars" style="flex-shrink:0;font-size:.95rem"></div>
+      <div id="r-msg" style="font-size:.72rem;color:var(--mut);flex:1;min-width:80px;line-height:1.4"></div>
     </div>
-    <div class="r-msg" id="r-msg"></div>
-  </div>
 
-  <!-- Next match: opponent + tactic — top priority on mobile -->
-  <div id="r-next-match" style="display:none;margin-top:10px">
-    <div class="pmp-box">
-      <div class="pmp-scout" id="r-next-scout"></div>
-      <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
-      <div class="mini-tact-row">
-        <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="rmt-attack" onclick="selectResultTactic('attack',this)">⚔️ Attack</button>
-        <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="rmt-balanced" onclick="selectResultTactic('balanced',this)">⚖️ Balanced</button>
-        <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="rmt-defend" onclick="selectResultTactic('defend',this)">🛡️ Defend</button>
+    <!-- Next match: opponent + tactic -->
+    <div id="r-next-match" style="display:none;margin-bottom:10px">
+      <div class="pmp-box">
+        <div class="pmp-scout" id="r-next-scout"></div>
+        <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
+        <div class="mini-tact-row">
+          <button data-i18n="tac.btn_attack" class="mini-tact-btn" id="rmt-attack" onclick="selectResultTactic('attack',this)">⚔️ Attack</button>
+          <button data-i18n="tac.btn_balanced" class="mini-tact-btn tact-sel" id="rmt-balanced" onclick="selectResultTactic('balanced',this)">⚖️ Balanced</button>
+          <button data-i18n="tac.btn_defend" class="mini-tact-btn" id="rmt-defend" onclick="selectResultTactic('defend',this)">🛡️ Defend</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Primary CTA — immediately after next-match panel -->
-  <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-top:10px"></button>
+    <!-- Primary CTA -->
+    <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-bottom:10px"></button>
 
-  <!-- Match stats + scorers -->
-  <div class="card" style="margin-top:10px;padding:12px 14px">
-    <div id="r-two-col-stats"></div>
-    <div id="r-scorers-compact" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);font-size:.78rem;color:var(--mut);display:none"></div>
-  </div>
+    <!-- Stats toggle -->
+    <button id="m-stats-toggle" class="btn btn-ghost" style="width:100%;font-size:.75rem;margin-bottom:0" onclick="toggleMatchStats()">📊 <span id="m-stats-toggle-lbl">Statistiche ▼</span></button>
 
-  <!-- Campaign totals -->
-  <div class="card" style="margin-top:8px;padding:10px 14px">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-      <div id="r-camp-row" style="font-size:.78rem;color:var(--mut)"></div>
-      <div id="r-top-scorer" style="font-size:.75rem;color:var(--mut)"></div>
+    <!-- Collapsible stats panel -->
+    <div id="m-stats-panel" style="display:none;margin-top:8px">
+      <div class="card" style="padding:12px 14px;margin-bottom:8px">
+        <div id="r-two-col-stats"></div>
+        <div id="r-scorers-compact" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);font-size:.78rem;color:var(--mut);display:none"></div>
+      </div>
+      <div class="card" style="padding:10px 14px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+          <div id="r-camp-row" style="font-size:.78rem;color:var(--mut)"></div>
+          <div id="r-top-scorer" style="font-size:.75rem;color:var(--mut)"></div>
+        </div>
+      </div>
+      <div id="r-standings" style="margin-bottom:8px;display:none">
+        <div class="phase-label" style="margin-bottom:6px">Standings</div>
+        <table class="standings" id="r-standings-table"></table>
+      </div>
+      <div id="r-nuovo-status" style="margin-bottom:8px;display:none"></div>
     </div>
-  </div>
 
-  <!-- Standings (group only) -->
-  <div id="r-standings" style="margin-top:8px;display:none">
-    <div class="phase-label" style="margin-bottom:6px">Standings</div>
-    <table class="standings" id="r-standings-table"></table>
-  </div>
-  <div id="r-nuovo-status" style="margin-top:8px;display:none"></div>
+    <!-- Hidden compatibility elements -->
+    <div id="r-rnd" style="display:none"></div>
+    <div id="r-sc" style="display:none"></div>
 
-  <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
+  </div>
 </div>
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
@@ -3262,6 +3264,11 @@ function _runMatch(){
   setMatchSpeed('normal');
   renderMatchLineups();
 
+  // Reset result zone
+  var rz=document.getElementById('m-result-zone');
+  if(rz)rz.style.display='none';
+  var si=document.getElementById('m-speed-icons');
+  if(si)si.style.display='flex';
   showScreen('screen-match');
   setTimeout(runLog,800);
 }
@@ -3411,9 +3418,9 @@ function renderMatchLineups(){
 
 function setMatchSpeed(s){
   M.speedKey=s;
-  document.querySelectorAll('.speed-btn').forEach(function(b){b.classList.remove('spd-active');});
+  document.querySelectorAll('.spd-ico').forEach(function(b){b.classList.remove('spd-ico-active');});
   var id={slow:'spd-slow',normal:'spd-normal',fast:'spd-fast'}[s];
-  if(id)document.getElementById(id).classList.add('spd-active');
+  if(id)document.getElementById(id).classList.add('spd-ico-active');
 }
 
 function skipToResult(){
@@ -3429,6 +3436,15 @@ function skipToResult(){
   document.getElementById('m-score').textContent=M.myS+' — '+M.oppS;
   renderMatchLineups();
   showResult();
+}
+
+function toggleMatchStats(){
+  var p=document.getElementById('m-stats-panel');
+  var l=document.getElementById('m-stats-toggle-lbl');
+  if(!p)return;
+  var open=p.style.display!=='none';
+  p.style.display=open?'none':'block';
+  if(l)l.textContent=open?'Statistiche ▼':'Statistiche ▲';
 }
 
 function runLog(){
@@ -3689,7 +3705,18 @@ function showResult(){
   else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl=t('btn.trophy');
   else lbl=_nextInfo?t('camp.kickoff'):t('btn.continue');
   const cb=document.getElementById('btn-rcont'); cb.textContent=lbl; cb.className='btn btn-gold';
-  showScreen('screen-result');
+  // Reveal result zone in-place (no screen transition)
+  var rz=document.getElementById('m-result-zone');
+  if(rz){rz.style.display='block';}
+  var si=document.getElementById('m-speed-icons');
+  if(si)si.style.display='none';
+  // Reset stats panel
+  var sp=document.getElementById('m-stats-panel');
+  if(sp)sp.style.display='none';
+  var tl=document.getElementById('m-stats-toggle-lbl');
+  if(tl)tl.textContent='Statistiche ▼';
+  // Scroll result zone into view
+  if(rz)setTimeout(function(){rz.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
 }
 
 
