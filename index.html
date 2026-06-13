@@ -832,10 +832,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div style="border-top:1px solid var(--brd);margin:10px 0 10px"></div>
 
     <!-- Outcome row: result + stars + comment (horizontal) -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;text-align:center">
+    <div style="border-left:3px solid var(--res-color,#888);padding-left:11px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
       <div class="ro" id="r-out" style="flex-shrink:0;font-size:1.1rem"></div>
+      <div id="r-msg" style="font-size:.72rem;color:var(--mut);flex:1;text-align:center;padding:0 8px;line-height:1.4"></div>
       <div class="stars" id="r-stars" style="flex-shrink:0;font-size:.95rem"></div>
-      <div id="r-msg" style="font-size:.72rem;color:var(--mut);flex:1;min-width:80px;line-height:1.4"></div>
     </div>
 
     <!-- Next match: opponent + tactic -->
@@ -3578,6 +3578,8 @@ function showResult(){
   // ─── RENDER ───
   document.getElementById('r-rnd').textContent=roundLabel;
   const oe=document.getElementById('r-out'); oe.textContent=outcome; oe.className='ro '+cls;
+  var _resCol=cls==='ow'?'var(--grn2)':cls==='od'?'var(--gold)':'var(--red2)';
+  var _resRow=oe.parentElement;if(_resRow)_resRow.style.setProperty('--res-color',_resCol);
   document.getElementById('r-sc').textContent=myG+' – '+oppG;
   document.getElementById('r-stars').innerHTML=sh(stars);
   document.getElementById('r-msg').textContent=msg;
