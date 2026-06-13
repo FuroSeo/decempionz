@@ -34,6 +34,7 @@
 }
 [data-theme="light"] body{background:var(--bg);color:var(--text)}
 [data-theme="light"] .card{background:var(--s1);border-color:var(--brd)}
+[data-theme="light"] .draft-pitch::before{background-image:url("%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%20preserveAspectRatio='none'%3E%3Cg%20fill='none'%20stroke='rgba(0,0,0,.1)'%20stroke-width='.9'%3E%3Ccircle%20cx='50'%20cy='50'%20r='20'/%3E%3Crect%20x='20'%20y='1'%20width='60'%20height='24'/%3E%3Crect%20x='20'%20y='75'%20width='60'%20height='24'/%3E%3Crect%20x='32'%20y='1'%20width='36'%20height='10'/%3E%3Crect%20x='32'%20y='89'%20width='36'%20height='10'/%3E%3C/g%3E%3Ccircle%20cx='50'%20cy='50'%20r='1.8'%20fill='rgba(0,0,0,.1)'/%3E%3Ccircle%20cx='50'%20cy='17'%20r='1.2'%20fill='rgba(0,0,0,.1)'/%3E%3Ccircle%20cx='50'%20cy='83'%20r='1.2'%20fill='rgba(0,0,0,.1)'/%3E%3C/svg%3E");}
 [data-theme="light"] .draft-pitch{
   background:
     radial-gradient(ellipse 62% 22% at 50% 100%, rgba(0,0,0,.06) 0%, transparent 100%),
@@ -282,6 +283,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* ── DRAFT PITCH ── */
 .draft-pitch{
+  position:relative;
   background:
     radial-gradient(ellipse 62% 22% at 50% 100%, rgba(255,255,255,.055) 0%, transparent 100%),
     radial-gradient(ellipse 62% 22% at 50% 0%,   rgba(255,255,255,.055) 0%, transparent 100%),
@@ -289,7 +291,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     linear-gradient(180deg,#0b350b,#114d11 50%,#0b350b);
   border:1px solid #1d541d;border-radius:12px;padding:10px 8px;margin-bottom:14px;
   display:flex;flex-direction:column;gap:8px;min-height:190px;}
-.dp-row{display:flex;justify-content:center;gap:8px;align-items:center;}
+.draft-pitch::before{content:'';position:absolute;inset:0;border-radius:12px;pointer-events:none;z-index:0;background-image:url("%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%20preserveAspectRatio='none'%3E%3Cg%20fill='none'%20stroke='rgba(255,255,255,.12)'%20stroke-width='.9'%3E%3Ccircle%20cx='50'%20cy='50'%20r='20'/%3E%3Crect%20x='20'%20y='1'%20width='60'%20height='24'/%3E%3Crect%20x='20'%20y='75'%20width='60'%20height='24'/%3E%3Crect%20x='32'%20y='1'%20width='36'%20height='10'/%3E%3Crect%20x='32'%20y='89'%20width='36'%20height='10'/%3E%3C/g%3E%3Ccircle%20cx='50'%20cy='50'%20r='1.8'%20fill='rgba(255,255,255,.12)'/%3E%3Ccircle%20cx='50'%20cy='17'%20r='1.2'%20fill='rgba(255,255,255,.12)'/%3E%3Ccircle%20cx='50'%20cy='83'%20r='1.2'%20fill='rgba(255,255,255,.12)'/%3E%3C/svg%3E");background-size:100% 100%;}
+.dp-row{position:relative;z-index:1;display:flex;justify-content:center;gap:8px;align-items:center;}
 /* Base */
 .dp-slot{display:flex;flex-direction:column;align-items:center;
   justify-content:center;transition:all .2s;flex-shrink:0;}
@@ -937,7 +940,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.3';
+const GAME_VERSION='4.8.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3730,27 +3733,28 @@ function showGameOver(){
   const kRows=G.knockResults.map(function(r,i){return _jRow(KNAMES2[Math.min(i,KNAMES2.length-1)],r.opp,r.myG,r.oppG);}).join('');
   document.getElementById('go-journey').innerHTML=gRows+kRows;
 
-  // Pitch
-  const goPitch=document.getElementById('go-pitch');
-  if(goPitch&&G.formation&&FORMATIONS[G.formation]){
-    const _goTac=G.draftTactic||G.tactic||'balanced';
-    const positions=fmtPositions(G.formation,_goTac);
-    const rows=fmtRows(G.formation,_goTac);
-    const slotsByPos={};
-    positions.forEach(function(pos,i){if(!slotsByPos[pos])slotsByPos[pos]=[];slotsByPos[pos].push(i);});
-    const used={};
-    goPitch.innerHTML=rows.map(function(row){
-      return'<div class="dp-row">'+row.map(function(pos){
-        if(!used[pos])used[pos]=0;
-        const slotIdx=(slotsByPos[pos]||[])[used[pos]];used[pos]++;
-        const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
-        if(player){const grp=slotGroup(pos);return filledSlotHTML(player,grp);}
-        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
-      }).join('')+'</div>';
-    }).join('');
-  }
-
+  renderGameOverPitch();
   showScreen('screen-gameover');
+}
+
+function renderGameOverPitch(){
+  const goPitch=document.getElementById('go-pitch');
+  if(!goPitch||!G.formation||!FORMATIONS[G.formation])return;
+  const _goTac=G.draftTactic||G.tactic||'balanced';
+  const positions=fmtPositions(G.formation,_goTac);
+  const rows=fmtRows(G.formation,_goTac);
+  const slotsByPos={};
+  positions.forEach(function(pos,i){if(!slotsByPos[pos])slotsByPos[pos]=[];slotsByPos[pos].push(i);});
+  const used={};
+  goPitch.innerHTML=rows.map(function(row){
+    return'<div class="dp-row">'+row.map(function(pos){
+      if(!used[pos])used[pos]=0;
+      const slotIdx=(slotsByPos[pos]||[])[used[pos]];used[pos]++;
+      const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
+      if(player){const grp=slotGroup(pos);return filledSlotHTML(player,grp);}
+      return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
+    }).join('')+'</div>';
+  }).join('');
 }
 
 function renderTrophyPitch(){
@@ -3985,6 +3989,9 @@ function toggleTheme(){
   localStorage.setItem('gl-theme',isLight?'dark':'light');
   const icon=document.getElementById('theme-icon');
   if(icon)icon.textContent=isLight?'☀️':'🌙';
+  // Re-render pitch slots so slotTierCss picks up new theme
+  if(document.getElementById('screen-gameover').classList.contains('active'))renderGameOverPitch();
+  if(document.getElementById('screen-trophy').classList.contains('active'))renderTrophyPitch();
 }
 function syncThemeIcon(){
   const icon=document.getElementById('theme-icon');
