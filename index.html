@@ -449,6 +449,38 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* trophy match log */
 .t-log-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--brd);font-size:.82rem}
 .t-log-row:last-child{border-bottom:none}
+/* ── End screens ── */
+.end-hero{text-align:center;padding:5px 14px 4px}
+.end-grade-pill{display:inline-block;font-size:.52rem;font-weight:700;padding:3px 12px;border-radius:10px;letter-spacing:1.2px;margin-bottom:3px}
+.end-grade-pill.win{background:var(--gold);color:#000}
+.end-grade-pill.elim{background:var(--s2);color:var(--mut);border:1px solid var(--brd)}
+.end-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:1px}
+.end-sub{font-size:.56rem;color:var(--mut);letter-spacing:.3px}
+.end-score{font-size:1rem;font-weight:700;color:var(--text);margin-top:3px}
+.end-pitch-wrap{margin-bottom:6px}
+.end-pitch-wrap .draft-pitch{min-height:unset;margin-bottom:0;gap:5px;padding:8px 6px}
+.end-stats{display:flex;margin-bottom:6px;background:var(--s2);border-radius:10px;padding:7px 10px;border:1px solid var(--brd)}
+.end-stat-cell{flex:1;text-align:center}
+.end-stat-cell+.end-stat-cell{border-left:1px solid var(--brd)}
+.end-stat-v{font-size:.72rem;font-weight:700;color:var(--text)}
+.end-stat-v.gold{color:var(--gold)}
+.end-stat-l{font-size:.44rem;color:var(--mut);letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+.end-journey{margin-bottom:6px;background:var(--s2);border-radius:10px;padding:8px 11px;border:1px solid var(--brd)}
+.end-j-lbl{font-size:.44rem;color:var(--mut);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px}
+.end-j-row{display:flex;align-items:center;gap:6px;padding:3.5px 0;border-bottom:1px solid var(--brd)}
+.end-j-row:last-child{border-bottom:none}
+.end-j-tag{font-size:.44rem;padding:2px 5px;border-radius:4px;font-weight:700;letter-spacing:.3px;min-width:28px;text-align:center;flex-shrink:0}
+.end-j-tag.w{background:#14532d;color:#86efac}
+.end-j-tag.l{background:#450a0a;color:#f87171}
+.end-j-tag.d{background:#44310a;color:#fcd34d}
+.end-j-opp{font-size:.53rem;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.end-j-score{font-size:.53rem;color:var(--mut);flex-shrink:0;min-width:30px;text-align:right}
+.end-j-res{font-size:.5rem;flex-shrink:0;width:14px;text-align:center;font-weight:700}
+.end-extra{font-size:.5rem;color:var(--mut);line-height:1.6;margin-top:6px}
+.end-extra strong{color:var(--text);font-weight:700}
+.end-fold-hint{text-align:center;font-size:.55rem;color:var(--mut);opacity:.3;padding:6px 0 2px}
+.end-btns{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.end-btns-row{display:flex;gap:8px}
 
 /* ── Difficulty cards ── */
 .diff-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
@@ -829,87 +861,60 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
-
-  <div style="text-align:center;padding:16px 0 8px">
-    <div style="font-size:3.5rem;margin-bottom:8px">💔</div>
-    <h2>Eliminated</h2>
-    <div style="color:var(--mut);margin:8px 0;font-size:.88rem;line-height:1.5" id="go-txt"></div>
-    <div style="font-size:1.2rem;font-weight:700;margin-bottom:12px" id="go-sc"></div>
+  <div class="end-hero">
+    <div style="font-size:2.2rem;line-height:1;margin-bottom:3px">💔</div>
+    <div class="end-grade-pill elim">ELIMINATI</div>
+    <div class="end-title" id="go-round-lbl"></div>
+    <div class="end-sub" id="go-sub-lbl"></div>
+    <div class="end-score" id="go-sc"></div>
   </div>
-
-  <!-- Campaign stats summary -->
-  <div class="card" style="padding:12px 14px;margin-bottom:10px">
-    <div class="label" style="margin-bottom:10px">Campaign Summary</div>
-    <div id="go-stats-grid"></div>
-    <div id="go-extra-stats" style="margin-top:8px;border-top:1px solid var(--brd);padding-top:8px"></div>
-  </div>
-
-  <!-- Winning XI -->
-  <div id="go-pitch-wrap" style="margin-bottom:10px;display:none">
-    <div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px;text-align:center">Your XI</div>
+  <div class="end-pitch-wrap">
     <div class="draft-pitch" id="go-pitch"></div>
   </div>
-
-  <!-- Match journey -->
-  <div class="card" style="padding:12px 14px;margin-bottom:10px" id="go-journey-card">
-    <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">Campaign Journey</div>
+  <div class="end-stats" id="go-stats"></div>
+  <div class="end-journey">
+    <div class="end-j-lbl" data-i18n="end.journey">Percorso</div>
     <div id="go-journey"></div>
-    <div id="go-ratings"></div>
+    <div class="end-extra" id="go-extra"></div>
   </div>
-
-  <button class="btn btn-gold" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.85" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
+  <div class="end-fold-hint">▼</div>
+  <div class="end-btns">
+    <div class="end-btns-row">
+      <button class="btn btn-gold" style="flex:1;margin-top:0" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
+      <button class="btn btn-share" style="flex:1;margin-top:0" data-i18n="btn.share" onclick="shareResult()">📤 Condividi</button>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
+  </div>
 </div>
-
 <!-- TROPHY -->
 <div class="screen" id="screen-trophy" style="position:relative">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
-
   <div class="confetti-wrap" id="t-confetti"></div>
-  <div style="position:relative;z-index:1">
-
-    <!-- Hero -->
-    <div style="text-align:center;padding-top:8px">
-      <div class="trophy">🏆</div>
-      <div class="grade-badge grade-s" id="t-grade"></div>
-      <h2 style="margin:6px 0 2px;font-size:1.4rem" id="t-title"></h2>
-      <div style="color:var(--mut);font-size:.78rem;margin-bottom:2px" id="t-club"></div>
-      <div class="stars" style="justify-content:center;font-size:1.1rem;margin:8px 0 0" id="t-stars"></div>
-      <div style="color:var(--mut);font-size:.75rem;margin-top:3px" id="t-rec"></div>
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <div class="end-hero">
+    <div style="font-size:2.2rem;line-height:1;margin-bottom:3px">🏆</div>
+    <div class="end-grade-pill win" id="t-grade"></div>
+    <div class="end-title" id="t-title"></div>
+    <div class="end-sub" id="t-sub"></div>
+    <div class="stars" id="t-stars" style="justify-content:center;margin-top:3px"></div>
+  </div>
+  <div class="end-pitch-wrap">
+    <div class="draft-pitch" id="t-pitch"></div>
+  </div>
+  <div class="end-stats" id="t-stats"></div>
+  <div class="end-journey">
+    <div class="end-j-lbl" data-i18n="end.journey">Percorso</div>
+    <div id="t-journey"></div>
+    <div class="end-extra" id="t-extra"></div>
+  </div>
+  <div class="end-fold-hint">▼</div>
+  <div class="end-btns">
+    <div class="end-btns-row">
+      <button class="btn btn-gold" style="flex:1;margin-top:0;font-size:.95rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
+      <button class="btn btn-share" style="flex:1;margin-top:0" data-i18n="btn.share" onclick="shareResult()">📤 Condividi</button>
     </div>
-
-    <!-- Hero stat cards -->
-    <div class="t-hero-cards" id="t-hero-cards"></div>
-
-    <!-- Top scorers -->
-    <div class="card" id="t-scorers" style="padding:10px 14px;margin-bottom:10px;display:none"></div>
-
-    <!-- Campaign record -->
-    <div class="card" style="padding:10px 14px;margin-bottom:10px">
-      <div id="t-record-row"></div>
-    </div>
-
-    <!-- Winning XI -->
-    <div style="margin-bottom:10px">
-      <div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px;text-align:center">Winning XI</div>
-      <div class="draft-pitch" id="t-pitch"></div>
-    </div>
-
-    <!-- Match journey -->
-    <div class="card" style="padding:12px 14px;margin-bottom:16px">
-      <div style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">Road to the Trophy</div>
-      <div id="t-journey"></div>
-    </div>
-
-    <!-- Player ratings -->
-    <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
-
-    <button class="btn btn-gold" style="font-size:1rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Play Again</button>
-    <button class="btn btn-share" style="width:100%;margin-top:6px;font-size:.85rem" data-i18n="btn.share" onclick="shareResult()">📤 Share Result</button>
-    <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.85" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
   </div>
 </div>
-
 <!-- HOW TO PLAY -->
 <div class="screen" id="screen-howto">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
@@ -1069,6 +1074,7 @@ const STRINGS={
     'ev.protests':'📣 Proteste in campo',
     'btn.replay':'⚽ Nuova Partita',
     'btn.share':'📤 Condividi Risultato',
+    'end.journey':'Percorso',
     'btn.change_rules':'⚙️ Cambia regole',
     'nuovo.league_phase':'Fase di Lega',
     'nuovo.qualify_at':'Soglia: 8 pt',
@@ -1269,6 +1275,7 @@ const STRINGS={
     'ev.protests':'📣 Players surround referee',
     'btn.replay':'⚽ Play Again',
     'btn.share':'📤 Share Result',
+    'end.journey':'Road to the Trophy',
     'btn.change_rules':'⚙️ Change Rules',
     'nuovo.league_phase':'League Phase',
     'nuovo.qualify_at':'Qualify at',
@@ -3745,6 +3752,94 @@ function showGameOver(){
   }
 
   showScreen('screen-gameover');
+}
+
+function renderTrophyPitch(){
+  if(!FORMATIONS[G.formation])return;
+  const _tac=G.draftTactic||G.tactic||'balanced';
+  const positions=fmtPositions(G.formation,_tac);
+  const rows=fmtRows(G.formation,_tac);
+  const slotsByPos={};
+  positions.forEach(function(pos,i){
+    if(!slotsByPos[pos])slotsByPos[pos]=[];
+    slotsByPos[pos].push(i);
+  });
+  const used={};
+  const pitchEl=document.getElementById('t-pitch');
+  if(!pitchEl)return;
+  pitchEl.innerHTML=rows.map(function(row){
+    return '<div class="dp-row">'+row.map(function(pos){
+      if(!used[pos])used[pos]=0;
+      const slotIdx=(slotsByPos[pos]||[])[used[pos]];
+      used[pos]++;
+      const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
+      if(player){
+        const grp=slotGroup(pos);
+        return filledSlotHTML(player,grp);
+      }
+      return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
+    }).join('')+'</div>';
+  }).join('');
+}
+
+function showTrophy(){
+  const formatTitle={coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
+  const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
+  const gLabel=G.format==='nuovo'?'LG':'GP';
+  const all=[...G.groupUserResults,...G.knockResults];
+  const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
+  const pct=max>0?total/max:0;
+  const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
+  const gradeMsg={'S':t('grade.s'),'A':t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
+  const campW=all.filter(r=>r.myG>r.oppG).length;
+  const campD=all.filter(r=>r.myG===r.oppG).length;
+  const campL=all.filter(r=>r.myG<r.oppG).length;
+  const topScorerT=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
+  let mvpName='',mvpAvg=0;
+  Object.entries(G.campaignMatchRatings||{}).forEach(function(e){const a=avg(e[1]);if(a>mvpAvg){mvpAvg=a;mvpName=e[0];}});
+  const isIt=(G.lang||'it')==='it';
+  // Hero
+  document.getElementById('t-grade').textContent='GRADE '+grade+' — '+gradeMsg;
+  document.getElementById('t-title').textContent=formatTitle[G.format]||'Campione!';
+  document.getElementById('t-sub').textContent=(G.tournament?G.tournament.name:'')+' · '+G.formation+' · '+_diffLabel();
+  document.getElementById('t-stars').innerHTML=sh(Math.round(total/all.length));
+  // Stats
+  document.getElementById('t-stats').innerHTML=
+    '<div class="end-stat-cell"><div class="end-stat-v">'+campW+(isIt?'V ':' W ')+campD+(isIt?'P ':' D ')+campL+(isIt?'S':'L')+'</div><div class="end-stat-l">Record</div></div>'
+    +'<div class="end-stat-cell"><div class="end-stat-v">'+(G.campaignGF||0)+' – '+(G.campaignGA||0)+'</div><div class="end-stat-l">GF – GA</div></div>'
+    +'<div class="end-stat-cell"><div class="end-stat-v gold">'+total+'/'+max+' ⭐</div><div class="end-stat-l">'+(isIt?'Stelle':'Stars')+'</div></div>';
+  // Extra
+  document.getElementById('t-extra').innerHTML=
+    (topScorerT?'<strong>'+t('trophy.lbl_top_scorer')+':</strong> '+topScorerT[0]+' ('+topScorerT[1]+'g)':'')
+    +(topScorerT&&mvpName?'  ·  ':'')
+    +(mvpName?'<strong>MVP:</strong> '+mvpName+' ('+mvpAvg.toFixed(1)+')':'');
+  // Journey
+  function _jRow(tag,opp,myG,oppG){
+    const w=myG>oppG,d=myG===oppG;
+    const cls=w?'w':d?'d':'l',rv=w?'W':d?'D':'L';
+    const rc=w?'color:#22c55e':d?'color:#eab308':'color:#ef4444';
+    return'<div class="end-j-row"><span class="end-j-tag '+cls+'">'+tag+'</span>'
+      +'<span class="end-j-opp">'+opp+'</span>'
+      +'<span class="end-j-score">'+myG+'–'+oppG+'</span>'
+      +'<span class="end-j-res" style="'+rc+'">'+rv+'</span></div>';
+  }
+  document.getElementById('t-journey').innerHTML=
+    G.groupUserResults.map(function(r,i){return _jRow(gLabel+(i+1),r.opp,r.myG,r.oppG);}).join('')
+    +G.knockResults.map(function(r,i){return _jRow(KNAMES[Math.min(i,KNAMES.length-1)],r.opp,r.myG,r.oppG);}).join('');
+  renderTrophyPitch();
+  // Confetti
+  const wrap=document.getElementById('t-confetti');
+  wrap.innerHTML='';
+  const cols=['#eab308','#22c55e','#3b82f6','#ef4444','#a855f7','#f97316','#ffffff'];
+  for(let i=0;i<55;i++){
+    const el=document.createElement('div');el.className='cf';
+    el.style.cssText='left:'+(Math.random()*100)+'%;top:-10px;background:'+cols[i%cols.length]
+      +';width:'+(5+Math.random()*5)+'px;height:'+(7+Math.random()*6)+'px'
+      +';border-radius:'+(Math.random()>.5?'50%':'2px')
+      +';animation-duration:'+(1.8+Math.random()*2.5)+'s;animation-delay:'+(Math.random()*1.2)+'s';
+    wrap.appendChild(el);
+  }
+  showScreen('screen-trophy');
 }
 
 function renderTrophyPitch(){
