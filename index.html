@@ -832,7 +832,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div style="border-top:1px solid var(--brd);margin:10px 0 10px"></div>
 
     <!-- Outcome row: result + stars + comment (horizontal) -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;text-align:center">
       <div class="ro" id="r-out" style="flex-shrink:0;font-size:1.1rem"></div>
       <div class="stars" id="r-stars" style="flex-shrink:0;font-size:.95rem"></div>
       <div id="r-msg" style="font-size:.72rem;color:var(--mut);flex:1;min-width:80px;line-height:1.4"></div>
@@ -3243,7 +3243,7 @@ function _runMatch(){
   const _oppCol=(_oppTid&&JERSEY_COLORS[_oppTid])||'#888';
 
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
-  document.getElementById('m-home').textContent='Decempionz FC';
+  document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">Decempionz FC</span>';
   document.getElementById('m-away').innerHTML=jerseyIcon(_oppCol,18)+'<span style="margin-left:4px">'+oppName+'</span>';
   document.getElementById('m-score').textContent='0 — 0';
   document.getElementById('m-score').className='m-score';
@@ -3715,8 +3715,6 @@ function showResult(){
   if(sp)sp.style.display='none';
   var tl=document.getElementById('m-stats-toggle-lbl');
   if(tl)tl.textContent='Statistiche ▼';
-  // Scroll result zone into view
-  if(rz)setTimeout(function(){rz.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
 }
 
 
