@@ -940,7 +940,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.8.4';
+const GAME_VERSION='4.8.5';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4316,34 +4316,48 @@ function _devStressTest(){
 
 /* ── Mock screens ── */
 function _devEnsureSquad(){
-  if(!G.squad||G.squad.length<1){
-    _devQuickDraft('top');
-    return false;
-  }
+  if(!G.squad||G.squad.length<1) _devQuickDraft('top');
   return true;
 }
 function _devMockResult(){
-  if(!_devEnsureSquad())return;
-  M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;
+  _devEnsureSquad();
+  // Minimal match screen init
+  document.getElementById('m-home').textContent='Decempionz FC';
+  document.getElementById('m-away').textContent='Dev FC';
+  document.getElementById('m-score').textContent='2 — 1';
+  document.getElementById('m-tag').innerHTML='';
+  document.getElementById('m-lineup-home').innerHTML='';
+  document.getElementById('m-lineup-away').innerHTML='';
+  var si=document.getElementById('m-speed-icons');if(si)si.style.display='none';
+  var rz=document.getElementById('m-result-zone');if(rz)rz.style.display='none';
+  var pz=document.getElementById('pen-zone');if(pz)pz.style.display='none';
+  // Match state
+  M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;M.myS=2;M.oppS=1;
   M.isKnockout=false;M.roundLabel='Dev Test';M.oppName='Dev FC';
   M.log=[];M.penResult=null;M.eliminated=false;
   if(!G.groupUserResults)G.groupUserResults=[];
-  closeDevPanel();showResult();
+  if(!G.phase)G.phase='group';
+  closeDevPanel();
+  showScreen('screen-match');
+  showResult();
 }
 function _devMockTrophy(){
-  if(!_devEnsureSquad())return;
+  _devEnsureSquad();
   if(!G.groupUserResults.length)
     [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
   if(!G.knockResults.length)
     ['R16','QF','SF','FIN'].forEach(function(r){G.knockResults.push({myG:1,oppG:0,stars:2,opp:'Dev '+r});});
+  G.phase='done';
   closeDevPanel();showTrophy();
 }
 function _devMockGameOver(){
-  if(!_devEnsureSquad())return;
+  _devEnsureSquad();
   G.phase='knockout';G.knockRound=1;
+  if(!G.groupUserResults.length)
+    [0,1,2].forEach(function(i){G.groupUserResults.push({myG:2,oppG:1,stars:2,opp:'Dev G'+(i+1)});});
   if(!G.knockOpps||!G.knockOpps.length) setupCampaign();
   if(!G.knockResults.length) G.knockResults.push({myG:0,oppG:2,stars:0,opp:'Dev FC'});
-  M.myG=0;M.oppG=2;M.oppName='Dev FC';
+  M.myG=0;M.oppG=2;M.oppName='Dev FC';M.eliminated=true;
   closeDevPanel();showGameOver();
 }
 
