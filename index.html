@@ -510,6 +510,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   opacity:.75;transition:opacity .18s}
 .screen-logo:hover{opacity:1}
 
+
+/* ── Modals ── */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:8000;align-items:flex-end;justify-content:center}
+.modal-sheet{background:var(--s1);border-radius:18px 18px 0 0;padding:20px 18px 32px;max-height:80vh;overflow-y:auto;width:100%;max-width:480px}
+.modal-title{font-size:1rem;font-weight:800;margin-bottom:14px;color:var(--text)}
+.modal-section h3{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin:14px 0 4px}
+.modal-section p{font-size:.8rem;color:var(--mut);line-height:1.55;margin:0}
+
 /* ── Share button ── */
 .btn-share{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;
   font-weight:700;font-size:.85rem;letter-spacing:.3px}
@@ -4429,6 +4437,59 @@ function _devSetMom(v){
     <!-- Language -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:24px">
       <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:6px;font-size:.7rem;cursor:pointer">🌐 Lingua: IT</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- FAN PROJECT MODAL -->
+<div class="modal-overlay" id="modal-fanproject" onclick="if(event.target===this)closeFanProject()">
+  <div class="modal-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="modal-title">⚽ Fan Project</div>
+      <button onclick="closeFanProject()" style="background:none;border:none;color:var(--mut);font-size:1.2rem;cursor:pointer;padding:4px">✕</button>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="fp.h_disclaimer">Disclaimer</h3>
+      <p data-i18n-html="fp.p_disclaimer"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="fp.h_copyright">Copyright</h3>
+      <p data-i18n-html="fp.p_copyright"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="fp.h_terms">Terms of Use</h3>
+      <p data-i18n-html="fp.p_terms"></p>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY MODAL -->
+<div class="modal-overlay" id="modal-privacy" onclick="if(event.target===this)closePrivacy()">
+  <div class="modal-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="modal-title">🔒 Privacy</div>
+      <button onclick="closePrivacy()" style="background:none;border:none;color:var(--mut);font-size:1.2rem;cursor:pointer;padding:4px">✕</button>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="priv.h_data">No Data Collection</h3>
+      <p data-i18n-html="priv.p_data"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="priv.h_cookies">Cookies &amp; Local Storage</h3>
+      <p data-i18n-html="priv.p_cookies"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="priv.h_scripts">Third-party Scripts</h3>
+      <p data-i18n-html="priv.p_scripts"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="priv.h_gdpr">Your Rights (GDPR)</h3>
+      <p data-i18n-html="priv.p_gdpr"></p>
+    </div>
+    <div class="modal-section">
+      <h3 data-i18n="priv.h_updates">Updates</h3>
+      <p data-i18n-html="priv.p_updates"></p>
     </div>
   </div>
 </div>
