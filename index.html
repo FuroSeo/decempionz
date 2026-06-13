@@ -905,6 +905,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="card" style="padding:12px 14px;margin-bottom:16px" id="t-ratings"></div>
 
     <button class="btn btn-gold" style="font-size:1rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Play Again</button>
+    <button class="btn btn-share" style="width:100%;margin-top:6px;font-size:.85rem" data-i18n="btn.share" onclick="shareResult()">📤 Share Result</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.78rem;opacity:.85" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Change Rules</button>
   </div>
 </div>
@@ -931,7 +932,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.7.8';
+const GAME_VERSION='4.7.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1067,6 +1068,7 @@ const STRINGS={
     'ev.freekick':'🤕 Calcio di punizione',
     'ev.protests':'📣 Proteste in campo',
     'btn.replay':'⚽ Nuova Partita',
+    'btn.share':'📤 Condividi Risultato',
     'btn.change_rules':'⚙️ Cambia regole',
     'nuovo.league_phase':'Fase di Lega',
     'nuovo.qualify_at':'Soglia: 8 pt',
@@ -1266,6 +1268,7 @@ const STRINGS={
     'ev.freekick':'🤕 Free kick conceded',
     'ev.protests':'📣 Players surround referee',
     'btn.replay':'⚽ Play Again',
+    'btn.share':'📤 Share Result',
     'btn.change_rules':'⚙️ Change Rules',
     'nuovo.league_phase':'League Phase',
     'nuovo.qualify_at':'Qualify at',
