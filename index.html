@@ -3676,63 +3676,57 @@ function showGroupElimination(pos,pts){
 }
 function showGameOver(){
   const KNAMES=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
+  const KNAMES2=G.format==='coppa'?['R1','R2','QF','SF','Final']:['R16','QF','SF','Final'];
   const ri=Math.min(G.knockRound,KNAMES.length-1);
   const allRes=[...G.groupUserResults,...G.knockResults];
   const total=allRes.reduce((s,r)=>s+(r.stars||0),0);
+  const max=allRes.length*3;
   const campW=allRes.filter(r=>r.myG>r.oppG).length;
   const campD=allRes.filter(r=>r.myG===r.oppG).length;
   const campL=allRes.filter(r=>r.myG<r.oppG).length;
 
-  document.getElementById('go-txt').innerHTML=
-    t('go.eliminated_in')+' <strong>'+(ri>=0?KNAMES[ri]:t('round.r16'))+'</strong><br>'
-    +'vs '+M.oppName
-    +(total>0?'<br><span style="margin-top:4px;display:inline-block">⭐ '+total+' stars</span>':'');
+  // Hero
+  document.getElementById('go-round-lbl').textContent=ri>=0?KNAMES[ri]:t('round.r16');
+  document.getElementById('go-sub-lbl').textContent='vs '+M.oppName+(G.tournament?' · '+G.tournament.name:'')+' · '+_diffLabel();
   document.getElementById('go-sc').textContent=M.myG+' – '+M.oppG;
 
-  // Stats grid
-  document.getElementById('go-stats-grid').innerHTML=
-    '<div class="go-stats-row">'+
-    [['P',allRes.length],['W',campW],['D',campD],['L',campL],
-     ['GF',G.campaignGF||0],['GA',G.campaignGA||0],['CS',G.campaignCleanSheets||0]]
-    .map(([l,v])=>'<div class="go-stat"><div class="go-stat-v">'+v+'</div><div class="go-stat-l">'+l+'</div></div>')
-    .join('')+'</div>';
+  // Stats row
+  const isIt=(G.lang||'it')==='it';
+  document.getElementById('go-stats').innerHTML=
+    '<div class="end-stat-cell"><div class="end-stat-v">'+campW+(isIt?'V ':' W ')+campD+(isIt?'P ':' D ')+campL+(isIt?'S':'L')+'</div><div class="end-stat-l">Record</div></div>'
+    +'<div class="end-stat-cell"><div class="end-stat-v">'+(G.campaignGF||0)+' – '+(G.campaignGA||0)+'</div><div class="end-stat-l">GF – GA</div></div>'
+    +'<div class="end-stat-cell"><div class="end-stat-v gold">'+total+'/'+max+' ⭐</div><div class="end-stat-l">'+(isIt?'Stelle':'Stars')+'</div></div>';
 
-  // Extra stats
+  // Extra: top scorer + MVP
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   let mvpName='',mvpAvg=0;
-  Object.entries(G.campaignMatchRatings||{}).forEach(([name,r])=>{
-    const a=avg(r); if(a>mvpAvg){mvpAvg=a;mvpName=name;}
-  });
-  const bw=G.campaignBestWin;
-  document.getElementById('go-extra-stats').innerHTML=
-    (topScorer?'<div class="go-extra-row"><span>'+t('stats.top_scorer')+'</span><strong>'+topScorer[0]+' ('+topScorer[1]+')</strong></div>':'')
-    +(mvpName?'<div class="go-extra-row"><span>'+t('stats.best_player')+'</span><strong>'+mvpName+' ('+mvpAvg.toFixed(1)+')</strong></div>':'')
-    +(bw?'<div class="go-extra-row"><span>'+t('stats.best_win')+'</span><strong>'+bw.myG+'–'+bw.oppG+' vs '+bw.opp+'</strong></div>':'');
+  Object.entries(G.campaignMatchRatings||{}).forEach(function(e){const a=avg(e[1]);if(a>mvpAvg){mvpAvg=a;mvpName=e[0];}});
+  document.getElementById('go-extra').innerHTML=
+    (topScorer?'<strong>'+t('stats.top_scorer')+':</strong> '+topScorer[0]+' ('+topScorer[1]+'g)':'')
+    +(topScorer&&mvpName?'  ·  ':'')
+    +(mvpName?'<strong>MVP:</strong> '+mvpName+' ('+mvpAvg.toFixed(1)+')':'');
 
-  // Match journey
+  // Journey rows
   const gLabel=G.format==='nuovo'?'LG':'GP';
-  const kTags=G.format==='coppa'?['r16','r16','qf','sf','final']:['r16','qf','sf','final'];
-  const KNAMES2=G.format==='coppa'?['R1','R2','QF','SF','Final']:['R16','QF','SF','Final'];
-  const gRows=G.groupUserResults.map(function(r,i){
-    const res=r.myG>r.oppG?'<span style="color:#22c55e;font-weight:700">W</span>':r.myG===r.oppG?'<span style="color:#eab308;font-weight:700">D</span>':'<span style="color:#ef4444;font-weight:700">L</span>';
-    return '<div class="t-log-row"><div style="display:flex;align-items:center;gap:6px"><span class="tag tag-group">'+gLabel+(i+1)+'</span><span>'+r.opp+'</span></div>'
-      +'<div style="display:flex;align-items:center;gap:7px">'+res+'<span style="color:var(--mut);min-width:30px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
-  }).join('');
-  const kRows=G.knockResults.map(function(r,i){
-    const res=r.myG>r.oppG?'<span style="color:#22c55e;font-weight:700">W</span>':r.myG===r.oppG?'<span style="color:#eab308;font-weight:700">D</span>':'<span style="color:#ef4444;font-weight:700">L</span>';
-    const tag=kTags[Math.min(i,kTags.length-1)];
-    return '<div class="t-log-row"><div style="display:flex;align-items:center;gap:6px"><span class="tag tag-'+tag+'">'+KNAMES2[i]+'</span><span>'+r.opp+'</span></div>'
-      +'<div style="display:flex;align-items:center;gap:7px">'+res+'<span style="color:var(--mut);min-width:30px;text-align:right">'+r.myG+'–'+r.oppG+'</span><div class="stars" style="font-size:.7rem">'+sh(r.stars)+'</div></div></div>';
-  }).join('');
+  function _jRow(tag,opp,myG,oppG){
+    const w=myG>oppG,d=myG===oppG;
+    const cls=w?'w':d?'d':'l';
+    const rv=w?'W':d?'D':'L';
+    const rc=w?'color:#22c55e':d?'color:#eab308':'color:#ef4444';
+    return'<div class="end-j-row">'
+      +'<span class="end-j-tag '+cls+'">'+tag+'</span>'
+      +'<span class="end-j-opp">'+opp+'</span>'
+      +'<span class="end-j-score">'+myG+'–'+oppG+'</span>'
+      +'<span class="end-j-res" style="'+rc+'">'+rv+'</span>'
+      +'</div>';
+  }
+  const gRows=G.groupUserResults.map(function(r,i){return _jRow(gLabel+(i+1),r.opp,r.myG,r.oppG);}).join('');
+  const kRows=G.knockResults.map(function(r,i){return _jRow(KNAMES2[Math.min(i,KNAMES2.length-1)],r.opp,r.myG,r.oppG);}).join('');
   document.getElementById('go-journey').innerHTML=gRows+kRows;
-  var goRatEl2=document.getElementById('go-ratings');
-  if(goRatEl2)goRatEl2.innerHTML=buildRatingsGrid(G.campaignMatchRatings);
 
   // Pitch
-  const goWrap=document.getElementById('go-pitch-wrap');
   const goPitch=document.getElementById('go-pitch');
-  if(goWrap&&goPitch&&G.formation&&FORMATIONS[G.formation]){
-    goWrap.style.display='block';
+  if(goPitch&&G.formation&&FORMATIONS[G.formation]){
     const _goTac=G.draftTactic||G.tactic||'balanced';
     const positions=fmtPositions(G.formation,_goTac);
     const rows=fmtRows(G.formation,_goTac);
@@ -3740,12 +3734,12 @@ function showGameOver(){
     positions.forEach(function(pos,i){if(!slotsByPos[pos])slotsByPos[pos]=[];slotsByPos[pos].push(i);});
     const used={};
     goPitch.innerHTML=rows.map(function(row){
-      return '<div class="dp-row">'+row.map(function(pos){
+      return'<div class="dp-row">'+row.map(function(pos){
         if(!used[pos])used[pos]=0;
         const slotIdx=(slotsByPos[pos]||[])[used[pos]];used[pos]++;
         const player=slotIdx!==undefined?G.slotPlayers[slotIdx]:null;
         if(player){const grp=slotGroup(pos);return filledSlotHTML(player,grp);}
-        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
+        return'<div class="dp-slot empty dp-'+slotGroup(pos)+'">'+ghostSprite()+'<div class="dp-slot-pos">'+pos+'</div></div>';
       }).join('')+'</div>';
     }).join('');
   }
