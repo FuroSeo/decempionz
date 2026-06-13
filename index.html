@@ -1142,6 +1142,7 @@ const STRINGS={
     'coach.pick_title':'Scegli il tuo Allenatore',
     'coach.pick_subtitle':'Nessun reroll — scegli con saggezza.',
     'coach.pref_form':'Modulo preferito:',
+    'next.opponent':'Prossimo Avversario',
     'pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
   },
@@ -1330,6 +1331,7 @@ const STRINGS={
     'coach.pick_title':'Choose your Manager',
     'coach.pick_subtitle':'No rerolls — choose wisely.',
     'coach.pref_form':'Preferred formation:',
+    'next.opponent':'Next Opponent',
     'pen.win':'You win on penalties! 🎉',
     'pen.loss':'Eliminated on penalties. 💔',
   }
@@ -3545,9 +3547,14 @@ function showResult(){
     _pendingMatch={oppTactic:_nOt};  // playRound() will pick this up
     var _nBeats=Object.keys(TACTIC_WINS).find(function(k){return TACTIC_WINS[k]===_nOt;});
     var _rNextScout=document.getElementById('r-next-scout');
-    if(_rNextScout)_rNextScout.innerHTML='🔍 <strong>vs '+_nextInfo.oppName+'</strong><br>'
-      +t('scout.likely')+' <strong>'+tacLabel(_nOt)+'</strong>'
-      +(_nBeats?' '+t('scout.counter')+' <strong>'+tacLabel(_nBeats)+'</strong>':'');
+    var _nCol=(_nextInfo.oppId&&JERSEY_COLORS[_nextInfo.oppId])||'#888';
+    var _nSwatch='<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+_nCol+';opacity:.9;margin-right:6px;vertical-align:middle;flex-shrink:0"></span>';
+    if(_rNextScout)_rNextScout.innerHTML=
+      '<div style="font-size:.55rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:5px">'+t('next.opponent')+'</div>'
+      +'<div style="font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;margin-bottom:8px">'+_nSwatch+_nextInfo.oppName+'</div>'
+      +'<div style="font-size:.7rem;color:var(--mut)">'+t('scout.likely')+' <strong style="color:var(--text)">'+tacLabel(_nOt)+'</strong>'
+      +(_nBeats?' '+t('scout.counter')+' <strong style="color:var(--text)">'+tacLabel(_nBeats)+'</strong>':'')
+      +'</div>';
     // Sync tactic buttons to current G.tactic
     var _rCurTact=G.tactic||'balanced';
     document.querySelectorAll('#rmt-attack,#rmt-balanced,#rmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
@@ -3623,7 +3630,7 @@ function getNextMatchInfo(){
       const nextIdx=G.groupRound+1;
       if(nextIdx<G.groupTeams.length){
         var nt=G.groupTeams[nextIdx];
-        return{oppName:nt.team.name+" '"+nt.team.season.slice(-2),oppStr:teamStrength(nt.id)};
+        return{oppName:nt.team.name+" '"+nt.team.season.slice(-2),oppStr:teamStrength(nt.id),oppId:nt.id};
       }
     } else {
       // Group done — check if player qualifies for knockout
@@ -3636,14 +3643,14 @@ function getNextMatchInfo(){
         qualifies=st.findIndex(function(s){return s.id==='user';})<2;
       }
       if(qualifies&&G.knockOpps&&G.knockOpps[0]){
-        return{oppName:G.knockOpps[0].name,oppStr:G.knockOpps[0].str};
+        return{oppName:G.knockOpps[0].name,oppStr:G.knockOpps[0].str,oppId:G.knockOpps[0].id||null};
       }
     }
   } else {
     // Knockout phase
     if(G.knockRound+1<maxKnock&&G.knockOpps){
       var nk=G.knockOpps[G.knockRound+1];
-      if(nk)return{oppName:nk.name,oppStr:nk.str};
+      if(nk)return{oppName:nk.name,oppStr:nk.str,oppId:nk.id||null};
     }
   }
   return null;
