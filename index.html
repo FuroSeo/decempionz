@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Decempionz — Draft legendary football squads and conquer Europe. A blind draft card game spanning 60 years of Champions League history.">
+<meta name="description" content="Decempionz — Fai il draft delle leggende del calcio e conquista l'Europa. Un gioco di carte blind draft con 60 anni di storia della Champions League.">
 <meta name="author" content="Decempionz">
-<meta property="og:title" content="Decempionz — The Ultimate Football Draft">
-<meta property="og:description" content="Draft legendary players, build your XI and conquer Europe. 66 historic squads, 3 tournament formats.">
+<meta property="og:title" content="Decempionz — Il Draft delle Leggende del Calcio">
+<meta property="og:description" content="Scegli i giocatori leggendari, costruisci il tuo XI e conquista l'Europa. 66 rose storiche, 3 formati di torneo.">
 <meta property="og:image" content="https://decempionz.com/og-image.png">
 <meta property="og:url" content="https://decempionz.com">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="it_IT">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Decempionz — The Ultimate Football Draft">
-<meta name="twitter:description" content="Draft legends. Build your XI. Conquer Europe.">
+<meta name="twitter:title" content="Decempionz — Il Draft delle Leggende del Calcio">
+<meta name="twitter:description" content="Fai il draft delle leggende. Costruisci il tuo XI. Conquista l'Europa.">
 <meta name="twitter:image" content="https://decempionz.com/og-image.png">
-<meta property="og:description" content="Draft legendary football squads and conquer Europe across 10 historic eras.">
-<meta property="og:type" content="website">
 <meta name="theme-color" content="#07090f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
-<title>Decempionz</title>
+<title>Decempionz — Draft le Leggende del Calcio e Conquista l'Europa</title>
 <style>
 :root{
   --bg:#07090f;--s1:#0f1520;--s2:#17202e;--brd:#1e2d42;
@@ -572,6 +571,19 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   padding:10px 20px;font-size:.75rem;font-weight:600;z-index:9999;
   opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 #share-toast.show{opacity:1}
+/* ── Share modal ── */
+#share-modal{display:none;position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#share-modal.open{display:flex}
+#share-modal-box{background:#0f1520;border:1px solid #1e2d42;border-radius:18px;
+  padding:22px 20px 20px;max-width:460px;width:100%;max-height:92vh;overflow-y:auto;box-sizing:border-box}
+#share-canvas{width:100%;border-radius:10px;display:block;margin-bottom:16px;image-rendering:pixelated}
+.share-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.share-modal-title{font-weight:700;color:#e8edf5;font-size:.95rem}
+.share-modal-close{background:none;border:none;color:#6b7e95;font-size:1.3rem;cursor:pointer;line-height:1;padding:0}
+.share-modal-close:hover{color:#e8edf5}
+.share-modal-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.share-modal-btns .btn{font-size:.75rem;padding:10px 6px;letter-spacing:.1px}
 </style>
 </head>
 <body><script>
@@ -938,7 +950,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.0';
+const GAME_VERSION='4.9.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3955,7 +3967,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 // ── Share result ──────────────────────────────────────────────────────────────
-function shareResult(){
+function _shareData(){
   const all=[...G.groupUserResults,...G.knockResults];
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
@@ -3963,59 +3975,219 @@ function shareResult(){
   const total=all.reduce((s,r)=>s+(r.stars||0),0), max=all.length*3;
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
-  const gradeEmoji={'S':'🌟','A':'⭐','B':'✅','C':'🏳️'}[grade]||'🏆';
+  const isWinner=G.phase==='done'||document.getElementById('screen-trophy').classList.contains('active');
   const formatLabel={'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League';
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
-  const isWinner=G.phase==='done'||document.getElementById('screen-trophy').classList.contains('active');
-  const statusLine=isWinner
-    ? gradeEmoji+' Grade '+grade+' — '+formatLabel+' Winner!'
-    : '💔 Eliminated in '+formatLabel+' ('+campW+'W '+campD+'D '+campL+'L)';
-  const diffLabel={'easy':'🟢 Facile','normal':'🟡 Normale','hard':'🔴 Difficile'}[G.difficulty||'normal']||'🟡';
-  const coachStr=G.coach?(' · 👔 '+G.coach.name):'';
   const isIt=(G.lang||'it')==='it';
-  const challengeLine=isIt?'Puoi fare meglio? → decempionz.com':'Can you beat me? → decempionz.com';
-  const wdlLabel=isIt?(campW+'V '+campD+'P '+campL+'S'):(campW+'W '+campD+'D '+campL+'L');
-  const goalLabel=isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
-  const scorerLabel=isIt?'Capocannoniere: ':'Top scorer: ';
-  // Build lineup by role group
   const sq=G.squad&&G.squad.length?G.squad:G.slotPlayers.filter(Boolean);
   const grpMap={GK:[],DEF:[],MID:[],FWD:[]};
   sq.forEach(function(p){grpMap[posGroup(p.p)].push(p.n);});
+  return {campW,campD,campL,grade,isWinner,formatLabel,topScorerStr,isIt,grpMap,sq};
+}
+
+function shareResult(){
+  buildShareCanvas();
+  document.getElementById('share-modal').classList.add('open');
+}
+
+function closeShareModal(){
+  document.getElementById('share-modal').classList.remove('open');
+}
+
+function _roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function buildShareCanvas(){
+  const W=1080,H=1080;
+  const canvas=document.getElementById('share-canvas');
+  canvas.width=W; canvas.height=H;
+  const c=canvas.getContext('2d');
+  const d=_shareData();
+
+  // Background
+  c.fillStyle='#07090f'; c.fillRect(0,0,W,H);
+  const bgGrad=c.createRadialGradient(W/2,H*0.28,60,W/2,H*0.28,620);
+  bgGrad.addColorStop(0,'rgba(26,58,122,0.28)'); bgGrad.addColorStop(1,'rgba(7,9,15,0)');
+  c.fillStyle=bgGrad; c.fillRect(0,0,W,H);
+
+  // Gold top bar
+  const topBar=c.createLinearGradient(0,0,W,0);
+  topBar.addColorStop(0,'#c9a227'); topBar.addColorStop(0.5,'#e8c04a'); topBar.addColorStop(1,'#c9a227');
+  c.fillStyle=topBar; c.fillRect(0,0,W,7);
+
+  // Logo
+  c.textAlign='center';
+  c.font='bold 58px Arial,sans-serif';
+  c.fillStyle='#c9a227';
+  c.fillText('DECEMPIONZ',W/2,88);
+
+  // Era
+  const eraName=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
+  c.font='28px Arial,sans-serif'; c.fillStyle='#6b7e95';
+  c.fillText(eraName,W/2,132);
+
+  // Divider
+  c.strokeStyle='#1e2d42'; c.lineWidth=1.5;
+  c.beginPath(); c.moveTo(80,158); c.lineTo(W-80,158); c.stroke();
+
+  // Grade badge
+  const gradeColors={S:'#c9a227',A:'#16a34a',B:'#2451a8',C:'#dc2626'};
+  const gCol=gradeColors[d.grade]||'#c9a227';
+  c.fillStyle=gCol+'28'; _roundRect(c,W/2-100,178,200,76,38); c.fill();
+  c.strokeStyle=gCol; c.lineWidth=2.5; _roundRect(c,W/2-100,178,200,76,38); c.stroke();
+  c.font='bold 44px Arial,sans-serif'; c.fillStyle=gCol;
+  c.fillText('Grade '+d.grade,W/2,230);
+
+  // Status line
+  const statusEmoji=d.isWinner?'🏆':'💔';
+  const statusVerb=d.isWinner?(d.isIt?'Campione':'Champion'):(d.isIt?'Eliminato':'Eliminated');
+  c.font='bold 34px Arial,sans-serif'; c.fillStyle='#e8edf5';
+  c.fillText(statusEmoji+'  '+statusVerb+' · '+d.formatLabel,W/2,300);
+
+  // Formation
+  const diffMap={'easy':d.isIt?'🟢 Facile':'🟢 Easy','normal':d.isIt?'🟡 Normale':'🟡 Normal','hard':d.isIt?'🔴 Difficile':'🔴 Hard'};
+  const diffLbl=(diffMap[G.difficulty||'normal'])||'🟡';
+  const coachStr=G.coach?'  ·  👔 '+G.coach.name:'';
+  c.font='24px Arial,sans-serif'; c.fillStyle='#6b7e95';
+  c.fillText(G.formation+coachStr+'  ·  '+diffLbl,W/2,344);
+
+  // Divider
+  c.strokeStyle='#1e2d42'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(80,370); c.lineTo(W-80,370); c.stroke();
+
+  // Lineup
+  const rows=[
+    d.grpMap.GK.length?{icon:'🧤',names:d.grpMap.GK.join('  ·  ')}:null,
+    d.grpMap.DEF.length?{icon:'🛡️',names:d.grpMap.DEF.join('  ·  ')}:null,
+    d.grpMap.MID.length?{icon:'⚙️',names:d.grpMap.MID.join('  ·  ')}:null,
+    d.grpMap.FWD.length?{icon:'⚡',names:d.grpMap.FWD.join('  ·  ')}:null,
+  ].filter(Boolean);
+  let ly=428;
+  rows.forEach(function(row){
+    c.font='27px Arial,sans-serif'; c.fillStyle='#e8edf5'; c.textAlign='center';
+    c.fillText(row.icon+'  '+row.names,W/2,ly); ly+=54;
+  });
+
+  // Stats section
+  ly=Math.max(ly+10,585);
+  c.strokeStyle='#1e2d42'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(80,ly); c.lineTo(W-80,ly); c.stroke(); ly+=48;
+
+  const wdlLabel=d.isIt?(d.campW+'V  '+d.campD+'P  '+d.campL+'S'):(d.campW+'W  '+d.campD+'D  '+d.campL+'L');
+  const goalLabel=d.isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
+  const scorerLabel=d.isIt?'Capocannoniere: ':'Top scorer: ';
+
+  c.font='bold 30px Arial,sans-serif'; c.fillStyle='#e8edf5';
+  c.fillText('⚽  '+wdlLabel+'  ·  '+goalLabel,W/2,ly); ly+=50;
+  c.font='26px Arial,sans-serif'; c.fillStyle='#6b7e95';
+  c.fillText('🌟  '+scorerLabel+d.topScorerStr,W/2,ly);
+
+  // Bottom section
+  const bottomY=H-130;
+  c.strokeStyle='#1e2d42'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(0,bottomY-16); c.lineTo(W,bottomY-16); c.stroke();
+
+  const challengeVerb=d.isWinner
+    ?(d.isIt?'Riesci a fare meglio? Sfidami su':'Can you beat this? Try at')
+    :(d.isIt?'Puoi fare meglio di me? Prova su':'Can you do better? Try at');
+  c.font='24px Arial,sans-serif'; c.fillStyle='#6b7e95';
+  c.fillText(challengeVerb,W/2,bottomY+18);
+  c.font='bold 34px Arial,sans-serif'; c.fillStyle='#c9a227';
+  c.fillText('decempionz.com',W/2,bottomY+62);
+  c.font='20px Arial,sans-serif'; c.fillStyle='#2451a8';
+  c.fillText('#Decempionz  #ChampionsLeague  #FootballDraft',W/2,bottomY+97);
+
+  // Gold bottom bar
+  c.fillStyle=topBar; c.fillRect(0,H-6,W,6);
+}
+
+function _buildShareText(){
+  const d=_shareData();
+  const gradeEmoji={S:'🌟',A:'⭐',B:'✅',C:'🏳️'}[d.grade]||'🏆';
+  const formatLabel=d.formatLabel;
+  const statusLine=d.isWinner
+    ?(gradeEmoji+' Grade '+d.grade+' — '+formatLabel+(d.isIt?' Vinto!':' Won!'))
+    :('💔 '+(d.isIt?'Eliminato':'Eliminated')+' · '+formatLabel+' ('+d.campW+(d.isIt?'V ':' W ')+d.campD+(d.isIt?'P ':' D ')+d.campL+(d.isIt?'S':'L')+')');
+  const diffLbl={easy:d.isIt?'🟢 Facile':'🟢 Easy',normal:d.isIt?'🟡 Normale':'🟡 Normal',hard:d.isIt?'🔴 Difficile':'🔴 Hard'}[G.difficulty||'normal']||'🟡';
+  const coachStr=G.coach?(' · 👔 '+G.coach.name):'';
   const lineupLines=[
-    grpMap.GK.length?'🧤 '+grpMap.GK.join(' · '):'',
-    grpMap.DEF.length?'🛡️ '+grpMap.DEF.join(' · '):'',
-    grpMap.MID.length?'⚙️ '+grpMap.MID.join(' · '):'',
-    grpMap.FWD.length?'⚡ '+grpMap.FWD.join(' · '):''
+    d.grpMap.GK.length?'🧤 '+d.grpMap.GK.join(' · '):'',
+    d.grpMap.DEF.length?'🛡️ '+d.grpMap.DEF.join(' · '):'',
+    d.grpMap.MID.length?'⚙️ '+d.grpMap.MID.join(' · '):'',
+    d.grpMap.FWD.length?'⚡ '+d.grpMap.FWD.join(' · '):'',
   ].filter(Boolean).join('\n');
-  const lines=[
+  const wdlLabel=d.isIt?(d.campW+'V '+d.campD+'P '+d.campL+'S'):(d.campW+'W '+d.campD+'D '+d.campL+'L');
+  const goalLabel=d.isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
+  const scorerLabel=d.isIt?'Capocannoniere: ':'Top scorer: ';
+  const eraStr=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
+  const challengeLine=d.isWinner
+    ?(d.isIt?'Riesci a fare meglio? Sfidami → decempionz.com':'Can you beat this? Try → decempionz.com')
+    :(d.isIt?'Puoi fare meglio di me? → decempionz.com':'Can you do better? → decempionz.com');
+  return [
     statusLine,
-    diffLabel+' · '+G.formation+coachStr,
+    eraStr+' · '+G.formation+coachStr+' · '+diffLbl,
     '',
     lineupLines,
     '',
     '⚽ '+wdlLabel+' · '+goalLabel,
-    '🌟 '+scorerLabel+topScorerStr,
+    '🌟 '+scorerLabel+d.topScorerStr,
     '',
-    challengeLine
+    challengeLine,
+    '#Decempionz #ChampionsLeague #FootballDraft'
   ].join('\n');
-  const shareUrl='https://decempionz.com';
+}
 
-  if(navigator.share){
-    navigator.share({title:'Decempionz',text:lines}).catch(()=>{});
-  } else {
-    try{
-      navigator.clipboard.writeText(lines).then(function(){showShareToast('📋 Copied to clipboard!');});
-    }catch(e){
-      // Fallback for older browsers
-      const ta=document.createElement('textarea');
-      ta.value=lines; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-      showShareToast('📋 Copied to clipboard!');
+function downloadShareCard(){
+  const canvas=document.getElementById('share-canvas');
+  const a=document.createElement('a');
+  a.download='decempionz-result.png';
+  a.href=canvas.toDataURL('image/png');
+  a.click();
+}
+
+function nativeShare(){
+  const canvas=document.getElementById('share-canvas');
+  const text=_buildShareText();
+  canvas.toBlob(function(blob){
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],'decempionz-result.png',{type:'image/png'})]})){
+      navigator.share({
+        title:'Decempionz',
+        text:text,
+        files:[new File([blob],'decempionz-result.png',{type:'image/png'})]
+      }).catch(function(){
+        navigator.share({title:'Decempionz',text:text}).catch(()=>{});
+      });
+    } else if(navigator.share){
+      navigator.share({title:'Decempionz',text:text}).catch(()=>{});
+    } else {
+      _copyText(text);
     }
+  },'image/png');
+}
+
+function copyShareText(){
+  _copyText(_buildShareText());
+}
+
+function _copyText(txt){
+  try{
+    navigator.clipboard.writeText(txt).then(function(){showShareToast('📋 Copiato!');});
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showShareToast('📋 Copiato!');
   }
 }
+
 function showShareToast(msg){
   const t=document.getElementById('share-toast');
   if(!t)return;
@@ -4392,110 +4564,163 @@ function _devSetMom(v){
       <div id="dv-force-status" style="font-size:.65rem;color:#555;margin-top:6px"></div>
     </div>
 
+
     <!-- Force Score -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="color:#f97316;font-size:.72rem;font-weight:700;margin-bottom:8px">⚽ FORZA RISULTATO</div>
+      <div style="color:#f97316;font-size:.72rem;font-weight:700;margin-bottom:8px">⚡ FORZA RISULTATO</div>
       <div style="display:flex;gap:4px;flex-wrap:wrap">
-        <button onclick="_devForceScore(3,0)" style="background:#1a1a1a;border:1px solid #333;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">3-0</button>
-        <button onclick="_devForceScore(2,1)" style="background:#1a1a1a;border:1px solid #333;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">2-1</button>
-        <button onclick="_devForceScore(1,1)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">1-1</button>
-        <button onclick="_devForceScore(0,1)" style="background:#1a1a1a;border:1px solid #333;color:#ef4444;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-1</button>
-        <button onclick="_devForceScore(0,3)" style="background:#1a1a1a;border:1px solid #333;color:#ef4444;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-3</button>
-        <button onclick="_devForceScore(null,null)" style="background:#1a1a1a;border:1px solid #555;color:#777;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">Reset</button>
+        <button onclick="_devForceScore(1,0)" style="background:#1a3a1a;border:1px solid #22c55e;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">1-0</button>
+        <button onclick="_devForceScore(2,0)" style="background:#1a3a1a;border:1px solid #22c55e;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">2-0</button>
+        <button onclick="_devForceScore(2,1)" style="background:#1a3a1a;border:1px solid #22c55e;color:#22c55e;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">2-1</button>
+        <button onclick="_devForceScore(1,1)" style="background:#1a1a1a;border:1px solid #eab308;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">1-1</button>
+        <button onclick="_devForceScore(0,1)" style="background:#3a1a1a;border:1px solid #f87171;color:#f87171;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-1</button>
+        <button onclick="_devForceScore(0,2)" style="background:#3a1a1a;border:1px solid #f87171;color:#f87171;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">0-2</button>
+        <button onclick="_devForceScore(null,null)" style="background:#1a1a1a;border:1px solid #555;color:#aaa;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">Reset</button>
       </div>
     </div>
 
     <!-- Stress Test -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="color:#818cf8;font-size:.72rem;font-weight:700;margin-bottom:8px">🧪 STRESS TEST</div>
-      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
-        <label style="color:#666;font-size:.65rem">N sim:<input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="width:60px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
-        <label style="color:#666;font-size:.65rem">Opp str:<input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="width:48px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
-        <label style="color:#666;font-size:.65rem">Mod:<input id="dv-oppmod" type="number" value="0" min="-2" max="2" step="0.1" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
+      <div style="color:#a78bfa;font-size:.72rem;font-weight:700;margin-bottom:8px">🧪 STRESS TEST</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <label style="font-size:.6rem;color:#555">Partite</label>
+          <input id="dv-stress-n" type="number" value="500" min="10" max="5000" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem;width:70px">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <label style="font-size:.6rem;color:#555">Forza avv.</label>
+          <input id="dv-stress-opp" type="number" value="8.0" min="5" max="10" step="0.5" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem;width:70px">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <label style="font-size:.6rem;color:#555">Mod extra</label>
+          <input id="dv-oppmod" type="number" value="0" min="-3" max="3" step="0.5" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem;width:60px">
+        </div>
       </div>
-      <button onclick="_devStressTest()" style="width:100%;background:#1a1a3a;border:1px solid #818cf8;color:#818cf8;border-radius:6px;padding:5px;font-size:.7rem;cursor:pointer">▶ Esegui simulazione</button>
-      <div id="dv-stress-result"></div>
+      <button onclick="_devStressTest()" style="background:#2a1a5a;border:1px solid #a78bfa;color:#a78bfa;border-radius:6px;padding:5px 12px;font-size:.7rem;cursor:pointer;width:100%">▶ Esegui simulazione</button>
+      <div id="dv-stress-result" style="margin-top:6px;font-size:.65rem;color:#555"></div>
     </div>
 
-    <!-- Mock Screens -->
+    <!-- Coach Assignment -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="color:#e879f9;font-size:.72rem;font-weight:700;margin-bottom:8px">🖥️ MOCK SCREENS</div>
-      <div style="display:flex;gap:6px">
-        <button onclick="_devMockResult()" style="flex:1;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Result</button>
-        <button onclick="_devMockTrophy()" style="flex:1;background:#1a1a0a;border:1px solid #eab308;color:#eab308;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Trophy</button>
-        <button onclick="_devMockGameOver()" style="flex:1;background:#1a0a0a;border:1px solid #ef4444;color:#ef4444;border-radius:6px;padding:5px;font-size:.65rem;cursor:pointer">Game Over</button>
+      <div style="color:#fbbf24;font-size:.72rem;font-weight:700;margin-bottom:8px">👔 ALLENATORE</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <select id="dv-coach-sel" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem;flex:1">
+          <option value="0">Rinus Michels (4-3-3)</option>
+          <option value="1">Helenio Herrera (3-5-2)</option>
+          <option value="2">Nereo Rocco (5-4-1)</option>
+          <option value="3">Ernst Happel (4-4-2)</option>
+          <option value="4">Valeriy Lobanovskyi (4-4-2)</option>
+          <option value="5">Nils Liedholm (4-3-3)</option>
+          <option value="6">Arrigo Sacchi (4-4-2)</option>
+          <option value="7">Johan Cruyff (3-4-3)</option>
+          <option value="8">Fabio Capello (4-4-2)</option>
+          <option value="9">Giovanni Trapattoni (5-3-2)</option>
+          <option value="10">Marcello Lippi (3-5-2)</option>
+          <option value="11">Louis van Gaal (3-4-3)</option>
+          <option value="12">Sven-Göran Eriksson (4-4-2)</option>
+          <option value="13">Sir Alex Ferguson (4-4-2)</option>
+          <option value="14">Ottmar Hitzfeld (4-2-3-1)</option>
+          <option value="15">Carlo Ancelotti (4-4-2)</option>
+          <option value="16">José Mourinho (4-5-1)</option>
+          <option value="17">Rafael Benítez (4-4-2)</option>
+          <option value="18">Guus Hiddink (4-3-3)</option>
+          <option value="19">Vicente del Bosque (4-2-3-1)</option>
+          <option value="20">Luiz Felipe Scolari (4-2-3-1)</option>
+          <option value="21">Didier Deschamps (4-5-1)</option>
+          <option value="22">Jupp Heynckes (4-2-3-1)</option>
+          <option value="23">Pep Guardiola (4-3-3)</option>
+          <option value="24">Jürgen Klopp (4-3-3)</option>
+          <option value="25">Antonio Conte (3-5-2)</option>
+          <option value="26">Zinedine Zidane (4-3-3)</option>
+          <option value="27">Diego Simeone (4-5-1)</option>
+          <option value="28">Roberto Mancini (4-2-3-1)</option>
+          <option value="29">Claudio Ranieri (4-4-2)</option>
+        </select>
       </div>
-    </div>
-
-    <!-- Coach -->
-    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
-      <div style="color:#fcd34d;font-size:.72rem;font-weight:700;margin-bottom:8px">🧑‍💼 COACH</div>
       <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
-        <label style="color:#666;font-size:.65rem">Idx:<input id="dv-coach-sel" type="number" value="0" min="0" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
-        <label style="color:#666;font-size:.65rem">Boost%:<input id="dv-coach-boost" type="number" value="0" min="0" max="20" style="width:44px;margin-left:4px;background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:2px 4px;font-size:.65rem"></label>
-        <button onclick="_devAssignCoach()" style="background:#1a1a0a;border:1px solid #fcd34d;color:#fcd34d;border-radius:4px;padding:3px 10px;font-size:.65rem;cursor:pointer">Apply</button>
+        <label style="font-size:.65rem;color:#555;white-space:nowrap">Boost custom %</label>
+        <input id="dv-coach-boost" type="number" value="0" min="0" max="20" step="1" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem;width:60px">
       </div>
-      <div id="dv-coach-status" style="font-size:.65rem;color:#555"></div>
+      <button onclick="_devAssignCoach()" style="background:#2a2010;border:1px solid #fbbf24;color:#fbbf24;border-radius:6px;padding:5px 12px;font-size:.7rem;cursor:pointer;width:100%">✅ Assegna allenatore</button>
+      <div id="dv-coach-status" style="font-size:.65rem;color:#555;margin-top:6px"></div>
     </div>
 
-    <!-- Language -->
-    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:24px">
-      <button id="dv-lang-btn" onclick="_devToggleLang()" style="width:100%;background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:6px;font-size:.7rem;cursor:pointer">🌐 Lingua: IT</button>
+    <!-- Language & Mock Screens -->
+    <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="color:#6b7e95;font-size:.72rem;font-weight:700;margin-bottom:8px">🌐 LINGUA &amp; SCHERMATE</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button id="dv-lang-btn" onclick="_devToggleLang()" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:6px;padding:5px 10px;font-size:.7rem;cursor:pointer">🌐 Lingua: IT</button>
+        <button onclick="_devMockResult()" style="background:#1a1a1a;border:1px solid #333;color:#60a5fa;border-radius:6px;padding:5px 10px;font-size:.7rem;cursor:pointer">📊 Result</button>
+        <button onclick="_devMockTrophy()" style="background:#1a3a1a;border:1px solid #22c55e;color:#22c55e;border-radius:6px;padding:5px 10px;font-size:.7rem;cursor:pointer">🏆 Trophy</button>
+        <button onclick="_devMockGameOver()" style="background:#3a1a1a;border:1px solid #f87171;color:#f87171;border-radius:6px;padding:5px 10px;font-size:.7rem;cursor:pointer">💔 Game Over</button>
+      </div>
     </div>
+
   </div>
 </div>
 
-
-<!-- FAN PROJECT MODAL -->
-<div class="modal-overlay" id="modal-fanproject" onclick="if(event.target===this)closeFanProject()">
-  <div class="modal-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="modal-title">⚽ Fan Project</div>
-      <button onclick="closeFanProject()" style="background:none;border:none;color:var(--mut);font-size:1.2rem;cursor:pointer;padding:4px">✕</button>
+<!-- Modal: Fan Project -->
+<div id="modal-fanproject" class="modal-overlay" onclick="closeFanProject()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title">⚽ Fan Project</div>
+    <div class="modal-section">
+      <h3>Cos'è Decempionz?</h3>
+      <p>Decempionz è un progetto fan non ufficiale, sviluppato per celebrare 60 anni di storia della UEFA Champions League. Non è affiliato, sponsorizzato o approvato da UEFA, FIFA o da alcun club calcistico.</p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="fp.h_disclaimer">Disclaimer</h3>
-      <p data-i18n-html="fp.p_disclaimer"></p>
+      <h3>Licenze</h3>
+      <p>Tutti i nomi di calciatori, allenatori e squadre sono utilizzati a puro scopo di intrattenimento culturale e storico, senza fini commerciali. Nessun dato ufficiale protetto da copyright viene riprodotto.</p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="fp.h_copyright">Copyright</h3>
-      <p data-i18n-html="fp.p_copyright"></p>
+      <h3>Contatti</h3>
+      <p>Per segnalazioni, suggerimenti o collaborazioni: <strong style="color:var(--gold)">decempionz.com</strong></p>
     </div>
-    <div class="modal-section">
-      <h3 data-i18n="fp.h_terms">Terms of Use</h3>
-      <p data-i18n-html="fp.p_terms"></p>
-    </div>
+    <button class="modal-legal-close" onclick="closeFanProject()">Chiudi</button>
   </div>
 </div>
 
-<!-- PRIVACY MODAL -->
-<div class="modal-overlay" id="modal-privacy" onclick="if(event.target===this)closePrivacy()">
-  <div class="modal-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="modal-title">🔒 Privacy</div>
-      <button onclick="closePrivacy()" style="background:none;border:none;color:var(--mut);font-size:1.2rem;cursor:pointer;padding:4px">✕</button>
-    </div>
+<!-- Modal: Privacy -->
+<div id="modal-privacy" class="modal-overlay" onclick="closePrivacy()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title">🔒 Privacy</div>
     <div class="modal-section">
-      <h3 data-i18n="priv.h_data">No Data Collection</h3>
+      <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
       <p data-i18n-html="priv.p_data"></p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="priv.h_cookies">Cookies &amp; Local Storage</h3>
+      <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
       <p data-i18n-html="priv.p_cookies"></p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="priv.h_scripts">Third-party Scripts</h3>
+      <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
       <p data-i18n-html="priv.p_scripts"></p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="priv.h_gdpr">Your Rights (GDPR)</h3>
+      <h3 data-i18n="priv.h_gdpr">I tuoi diritti (GDPR)</h3>
       <p data-i18n-html="priv.p_gdpr"></p>
     </div>
     <div class="modal-section">
-      <h3 data-i18n="priv.h_updates">Updates</h3>
+      <h3 data-i18n="priv.h_updates">Aggiornamenti</h3>
       <p data-i18n-html="priv.p_updates"></p>
     </div>
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
   </div>
 </div>
 
-<div id="share-toast">📋
+<div id="share-toast">📋</div>
+
+<!-- Share Modal -->
+<div id="share-modal" onclick="closeShareModal()">
+  <div id="share-modal-box" onclick="event.stopPropagation()">
+    <div class="share-modal-header">
+      <span class="share-modal-title">📤 Condividi il risultato</span>
+      <button class="share-modal-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <canvas id="share-canvas"></canvas>
+    <div class="share-modal-btns">
+      <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
+      <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
+      <button class="btn" onclick="copyShareText()">📋 Copia</button>
+    </div>
+  </div>
+</div>
