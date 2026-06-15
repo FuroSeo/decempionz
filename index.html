@@ -950,7 +950,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.1';
+const GAME_VERSION='4.9.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3249,7 +3249,9 @@ function setMatchSpeed(s){
 
 function skipToResult(){
   M.speedKey='skip';
-  // Process all remaining events instantly
+  // Stop any running penalty kick sequence
+  if(typeof P!=='undefined'&&P)P.done=true;
+  // Process all remaining match events instantly
   while(M.idx<M.log.length){
     var ev=M.log[M.idx++];
     if(ev.goal){
@@ -3259,7 +3261,23 @@ function skipToResult(){
   }
   document.getElementById('m-score').textContent=M.myS+' — '+M.oppS;
   renderMatchLineups();
+  // Knockout tie: simulate penalties instantly instead of re-animating from scratch
+  if(M.isKnockout&&M.myG===M.oppG&&!M.penResult)_simPenaltiesInstant();
   showResult();
+}
+
+function _simPenaltiesInstant(){
+  var h=0,a=0,hK=[],aK=[],maxR=5;
+  for(var _i=0;_i<20;_i++){
+    var hs=Math.random()<0.76;hK.push(hs);if(hs)h++;
+    var hT=hK.length,aT=aK.length;
+    if(a-h>maxR-hT||(hT>=maxR&&aT>=maxR&&h!==a))break;
+    var as_=Math.random()<0.73;aK.push(as_);if(as_)a++;
+    hT=hK.length;aT=aK.length;
+    if(h-a>maxR-aT||(hT>=maxR&&aT>=maxR&&h!==a))break;
+    if(hT>=maxR&&aT>=maxR&&h===a)maxR++;
+  }
+  M.penResult={homeWon:h>a,pw:Math.max(h,a),pl:Math.min(h,a)};
 }
 
 function toggleMatchStats(){
@@ -4703,24 +4721,4 @@ function _devSetMom(v){
       <h3 data-i18n="priv.h_updates">Aggiornamenti</h3>
       <p data-i18n-html="priv.p_updates"></p>
     </div>
-    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
-  </div>
-</div>
-
-<div id="share-toast">📋</div>
-
-<!-- Share Modal -->
-<div id="share-modal" onclick="closeShareModal()">
-  <div id="share-modal-box" onclick="event.stopPropagation()">
-    <div class="share-modal-header">
-      <span class="share-modal-title">📤 Condividi il risultato</span>
-      <button class="share-modal-close" onclick="closeShareModal()">✕</button>
-    </div>
-    <canvas id="share-canvas"></canvas>
-    <div class="share-modal-btns">
-      <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
-      <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
-      <button class="btn" onclick="copyShareText()">📋 Copia</button>
-    </div>
-  </div>
-</div>
+    <button class="modal-legal-close" onclick="closePrivacy()"
