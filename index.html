@@ -608,6 +608,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 #challenge-modal-box{background:#0f1520;border:2px solid #c9a227;border-radius:18px;
   padding:28px 24px 24px;max-width:360px;width:100%;box-sizing:border-box;text-align:center}
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-F2ME1WYQHG',{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false});
+</script>
 </head>
 <body><script>
 (function(){var t=localStorage.getItem('gl-theme');if(t==='light')document.body.setAttribute('data-theme','light');})();
@@ -990,7 +998,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.5';
+const GAME_VERSION='4.9.6';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1020,7 +1028,7 @@ const STRINGS={
     'priv.h_data':'Nessuna raccolta di dati',
     'priv.p_data':'Decempionz non raccoglie, non archivia e non trasmette alcun dato personale. Non è richiesta registrazione. Non vengono richiesti nome, email, indirizzo o qualsiasi altro dato identificativo.',
     'priv.h_cookies':'Cookie e archiviazione locale',
-    'priv.p_cookies':'Nessun cookie di tracciamento o profilazione viene utilizzato. L\'unico dato salvato sul tuo dispositivo è la preferenza tema (chiaro/scuro), tramite <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. Puoi cancellarlo in qualsiasi momento svuotando la cache del browser.',
+    'priv.p_cookies':'Questo sito utilizza Google Analytics 4 con IP anonimizzato e senza cookie di profilazione o remarketing, al solo scopo di misurare il traffico in forma aggregata (numero di sessioni, paese, dispositivo). Nessun dato personale identificabile viene raccolto o condiviso. L\'unico dato salvato sul tuo dispositivo è la preferenza tema (chiaro/scuro), tramite <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. Puoi cancellarlo in qualsiasi momento svuotando la cache del browser.',
     'priv.h_scripts':'Script di terze parti',
     'priv.p_scripts':'Decempionz non carica script analytics, pixel di tracciamento, CDN esterne o qualsiasi risorsa di terze parti. Il gioco funziona interamente lato client, in un singolo file HTML.',
     'priv.h_gdpr':'I tuoi diritti (GDPR)',
@@ -1221,7 +1229,7 @@ const STRINGS={
     'priv.h_data':'No Data Collection',
     'priv.p_data':'Decempionz does not collect, store, or transmit any personal data. No registration is required. No name, email, address, or any other identifying information is requested.',
     'priv.h_cookies':'Cookies & Local Storage',
-    'priv.p_cookies':'No tracking or profiling cookies are used. The only data saved on your device is the theme preference (light/dark), stored via <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. You can delete it at any time by clearing your browser cache.',
+    'priv.p_cookies':'This site uses Google Analytics 4 with anonymized IP and no profiling or remarketing cookies, solely to measure traffic in aggregate form (number of sessions, country, device). No personally identifiable data is collected or shared. The only data saved on your device is the theme preference (light/dark), stored via <code style="font-size:.65rem;background:var(--s2);padding:1px 4px;border-radius:3px">localStorage</code>. You can delete it at any time by clearing your browser cache.',
     'priv.h_scripts':'Third-party Scripts',
     'priv.p_scripts':'Decempionz does not load any analytics scripts, tracking pixels, external CDNs, or third-party resources. The game runs entirely client-side in a single HTML file.',
     'priv.h_gdpr':'Your Rights (GDPR)',
