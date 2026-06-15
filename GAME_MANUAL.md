@@ -1,7 +1,7 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.8.9
-**Last updated:** 2026-06-13
+**Version:** 4.9.5
+**Last updated:** 2026-06-15
 **File:** `index.html` (single-file game, ~4500 lines)
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)
 **Repo:** [github.com/FuroSeo/decempionz](https://github.com/FuroSeo/decempionz)
@@ -12,6 +12,12 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 4.9.5 | 2026-06-15 | PWA: web app manifest + service worker; installabile da smartphone |
+| 4.9.4 | 2026-06-15 | Fix: Hall of Fame fetch puntava a `master` invece di `main` |
+| 4.9.3 | 2026-06-15 | Hall of Fame: schermata + fetch JSON da GitHub; social share canvas |
+| 4.9.2 | 2026-06-15 | Fix: skip (⏭) durante rigori non riavvia la sequenza (`_simPenaltiesInstant`) |
+| 4.9.1 | 2026-06-15 | Implementazioni social e Hall of Fame (primo rilascio) |
+| 4.9.0 | 2026-06-15 | Dataset audit: riduzione ★10 da 77 a 31 istanze; solo valutazioni intere (9/10) |
 | 4.8.9 | 2026-06-13 | Fix theme-switch name color: tier backgrounds via CSS classes, not inline styles |
 | 4.8.8 | 2026-06-13 | Remove duplicate showTrophy(); fix doubled CSS selector |
 | 4.8.7 | 2026-06-13 | Replace CSS ::before SVG pitch lines with JS DOM injection (injectPitchLines) |
@@ -319,7 +325,11 @@ WIN +1 · LOSS −1 · DRAW no change. Clamped to −3 / +3. Carries across all 
 
 ### Penalty Shootout
 
-`P(score) = 0.76 − 0.04 × (round − 1)` for rounds 1–5, then `0.76` in sudden death.
+`P(score) = 0.76` home / `0.73` away per tutti i calci, inclusi i supplementari (sudden death).
+
+`startPenalties()` anima la sequenza kick-by-kick. `finishPenalties()` setta `M.penResult = {homeWon, pw, pl}` e chiama `showResult()` dopo 2.2s.
+
+**Skip durante i rigori:** se l'utente preme ⏭ mentre la sequenza è in corso, `skipToResult()` setta `P.done = true` (ferma i timeout animati) e chiama `_simPenaltiesInstant()` che simula l'intera sequenza in modo sincrono e setta `M.penResult` prima di chiamare `showResult()`. Senza questo, `showResult()` trovava `M.penResult === null` e rilanciava `startPenalties()` da capo.
 
 ---
 
@@ -430,7 +440,7 @@ Triggered by **5 rapid clicks on the version number** (bottom of home screen).
 ## Versioning
 
 ```js
-const GAME_VERSION = '4.8.9';
+const GAME_VERSION = '4.9.5';
 ```
 
 Displayed via `<span class="gv"></span>` (populated on DOMContentLoaded). 5× rapid clicks → dev panel.
@@ -470,4 +480,130 @@ git commit -m "vX.X.X — description"
 git push origin main
 ```
 
-**Rules:** always Python str.replace() for edits · always node --check before commit · always bump GAME_VERSION · always cp to keep workspace and
+**Rules:** always Python str.replace() for edits · always node --check before commit · always bump GAME_VERSION · always cp to keep workspace and repo in sync.
+
+**Cache:** GitHub Pages caches aggressively. Hard-refresh (Ctrl+Shift+R) or `?v=N` to bypass.
+
+---
+
+## File Structure (repo)
+
+```
+decempionz/
+├── index.html           ← entire game (~4700 lines)
+├── GAME_MANUAL.md       ← this file
+├── hall-of-fame.json    ← HoF data (aggiornato manualmente)
+├── manifest.json        ← PWA manifest
+├── sw.js                ← service worker
+├── icon-192.png         ← PWA icon 192×192
+├── icon-512.png         ← PWA icon 512×512
+├── og-image.png         ← social preview image (1200×630)
+├── robots.txt
+└── sitemap.xml
+```
+
+---
+
+## Dataset
+
+### Rating System (v4.9.0+)
+
+**Solo valutazioni intere.** I rating sono numeri interi (1–10), nessun mezzo punto (es. 9.5) per evitare la cascata di mezzi punti su tutti i livelli.
+
+**Target ★10:** 31 istanze su 1122 giocatori (~2.8%). Le ★10 sono riservate ai GOAT assoluti per stagione. Prima del v4.9.0 erano 77 (6.9%), rendendo il draft troppo facile.
+
+**Tier visivi** (le soglie `slotTierCss` / `slotTierClass` non cambiano):
+
+| Tier | Rating | Effetto |
+|------|--------|---------|
+| tier-elite | 10 (≥9.5) | Gold border + glow animation |
+| tier-high | 9 (≥9.0) | Gold thin border |
+| tier-mid | 8 (≥8.5) | Grey border |
+| tier-low | ≤7 | Tan border |
+
+**★10 confermati (31 istanze):** Puskas, Eusebio, Mazzola, Charlton, Best, Rivera, Cruyff, Beckenbauer, Muller G, Scirea, Platini, Baresi (×2), Maldini (×3), van Basten, Gullit, Zidane (×2), Ronaldo R9, Kaka, CR7 (×3), Iniesta (×2), Messi (×2), Modric (×2).
+
+**Opponent str vs dataset:** I valori `str` in `KNOCKOUT_OPPS` e `COPPA_OPPS` sono **hardcodati manualmente** e NON corrispondono alla media dei rating della rosa. Sono calibrati per la curva di difficoltà del torneo e vanno tenuti separati dal dataset. Non aggiornare automaticamente in base alle medie.
+
+---
+
+## Hall of Fame
+
+Schermata `screen-hof` accessibile dal pulsante 🏆 in home. Fetch del file `hall-of-fame.json` dal repo GitHub.
+
+```js
+function openHallOfFame()   // mostra screen-hof, fetcha JSON (una sola volta: _hofLoaded flag)
+```
+
+**URL fetch:** `https://raw.githubusercontent.com/FuroSeo/decempionz/main/hall-of-fame.json`
+**Branch:** sempre `main` (non `master`).
+
+**Struttura `hall-of-fame.json`:**
+
+```json
+{
+  "entries": [
+    {
+      "nickname": "FuroSeo",
+      "grade": "S",
+      "era": "🏆 Anni d'Oro (1992–2004)",
+      "formation": "4-3-3",
+      "difficulty": "hard",
+      "record": "6V 1P 0S",
+      "goals": "18-4",
+      "topScorer": "Ronaldo (9g)",
+      "lineup": { "GK": [...], "DEF": [...], "MID": [...], "FWD": [...] },
+      "date": "2026-06-15"
+    }
+  ]
+}
+```
+
+Il file viene aggiornato **manualmente** (push al repo). Il gioco legge sempre la versione più recente su `main`.
+
+---
+
+## PWA (Progressive Web App)
+
+Il gioco è installabile come app nativa su smartphone.
+
+**File aggiunti al repo:**
+
+| File | Scopo |
+|------|-------|
+| `manifest.json` | Definisce nome, icone, colori, `display: standalone` |
+| `sw.js` | Service worker: cache-first per assets statici |
+| `icon-192.png` | Icona 192×192 |
+| `icon-512.png` | Icona 512×512 |
+
+**Meta tag in `<head>`:**
+
+```html
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Decempionz">
+```
+
+**Registrazione SW** (in `<script>`, fine file):
+
+```js
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+```
+
+**Cache name in `sw.js`:** `decempionz-vX.X.X` — da aggiornare ad ogni release per invalidare la cache degli utenti esistenti.
+
+---
+
+## Known Constraints
+
+- Single file — no module system, no tree-shaking. Keep globals minimal.
+- `user-select: none` applied globally — prevents text cursor on tap, intentional.
+- `localStorage` used only for `dcz_lang` and `gl-theme` — no save state.
+- GitHub Pages serves from `main` branch root. Deploy = push to main.
+- `navigator.share` unavailable on desktop — falls back to clipboard copy silently.
+- `slotTierCss()` must NOT include `background:` — backgrounds are CSS-only for theme-switch safety.
+- End screen pitches must be re-rendered on `toggleTheme()` so border/shadow recalculate for the new theme.
