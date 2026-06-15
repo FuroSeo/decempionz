@@ -562,6 +562,17 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .modal-section h3{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin:14px 0 4px}
 .modal-section p{font-size:.8rem;color:var(--mut);line-height:1.55;margin:0}
 
+
+/* ── Hall of Fame ── */
+.hof-card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:16px;margin-bottom:12px}
+.hof-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.hof-nickname{font-weight:800;font-size:.95rem;color:var(--text)}
+.hof-grade{font-size:1.1rem;font-weight:900}
+.hof-grade-S{color:#c9a227}.hof-grade-A{color:#16a34a}.hof-grade-B{color:#2451a8}.hof-grade-C{color:#dc2626}
+.hof-meta{font-size:.68rem;color:var(--mut);margin-bottom:8px}
+.hof-lineup{font-size:.65rem;color:var(--mut);line-height:1.7;border-top:1px solid var(--brd);padding-top:8px;margin-top:8px}
+.hof-stats{display:flex;gap:12px;font-size:.7rem;color:var(--text);margin-top:6px}
+.hof-stats span{color:var(--mut)}
 /* ── Share button ── */
 .btn-share{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border:none;
   font-weight:700;font-size:.85rem;letter-spacing:.3px}
@@ -584,6 +595,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .share-modal-close:hover{color:#e8edf5}
 .share-modal-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .share-modal-btns .btn{font-size:.75rem;padding:10px 6px;letter-spacing:.1px}
+.hof-submit-area{margin-top:12px;border-top:1px solid #1e2d42;padding-top:12px}
+.hof-submit-area input{width:100%;background:#07090f;border:1px solid #1e2d42;border-radius:8px;
+  color:#e8edf5;padding:9px 12px;font-size:.82rem;box-sizing:border-box;outline:none;margin-bottom:8px}
+.hof-submit-area input:focus{border-color:#c9a227}
+.hof-submit-area input::placeholder{color:#6b7e95}
+.hof-notice{font-size:.65rem;color:#6b7e95;text-align:center;margin-top:6px;line-height:1.4}
+/* Challenge modal */
+#challenge-modal{display:none;position:fixed;inset:0;z-index:10001;
+  background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+#challenge-modal.open{display:flex}
+#challenge-modal-box{background:#0f1520;border:2px solid #c9a227;border-radius:18px;
+  padding:28px 24px 24px;max-width:360px;width:100%;box-sizing:border-box;text-align:center}
 </style>
 </head>
 <body><script>
@@ -610,6 +633,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </button>
   <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
   <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;font-size:.82rem">❓ Come si gioca</button>
+  <button class="btn btn-ghost" onclick="openHallOfFame()" style="margin-top:6px;font-size:.82rem">🏆 Hall of Fame</button>
 
   <!-- Stats bar -->
   <div style="display:flex;gap:0;margin-top:20px;margin-bottom:16px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
@@ -928,6 +952,22 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
   </div>
 </div>
+<!-- HALL OF FAME -->
+<div class="screen" id="screen-hof">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:2rem;margin-bottom:6px">🏆</div>
+    <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">Hall of Fame</div>
+    <div style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
+  </div>
+  <div id="hof-loading" style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Caricamento...</div>
+  <div id="hof-entries" style="display:none"></div>
+  <div id="hof-error" style="display:none;text-align:center;color:var(--red);font-size:.8rem;padding:30px 0"></div>
+  <div style="margin-top:24px;text-align:center">
+    <button class="btn btn-ghost" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
+  </div>
+</div>
+
 <!-- HOW TO PLAY -->
 <div class="screen" id="screen-howto">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
@@ -950,7 +990,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.2';
+const GAME_VERSION='4.9.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3960,6 +4000,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var _lb=document.getElementById('lang-btn');
   if(_lb)_lb.textContent=_initLang==='it'?'🇬🇧':'🇮🇹';
   applyLang();
+  checkChallengeURL();
 });
 
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
@@ -3983,6 +4024,55 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 });
 
+
+
+// ── Hall of Fame ──────────────────────────────────────────────────────────────
+var _hofLoaded=false;
+function openHallOfFame(){
+  showScreen('screen-hof');
+  if(_hofLoaded)return;
+  var url='https://raw.githubusercontent.com/FuroSeo/decempionz/master/hall-of-fame.json';
+  fetch(url)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      _hofLoaded=true;
+      document.getElementById('hof-loading').style.display='none';
+      var container=document.getElementById('hof-entries');
+      container.style.display='block';
+      var entries=data.entries||[];
+      if(!entries.length){
+        container.innerHTML='<div style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Nessun risultato ancora. Sii il primo!</div>';
+        return;
+      }
+      container.innerHTML=entries.map(function(e,i){
+        var gClass='hof-grade-'+(e.grade||'C');
+        var lu=e.lineup||{};
+        var lineupHtml=[
+          lu.GK&&lu.GK.length?'🧤 '+lu.GK.join(', '):'',
+          lu.DEF&&lu.DEF.length?'🛡️ '+lu.DEF.join(', '):'',
+          lu.MID&&lu.MID.length?'⚙️ '+lu.MID.join(', '):'',
+          lu.FWD&&lu.FWD.length?'⚡ '+lu.FWD.join(', '):'',
+        ].filter(Boolean).join('<br>');
+        return '<div class="hof-card">'
+          +'<div class="hof-card-header">'
+          +'<div>'
+          +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
+          +'<div class="hof-meta">'+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
+          +'</div>'
+          +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
+          +'</div>'
+          +'<div class="hof-stats"><div>⚽ <span>Record</span> '+e.record+'</div><div>🥅 <span>Gol</span> '+e.goals+'</div>'+(e.topScorer?'<div>🌟 '+e.topScorer+'</div>':'')+'</div>'
+          +(lineupHtml?'<div class="hof-lineup">'+lineupHtml+'</div>':'')
+          +'</div>';
+      }).join('');
+    })
+    .catch(function(err){
+      document.getElementById('hof-loading').style.display='none';
+      var errEl=document.getElementById('hof-error');
+      errEl.style.display='block';
+      errEl.textContent='Impossibile caricare la Hall of Fame. Riprova più tardi.';
+    });
+}
 
 // ── Share result ──────────────────────────────────────────────────────────────
 function _shareData(){
@@ -4126,6 +4216,66 @@ function buildShareCanvas(){
   c.fillStyle=topBar; c.fillRect(0,H-6,W,6);
 }
 
+function buildChallengeUrl(nick){
+  try{
+    const d=_shareData();
+    const eraId=G.tournament?G.tournament.id:'alltime';
+    const diff=G.difficulty||'normal';
+    const fmt=G.format||selectedFormat||'classic';
+    const grade=d.grade;
+    const params=new URLSearchParams();
+    params.set('era',eraId);
+    params.set('diff',diff);
+    params.set('fmt',fmt);
+    params.set('grade',grade);
+    if(nick&&nick.trim())params.set('nick',nick.trim().slice(0,24));
+    return 'https://decempionz.com?'+params.toString();
+  }catch(e){return 'https://decempionz.com';}
+}
+
+function checkChallengeURL(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    if(!p.has('era'))return;
+    const eraId=p.get('era')||'alltime';
+    const diff=p.get('diff')||'normal';
+    const fmt=p.get('fmt')||'classic';
+    const nick=p.get('nick')||'';
+    const grade=p.get('grade')||'';
+    // Pre-configure game settings
+    selectedDiff=diff;
+    selectedFormat=fmt;
+    if(eraId==='alltime'){
+      selectedEraT=null;
+    }else{
+      selectedEraT=TOURNAMENTS.find(function(t){return t.id===eraId;})||null;
+    }
+    // Build modal content
+    const modal=document.getElementById('challenge-modal');
+    if(!modal)return;
+    const eraT=selectedEraT;
+    const eraName=eraT?(eraT.emoji||'🌍')+' '+eraT.name:'🌍 All Time';
+    const diffEmoji={'easy':'🟢','normal':'🟡','hard':'🔴'}[diff]||'🟡';
+    const gradeStr=grade?((['S','A','B','C'].indexOf(grade)>-1)?'  ·  Grade '+grade:''):'';
+    const challenger=nick?('<strong style="color:#c9a227">'+nick.replace(/</g,'&lt;')+'</strong>'):'Qualcuno';
+    document.getElementById('challenge-title').innerHTML=challenger+' ti sfida!';
+    document.getElementById('challenge-body').innerHTML=
+      eraName+'  '+diffEmoji+' '+({'easy':'Facile','normal':'Normale','hard':'Difficile'}[diff]||'Normale')
+      +gradeStr
+      +'<br><span style="color:#6b7e95;font-size:.78rem">Riesci a fare meglio?</span>';
+    modal.classList.add('open');
+  }catch(e){}
+}
+
+function closeChallengeModal(){
+  document.getElementById('challenge-modal').classList.remove('open');
+}
+
+function acceptChallenge(){
+  closeChallengeModal();
+  showScreen('screen-format');
+}
+
 function _buildShareText(){
   const d=_shareData();
   const gradeEmoji={S:'🌟',A:'⭐',B:'✅',C:'🏳️'}[d.grade]||'🏆';
@@ -4145,9 +4295,11 @@ function _buildShareText(){
   const goalLabel=d.isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
   const scorerLabel=d.isIt?'Capocannoniere: ':'Top scorer: ';
   const eraStr=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
+  var _hofNick='';try{var _el=document.getElementById('hof-nickname');if(_el)_hofNick=_el.value||'';}catch(e){}
+  const _chUrl=buildChallengeUrl(_hofNick);
   const challengeLine=d.isWinner
-    ?(d.isIt?'Riesci a fare meglio? Sfidami → decempionz.com':'Can you beat this? Try → decempionz.com')
-    :(d.isIt?'Puoi fare meglio di me? → decempionz.com':'Can you do better? → decempionz.com');
+    ?(d.isIt?'Riesci a fare meglio? Sfidami → '+_chUrl:'Can you beat this? Try → '+_chUrl)
+    :(d.isIt?'Puoi fare meglio di me? → '+_chUrl:'Can you do better? → '+_chUrl);
   return [
     statusLine,
     eraStr+' · '+G.formation+coachStr+' · '+diffLbl,
@@ -4204,6 +4356,51 @@ function _copyText(txt){
     document.execCommand('copy'); document.body.removeChild(ta);
     showShareToast('📋 Copiato!');
   }
+}
+
+
+function submitToHoF(){
+  var nick=(document.getElementById('hof-nickname').value||'').trim();
+  if(!nick){document.getElementById('hof-nickname').focus();return;}
+  var d=_shareData();
+  var eraName=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
+  var diffMap={easy:'🟢 Facile',normal:'🟡 Normale',hard:'🔴 Difficile'};
+  var diffLbl=diffMap[G.difficulty||'normal']||'🟡';
+  var grpMap=d.grpMap;
+  var lineup=[
+    grpMap.GK.length?'🧤 '+grpMap.GK.join(', '):'',
+    grpMap.DEF.length?'🛡️ '+grpMap.DEF.join(', '):'',
+    grpMap.MID.length?'⚙️ '+grpMap.MID.join(', '):'',
+    grpMap.FWD.length?'⚡ '+grpMap.FWD.join(', '):'',
+  ].filter(Boolean).join('\n');
+  var wdlLabel=d.campW+'V '+d.campD+'P '+d.campL+'S';
+  var goalLabel=G.campaignGF+'-'+G.campaignGA+' gol';
+  var topScorer=Object.entries(G.campaignScorers||{}).sort(function(a,b){return b[1]-a[1];})[0];
+  var topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'--';
+  var title='[HoF] Grade '+d.grade+' – '+d.formatLabel+' – '+nick;
+  var rows=[
+    '## 🏆 Hall of Fame Submission','',
+    '| Campo | Valore |','|---|---|',
+    '| **Nickname** | '+nick+' |',
+    '| **Grade** | '+d.grade+' |',
+    '| **Esito** | '+(d.isWinner?'Campione 🏆':'Eliminato 💔')+' |',
+    '| **Era** | '+eraName+' |',
+    '| **Formato** | '+d.formatLabel+' |',
+    '| **Formazione** | '+G.formation+' |',
+    '| **Difficoltà** | '+diffLbl+' |',
+    '| **Record** | '+wdlLabel+' |',
+    '| **Gol** | '+goalLabel+' |',
+    '| **Capocannoniere** | '+topScorerStr+' |','',
+    '### Rosa','```',lineup,'```','','---','*Inviato da decempionz.com*'
+  ];
+  var body=rows.join('\n');
+  var url='https://github.com/FuroSeo/decempionz/issues/new'
+    +'?title='+encodeURIComponent(title)
+    +'&body='+encodeURIComponent(body)
+    +'&labels=hall-of-fame';
+  window.open(url,'_blank');
+  document.getElementById('hof-nickname').value='';
+  showShareToast('🏆 Submission inviata!');
 }
 
 function showShareToast(msg){
@@ -4709,8 +4906,7 @@ function _devSetMom(v){
       <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
       <p data-i18n-html="priv.p_cookies"></p>
     </div>
-    <div class="modal-section">
-      <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
+    <div class="modal-section">      <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
       <p data-i18n-html="priv.p_scripts"></p>
     </div>
     <div class="modal-section">
@@ -4721,4 +4917,40 @@ function _devSetMom(v){
       <h3 data-i18n="priv.h_updates">Aggiornamenti</h3>
       <p data-i18n-html="priv.p_updates"></p>
     </div>
-    <button class="modal-legal-close" onclick="closePrivacy()"
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
+  </div>
+</div>
+
+<!-- Challenge Modal -->
+<div id="challenge-modal" onclick="closeChallengeModal()">
+  <div id="challenge-modal-box" onclick="event.stopPropagation()">
+    <div style="font-size:2.2rem;margin-bottom:10px">⚔️</div>
+    <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
+    <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
+    <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
+  </div>
+</div>
+
+<div id="share-toast">📋</div>
+
+<!-- Share Modal -->
+<div id="share-modal" onclick="closeShareModal()">
+  <div id="share-modal-box" onclick="event.stopPropagation()">
+    <div class="share-modal-header">
+      <span class="share-modal-title">📤 Condividi il risultato</span>
+      <button class="share-modal-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <canvas id="share-canvas"></canvas>
+    <div class="share-modal-btns">
+      <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
+      <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
+      <button class="btn" onclick="copyShareText()">📋 Copia</button>
+    </div>
+    <div class="hof-submit-area">
+      <input type="text" id="hof-nickname" maxlength="24" placeholder="Il tuo nickname (max 24 caratteri)">
+      <button class="btn btn-gold" style="width:100%;font-size:.8rem" onclick="submitToHoF()">🏆 Invia in Hall of Fame</button>
+      <p class="hof-notice">⏳ I risultati vengono pubblicati dopo approvazione del moderatore</p>
+    </div>
+  </div>
+</div>
