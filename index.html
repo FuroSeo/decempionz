@@ -1661,6 +1661,13 @@ function fmtRows(formation, tactic){
 }
 
 /* ═══════════════════════════════════════
+function draftNameSz(name,isElite){
+  var base=isElite?.92:.80;
+  var l=name.length;
+  if(l>18)base=Math.max(base-.20,.58);
+  else if(l>13)base=Math.max(base-.12,.64);
+  return base+'rem';
+}
    COACHES
 ═══════════════════════════════════════ */
 const COACHES = [
@@ -1694,6 +1701,24 @@ const COACHES = [
   {n:'Diego Simeone',      pref:'4-5-1'},
   {n:'Roberto Mancini',    pref:'4-2-3-1'},
   {n:'Claudio Ranieri',    pref:'4-4-2'}];
+
+const COPA_COACHES = [
+  {n:'Osvaldo Zubeldía',    pref:'5-3-2'},
+  {n:'Carlos Bianchi',      pref:'4-4-2'},
+  {n:'Marcelo Gallardo',    pref:'4-2-3-1'},
+  {n:'Jorge Jesus',         pref:'4-4-2'},
+  {n:'Abel Ferreira',       pref:'4-3-3'},
+  {n:'Francisco Maturana',  pref:'4-4-2'},
+  {n:'Telê Santana',        pref:'4-4-2'},
+  {n:'Vanderlei Luxemburgo',pref:'4-4-2'},
+  {n:'Cuca',                pref:'4-2-3-1'},
+  {n:'Dorival Júnior',      pref:'4-4-2'},
+  {n:'Fernando Diniz',      pref:'4-2-3-1'},
+  {n:'Carlos Bilardo',      pref:'3-5-2'},
+  {n:'Ramón Díaz',          pref:'4-4-2'},
+  {n:'Edgardo Bauza',       pref:'4-5-1'},
+  {n:'Daniel Passarella',   pref:'4-4-2'}];
+
 
 function formDMA(key){
   var p=key.split('-').map(Number);
@@ -2995,7 +3020,7 @@ function renderThreeCards(){
       const light=document.body.getAttribute('data-theme')==='light';
       const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
-      const nameSz=isElite?'.92rem':'.8rem';
+      const nameSz=draftNameSz(p.n,isElite);
       const starBadge=isElite?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
       return'<div onclick="draftPick('+i+')" class="draft-pick-card"'
         +' style="'+tierCss
@@ -3004,7 +3029,7 @@ function renderThreeCards(){
         +playerSprite(col)
         +starBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
-        +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.2;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.n+'</div>'
+        +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.15;max-width:100%;overflow:hidden;word-break:break-word">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
           +'<span style="font-size:'+(isElite?'.85':'.75')+'rem;font-weight:900;color:'+ratingCol+'">'+p.r+'</span>'
@@ -3091,7 +3116,8 @@ function finalizeDraft(){
 ═══════════════════════════════════════ */
 function showCoachDraft(){
   // Already on screen-draft — don't call showScreen (avoids scroll-to-top burying cards)
-  var pool=COACHES.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
+  var _cPool=G.gameMode==='copa'?COPA_COACHES:COACHES;
+  var pool=_cPool.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
   G._coachPool=pool;
   // Keep the pitch visible — just update the header and hide draft controls
   var ti=document.getElementById('d-title');
