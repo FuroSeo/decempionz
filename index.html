@@ -999,7 +999,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.7';
+const GAME_VERSION='4.9.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3162,7 +3162,7 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   allEvs.forEach(ev=>{
     if(ev.t==='my'){
       ms++;
-      const s=pick(scorers)?.n||pick(scorers)||'Unknown';
+      const _sp=pick(scorers);const s=(_sp&&_sp.n)||'Unknown';
       evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+pick(['fires home!','scores!','brilliant finish!','makes it count!'])+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
     } else if(ev.t==='opp'){
       os++;
@@ -3429,8 +3429,8 @@ function showResult(){
   const myScorers=[], oppScorers=[];
   M.log.forEach(ev=>{
     if(ev.cls==='lg'&&ev.goal){
-      const m=ev.text.match(/^(\d+)' ⚽ (.+?) —/);
-      if(m) myScorers.push({min:m[1],name:m[2]});
+      const _sn=typeof ev.scorer==='string'&&ev.scorer?ev.scorer:null;
+      if(_sn) myScorers.push({min:ev.min,name:_sn});
     }
     if(ev.cls==='lc'&&ev.goal) oppScorers.push({min:ev.min,name:ev.scorer||oppName});
   });
