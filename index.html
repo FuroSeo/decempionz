@@ -1147,6 +1147,8 @@ const STRINGS={
     'go.finished_pos_post':'nel girone. Solo le prime 2 avanzano.',
     'trophy.old_cup':'Campioni dell\'Old Cup',
     'trophy.classic':'Campioni Classic',
+    'trophy.copa_old_cup':'Campioni Copa Old Cup',
+    'trophy.copa_classic':'Campioni Copa Libertadores',
     'trophy.nuovo':'Campioni New Wave',
     'grade.s':'Campagna perfetta!',
     'grade.a':'Campioni d\'Europa',
@@ -1357,6 +1359,8 @@ const STRINGS={
     'go.finished_pos_post':'in the group. Only the top 2 advance.',
     'trophy.old_cup':'Old Cup Champions',
     'trophy.classic':'Classic Champions',
+    'trophy.copa_old_cup':'Copa Old Cup Champions',
+    'trophy.copa_classic':'Copa Libertadores Champions',
     'trophy.nuovo':'New Wave Champions',
     'grade.s':'Perfect campaign!',
     'grade.a':'Champions of Europe',
@@ -2750,7 +2754,7 @@ function selectFormat(f,el){
 function confirmFormat(){
   G.format=selectedFormat;
   G.difficulty=selectedDiff||'normal';
-  const era=selectedEraT||TOURNAMENTS.find(t=>t.id==='alltime');
+  const era=selectedEraT||(G.gameMode==='copa'?COPA_TOURNAMENTS.find(function(t){return t.allTime;}):TOURNAMENTS.find(t=>t.id==='alltime'));
   applyTournament(era);
   G.tactic='balanced';
   renderFormationGrid();
@@ -4236,7 +4240,8 @@ function renderTrophyPitch(){
 }
 
 function showTrophy(){
-  const formatTitle={coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
+  var _isCopa=G.gameMode==='copa';
+  const formatTitle=_isCopa?{coppa:t('trophy.copa_old_cup'),classic:t('trophy.copa_classic'),nuovo:t('trophy.copa_classic')}:{coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
   const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
   const gLabel=G.format==='nuovo'?'LG':'GP';
   const all=[...G.groupUserResults,...G.knockResults];
@@ -4437,7 +4442,7 @@ function _shareData(){
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
   const isWinner=G.phase==='done'||document.getElementById('screen-trophy').classList.contains('active');
-  const formatLabel={'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League';
+  const formatLabel=G.gameMode==='copa'?({'coppa':'Copa Old Cup','classic':'Copa Classic','nuovo':'Copa Classic'}[G.format]||'Copa Libertadores'):({'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League');
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
   const isIt=(G.lang||'it')==='it';
@@ -4563,7 +4568,8 @@ function buildShareCanvas(){
   c.font='bold 34px Arial,sans-serif'; c.fillStyle='#c9a227';
   c.fillText('decempionz.com',W/2,bottomY+62);
   c.font='20px Arial,sans-serif'; c.fillStyle='#2451a8';
-  c.fillText('#Decempionz  #ChampionsLeague  #FootballDraft',W/2,bottomY+97);
+  var _ht=G.gameMode==='copa'?'#Decempionz  #CopaLibertadores  #FootballDraft':'#Decempionz  #ChampionsLeague  #FootballDraft';
+  c.fillText(_ht,W/2,bottomY+97);
 
   // Gold bottom bar
   c.fillStyle=topBar; c.fillRect(0,H-6,W,6);
@@ -4578,6 +4584,7 @@ function buildChallengeUrl(nick){
     const grade=d.grade;
     const params=new URLSearchParams();
     params.set('era',eraId);
+    params.set('mode',G.gameMode||'ucl');
     params.set('diff',diff);
     params.set('fmt',fmt);
     params.set('grade',grade);
@@ -4591,17 +4598,21 @@ function checkChallengeURL(){
     const p=new URLSearchParams(window.location.search);
     if(!p.has('era'))return;
     const eraId=p.get('era')||'alltime';
+    const mode=p.get('mode')||'ucl';
     const diff=p.get('diff')||'normal';
     const fmt=p.get('fmt')||'classic';
     const nick=p.get('nick')||'';
     const grade=p.get('grade')||'';
     // Pre-configure game settings
+    G.gameMode=mode;
     selectedDiff=diff;
     selectedFormat=fmt;
-    if(eraId==='alltime'){
+    var _challengeTournList=mode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+    var _challengeAllTimeId=mode==='copa'?'copa_alltime':'alltime';
+    if(eraId===_challengeAllTimeId||eraId==='alltime'){
       selectedEraT=null;
     }else{
-      selectedEraT=TOURNAMENTS.find(function(t){return t.id===eraId;})||null;
+      selectedEraT=_challengeTournList.find(function(t){return t.id===eraId;})||null;
     }
     // Build modal content
     const modal=document.getElementById('challenge-modal');
@@ -4791,11 +4802,13 @@ function _devQuickDraft(type){
   var diff=document.getElementById('dv-diff').value;
 
   // Pick a random tournament compatible with format
-  var trnPool=TOURNAMENTS.filter(function(t){
-    if(fmt==='coppa') return t.id!=='alltime'&&parseInt(t.years)<1993;
+  var _devMode=G.gameMode||'ucl';
+  var _devTList=_devMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+  var trnPool=_devTList.filter(function(t){
+    if(fmt==='coppa') return !t.allTime;
     return true;
   });
-  if(!trnPool.length) trnPool=TOURNAMENTS;
+  if(!trnPool.length) trnPool=_devTList;
   var trn=trnPool[Math.floor(Math.random()*trnPool.length)];
 
   G.format=fmt;
@@ -4809,8 +4822,9 @@ function _devQuickDraft(type){
 
   // Use ALL teams as player source to guarantee full position coverage
   var fullPool=[];
-  Object.keys(TEAMS).forEach(function(id){
-    var tm=TEAMS[id];
+  var _devDB=_activeTeams();
+  Object.keys(_devDB).forEach(function(id){
+    var tm=_devDB[id];
     tm.players.forEach(function(p){
       fullPool.push({n:p.n,p:p.p,r:p.r,club:tm.name,teamId:id});
     });
