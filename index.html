@@ -95,6 +95,22 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .btn-ghost:hover{background:var(--s2);border-color:var(--text)}
 .btn:disabled{opacity:.32;cursor:not-allowed;transform:none!important}
 .btn-inactive{opacity:.35;cursor:not-allowed;pointer-events:none}
+/* Lobby: tournament cards */
+.tourn-card{background:var(--s1);border:1.5px solid var(--brd);border-radius:16px;padding:18px 18px 14px;margin-bottom:14px;position:relative;overflow:hidden}
+.tourn-card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.tourn-icon{font-size:2rem;line-height:1;flex-shrink:0}
+.tourn-name{font-size:1.1rem;font-weight:900;letter-spacing:-.4px;color:var(--text)}
+.tourn-sub{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-top:3px}
+.tourn-stats{display:flex;gap:0;margin-bottom:14px;background:var(--s2);border-radius:10px;overflow:hidden}
+.tourn-stat{flex:1;text-align:center;padding:10px 6px}
+.tourn-stat+.tourn-stat{border-left:1px solid var(--brd)}
+.tourn-stat-val{font-size:1.1rem;font-weight:900;color:var(--gold)}
+.tourn-stat-lbl{font-size:.54rem;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.tourn-badge-soon{position:absolute;top:14px;right:14px;background:var(--s2);color:var(--mut);font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--brd)}
+.tourn-card.tourn-locked{opacity:.5;pointer-events:none}
+.tourn-card.tourn-ucl{border-color:#1e3a6a}
+.tourn-bottom-btns{display:flex;gap:8px;margin-top:6px}
+.tourn-bottom-btns .btn{margin-top:0}
 #btn-start-draft{position:sticky;bottom:16px;z-index:10;box-shadow:0 -4px 16px var(--bg);}
 .tag{display:inline-block;padding:3px 9px;border-radius:5px;font-size:.63rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
 .tag-group{background:#0f2040;color:#60a5fa}.tag-r16{background:#0f3020;color:#4ade80}
@@ -628,47 +644,64 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen active" id="screen-home">
 
   <!-- Hero -->
-  <div style="text-align:center;margin-bottom:20px;padding-top:16px">
-    <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">The Ultimate Football Draft</div>
+  <div style="text-align:center;margin-bottom:22px;padding-top:16px">
+    <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Il Draft di Calcio Definitivo</div>
     <h1 class="logo">Decempionz</h1>
-    <p data-i18n-html="home.subtitle" style="color:var(--mut);margin-top:10px;font-size:.95rem;line-height:1.5;font-style:italic;letter-spacing:.01em">I Campioni che hanno fatto la storia</p>
+    <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:10px;font-size:.85rem;line-height:1.5;font-style:italic">Scegli il torneo</p>
   </div>
 
-  <!-- CTA -->
-  <button class="btn btn-gold" onclick="quickStart()" style="font-size:1.05rem;padding:17px;letter-spacing:.5px">
-    <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
-    <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.6rem;font-weight:400;opacity:.75;letter-spacing:.3px;margin-top:3px">Classic · All Time · Normale</span>
-  </button>
-  <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
-  <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="margin-top:6px;font-size:.82rem">❓ Come si gioca</button>
-  <button class="btn btn-ghost" onclick="openHallOfFame()" style="margin-top:6px;font-size:.82rem">🏆 Hall of Fame</button>
-
-  <!-- Stats bar -->
-  <div style="display:flex;gap:0;margin-top:20px;margin-bottom:16px;background:var(--s1);border:1px solid var(--brd);border-radius:12px;overflow:hidden">
-    <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">66</div>
-      <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px" data-i18n="home.stat_squads">Squads</div>
+  <!-- UCL Legends card -->
+  <div class="tourn-card tourn-ucl" id="tourn-ucl">
+    <div class="tourn-card-hdr">
+      <div class="tourn-icon">🏆</div>
+      <div>
+        <div class="tourn-name" data-i18n="tourn.ucl.name">UCL Legends</div>
+        <div class="tourn-sub" data-i18n="tourn.ucl.sub">Champions League · 1956 – 2024</div>
+      </div>
     </div>
-    <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">1123</div>
-      <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px" data-i18n="home.stat_players">Players</div>
+    <div class="tourn-stats">
+      <div class="tourn-stat">
+        <div class="tourn-stat-val">66</div>
+        <div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div>
+      </div>
+      <div class="tourn-stat">
+        <div class="tourn-stat-val">1123</div>
+        <div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div>
+      </div>
+      <div class="tourn-stat">
+        <div class="tourn-stat-val">10</div>
+        <div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div>
+      </div>
     </div>
-    <div style="flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--brd)">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">10</div>
-      <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px" data-i18n="home.stat_eras">Eras</div>
-    </div>
-    <div style="flex:1;text-align:center;padding:12px 8px">
-      <div style="font-size:1.4rem;font-weight:900;color:var(--gold)">29</div>
-      <div style="font-size:.6rem;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin-top:2px" data-i18n="home.stat_clubs">Clubs</div>
-    </div>
+    <button class="btn btn-gold" onclick="quickStart()" style="font-size:1rem;padding:15px">
+      <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
+      <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+    </button>
+    <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
   </div>
 
-  <!-- How it works -->
-  <div class="card" style="margin-bottom:16px">
-    <div data-i18n="home.how_it_works" style="font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:10px">How it works</div>
-    <div class="step-row"><div class="sn">01</div><div data-i18n-html="home.step1" class="st"><strong>Pick your formation</strong> — or jump straight in with defaults. 10 eras, 1961–2023, 1123 legends.</div></div>
-    <div class="step-row"><div class="sn">02</div><div data-i18n-html="home.step2" class="st"><strong>Draft your XI</strong> — 3 cards at a time, pick 1. Rerolls are limited — choose wisely.</div></div>
-    <div class="step-row"><div class="sn">03</div><div data-i18n-html="home.step3" class="st"><strong>Conquer Europe</strong> — scout report, tactics, group stage &amp; knockouts. No two runs are the same.</div></div>
+  <!-- Copa Libertadores — Coming Soon -->
+  <div class="tourn-card tourn-locked" id="tourn-copa">
+    <span class="tourn-badge-soon" data-i18n="tourn.soon">Prossimamente</span>
+    <div class="tourn-card-hdr">
+      <div class="tourn-icon">🌎</div>
+      <div>
+        <div class="tourn-name" data-i18n="tourn.copa.name">Copa Libertadores</div>
+        <div class="tourn-sub" data-i18n="tourn.copa.sub">Sud America · 1960 – 2024</div>
+      </div>
+    </div>
+    <div class="tourn-stats">
+      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
+    </div>
+    <button class="btn btn-ghost" disabled data-i18n="tourn.soon" style="margin-top:4px">Prossimamente</button>
+  </div>
+
+  <!-- Bottom actions -->
+  <div class="tourn-bottom-btns">
+    <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.82rem">❓ Come si gioca</button>
+    <button class="btn btn-ghost" onclick="openHallOfFame()" style="font-size:.82rem">🏆 Hall of Fame</button>
   </div>
 
   <div class="legal-footer">
@@ -999,7 +1032,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.7';
+const GAME_VERSION='5.0.0-dev';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1015,6 +1048,12 @@ const STRINGS={
     'home.step1':'<strong>Scegli la formazione</strong> — o parti subito con i default. 10 ere, 1961–2023, 1123 campioni.',
     'home.step2':'<strong>Drafta il tuo XI</strong> — 3 carte alla volta, scegline 1. I reroll sono limitati — scegli con cura.',
     'home.step3':'<strong>Conquista l\'Europa</strong> — scout report, tattica, gironi e knockout. Nessun run è uguale all\'altro.',
+    'home.lobby_sub':'Scegli il torneo',
+    'tourn.ucl.name':'UCL Legends',
+    'tourn.ucl.sub':'Champions League · 1956 – 2024',
+    'tourn.copa.name':'Copa Libertadores',
+    'tourn.copa.sub':'Sud America · 1960 – 2024',
+    'tourn.soon':'Prossimamente',
     'home.btn_quick':'⚽ Gioca subito',
     'home.btn_quick_sub':'Classic · All Time · Normale',
     'home.btn_custom':'⚙️ Personalizza',
@@ -1216,6 +1255,12 @@ const STRINGS={
     'home.step1':'<strong>Pick your formation</strong> — or jump straight in with defaults. 10 eras, 1961–2023, 1123 legends.',
     'home.step2':'<strong>Draft your XI</strong> — 3 cards at a time, pick 1. Rerolls are limited — choose wisely.',
     'home.step3':'<strong>Conquer Europe</strong> — scout report, tactics, group stage &amp; knockouts. No two runs are the same.',
+    'home.lobby_sub':'Choose your tournament',
+    'tourn.ucl.name':'UCL Legends',
+    'tourn.ucl.sub':'Champions League · 1956 – 2024',
+    'tourn.copa.name':'Copa Libertadores',
+    'tourn.copa.sub':'South America · 1960 – 2024',
+    'tourn.soon':'Coming Soon',
     'home.btn_quick':'⚽ Play Now',
     'home.btn_quick_sub':'Classic · All Time · Normal',
     'home.btn_custom':'⚙️ Customize',
