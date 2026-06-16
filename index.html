@@ -5086,8 +5086,25 @@ function _devClick(){
   _devClickTimer=setTimeout(function(){_devClickCount=0;},2000);
   if(_devClickCount>=5){_devClickCount=0;openDevPanel();}
 }
+function _devSetMode(mode){
+  G.gameMode=mode;
+  applyTournamentTheme(mode);
+  // auto-force format compatibile
+  var fmtSel=document.getElementById('dv-format');
+  if(fmtSel&&(mode==='copa'||mode==='wc')){
+    fmtSel.value='coppa';
+    fmtSel.disabled=true;
+  } else if(fmtSel){
+    fmtSel.disabled=false;
+  }
+}
 function openDevPanel(){
   document.querySelectorAll('#dev-panel .gv').forEach(function(v){v.textContent=GAME_VERSION;});
+  // Sync game mode selector
+  var modeSel=document.getElementById('dv-mode');
+  var curMode=G.gameMode||'ucl';
+  if(modeSel) modeSel.value=curMode;
+  _devSetMode(curMode);
   document.getElementById('dev-panel').style.display='block';
 }
 function closeDevPanel(){
@@ -5102,6 +5119,8 @@ function _devQuickDraft(type){
 
   // Pick a random tournament compatible with format
   var _devMode=G.gameMode||'ucl';
+  // Copa e WC sono sempre knockout-only
+  if(_devMode==='copa'||_devMode==='wc') fmt='coppa';
   var _devTList=_devMode==='copa'?COPA_TOURNAMENTS:_devMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
   var trnPool=_devTList.filter(function(t){
     if(fmt==='coppa') return !t.allTime;
@@ -5318,7 +5337,8 @@ function _devMockResult(){
 }
 function _devMockTrophy(){
   _devEnsureSquad();
-  if(!G.groupUserResults.length)
+  var isKO=(G.format==='coppa'||G.gameMode==='copa'||G.gameMode==='wc');
+  if(!isKO&&!G.groupUserResults.length)
     [0,1,2].forEach(function(i){G.groupUserResults.push({myG:3,oppG:0,stars:3,opp:'Dev '+i});});
   if(!G.knockResults.length)
     ['R16','QF','SF','FIN'].forEach(function(r){G.knockResults.push({myG:1,oppG:0,stars:2,opp:'Dev '+r});});
@@ -5386,11 +5406,18 @@ function _devSetMom(v){
     <!-- Quick Draft -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
       <div style="color:#60a5fa;font-size:.72rem;font-weight:700;margin-bottom:8px">⚡ QUICK DRAFT</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <select id="dv-mode" onchange="_devSetMode(this.value)" style="background:#1a1a1a;color:#eab308;border:1px solid #444;border-radius:4px;padding:3px 6px;font-size:.7rem;font-weight:700">
+          <option value="ucl">🏆 UCL</option>
+          <option value="copa">🌎 Copa</option>
+          <option value="wc">🌍 WC</option>
+        </select>
+      </div>
       <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
         <select id="dv-format" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem">
           <option value="classic">Classic CL</option>
           <option value="nuovo">New Format</option>
-          <option value="coppa">Copa</option>
+          <option value="coppa">Knockout only</option>
         </select>
         <select id="dv-form" style="background:#1a1a1a;color:#ccc;border:1px solid #333;border-radius:4px;padding:3px 6px;font-size:.7rem">
           <option value="4-3-3">4-3-3</option>
