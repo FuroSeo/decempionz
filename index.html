@@ -1562,10 +1562,10 @@ const SLOT_COMPAT = {
   CDM: ['CDM','CM'],
   CM:  ['CM','CDM','CAM'],        // CM no longer covers wide roles
   CAM: ['CAM','CM','SS'],
-  RM:  ['RM','LM'],                 // wide mids only — no wingers
-  LM:  ['LM','RM'],
-  RW:  ['RW','LW','CAM'],          // wingers + creative CAM
-  LW:  ['LW','RW','CAM'],
+  RM:  ['RM','LM','RW','LW'],       // wide: mids & wingers interchangeable
+  LM:  ['LM','RM','LW','RW'],
+  RW:  ['RW','LW','RM','LM','CAM'],// wingers + wide mids + creative CAM
+  LW:  ['LW','RW','LM','RM','CAM'],
   ST:  ['ST','CF','SS'],
   CF:  ['CF','ST','SS'],
   SS:  ['SS','ST','CF','CAM'],
