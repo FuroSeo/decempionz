@@ -3362,6 +3362,7 @@ function playRound(){
 }
 
 function _runMatch(){
+  var _aDB=_activeTeams();
   const {oppName,roundLabel,roundTag,isKnockout}=_pendingMatch;
   let oppStr=_pendingMatch.oppStr;
   // Apply difficulty opponent modifier
@@ -3428,11 +3429,11 @@ function _runMatch(){
   let oppPlayerPool=[];
   if(G.phase==='group'){
     const oppId=G.groupTeams[G.groupRound].id;
-    oppPlayerPool=[...TEAMS[oppId].players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
+    oppPlayerPool=[...(_aDB[oppId]||TEAMS[oppId]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
   } else {
     const koOpp=G.knockOpps[G.knockRound];
-    if(koOpp&&koOpp.id&&TEAMS[koOpp.id])
-      oppPlayerPool=[...TEAMS[koOpp.id].players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
+    if(koOpp&&koOpp.id&&(_aDB[koOpp.id]||TEAMS[koOpp.id]))
+      oppPlayerPool=[...(_aDB[koOpp.id]||TEAMS[koOpp.id]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
   }
   const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
@@ -3446,9 +3447,9 @@ function _runMatch(){
   // Build away XI: prefer full team roster, fall back to oppPlayerPool
   var _awayXI=[];
   var _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
-  if(_oppTid&&TEAMS[_oppTid]){
+  if(_oppTid&&(_aDB[_oppTid]||TEAMS[_oppTid])){
     const _posW={GK:0,CB:1,LB:1,RB:1,DM:2,CM:2,AM:2,RM:2,LM:2,RW:3,LW:3,ST:4,CF:4,SS:4};
-    _awayXI=[...TEAMS[_oppTid].players].sort(function(a,b){return b.r-a.r;}).slice(0,11)
+    _awayXI=[...(_aDB[_oppTid]||TEAMS[_oppTid]).players].sort(function(a,b){return b.r-a.r;}).slice(0,11)
       .sort(function(a,b){return(_posW[a.p]??3)-(_posW[b.p]??3);})
       .map(function(p){return{n:p.n,p:p.p};});
   } else {
@@ -3531,10 +3532,10 @@ function startPenalties(){
   let oppPenNames=[];
   if(G.phase==='group'){
     const oppId=G.groupTeams[G.groupRound-1]?.id||G.groupTeams[G.groupRound]?.id;
-    if(oppId&&TEAMS[oppId]) oppPenNames=[...TEAMS[oppId].players].sort((a,b)=>b.r-a.r).slice(0,8).map(p=>p.n);
+    if(oppId&&(_aDB[oppId]||TEAMS[oppId])) oppPenNames=[...(_aDB[oppId]||TEAMS[oppId]).players].sort((a,b)=>b.r-a.r).slice(0,8).map(p=>p.n);
   } else {
     const koOpp=G.knockOpps[G.knockRound];
-    if(koOpp?.id&&TEAMS[koOpp.id]) oppPenNames=[...TEAMS[koOpp.id].players].sort((a,b)=>b.r-a.r).slice(0,8).map(p=>p.n);
+    if(koOpp?.id&&(_aDB[koOpp.id]||TEAMS[koOpp.id])) oppPenNames=[...(_aDB[koOpp.id]||TEAMS[koOpp.id]).players].sort((a,b)=>b.r-a.r).slice(0,8).map(p=>p.n);
   }
   if(!oppPenNames.length) oppPenNames=[M.oppName]; // fallback
   P={round:0,side:'home',h:0,a:0,hKicks:[],aKicks:[],maxRounds:5,
