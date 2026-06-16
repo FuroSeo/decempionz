@@ -83,7 +83,7 @@
 .tourn-card.tourn-wc{border-color:#5a1212}
 .tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
 .tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
-.tourn-tab.tab-active{background:var(--s1);color:var(--text)}
+.tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -661,7 +661,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Tournament tab switcher -->
   <div class="tourn-tab-bar">
-    <button id="tab-ucl" class="tourn-tab tab-active" onclick="switchTournTab('ucl')">🏆 UCL</button>
+    <button id="tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchTournTab('ucl')">🏆 UCL</button>
     <button id="tab-copa" class="tourn-tab" onclick="switchTournTab('copa')">🌎 Copa</button>
     <button id="tab-wc" class="tourn-tab" onclick="switchTournTab('wc')">🌍 World Cup</button>
   </div>
@@ -1042,7 +1042,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
   </div>
   <div class="tourn-tab-bar" style="margin-bottom:14px">
-    <button id="hof-tab-ucl" class="tourn-tab tab-active" onclick="switchHofTab('ucl')">🏆 UCL</button>
+    <button id="hof-tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchHofTab('ucl')">🏆 UCL</button>
     <button id="hof-tab-copa" class="tourn-tab" onclick="switchHofTab('copa')">🌎 Copa</button>
     <button id="hof-tab-wc" class="tourn-tab" onclick="switchHofTab('wc')">🌍 World Cup</button>
   </div>
@@ -3000,7 +3000,10 @@ function switchTournTab(mode){
     var card=document.getElementById('tourn-'+m);
     var tab=document.getElementById('tab-'+m);
     if(card) card.style.display=(m===mode)?'':'none';
-    if(tab) tab.classList.toggle('tab-active',m===mode);
+    if(tab){
+      tab.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      if(m===mode) tab.classList.add('tab-active-'+mode);
+    }
   });
 }
 function selectFormat(f,el){
@@ -4651,7 +4654,10 @@ function switchHofTab(mode){
   _hofActiveMode=mode;
   ['ucl','copa','wc'].forEach(function(m){
     var tb=document.getElementById('hof-tab-'+m);
-    if(tb) tb.classList.toggle('tab-active',m===mode);
+    if(tb){
+      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      if(m===mode) tb.classList.add('tab-active-'+mode);
+    }
   });
   if(_hofLoaded) _renderHofEntries();
 }
@@ -4699,7 +4705,10 @@ function openHallOfFame(){
   if(G.gameMode) _hofActiveMode=G.gameMode;
   ['ucl','copa','wc'].forEach(function(m){
     var tb=document.getElementById('hof-tab-'+m);
-    if(tb) tb.classList.toggle('tab-active',m===_hofActiveMode);
+    if(tb){
+      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      if(m===_hofActiveMode) tb.classList.add('tab-active-'+_hofActiveMode);
+    }
   });
   showScreen('screen-hof');
   if(_hofLoaded){_renderHofEntries();return;}
