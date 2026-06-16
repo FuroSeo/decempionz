@@ -598,12 +598,15 @@ if('serviceWorker' in navigator){
 
 ---
 
-## Known Constraints
+## Multiverse Roadmap (branch `dev`)
 
-- Single file — no module system, no tree-shaking. Keep globals minimal.
-- `user-select: none` applied globally — prevents text cursor on tap, intentional.
-- `localStorage` used only for `dcz_lang` and `gl-theme` — no save state.
-- GitHub Pages serves from `main` branch root. Deploy = push to main.
-- `navigator.share` unavailable on desktop — falls back to clipboard copy silently.
-- `slotTierCss()` must NOT include `background:` — backgrounds are CSS-only for theme-switch safety.
-- End screen pitches must be re-rendered on `toggleTheme()` so border/shadow recalculate for the new theme.
+Questa sezione documenta il piano di espansione del gioco verso un sistema multi-torneo. Lo sviluppo avviene **esclusivamente sul branch `dev`** — il branch `main` serve il gioco live e non va mai toccato durante questo sviluppo.
+
+### Visione
+
+La home diventa una **lobby selettore torneo**. Ogni torneo ha la sua card con identità grafica, dataset e formato. Il motore di gioco (draft, simulazione, formazioni, coach, i18n) resta identico e condiviso.
+
+```
+Home Lobby
+├── UCL Legends        ← già esistente, invariato
+├── Copa Libertadores  ← primo nuovo torneo (pri
