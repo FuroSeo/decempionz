@@ -78,6 +78,9 @@
 [data-theme="light"] .tc-badge{background:var(--blue);color:var(--blue-lt)}
 [data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#86efac;}
 [data-theme="light"][data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#2d9e50;}
+[data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#fca5a5;}
+[data-theme="light"][data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#dc6060;}
+.tourn-card.tourn-wc{border-color:#5a1212}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -693,15 +696,36 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       </div>
     </div>
     <div class="tourn-stats">
-      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
-      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
-      <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">24</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">288</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">4</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
     <button class="btn btn-gold" onclick="quickStartCopa()" style="font-size:1rem;padding:15px">
       <span data-i18n="copa.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button data-i18n="copa.btn_custom" class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px">⚙️ Personalizza</button>
+  </div>
+
+  <!-- World Cup Legends -->
+  <div class="tourn-card tourn-wc" id="tourn-wc">
+    <div class="tourn-card-hdr">
+      <div class="tourn-icon">🌍</div>
+      <div>
+        <div class="tourn-name" data-i18n="tourn.wc.name">World Cup Legends</div>
+        <div class="tourn-sub" data-i18n="tourn.wc.sub">Mondiali · 1930 – 2022</div>
+      </div>
+    </div>
+    <div class="tourn-stats">
+      <div class="tourn-stat"><div class="tourn-stat-val">65</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">780</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">6</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
+    </div>
+    <button class="btn btn-gold" onclick="quickStartWC()" style="font-size:1rem;padding:15px">
+      <span data-i18n="wc.btn_quick">⚽ Gioca subito</span>
+      <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+    </button>
+    <button data-i18n="wc.btn_custom" class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px">⚙️ Personalizza</button>
   </div>
 
   <!-- Bottom actions -->
@@ -1038,7 +1062,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.0.0-dev';
+const GAME_VERSION='5.1.0-dev';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1059,10 +1083,17 @@ const STRINGS={
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
     'tourn.copa.sub':'Sud America · 1960 – 2024',
+    'tourn.wc.name':'World Cup Legends',
+    'tourn.wc.sub':'Mondiali · 1930 – 2022',
     'tourn.soon':'Prossimamente',
     'copa.btn_quick':'⚽ Gioca subito',
     'copa.btn_quick_sub':'Classic · All Time · Normale',
     'copa.btn_custom':'⚙️ Personalizza',
+    'wc.btn_quick':'⚽ Gioca subito',
+    'wc.btn_quick_sub':'Classic · All Time · Normale',
+    'wc.btn_custom':'⚙️ Personalizza',
+    'trophy.wc_classic':'Campione del Mondo!',
+    'trophy.wc_old_cup':'Coppa Vecchio Stampo',
     'home.btn_quick':'⚽ Gioca subito',
     'home.btn_quick_sub':'Classic · All Time · Normale',
     'home.btn_custom':'⚙️ Personalizza',
@@ -1272,10 +1303,17 @@ const STRINGS={
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
     'tourn.copa.sub':'South America · 1960 – 2024',
+    'tourn.wc.name':'World Cup Legends',
+    'tourn.wc.sub':'World Cup · 1930 – 2022',
     'tourn.soon':'Coming Soon',
     'copa.btn_quick':'⚽ Play Now',
     'copa.btn_quick_sub':'Classic · All Time · Normal',
     'copa.btn_custom':'⚙️ Customize',
+    'wc.btn_quick':'⚽ Play Now',
+    'wc.btn_quick_sub':'Classic · All Time · Normal',
+    'wc.btn_custom':'⚙️ Customize',
+    'trophy.wc_classic':'World Champion!',
+    'trophy.wc_old_cup':'Old Cup Style',
     'home.btn_quick':'⚽ Play Now',
     'home.btn_quick_sub':'Classic · All Time · Normal',
     'home.btn_custom':'⚙️ Customize',
@@ -2415,8 +2453,164 @@ const COPA_JERSEY_COLORS = {
   pal_2021:'#1e8c1e', fla_2223:'#cc0000', flu_2324:'#8b1a1a'
 };
 
-function _activeTeams(){ return G.gameMode==='copa' ? COPA_TEAMS : TEAMS; }
-function _activeJerseyColors(){ return G.gameMode==='copa' ? COPA_JERSEY_COLORS : JERSEY_COLORS; }
+/* ═══════════════════════════════════════════════════════
+   WORLD CUP LEGENDS — DATASET
+   65 rose storiche · 6 ere · 1930–2022
+═══════════════════════════════════════════════════════ */
+const WC_TEAMS={
+  uru_1930:{name:"Uruguay",season:"1930",country:"🇺🇾",club:"uruguay",players:[{n:"Enrique Ballesteros",p:"GK",r:8},{n:"José Nasazzi",p:"CB",r:9},{n:"José Andrade",p:"CDM",r:9},{n:"Lorenzo Fernández",p:"CM",r:8},{n:"Álvaro Gestido",p:"CB",r:8},{n:"Juan Piriz",p:"RB",r:7},{n:"Hector Scarone",p:"CAM",r:9},{n:"Pablo Dorado",p:"LW",r:8},{n:"Héctor Castro",p:"ST",r:8},{n:"Pedro Cea",p:"ST",r:8},{n:"Santos Iriarte",p:"RW",r:8},{n:"Pedro Petrone",p:"ST",r:8}]},
+  arg_1930:{name:"Argentina",season:"1930",country:"🇦🇷",club:"argentina",players:[{n:"Juan Botasso",p:"GK",r:8},{n:"Luis Monti",p:"CDM",r:9},{n:"Guillermo Stábile",p:"ST",r:9},{n:"Carlos Peucelle",p:"RW",r:8},{n:"Francisco Varallo",p:"ST",r:8},{n:"Manuel Ferreira",p:"CAM",r:8},{n:"Adolfo Zumelzú",p:"LB",r:7},{n:"Fernando Paternoster",p:"RB",r:7},{n:"Alfredo Desiderio",p:"CB",r:7},{n:"Alberto Chividini",p:"CB",r:7},{n:"Alejandro Scopelli",p:"CM",r:7},{n:"Roberto Cherro",p:"LW",r:8}]},
+  ita_1934:{name:"Italia",season:"1934",country:"🇮🇹",club:"italy",players:[{n:"Gianpiero Combi",p:"GK",r:9},{n:"Giuseppe Meazza",p:"CAM",r:10},{n:"Angelo Schiavio",p:"ST",r:9},{n:"Giovanni Ferrari",p:"CM",r:8},{n:"Raimundo Orsi",p:"LW",r:8},{n:"Luis Monti",p:"CDM",r:8},{n:"Pietro Ferraris",p:"RW",r:8},{n:"Virginio Rosetta",p:"RB",r:8},{n:"Luigi Allemandi",p:"LB",r:7},{n:"Eraldo Monzeglio",p:"CB",r:7},{n:"Umberto Caligaris",p:"CB",r:8},{n:"Giovanni Guaita",p:"LW",r:7}]},
+  cze_1934:{name:"Cecoslovacchia",season:"1934",country:"🇨🇿",club:"czechoslovakia",players:[{n:"František Plánička",p:"GK",r:9},{n:"Oldřich Nejedlý",p:"ST",r:9},{n:"Antonín Puč",p:"LW",r:9},{n:"Jiří Sobotka",p:"CAM",r:8},{n:"Josef Košťálek",p:"CDM",r:8},{n:"Ladislav Ženíšek",p:"RW",r:8},{n:"František Junek",p:"CM",r:7},{n:"Bedřich Svoboda",p:"CB",r:7},{n:"Stefan Čambal",p:"CB",r:7},{n:"Antonín Vodička",p:"RB",r:7},{n:"Josef Silný",p:"LB",r:7},{n:"Rudolf Krčil",p:"CM",r:7}]},
+  ita_1938:{name:"Italia",season:"1938",country:"🇮🇹",club:"italy",players:[{n:"Aldo Olivieri",p:"GK",r:8},{n:"Giuseppe Meazza",p:"CAM",r:10},{n:"Silvio Piola",p:"ST",r:9},{n:"Amedeo Biavati",p:"RW",r:8},{n:"Gino Colaussi",p:"LW",r:8},{n:"Giovanni Ferrari",p:"CM",r:8},{n:"Pietro Serantoni",p:"CDM",r:8},{n:"Michele Andreolo",p:"CM",r:7},{n:"Alfredo Foni",p:"RB",r:8},{n:"Pietro Rava",p:"LB",r:8},{n:"Ugo Locatelli",p:"CB",r:7},{n:"Dino Fiorini",p:"CB",r:7}]},
+  hun_1938:{name:"Ungheria",season:"1938",country:"🇭🇺",club:"hungary",players:[{n:"Antal Szabó",p:"GK",r:8},{n:"György Sárosi",p:"CAM",r:9},{n:"Gyula Zsengellér",p:"ST",r:9},{n:"Pál Titkos",p:"LW",r:8},{n:"György Lázár",p:"CDM",r:8},{n:"Jenő Vincze",p:"CM",r:7},{n:"Géza Polgar",p:"RW",r:7},{n:"Sándor Biró",p:"RB",r:7},{n:"Márton Bukovi",p:"CB",r:7},{n:"Gyula Polgár",p:"CB",r:7},{n:"Imre Markos",p:"LB",r:7},{n:"Gyula Kocsis",p:"CM",r:8}]},
+  uru_1950:{name:"Uruguay",season:"1950",country:"🇺🇾",club:"uruguay",players:[{n:"Roque Máspoli",p:"GK",r:9},{n:"Juan Alberto Schiaffino",p:"CAM",r:10},{n:"Alcides Ghiggia",p:"RW",r:9},{n:"Obdulio Varela",p:"CDM",r:9},{n:"Omar Míguez",p:"ST",r:8},{n:"Schubert Gambetta",p:"LB",r:8},{n:"Matías González",p:"RB",r:7},{n:"Eusebio Tejera",p:"CB",r:8},{n:"Víctor Rodríguez Andrade",p:"CM",r:8},{n:"Julio Pérez",p:"LW",r:8},{n:"Oscar Míguez",p:"ST",r:7},{n:"Carlos Morán",p:"CB",r:7}]},
+  bra_1950:{name:"Brasil",season:"1950",country:"🇧🇷",club:"brazil",players:[{n:"Barbosa",p:"GK",r:8},{n:"Zizinho",p:"CAM",r:10},{n:"Jair",p:"RW",r:9},{n:"Ademir",p:"ST",r:9},{n:"Chico",p:"LW",r:8},{n:"Friaça",p:"ST",r:8},{n:"Danilo",p:"CDM",r:8},{n:"Bauer",p:"CM",r:8},{n:"Juvenal",p:"CB",r:7},{n:"Augusto",p:"CB",r:7},{n:"Bigode",p:"LB",r:7},{n:"Nilton Santos",p:"LB",r:8}]},
+  ger_1954:{name:"Germania Ovest",season:"1954",country:"🇩🇪",club:"germany",players:[{n:"Toni Turek",p:"GK",r:9},{n:"Fritz Walter",p:"CAM",r:10},{n:"Helmut Rahn",p:"RW",r:9},{n:"Morlock",p:"ST",r:9},{n:"Ottmar Walter",p:"ST",r:8},{n:"Hans Schäfer",p:"LW",r:8},{n:"Karl Mai",p:"CDM",r:8},{n:"Horst Eckel",p:"CM",r:8},{n:"Jupp Posipal",p:"CB",r:7},{n:"Friedrich Laband",p:"CB",r:7},{n:"Josef Kohlmeyer",p:"LB",r:7},{n:"Anton Stanislawski",p:"RB",r:7}]},
+  hun_1954:{name:"Ungheria",season:"1954",country:"🇭🇺",club:"hungary",players:[{n:"Gyula Grosics",p:"GK",r:9},{n:"Ferenc Puskás",p:"CAM",r:10},{n:"Sándor Kocsis",p:"ST",r:10},{n:"Nándor Hidegkuti",p:"CF",r:9},{n:"Zoltán Czibor",p:"LW",r:9},{n:"Mihály Lantos",p:"LB",r:8},{n:"Jenő Buzánszky",p:"RB",r:8},{n:"Gyula Lóránt",p:"CB",r:8},{n:"József Zakariás",p:"CDM",r:8},{n:"Gábor Tóth",p:"CB",r:7},{n:"József Bozsik",p:"CM",r:9},{n:"Péter Palotás",p:"ST",r:7}]},
+  bra_1958:{name:"Brasil",season:"1958",country:"🇧🇷",club:"brazil",players:[{n:"Gilmar",p:"GK",r:9},{n:"Pelé",p:"CAM",r:10},{n:"Garrincha",p:"RW",r:10},{n:"Didi",p:"CM",r:9},{n:"Vavá",p:"ST",r:9},{n:"Zagallo",p:"LW",r:8},{n:"Djalma Santos",p:"RB",r:8},{n:"Nílton Santos",p:"LB",r:9},{n:"Orlando",p:"CB",r:8},{n:"Bellini",p:"CB",r:8},{n:"Moacir",p:"CDM",r:7},{n:"José Altafini",p:"ST",r:8}]},
+  swe_1958:{name:"Svezia",season:"1958",country:"🇸🇪",club:"sweden",players:[{n:"Kalle Svensson",p:"GK",r:8},{n:"Kurt Hamrin",p:"RW",r:9},{n:"Gunnar Gren",p:"CAM",r:8},{n:"Nils Liedholm",p:"CM",r:9},{n:"Agne Simonsson",p:"ST",r:8},{n:"Nacka Skoglund",p:"LW",r:8},{n:"Julle Gustavsson",p:"CB",r:8},{n:"Sven Axbom",p:"LB",r:7},{n:"Orvar Bergmark",p:"RB",r:7},{n:"Bengt Gustavsson",p:"CDM",r:7},{n:"Hans Parling",p:"CB",r:7},{n:"Sigge Parling",p:"CB",r:7}]},
+  bra_1962:{name:"Brasil",season:"1962",country:"🇧🇷",club:"brazil",players:[{n:"Gilmar",p:"GK",r:9},{n:"Garrincha",p:"RW",r:10},{n:"Pelé",p:"CAM",r:10},{n:"Didi",p:"CM",r:8},{n:"Vavá",p:"ST",r:8},{n:"Amarildo",p:"ST",r:8},{n:"Djalma Santos",p:"RB",r:8},{n:"Nílton Santos",p:"LB",r:8},{n:"Mauro",p:"CB",r:8},{n:"Zózimo",p:"CB",r:7},{n:"Zagallo",p:"LW",r:8},{n:"Zito",p:"CDM",r:8}]},
+  cze_1962:{name:"Cecoslovacchia",season:"1962",country:"🇨🇿",club:"czechoslovakia",players:[{n:"Viliam Schrojf",p:"GK",r:9},{n:"Josef Masopust",p:"CM",r:10},{n:"Adolf Scherer",p:"ST",r:8},{n:"Tomáš Pospíchal",p:"RW",r:7},{n:"Jan Jelínek",p:"LW",r:7},{n:"Ladislav Novák",p:"LB",r:8},{n:"Jan Lala",p:"RB",r:7},{n:"Ján Popluhár",p:"CB",r:8},{n:"Svatopluk Pluskal",p:"CB",r:7},{n:"Andrej Kvašňák",p:"CDM",r:7},{n:"Josef Vojta",p:"CAM",r:7},{n:"Ludvík Šejna",p:"CM",r:7}]},
+  eng_1966:{name:"Inghilterra",season:"1966",country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",club:"england",players:[{n:"Gordon Banks",p:"GK",r:10},{n:"Bobby Moore",p:"CB",r:10},{n:"Bobby Charlton",p:"CM",r:10},{n:"Geoff Hurst",p:"ST",r:9},{n:"Roger Hunt",p:"ST",r:8},{n:"Martin Peters",p:"CAM",r:8},{n:"Nobby Stiles",p:"CDM",r:8},{n:"Alan Ball",p:"CM",r:8},{n:"Ray Wilson",p:"LB",r:8},{n:"George Cohen",p:"RB",r:7},{n:"Jack Charlton",p:"CB",r:8},{n:"Jimmy Greaves",p:"ST",r:8}]},
+  ger_1966:{name:"Germania Ovest",season:"1966",country:"🇩🇪",club:"germany",players:[{n:"Hans Tilkowski",p:"GK",r:8},{n:"Uwe Seeler",p:"ST",r:9},{n:"Helmut Haller",p:"CAM",r:8},{n:"Franz Beckenbauer",p:"CM",r:10},{n:"Sigfried Held",p:"LW",r:8},{n:"Lothar Emmerich",p:"LW",r:8},{n:"Wolfgang Overath",p:"CM",r:8},{n:"Willi Schulz",p:"CB",r:8},{n:"Karl-Heinz Schnellinger",p:"LB",r:8},{n:"Horst-Dieter Höttges",p:"RB",r:7},{n:"Sepp Maier",p:"GK",r:8},{n:"Reinhard Libuda",p:"RW",r:7}]},
+  por_1966:{name:"Portogallo",season:"1966",country:"🇵🇹",club:"portugal",players:[{n:"José Pereira",p:"GK",r:8},{n:"Eusébio",p:"ST",r:10},{n:"José Augusto",p:"RW",r:9},{n:"Mário Coluna",p:"CM",r:9},{n:"José Torres",p:"ST",r:8},{n:"António Simões",p:"LW",r:8},{n:"Vicente",p:"RB",r:7},{n:"João Morais",p:"LB",r:7},{n:"Germano",p:"CB",r:8},{n:"Alexandre Baptista",p:"CB",r:7},{n:"Hilário",p:"GK",r:7},{n:"Yaúca",p:"CDM",r:7}]},
+  bra_1970:{name:"Brasil",season:"1970",country:"🇧🇷",club:"brazil",players:[{n:"Félix",p:"GK",r:8},{n:"Pelé",p:"ST",r:10},{n:"Jairzinho",p:"RW",r:10},{n:"Rivelino",p:"LW",r:9},{n:"Tostão",p:"CF",r:9},{n:"Gerson",p:"CM",r:9},{n:"Carlos Alberto",p:"RB",r:9},{n:"Clodoaldo",p:"CDM",r:8},{n:"Brito",p:"CB",r:8},{n:"Wilson Piazza",p:"CB",r:7},{n:"Everaldo",p:"LB",r:8},{n:"Paulo Cézar",p:"LW",r:8}]},
+  ita_1970:{name:"Italia",season:"1970",country:"🇮🇹",club:"italy",players:[{n:"Dino Zoff",p:"GK",r:9},{n:"Sandro Mazzola",p:"CAM",r:9},{n:"Gianni Rivera",p:"CAM",r:9},{n:"Luigi Riva",p:"ST",r:9},{n:"Roberto Boninsegna",p:"ST",r:8},{n:"Giacinto Facchetti",p:"LB",r:9},{n:"Tarcisio Burgnich",p:"CB",r:8},{n:"Romolo De Sisti",p:"CM",r:8},{n:"Mario Bertini",p:"CDM",r:7},{n:"Pierluigi Cera",p:"CB",r:7},{n:"Angelo Domenghini",p:"RW",r:7},{n:"Enrico Albertosi",p:"GK",r:8}]},
+  ger_1974:{name:"Germania Ovest",season:"1974",country:"🇩🇪",club:"germany",players:[{n:"Sepp Maier",p:"GK",r:9},{n:"Franz Beckenbauer",p:"CB",r:10},{n:"Gerd Müller",p:"ST",r:10},{n:"Paul Breitner",p:"LB",r:9},{n:"Uli Hoeness",p:"ST",r:8},{n:"Rainer Bonhof",p:"CDM",r:8},{n:"Wolfgang Overath",p:"CM",r:8},{n:"Berti Vogts",p:"RB",r:8},{n:"Georg Schwarzenbeck",p:"CB",r:7},{n:"Bernd Hölzenbein",p:"LW",r:8},{n:"Jürgen Grabowski",p:"RW",r:8},{n:"Heinz Flohe",p:"CM",r:7}]},
+  ned_1974:{name:"Olanda",season:"1974",country:"🇳🇱",club:"netherlands",players:[{n:"Jan Jongbloed",p:"GK",r:8},{n:"Johan Cruyff",p:"CAM",r:10},{n:"Johan Neeskens",p:"CDM",r:9},{n:"Rob Rensenbrink",p:"LW",r:9},{n:"Johnny Rep",p:"RW",r:8},{n:"Ruud Krol",p:"LB",r:9},{n:"Wim Rijsbergen",p:"CB",r:8},{n:"Arie Haan",p:"CM",r:8},{n:"Wim Jansen",p:"CM",r:8},{n:"Willem van Hanegem",p:"CM",r:8},{n:"Barry Hulshoff",p:"CB",r:7},{n:"Win Suurbier",p:"RB",r:8}]},
+  pol_1974:{name:"Polonia",season:"1974",country:"🇵🇱",club:"poland",players:[{n:"Jan Tomaszewski",p:"GK",r:9},{n:"Grzegorz Lato",p:"RW",r:9},{n:"Kazimierz Deyna",p:"CAM",r:10},{n:"Andrzej Szarmach",p:"ST",r:8},{n:"Robert Gadocha",p:"LW",r:8},{n:"Zygmunt Maszczyk",p:"CM",r:7},{n:"Henryk Kasperczak",p:"CM",r:7},{n:"Władysław Żmuda",p:"CB",r:8},{n:"Adam Musiał",p:"CB",r:7},{n:"Jerzy Gorgoń",p:"RB",r:7},{n:"Antoni Szymanowski",p:"LB",r:7},{n:"Mirosław Bulzacki",p:"CDM",r:7}]},
+  arg_1978:{name:"Argentina",season:"1978",country:"🇦🇷",club:"argentina",players:[{n:"Ubaldo Fillol",p:"GK",r:9},{n:"Mario Kempes",p:"ST",r:10},{n:"Daniel Passarella",p:"CB",r:9},{n:"Osvaldo Ardiles",p:"CM",r:9},{n:"Leopoldo Luque",p:"ST",r:8},{n:"René Houseman",p:"RW",r:8},{n:"Jorge Olguin",p:"RB",r:7},{n:"Luis Galván",p:"CB",r:7},{n:"Alberto Tarantini",p:"LB",r:8},{n:"Américo Gallego",p:"CDM",r:7},{n:"Daniel Bertoni",p:"LW",r:8},{n:"Héctor Baley",p:"GK",r:7}]},
+  ned_1978:{name:"Olanda",season:"1978",country:"🇳🇱",club:"netherlands",players:[{n:"Jan Jongbloed",p:"GK",r:8},{n:"Rob Rensenbrink",p:"LW",r:9},{n:"Johan Neeskens",p:"CDM",r:9},{n:"Ruud Krol",p:"LB",r:9},{n:"Johnny Rep",p:"RW",r:8},{n:"Arie Haan",p:"CM",r:9},{n:"Wim Suurbier",p:"RB",r:8},{n:"Ernie Brandts",p:"CB",r:7},{n:"Dick Nanninga",p:"ST",r:7},{n:"Pieter Wildschut",p:"CB",r:7},{n:"René van de Kerkhof",p:"CM",r:8},{n:"Willy van de Kerkhof",p:"CM",r:8}]},
+  bra_1978:{name:"Brasil",season:"1978",country:"🇧🇷",club:"brazil",players:[{n:"Emerson Leão",p:"GK",r:8},{n:"Zico",p:"CAM",r:10},{n:"Rivelino",p:"LW",r:9},{n:"Roberto Dinamite",p:"ST",r:8},{n:"Dirceu",p:"CM",r:8},{n:"Oscar",p:"CDM",r:8},{n:"Edinho",p:"CB",r:7},{n:"Amaral",p:"CB",r:7},{n:"Nelinho",p:"RB",r:8},{n:"Toninho Cerezo",p:"CM",r:8},{n:"Mendonça",p:"ST",r:7},{n:"Batista",p:"CDM",r:7}]},
+  ita_1982:{name:"Italia",season:"1982",country:"🇮🇹",club:"italy",players:[{n:"Dino Zoff",p:"GK",r:10},{n:"Paolo Rossi",p:"ST",r:10},{n:"Bruno Conti",p:"RW",r:9},{n:"Marco Tardelli",p:"CM",r:9},{n:"Claudio Gentile",p:"CB",r:9},{n:"Antonio Cabrini",p:"LB",r:8},{n:"Gaetano Scirea",p:"CB",r:9},{n:"Francesco Graziani",p:"ST",r:8},{n:"Giancarlo Antognoni",p:"CAM",r:8},{n:"Fulvio Collovati",p:"CB",r:7},{n:"Gabriele Oriali",p:"CDM",r:7},{n:"Alessandro Altobelli",p:"ST",r:8}]},
+  bra_1982:{name:"Brasil",season:"1982",country:"🇧🇷",club:"brazil",players:[{n:"Waldir Peres",p:"GK",r:8},{n:"Zico",p:"CAM",r:10},{n:"Sócrates",p:"CM",r:9},{n:"Falcão",p:"CM",r:9},{n:"Éder",p:"LW",r:8},{n:"Serginho",p:"ST",r:8},{n:"Oscar",p:"CDM",r:8},{n:"Cerezo",p:"CM",r:8},{n:"Leandro",p:"RB",r:7},{n:"Junior",p:"LB",r:9},{n:"Luizinho",p:"CB",r:7},{n:"Batista",p:"CDM",r:7}]},
+  ger_1982:{name:"Germania Ovest",season:"1982",country:"🇩🇪",club:"germany",players:[{n:"Harald Schumacher",p:"GK",r:8},{n:"Karl-Heinz Rummenigge",p:"ST",r:10},{n:"Klaus Fischer",p:"ST",r:8},{n:"Paul Breitner",p:"CM",r:9},{n:"Hans-Peter Briegel",p:"LB",r:8},{n:"Bernd Förster",p:"CB",r:8},{n:"Karl-Heinz Förster",p:"CB",r:8},{n:"Wolfgang Dremmler",p:"CDM",r:7},{n:"Manfred Kaltz",p:"RB",r:7},{n:"Felix Magath",p:"CM",r:8},{n:"Horst Hrubesch",p:"ST",r:8},{n:"Uli Stielike",p:"CDM",r:7}]},
+  pol_1982:{name:"Polonia",season:"1982",country:"🇵🇱",club:"poland",players:[{n:"Józef Młynarczyk",p:"GK",r:8},{n:"Zbigniew Boniek",p:"CAM",r:10},{n:"Grzegorz Lato",p:"RW",r:8},{n:"Andrzej Szarmach",p:"ST",r:7},{n:"Włodzimierz Smolarek",p:"LW",r:8},{n:"Władysław Żmuda",p:"CB",r:8},{n:"Stefan Majewski",p:"CB",r:7},{n:"Roman Wójcicki",p:"CDM",r:7},{n:"Marek Dziuba",p:"CM",r:7},{n:"Andrzej Buncol",p:"CM",r:7},{n:"Bogusław Zając",p:"RB",r:7},{n:"Ryszard Majewski",p:"LB",r:7}]},
+  fra_1982:{name:"Francia",season:"1982",country:"🇫🇷",club:"france",players:[{n:"Jean-Luc Ettori",p:"GK",r:8},{n:"Michel Platini",p:"CAM",r:10},{n:"Bernard Lacombe",p:"ST",r:8},{n:"Didier Six",p:"LW",r:8},{n:"Dominique Rocheteau",p:"RW",r:8},{n:"Alain Giresse",p:"CM",r:9},{n:"Jean Tigana",p:"CM",r:9},{n:"Marius Trésor",p:"CB",r:8},{n:"Maxime Bossis",p:"LB",r:8},{n:"Manuel Amoros",p:"RB",r:7},{n:"Luis Fernandez",p:"CDM",r:7},{n:"Patrick Battiston",p:"CB",r:7}]},
+  arg_1986:{name:"Argentina",season:"1986",country:"🇦🇷",club:"argentina",players:[{n:"Nery Pumpido",p:"GK",r:8},{n:"Diego Maradona",p:"CAM",r:10},{n:"Jorge Valdano",p:"ST",r:9},{n:"Jorge Burruchaga",p:"CM",r:9},{n:"Sergio Batista",p:"CDM",r:8},{n:"Oscar Ruggeri",p:"CB",r:8},{n:"José Luis Brown",p:"CB",r:8},{n:"Julio Olarticoechea",p:"LB",r:7},{n:"Héctor Enrique",p:"CM",r:8},{n:"Ricardo Giusti",p:"CM",r:7},{n:"Claudio Borghi",p:"RW",r:7},{n:"Daniel Passarella",p:"CB",r:8}]},
+  ger_1986:{name:"Germania Ovest",season:"1986",country:"🇩🇪",club:"germany",players:[{n:"Harald Schumacher",p:"GK",r:8},{n:"Karl-Heinz Rummenigge",p:"ST",r:9},{n:"Andreas Brehme",p:"LB",r:9},{n:"Lothar Matthäus",p:"CM",r:10},{n:"Klaus Allofs",p:"ST",r:8},{n:"Rudi Völler",p:"ST",r:9},{n:"Pierre Littbarski",p:"RW",r:8},{n:"Thomas Berthold",p:"CB",r:7},{n:"Karl-Heinz Förster",p:"CB",r:7},{n:"Wolfgang Rolff",p:"CDM",r:7},{n:"Norbert Eder",p:"CB",r:7},{n:"Hans-Peter Briegel",p:"LB",r:7}]},
+  fra_1986:{name:"Francia",season:"1986",country:"🇫🇷",club:"france",players:[{n:"Joël Bats",p:"GK",r:8},{n:"Michel Platini",p:"CAM",r:10},{n:"Jean Tigana",p:"CM",r:9},{n:"Alain Giresse",p:"CM",r:8},{n:"Bruno Bellone",p:"ST",r:7},{n:"Yannick Stopyra",p:"ST",r:7},{n:"Luis Fernandez",p:"CDM",r:7},{n:"Maxime Bossis",p:"CB",r:8},{n:"Manuel Amoros",p:"RB",r:7},{n:"William Ayache",p:"LB",r:7},{n:"Patrick Battiston",p:"CB",r:7},{n:"Dominique Rocheteau",p:"RW",r:7}]},
+  bra_1986:{name:"Brasil",season:"1986",country:"🇧🇷",club:"brazil",players:[{n:"Carlos",p:"GK",r:8},{n:"Zico",p:"CAM",r:9},{n:"Sócrates",p:"CM",r:9},{n:"Careca",p:"ST",r:9},{n:"Júnior",p:"LB",r:8},{n:"Branco",p:"LB",r:7},{n:"Edinho",p:"CB",r:7},{n:"Mauro Galvão",p:"CB",r:7},{n:"Josimar",p:"RB",r:8},{n:"Elzo",p:"CDM",r:7},{n:"Müller",p:"ST",r:7},{n:"Alemão",p:"CM",r:7}]},
+  ger_1990:{name:"Germania Ovest",season:"1990",country:"🇩🇪",club:"germany",players:[{n:"Bodo Illgner",p:"GK",r:8},{n:"Lothar Matthäus",p:"CM",r:10},{n:"Andreas Brehme",p:"LB",r:9},{n:"Rudi Völler",p:"ST",r:9},{n:"Jürgen Klinsmann",p:"ST",r:9},{n:"Thomas Häßler",p:"CAM",r:8},{n:"Guido Buchwald",p:"CDM",r:8},{n:"Klaus Augenthaler",p:"CB",r:8},{n:"Jürgen Kohler",p:"CB",r:8},{n:"Stefan Reuter",p:"RB",r:7},{n:"Pierre Littbarski",p:"RW",r:8},{n:"Thomas Berthold",p:"RB",r:7}]},
+  arg_1990:{name:"Argentina",season:"1990",country:"🇦🇷",club:"argentina",players:[{n:"Sergio Goycochea",p:"GK",r:9},{n:"Diego Maradona",p:"CAM",r:10},{n:"Claudio Caniggia",p:"ST",r:9},{n:"Oscar Ruggeri",p:"CB",r:8},{n:"Roberto Sensini",p:"RB",r:7},{n:"Ricardo Giusti",p:"CDM",r:7},{n:"Julio Olarticoechea",p:"LB",r:7},{n:"Néstor Lorenzo",p:"CB",r:7},{n:"Hernán Medford",p:"CM",r:7},{n:"José Basualdo",p:"CM",r:7},{n:"Gustavo Dezotti",p:"ST",r:7},{n:"Jorge Burruchaga",p:"CM",r:8}]},
+  ita_1990:{name:"Italia",season:"1990",country:"🇮🇹",club:"italy",players:[{n:"Walter Zenga",p:"GK",r:9},{n:"Roberto Baggio",p:"CAM",r:10},{n:"Salvatore Schillaci",p:"ST",r:9},{n:"Paolo Maldini",p:"LB",r:9},{n:"Giuseppe Bergomi",p:"CB",r:8},{n:"Roberto Donadoni",p:"CM",r:8},{n:"Fernando De Napoli",p:"CDM",r:7},{n:"Nicola Berti",p:"CM",r:7},{n:"Riccardo Ferri",p:"CB",r:7},{n:"Pietro Vierchowod",p:"CB",r:7},{n:"Aldo Serena",p:"ST",r:7},{n:"Franco Baresi",p:"CB",r:9}]},
+  eng_1990:{name:"Inghilterra",season:"1990",country:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",club:"england",players:[{n:"Peter Shilton",p:"GK",r:9},{n:"Gary Lineker",p:"ST",r:10},{n:"Paul Gascoigne",p:"CAM",r:10},{n:"John Barnes",p:"LW",r:8},{n:"Terry Butcher",p:"CB",r:8},{n:"Des Walker",p:"CB",r:8},{n:"Stuart Pearce",p:"LB",r:8},{n:"Mark Wright",p:"CB",r:7},{n:"Steve McMahon",p:"CDM",r:7},{n:"Chris Waddle",p:"RW",r:8},{n:"David Platt",p:"CM",r:8},{n:"Peter Beardsley",p:"SS",r:8}]},
+  bra_1994:{name:"Brasil",season:"1994",country:"🇧🇷",club:"brazil",players:[{n:"Taffarel",p:"GK",r:9},{n:"Romário",p:"ST",r:10},{n:"Bebeto",p:"ST",r:10},{n:"Mauro Silva",p:"CDM",r:8},{n:"Mazinho",p:"CM",r:8},{n:"Cafu",p:"RB",r:9},{n:"Marcio Santos",p:"CB",r:7},{n:"Aldair",p:"CB",r:8},{n:"Branco",p:"LB",r:8},{n:"Zinho",p:"CM",r:8},{n:"Rai",p:"CAM",r:7},{n:"Leonardo",p:"LB",r:8}]},
+  ita_1994:{name:"Italia",season:"1994",country:"🇮🇹",club:"italy",players:[{n:"Gianluca Pagliuca",p:"GK",r:8},{n:"Roberto Baggio",p:"CAM",r:10},{n:"Demetrio Albertini",p:"CM",r:8},{n:"Nicola Berti",p:"CM",r:7},{n:"Paolo Maldini",p:"LB",r:9},{n:"Franco Baresi",p:"CB",r:9},{n:"Alessandro Costacurta",p:"CB",r:8},{n:"Mauro Tassotti",p:"RB",r:7},{n:"Roberto Donadoni",p:"CDM",r:7},{n:"Daniele Massaro",p:"ST",r:8},{n:"Pierluigi Casiraghi",p:"ST",r:7},{n:"Giuseppe Signori",p:"LW",r:8}]},
+  bul_1994:{name:"Bulgaria",season:"1994",country:"🇧🇬",club:"bulgaria",players:[{n:"Bobby Mihaylov",p:"GK",r:8},{n:"Hristo Stoichkov",p:"ST",r:10},{n:"Yordan Letchkov",p:"CM",r:8},{n:"Trifon Ivanov",p:"CB",r:8},{n:"Petar Hubchev",p:"CB",r:7},{n:"Tzanko Tzvetanov",p:"RB",r:7},{n:"Zlatko Yankov",p:"LB",r:7},{n:"Ilian Kiriakov",p:"CM",r:7},{n:"Emil Kostadinov",p:"ST",r:8},{n:"Krassimir Balakov",p:"CAM",r:9},{n:"Nasko Sirakov",p:"LW",r:7},{n:"Nikolai Todorov",p:"CDM",r:7}]},
+  fra_1998:{name:"Francia",season:"1998",country:"🇫🇷",club:"france",players:[{n:"Fabien Barthez",p:"GK",r:9},{n:"Zinedine Zidane",p:"CAM",r:10},{n:"Thierry Henry",p:"LW",r:10},{n:"Didier Deschamps",p:"CDM",r:8},{n:"Emmanuel Petit",p:"CM",r:9},{n:"Marcel Desailly",p:"CB",r:9},{n:"Laurent Blanc",p:"CB",r:8},{n:"Lilian Thuram",p:"RB",r:9},{n:"Bixente Lizarazu",p:"LB",r:8},{n:"Youri Djorkaeff",p:"CM",r:8},{n:"David Trezeguet",p:"ST",r:8},{n:"Stéphane Guivarc'h",p:"ST",r:7}]},
+  bra_1998:{name:"Brasil",season:"1998",country:"🇧🇷",club:"brazil",players:[{n:"Taffarel",p:"GK",r:9},{n:"Ronaldo",p:"ST",r:10},{n:"Rivaldo",p:"CAM",r:10},{n:"Bebeto",p:"ST",r:9},{n:"Roberto Carlos",p:"LB",r:10},{n:"Cafu",p:"RB",r:9},{n:"Aldair",p:"CB",r:8},{n:"Júnior Baiano",p:"CB",r:7},{n:"César Sampaio",p:"CDM",r:7},{n:"Emerson",p:"CM",r:8},{n:"Denilson",p:"LW",r:7},{n:"Leonardo",p:"LB",r:7}]},
+  cro_1998:{name:"Croazia",season:"1998",country:"🇭🇷",club:"croatia",players:[{n:"Dražen Ladić",p:"GK",r:8},{n:"Davor Šuker",p:"ST",r:10},{n:"Zvonimir Boban",p:"CAM",r:9},{n:"Robert Prosinečki",p:"CM",r:9},{n:"Slaven Bilić",p:"CB",r:8},{n:"Dario Šimić",p:"CB",r:7},{n:"Robert Jarni",p:"LB",r:8},{n:"Zvonimir Soldo",p:"CDM",r:7},{n:"Alen Bokšić",p:"LW",r:8},{n:"Goran Vlaović",p:"ST",r:7},{n:"Igor Tudor",p:"CB",r:7},{n:"Stjepan Tomas",p:"RB",r:7}]},
+  ned_1998:{name:"Olanda",season:"1998",country:"🇳🇱",club:"netherlands",players:[{n:"Edwin van der Sar",p:"GK",r:9},{n:"Dennis Bergkamp",p:"CAM",r:10},{n:"Patrick Kluivert",p:"ST",r:9},{n:"Frank de Boer",p:"CB",r:8},{n:"Ronald de Boer",p:"CM",r:8},{n:"Clarence Seedorf",p:"CM",r:9},{n:"Philip Cocu",p:"CM",r:8},{n:"Jaap Stam",p:"CB",r:9},{n:"Michael Reiziger",p:"RB",r:8},{n:"Arthur Numan",p:"LB",r:7},{n:"Marc Overmars",p:"LW",r:9},{n:"Boudewijn Zenden",p:"RW",r:7}]},
+  bra_2002:{name:"Brasil",season:"2002",country:"🇧🇷",club:"brazil",players:[{n:"Marcos",p:"GK",r:9},{n:"Ronaldo",p:"ST",r:10},{n:"Rivaldo",p:"CAM",r:10},{n:"Ronaldinho",p:"LW",r:9},{n:"Roberto Carlos",p:"LB",r:10},{n:"Cafu",p:"RB",r:9},{n:"Lúcio",p:"CB",r:9},{n:"Roque Júnior",p:"CB",r:7},{n:"Gilberto Silva",p:"CDM",r:8},{n:"Kléberson",p:"CM",r:7},{n:"Edilson",p:"RW",r:7},{n:"Denílson",p:"LW",r:7}]},
+  ger_2002:{name:"Germania",season:"2002",country:"🇩🇪",club:"germany",players:[{n:"Oliver Kahn",p:"GK",r:10},{n:"Miroslav Klose",p:"ST",r:9},{n:"Michael Ballack",p:"CM",r:10},{n:"Rudi Völler",p:"ST",r:8},{n:"Oliver Neuville",p:"LW",r:7},{n:"Sebastian Kehl",p:"CDM",r:7},{n:"Carsten Ramelow",p:"CB",r:7},{n:"Christian Ziege",p:"LB",r:7},{n:"Torsten Frings",p:"CM",r:8},{n:"Bernd Schneider",p:"CAM",r:8},{n:"Thomas Linke",p:"CB",r:7},{n:"Jens Nowotny",p:"CB",r:7}]},
+  tur_2002:{name:"Turchia",season:"2002",country:"🇹🇷",club:"turkey",players:[{n:"Rüştü Reçber",p:"GK",r:9},{n:"Hakan Şükür",p:"ST",r:9},{n:"İlhan Mansız",p:"ST",r:8},{n:"Yıldıray Baştürk",p:"CAM",r:8},{n:"Emre Belözoğlu",p:"CM",r:8},{n:"Tugay Kerimoğlu",p:"CDM",r:8},{n:"Bülent Korkmaz",p:"CB",r:7},{n:"Alpay Özalan",p:"CB",r:7},{n:"Hasan Şaş",p:"RW",r:8},{n:"Umit Davala",p:"LW",r:7},{n:"Okan Buruk",p:"CM",r:7},{n:"Fatih Akyel",p:"LB",r:7}]},
+  kor_2002:{name:"Corea del Sud",season:"2002",country:"🇰🇷",club:"south_korea",players:[{n:"Lee Woon-jae",p:"GK",r:8},{n:"Park Ji-sung",p:"CM",r:9},{n:"Hong Myung-bo",p:"CB",r:9},{n:"Ahn Jung-hwan",p:"ST",r:8},{n:"Lee Young-pyo",p:"LB",r:8},{n:"Song Chong-gug",p:"CDM",r:8},{n:"Yoo Sang-chul",p:"CM",r:7},{n:"Kim Nam-il",p:"CM",r:7},{n:"Choi Tae-uk",p:"CB",r:7},{n:"Kim Tae-young",p:"RB",r:7},{n:"Seol Ki-hyeon",p:"RW",r:7},{n:"Hwang Sun-hong",p:"ST",r:7}]},
+  ita_2006:{name:"Italia",season:"2006",country:"🇮🇹",club:"italy",players:[{n:"Gianluigi Buffon",p:"GK",r:10},{n:"Francesco Totti",p:"CAM",r:9},{n:"Luca Toni",p:"ST",r:9},{n:"Andrea Pirlo",p:"CDM",r:10},{n:"Fabio Cannavaro",p:"CB",r:10},{n:"Gennaro Gattuso",p:"CM",r:8},{n:"Gianluca Zambrotta",p:"RB",r:8},{n:"Alessandro Nesta",p:"CB",r:9},{n:"Fabio Grosso",p:"LB",r:8},{n:"Simone Perrotta",p:"CM",r:7},{n:"Alberto Gilardino",p:"ST",r:8},{n:"Mauro Camoranesi",p:"RW",r:7}]},
+  fra_2006:{name:"Francia",season:"2006",country:"🇫🇷",club:"france",players:[{n:"Fabien Barthez",p:"GK",r:8},{n:"Zinedine Zidane",p:"CAM",r:10},{n:"Thierry Henry",p:"LW",r:10},{n:"Patrick Vieira",p:"CDM",r:9},{n:"Claude Makelele",p:"CDM",r:8},{n:"Frank Ribéry",p:"LW",r:8},{n:"William Gallas",p:"CB",r:8},{n:"Lilian Thuram",p:"RB",r:8},{n:"Willy Sagnol",p:"RB",r:7},{n:"Eric Abidal",p:"LB",r:7},{n:"David Trezeguet",p:"ST",r:8},{n:"Louis Saha",p:"ST",r:7}]},
+  ger_2006:{name:"Germania",season:"2006",country:"🇩🇪",club:"germany",players:[{n:"Jens Lehmann",p:"GK",r:9},{n:"Miroslav Klose",p:"ST",r:10},{n:"Michael Ballack",p:"CM",r:10},{n:"Lukas Podolski",p:"LW",r:8},{n:"Tim Borowski",p:"CM",r:7},{n:"Bernd Schneider",p:"CAM",r:7},{n:"Torsten Frings",p:"CDM",r:8},{n:"Per Mertesacker",p:"CB",r:8},{n:"Robert Huth",p:"CB",r:7},{n:"Philipp Lahm",p:"LB",r:9},{n:"Arne Friedrich",p:"RB",r:7},{n:"Bastian Schweinsteiger",p:"CM",r:8}]},
+  por_2006:{name:"Portogallo",season:"2006",country:"🇵🇹",club:"portugal",players:[{n:"Ricardo",p:"GK",r:8},{n:"Cristiano Ronaldo",p:"RW",r:10},{n:"Luís Figo",p:"CAM",r:9},{n:"Deco",p:"CM",r:9},{n:"Fernando Couto",p:"CB",r:7},{n:"Paulo Ferreira",p:"RB",r:7},{n:"Nuno Valente",p:"LB",r:7},{n:"Costinha",p:"CDM",r:7},{n:"Hugo Viana",p:"CM",r:7},{n:"Hélder Postiga",p:"ST",r:7},{n:"Pauleta",p:"ST",r:8},{n:"Simão",p:"LW",r:8}]},
+  esp_2010:{name:"Spagna",season:"2010",country:"🇪🇸",club:"spain",players:[{n:"Iker Casillas",p:"GK",r:10},{n:"Andrés Iniesta",p:"CAM",r:10},{n:"Xavi Hernández",p:"CM",r:10},{n:"David Villa",p:"ST",r:9},{n:"Sergio Busquets",p:"CDM",r:9},{n:"Gerard Piqué",p:"CB",r:9},{n:"Carles Puyol",p:"CB",r:8},{n:"Joan Capdevila",p:"LB",r:7},{n:"Sergio Ramos",p:"RB",r:9},{n:"David Silva",p:"CM",r:8},{n:"Fernando Torres",p:"ST",r:8},{n:"Pedro Rodríguez",p:"LW",r:7}]},
+  ned_2010:{name:"Olanda",season:"2010",country:"🇳🇱",club:"netherlands",players:[{n:"Maarten Stekelenburg",p:"GK",r:8},{n:"Wesley Sneijder",p:"CAM",r:10},{n:"Arjen Robben",p:"RW",r:10},{n:"Robin van Persie",p:"ST",r:9},{n:"Dirk Kuyt",p:"LW",r:8},{n:"Nigel de Jong",p:"CDM",r:8},{n:"Mark van Bommel",p:"CM",r:8},{n:"John Heitinga",p:"CB",r:7},{n:"Joris Mathijsen",p:"CB",r:7},{n:"Gregory van der Wiel",p:"RB",r:7},{n:"Giovanni van Bronckhorst",p:"LB",r:8},{n:"Rafael van der Vaart",p:"CM",r:8}]},
+  ger_2014:{name:"Germania",season:"2014",country:"🇩🇪",club:"germany",players:[{n:"Manuel Neuer",p:"GK",r:10},{n:"Mario Götze",p:"CAM",r:9},{n:"Thomas Müller",p:"RW",r:9},{n:"Miroslav Klose",p:"ST",r:9},{n:"Toni Kroos",p:"CM",r:10},{n:"Mesut Özil",p:"CM",r:9},{n:"Philipp Lahm",p:"RB",r:9},{n:"Mats Hummels",p:"CB",r:9},{n:"Per Mertesacker",p:"CB",r:8},{n:"Bastian Schweinsteiger",p:"CDM",r:8},{n:"Jerome Boateng",p:"CB",r:8},{n:"Benedikt Höwedes",p:"LB",r:7}]},
+  arg_2014:{name:"Argentina",season:"2014",country:"🇦🇷",club:"argentina",players:[{n:"Sergio Romero",p:"GK",r:8},{n:"Lionel Messi",p:"CAM",r:10},{n:"Gonzalo Higuaín",p:"ST",r:9},{n:"Ángel Di María",p:"RW",r:9},{n:"Javier Mascherano",p:"CDM",r:9},{n:"Ezequiel Lavezzi",p:"LW",r:7},{n:"Marcos Rojo",p:"CB",r:7},{n:"Pablo Zabaleta",p:"RB",r:7},{n:"Martín Demichelis",p:"CB",r:7},{n:"Federico Fernández",p:"CB",r:7},{n:"Lucas Biglia",p:"CM",r:7},{n:"Sergio Agüero",p:"ST",r:9}]},
+  bra_2014:{name:"Brasil",season:"2014",country:"🇧🇷",club:"brazil",players:[{n:"Júlio César",p:"GK",r:8},{n:"Neymar",p:"LW",r:10},{n:"Thiago Silva",p:"CB",r:10},{n:"Marcelo",p:"LB",r:9},{n:"David Luiz",p:"CB",r:8},{n:"Oscar",p:"CAM",r:8},{n:"Hulk",p:"RW",r:8},{n:"Paulinho",p:"CM",r:7},{n:"Dani Alves",p:"RB",r:9},{n:"Fred",p:"ST",r:7},{n:"Willian",p:"RW",r:7},{n:"Bernard",p:"LW",r:7}]},
+  fra_2018:{name:"Francia",season:"2018",country:"🇫🇷",club:"france",players:[{n:"Hugo Lloris",p:"GK",r:9},{n:"Kylian Mbappé",p:"ST",r:10},{n:"Antoine Griezmann",p:"CAM",r:10},{n:"Paul Pogba",p:"CM",r:9},{n:"N'Golo Kanté",p:"CDM",r:10},{n:"Raphaël Varane",p:"CB",r:9},{n:"Samuel Umtiti",p:"CB",r:8},{n:"Benjamin Pavard",p:"RB",r:8},{n:"Lucas Hernández",p:"LB",r:8},{n:"Blaise Matuidi",p:"CM",r:7},{n:"Olivier Giroud",p:"ST",r:7},{n:"Thomas Lemar",p:"LW",r:7}]},
+  cro_2018:{name:"Croazia",season:"2018",country:"🇭🇷",club:"croatia",players:[{n:"Danijel Subašić",p:"GK",r:8},{n:"Luka Modrić",p:"CM",r:10},{n:"Ivan Rakitić",p:"CM",r:9},{n:"Ivan Perišić",p:"LW",r:9},{n:"Mario Mandžukić",p:"ST",r:8},{n:"Dejan Lovren",p:"CB",r:7},{n:"Vedran Ćorluka",p:"CB",r:7},{n:"Šime Vrsaljko",p:"RB",r:7},{n:"Ante Rebić",p:"RW",r:8},{n:"Marcelo Brozović",p:"CDM",r:8},{n:"Milan Badelj",p:"CM",r:7},{n:"Domagoj Vida",p:"CB",r:7}]},
+  bel_2018:{name:"Belgio",season:"2018",country:"🇧🇪",club:"belgium",players:[{n:"Thibaut Courtois",p:"GK",r:10},{n:"Eden Hazard",p:"LW",r:10},{n:"Romelu Lukaku",p:"ST",r:9},{n:"Kevin De Bruyne",p:"CAM",r:10},{n:"Axel Witsel",p:"CDM",r:8},{n:"Vincent Kompany",p:"CB",r:9},{n:"Thomas Meunier",p:"RB",r:7},{n:"Jan Vertonghen",p:"CB",r:8},{n:"Toby Alderweireld",p:"CB",r:8},{n:"Nacer Chadli",p:"LW",r:7},{n:"Dries Mertens",p:"ST",r:8},{n:"Youri Tielemans",p:"CM",r:7}]},
+  arg_2022:{name:"Argentina",season:"2022",country:"🇦🇷",club:"argentina",players:[{n:"Emiliano Martínez",p:"GK",r:10},{n:"Lionel Messi",p:"CAM",r:10},{n:"Julián Álvarez",p:"ST",r:9},{n:"Rodrigo De Paul",p:"CM",r:8},{n:"Nicolás Otamendi",p:"CB",r:8},{n:"Cristian Romero",p:"CB",r:8},{n:"Nahuel Molina",p:"RB",r:7},{n:"Nicolás Tagliafico",p:"LB",r:7},{n:"Leandro Paredes",p:"CDM",r:7},{n:"Mac Allister",p:"CM",r:8},{n:"Ángel Di María",p:"RW",r:8},{n:"Lautaro Martínez",p:"ST",r:9}]},
+  fra_2022:{name:"Francia",season:"2022",country:"🇫🇷",club:"france",players:[{n:"Hugo Lloris",p:"GK",r:9},{n:"Kylian Mbappé",p:"ST",r:10},{n:"Antoine Griezmann",p:"CAM",r:9},{n:"Olivier Giroud",p:"ST",r:8},{n:"Raphaël Varane",p:"CB",r:8},{n:"Dayot Upamecano",p:"CB",r:7},{n:"Theo Hernandez",p:"LB",r:8},{n:"Benjamin Pavard",p:"RB",r:7},{n:"Adrien Rabiot",p:"CM",r:7},{n:"Aurélien Tchouaméni",p:"CDM",r:8},{n:"Marcus Thuram",p:"LW",r:8},{n:"Randal Kolo Muani",p:"ST",r:7}]},
+  mar_2022:{name:"Marocco",season:"2022",country:"🇲🇦",club:"morocco",players:[{n:"Yassine Bounou",p:"GK",r:10},{n:"Achraf Hakimi",p:"RB",r:10},{n:"Hakim Ziyech",p:"RW",r:9},{n:"Sofiane Boufal",p:"LW",r:8},{n:"Youssef En-Nesyri",p:"ST",r:8},{n:"Azzedine Ounahi",p:"CM",r:8},{n:"Selim Amallah",p:"CM",r:7},{n:"Romain Saïss",p:"CB",r:8},{n:"Nayef Aguerd",p:"CB",r:7},{n:"Noussair Mazraoui",p:"LB",r:8},{n:"Sofyan Amrabat",p:"CDM",r:9},{n:"Jawad El Yamiq",p:"CB",r:7}]},
+  cro_2022:{name:"Croazia",season:"2022",country:"🇭🇷",club:"croatia",players:[{n:"Dominik Livaković",p:"GK",r:9},{n:"Luka Modrić",p:"CM",r:10},{n:"Ivan Perišić",p:"LW",r:8},{n:"Bruno Petković",p:"ST",r:7},{n:"Marko Livaja",p:"RW",r:7},{n:"Mateo Kovačić",p:"CM",r:8},{n:"Marcelo Brozović",p:"CDM",r:8},{n:"Josip Gvardiol",p:"CB",r:9},{n:"Dejan Lovren",p:"CB",r:7},{n:"Josip Stanišić",p:"RB",r:7},{n:"Borna Sosa",p:"LB",r:7},{n:"Andrej Kramarić",p:"ST",r:8}]},
+};
+
+const WC_TOURNAMENTS=[
+  {id:'wc_pionieri',name:'I Pionieri',years:'1930–1954',emoji:'🏅',
+   desc:'Uruguay biscampione in casa, l\'Italia di Pozzo vince due volte, l\'Ungheria di Puskás e Kocsis incanta il mondo.',
+   teams:['uru_1930','arg_1930','ita_1934','cze_1934','ita_1938','hun_1938','uru_1950','bra_1950','ger_1954','hun_1954']},
+  {id:'wc_pele',name:"L'Era di Pelé",years:'1958–1970',emoji:'⭐',
+   desc:'Il Brasile di Pelé domina tre edizioni, l\'Inghilterra vince in casa, il Portogallo di Eusébio sorprende tutti.',
+   teams:['bra_1958','swe_1958','bra_1962','cze_1962','eng_1966','ger_1966','por_1966','bra_1970','ita_1970']},
+  {id:'wc_totale',name:'Calcio Totale',years:'1974–1982',emoji:'🔵',
+   desc:'La Germania di Beckenbauer campione, l\'Olanda di Cruyff rivoluziona il gioco, l\'Italia di Zoff e Rossi trionfa.',
+   teams:['ger_1974','ned_1974','pol_1974','arg_1978','ned_1978','bra_1978','ita_1982','bra_1982','ger_1982','pol_1982','fra_1982']},
+  {id:'wc_campioni',name:'Era dei Campioni',years:'1986–1994',emoji:'🔴',
+   desc:'Maradona leggendario con l\'Argentina, la Germania efficace di Matthäus, il Brasile di Romário, il Baggio delle notti italiane.',
+   teams:['arg_1986','ger_1986','fra_1986','bra_1986','ger_1990','arg_1990','ita_1990','eng_1990','bra_1994','ita_1994','bul_1994']},
+  {id:'wc_tattica',name:'Rivoluzione Tattica',years:'1998–2006',emoji:'🚀',
+   desc:'La Francia di Zidane campione in casa, il Brasile di Ronaldo inarrestabile, l\'Italia campione in Germania con Buffon e Pirlo.',
+   teams:['fra_1998','bra_1998','cro_1998','ned_1998','bra_2002','ger_2002','tur_2002','kor_2002','ita_2006','fra_2006','ger_2006','por_2006']},
+  {id:'wc_moderna',name:'Era Moderna',years:'2010–2022',emoji:'🌟',
+   desc:'La Spagna del tiki-taka, la Germania del falso nueve, la Francia campione bis, l\'Argentina di Messi finalmente campione.',
+   teams:['esp_2010','ned_2010','ger_2014','arg_2014','bra_2014','fra_2018','cro_2018','bel_2018','arg_2022','fra_2022','mar_2022','cro_2022']},
+  {id:'wc_alltime',name:'All Time',years:'1930–2022',emoji:'🌍',
+   desc:'Tutte le leggende mondiali senza limite di era. Il draft definitivo della Coppa del Mondo.',
+   teams:['uru_1930','arg_1930','ita_1934','cze_1934','ita_1938','hun_1938','uru_1950','bra_1950','ger_1954','hun_1954','bra_1958','swe_1958','bra_1962','cze_1962','eng_1966','ger_1966','por_1966','bra_1970','ita_1970','ger_1974','ned_1974','pol_1974','arg_1978','ned_1978','bra_1978','ita_1982','bra_1982','ger_1982','pol_1982','fra_1982','arg_1986','ger_1986','fra_1986','bra_1986','ger_1990','arg_1990','ita_1990','eng_1990','bra_1994','ita_1994','bul_1994','fra_1998','bra_1998','cro_1998','ned_1998','bra_2002','ger_2002','tur_2002','kor_2002','ita_2006','fra_2006','ger_2006','por_2006','esp_2010','ned_2010','ger_2014','arg_2014','bra_2014','fra_2018','cro_2018','bel_2018','arg_2022','fra_2022','mar_2022','cro_2022'],
+   allTime:true},
+];
+
+const WC_KNOCKOUT_OPPS={
+  r16:[{name:'Polonia 1974',str:7.5,id:'pol_1974'},{name:'Inghilterra 1966',str:7.8,id:'eng_1966'},
+       {name:'Francia 1982',str:7.6,id:'fra_1982'},{name:'Turchia 2002',str:7.5,id:'tur_2002'},
+       {name:'Brasile 1978',str:7.8,id:'bra_1978'},{name:'Polonia 1982',str:7.2,id:'pol_1982'},
+       {name:'Croazia 1998',str:7.8,id:'cro_1998'},{name:'Corea del Sud 2002',str:7.5,id:'kor_2002'}],
+  qf: [{name:'Olanda 1978',str:8.5,id:'ned_1978'},{name:'Germania 1966',str:8.2,id:'ger_1966'},
+       {name:'Italia 1970',str:8.4,id:'ita_1970'},{name:'Brasile 1986',str:8.3,id:'bra_1986'},
+       {name:'Argentina 1990',str:8.2,id:'arg_1990'},{name:'Portogallo 2006',str:8.4,id:'por_2006'}],
+  sf: [{name:'Olanda 1974',str:8.8,id:'ned_1974'},{name:'Italia 1982',str:8.9,id:'ita_1982'},
+       {name:'Francia 1998',str:8.8,id:'fra_1998'},{name:'Brasile 2002',str:9.0,id:'bra_2002'},
+       {name:'Germania 2014',str:8.9,id:'ger_2014'},{name:'Francia 2018',str:8.9,id:'fra_2018'}],
+  final:[{name:'Brasile 1970',str:9.5,id:'bra_1970'},{name:'Argentina 1986',str:9.4,id:'arg_1986'},
+         {name:'Italia 1982',str:9.2,id:'ita_1982'},{name:'Germania 2014',str:9.3,id:'ger_2014'},
+         {name:'Spagna 2010',str:9.3,id:'esp_2010'},{name:'Argentina 2022',str:9.4,id:'arg_2022'}],
+};
+
+const WC_COACHES=[
+  {n:"Vittorio Pozzo",nat:"ITA",pref:"4-3-3"},
+  {n:"Aimé Jacquet",nat:"FRA",pref:"4-3-3"},
+  {n:"Luiz Felipe Scolari",nat:"BRA",pref:"4-4-2"},
+  {n:"Didier Deschamps",nat:"FRA",pref:"4-3-3"},
+  {n:"Lionel Scaloni",nat:"ARG",pref:"4-4-2"},
+  {n:"Joachim Löw",nat:"GER",pref:"4-2-3-1"},
+  {n:"Vicente del Bosque",nat:"ESP",pref:"4-3-3"},
+  {n:"César Menotti",nat:"ARG",pref:"4-3-3"},
+  {n:"Carlos Bilardo",nat:"ARG",pref:"3-5-2"},
+  {n:"Franz Beckenbauer",nat:"GER",pref:"4-4-2"},
+  {n:"Rinus Michels",nat:"NED",pref:"4-3-3"},
+  {n:"Helmut Schön",nat:"GER",pref:"4-3-3"},
+  {n:"Mario Zagallo",nat:"BRA",pref:"4-2-4"},
+  {n:"Guus Hiddink",nat:"NED",pref:"4-3-3"},
+  {n:"Marcello Lippi",nat:"ITA",pref:"4-4-2"},
+  {n:"Jürgen Klinsmann",nat:"GER",pref:"4-4-2"},
+  {n:"Bora Milutinovic",nat:"USA",pref:"4-3-3"},
+  {n:"Sepp Herberger",nat:"GER",pref:"4-2-4"},
+  {n:"Miroslav Blazevic",nat:"CRO",pref:"4-4-2"},
+  {n:"Enzo Bearzot",nat:"ITA",pref:"4-4-2"},
+];
+
+const WC_JERSEY_COLORS={
+  uru_1930:"#9bc4e2",arg_1930:"#74acd6",ita_1934:"#003087",cze_1934:"#d40000",
+  ita_1938:"#003087",hun_1938:"#cc0000",uru_1950:"#9bc4e2",bra_1950:"#f5c800",
+  ger_1954:"#f0f0f0",hun_1954:"#cc0000",bra_1958:"#f5c800",swe_1958:"#006AA7",
+  bra_1962:"#f5c800",cze_1962:"#d40000",eng_1966:"#f0f0f0",ger_1966:"#f0f0f0",
+  por_1966:"#006600",bra_1970:"#f5c800",ita_1970:"#003087",ger_1974:"#f0f0f0",
+  ned_1974:"#f07800",pol_1974:"#f0f0f0",arg_1978:"#74acd6",ned_1978:"#f07800",
+  bra_1978:"#f5c800",ita_1982:"#003087",bra_1982:"#f5c800",ger_1982:"#f0f0f0",
+  pol_1982:"#f0f0f0",fra_1982:"#002395",arg_1986:"#74acd6",ger_1986:"#f0f0f0",
+  fra_1986:"#002395",bra_1986:"#f5c800",ger_1990:"#f0f0f0",arg_1990:"#74acd6",
+  ita_1990:"#003087",eng_1990:"#f0f0f0",bra_1994:"#f5c800",ita_1994:"#003087",
+  bul_1994:"#006749",fra_1998:"#002395",bra_1998:"#f5c800",cro_1998:"#cc3333",
+  ned_1998:"#f07800",bra_2002:"#f5c800",ger_2002:"#f0f0f0",tur_2002:"#e30a17",
+  kor_2002:"#c60c30",ita_2006:"#003087",fra_2006:"#002395",ger_2006:"#f0f0f0",
+  por_2006:"#006600",esp_2010:"#d00000",ned_2010:"#f07800",ger_2014:"#f0f0f0",
+  arg_2014:"#74acd6",bra_2014:"#f5c800",fra_2018:"#002395",cro_2018:"#cc3333",
+  bel_2018:"#000080",arg_2022:"#74acd6",fra_2022:"#002395",mar_2022:"#c1272d",
+  cro_2022:"#cc3333",
+};
+
+function _activeTeams(){ return G.gameMode==='copa' ? COPA_TEAMS : G.gameMode==='wc' ? WC_TEAMS : TEAMS; }
+function _activeJerseyColors(){ return G.gameMode==='copa' ? COPA_JERSEY_COLORS : G.gameMode==='wc' ? WC_JERSEY_COLORS : JERSEY_COLORS; }
 const JERSEY_COLORS={
   por_8687:'#003087',rm_6566:'#f5f5f5',fey_6970:'#cc0000',
   ben_6162:'#cc0000',int_6465:'#1c3fa8',cel_6667:'#1e8c1e',
@@ -2501,7 +2695,7 @@ function slotTierClass(r){
   return'tier-low';
 }
 function filledSlotHTML(player,grp){
-  const col=(COPA_JERSEY_COLORS[player.teamId]||JERSEY_COLORS[player.teamId])||'#555555';
+  const col=(WC_JERSEY_COLORS[player.teamId]||COPA_JERSEY_COLORS[player.teamId]||JERSEY_COLORS[player.teamId])||'#555555';
   const tierCss=slotTierCss(player.r);
   const tierCls=slotTierClass(player.r);
   const isElite=player.r>=9.5;
@@ -2579,8 +2773,8 @@ function topPlayers(teamId,n){const t=(_activeTeams()[teamId]||TEAMS[teamId]);re
 ═══════════════════════════════════════ */
 function showEraGrid(){
   // _eraFromFormat is set by browseEraFromFormat(), not here
-  var _tourList = G.gameMode==='copa' ? COPA_TOURNAMENTS : TOURNAMENTS;
-  var _teamDb   = G.gameMode==='copa' ? COPA_TEAMS : TEAMS;
+  var _tourList = G.gameMode==='copa' ? COPA_TOURNAMENTS : G.gameMode==='wc' ? WC_TOURNAMENTS : TOURNAMENTS;
+  var _teamDb   = G.gameMode==='copa' ? COPA_TEAMS : G.gameMode==='wc' ? WC_TEAMS : TEAMS;
   var grid = document.getElementById('era-grid');
   grid.innerHTML = _tourList.filter(function(trn){return !trn.allTime;}).map(function(trn){
     var i=_tourList.indexOf(trn);
@@ -2609,7 +2803,7 @@ function selectEra(idx, el){
   document.getElementById('btn-era-confirm').classList.remove('btn-inactive');
 }
 function selectAllTime(){
-  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
   const t=_tourList.find(function(x){return x.allTime;});
   if(_eraFromFormat){
     selectedEraT=null; // null = All Time
@@ -2622,7 +2816,7 @@ function selectAllTime(){
 }
 function confirmEra(){
   if(selectedEraIdx < 0) return;
-  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
   if(_eraFromFormat){
     selectedEraT=_tourList[selectedEraIdx];
     _eraFromFormat=false;
@@ -2672,7 +2866,7 @@ function _syncFormatCards(){
     nuovoCard.style.display='';
   }
 }
-function applyTournamentTheme(mode){if(mode==='copa'){document.body.setAttribute('data-mode','copa');}else{document.body.removeAttribute('data-mode');}}
+function applyTournamentTheme(mode){if(mode==='copa'){document.body.setAttribute('data-mode','copa');}else if(mode==='wc'){document.body.setAttribute('data-mode','wc');}else{document.body.removeAttribute('data-mode');}}
 function startGame(){
   G.gameMode='ucl';
   selectedFormat='classic';
@@ -2755,6 +2949,38 @@ function startGameCopa(){
   _syncFormatCards();
   applyTournamentTheme('copa');
 }
+function quickStartWC(){
+  G.gameMode='wc';
+  selectedFormat='classic';
+  selectedEraT=null;
+  selectedDiff='normal';
+  G.format='classic';
+  G.difficulty='normal';
+  const era=WC_TOURNAMENTS.find(function(t){return t.allTime;});
+  applyTournament(era);
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  applyTournamentTheme('wc');
+  showScreen('screen-formation');
+}
+function startGameWC(){
+  G.gameMode='wc';
+  selectedFormat='classic';
+  selectedEraT=null;
+  selectedDiff='normal';
+  document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
+  const def=document.getElementById('fc-classic');if(def)def.classList.add('fc-sel');
+  document.querySelectorAll('.diff-card').forEach(function(c){c.classList.remove('diff-sel');});
+  const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
+  showScreen('screen-format');
+  updateEraDisplay();
+  _syncFormatCards();
+  applyTournamentTheme('wc');
+}
 function selectFormat(f,el){
   selectedFormat=f;
   document.querySelectorAll('.format-card').forEach(c=>c.classList.remove('fc-sel'));
@@ -2763,7 +2989,7 @@ function selectFormat(f,el){
 function confirmFormat(){
   G.format=selectedFormat;
   G.difficulty=selectedDiff||'normal';
-  const era=selectedEraT||(G.gameMode==='copa'?COPA_TOURNAMENTS.find(function(t){return t.allTime;}):TOURNAMENTS.find(t=>t.id==='alltime'));
+  const era=selectedEraT||(G.gameMode==='copa'?COPA_TOURNAMENTS.find(function(t){return t.allTime;}):G.gameMode==='wc'?WC_TOURNAMENTS.find(function(t){return t.allTime;}):TOURNAMENTS.find(t=>t.id==='alltime'));
   applyTournament(era);
   G.tactic='balanced';
   renderFormationGrid();
@@ -3024,7 +3250,7 @@ function renderThreeCards(){
       const teamEntry=TEAMS[teamKey]||null;
       const season=teamEntry?teamEntry.season.slice(2):'';
       const displayClub=teamEntry?teamEntry.name:p.club;
-      const col=(COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
+      const col=(WC_JERSEY_COLORS[p.teamId]||COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
       const tierCss=slotTierCss(p.r);
       const targetSlot=empSlots[0]?empSlots[0].pos:'';
       const isElite=p.r>=9.5;
@@ -3129,7 +3355,7 @@ function finalizeDraft(){
 ═══════════════════════════════════════ */
 function showCoachDraft(){
   // Already on screen-draft — don't call showScreen (avoids scroll-to-top burying cards)
-  var _cPool=G.gameMode==='copa'?COPA_COACHES:COACHES;
+  var _cPool=G.gameMode==='copa'?COPA_COACHES:G.gameMode==='wc'?WC_COACHES:COACHES;
   var pool=_cPool.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
   G._coachPool=pool;
   // Keep the pitch visible — just update the header and hide draft controls
@@ -3197,14 +3423,14 @@ function pickCoach(i){
 function setupCampaign(){
   const t=G.tournament;
   var _DB=_activeTeams();
-  var _KNOCK=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:KNOCKOUT_OPPS;
+  var _KNOCK=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:G.gameMode==='wc'?WC_KNOCKOUT_OPPS:KNOCKOUT_OPPS;
 
   if(G.format==='coppa'){
     // Pure knockout — no group stage
-    var _COPPA=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:COPPA_OPPS;
+    var _COPPA=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:G.gameMode==='wc'?WC_KNOCKOUT_OPPS:COPPA_OPPS;
     G.groupTeams=[];G.groupOppResults=[];
     G.knockOpps=pickKnockSeq(
-      G.gameMode==='copa'
+      (G.gameMode==='copa'||G.gameMode==='wc')
         ?[_COPPA.r16,_COPPA.qf,_COPPA.sf,_COPPA.final]
         :[COPPA_OPPS.r1,COPPA_OPPS.r2,COPPA_OPPS.qf,COPPA_OPPS.sf,COPPA_OPPS.final],
       []);
@@ -3469,7 +3695,7 @@ function _runMatch(){
     _awayXI=oppPlayerPool.slice(0,11).map(function(p){return{n:p.n,p:p.p};});
   }
 
-  const _oppCol=(_oppTid&&(COPA_JERSEY_COLORS[_oppTid]||JERSEY_COLORS[_oppTid]))||'#888';
+  const _oppCol=(_oppTid&&(WC_JERSEY_COLORS[_oppTid]||COPA_JERSEY_COLORS[_oppTid]||JERSEY_COLORS[_oppTid]))||'#888';
 
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
   document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">Decempionz FC</span>';
@@ -3945,7 +4171,7 @@ function showResult(){
     _pendingMatch={oppTactic:_nOt};  // playRound() will pick this up
     var _nBeats=Object.keys(TACTIC_WINS).find(function(k){return TACTIC_WINS[k]===_nOt;});
     var _rNextScout=document.getElementById('r-next-scout');
-    var _nCol=(_nextInfo.oppId&&(COPA_JERSEY_COLORS[_nextInfo.oppId]||JERSEY_COLORS[_nextInfo.oppId]))||'#888';
+    var _nCol=(_nextInfo.oppId&&(WC_JERSEY_COLORS[_nextInfo.oppId]||COPA_JERSEY_COLORS[_nextInfo.oppId]||JERSEY_COLORS[_nextInfo.oppId]))||'#888';
     if(_rNextScout)_rNextScout.innerHTML=
       '<div style="font-size:.55rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:5px;display:flex;justify-content:space-between">'+t('next.opponent')+(_nextInfo.nextRoundLabel?'<span style="font-weight:400;text-transform:none;letter-spacing:0">'+_nextInfo.nextRoundLabel+'</span>':'')+'</div>'
       +'<div style="font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:8px">'+jerseyIcon(_nCol,24)+_nextInfo.oppName+'</div>'
@@ -4249,15 +4475,15 @@ function renderTrophyPitch(){
 }
 
 function showTrophy(){
-  var _isCopa=G.gameMode==='copa';
-  const formatTitle=_isCopa?{coppa:t('trophy.copa_old_cup'),classic:t('trophy.copa_classic'),nuovo:t('trophy.copa_classic')}:{coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
+  var _isCopa=G.gameMode==='copa';var _isWC=G.gameMode==='wc';
+  const formatTitle=_isCopa?{coppa:t('trophy.copa_old_cup'),classic:t('trophy.copa_classic'),nuovo:t('trophy.copa_classic')}:_isWC?{coppa:t('trophy.wc_old_cup'),classic:t('trophy.wc_classic'),nuovo:t('trophy.wc_classic')}:{coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
   const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
   const gLabel=G.format==='nuovo'?'LG':'GP';
   const all=[...G.groupUserResults,...G.knockResults];
   const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
-  const gradeMsg={'S':t('grade.s'),'A':_isCopa?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
+  const gradeMsg={'S':t('grade.s'),'A':(_isCopa||_isWC)?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
   const campL=all.filter(r=>r.myG<r.oppG).length;
@@ -4451,7 +4677,7 @@ function _shareData(){
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
   const isWinner=G.phase==='done'||document.getElementById('screen-trophy').classList.contains('active');
-  const formatLabel=G.gameMode==='copa'?({'coppa':'Copa Old Cup','classic':'Copa Classic','nuovo':'Copa Classic'}[G.format]||'Copa Libertadores'):({'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League');
+  const formatLabel=G.gameMode==='copa'?({'coppa':'Copa Old Cup','classic':'Copa Classic','nuovo':'Copa Classic'}[G.format]||'Copa Libertadores'):G.gameMode==='wc'?({'coppa':'WC Old Cup','classic':'WC Classic','nuovo':'WC Classic'}[G.format]||'World Cup Legends'):({'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League');
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
   const isIt=(G.lang||'it')==='it';
@@ -4577,7 +4803,7 @@ function buildShareCanvas(){
   c.font='bold 34px Arial,sans-serif'; c.fillStyle='#c9a227';
   c.fillText('decempionz.com',W/2,bottomY+62);
   c.font='20px Arial,sans-serif'; c.fillStyle='#2451a8';
-  var _ht=G.gameMode==='copa'?'#Decempionz  #CopaLibertadores  #FootballDraft':'#Decempionz  #ChampionsLeague  #FootballDraft';
+  var _ht=G.gameMode==='copa'?'#Decempionz  #CopaLibertadores  #FootballDraft':G.gameMode==='wc'?'#Decempionz  #WorldCupLegends  #FootballDraft':'#Decempionz  #ChampionsLeague  #FootballDraft';
   c.fillText(_ht,W/2,bottomY+97);
 
   // Gold bottom bar
@@ -4616,8 +4842,8 @@ function checkChallengeURL(){
     G.gameMode=mode;
     selectedDiff=diff;
     selectedFormat=fmt;
-    var _challengeTournList=mode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
-    var _challengeAllTimeId=mode==='copa'?'copa_alltime':'alltime';
+    var _challengeTournList=mode==='copa'?COPA_TOURNAMENTS:mode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
+    var _challengeAllTimeId=mode==='copa'?'copa_alltime':mode==='wc'?'wc_alltime':'alltime';
     if(eraId===_challengeAllTimeId||eraId==='alltime'){
       selectedEraT=null;
     }else{
@@ -4814,7 +5040,7 @@ function _devQuickDraft(type){
 
   // Pick a random tournament compatible with format
   var _devMode=G.gameMode||'ucl';
-  var _devTList=_devMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+  var _devTList=_devMode==='copa'?COPA_TOURNAMENTS:_devMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
   var trnPool=_devTList.filter(function(t){
     if(fmt==='coppa') return !t.allTime;
     return true;
