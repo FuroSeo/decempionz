@@ -1037,10 +1037,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- HALL OF FAME -->
 <div class="screen" id="screen-hof">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
-  <div style="text-align:center;margin-bottom:20px">
-    <div style="font-size:2rem;margin-bottom:6px">🏆</div>
+  <div style="text-align:center;margin-bottom:14px">
     <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">Hall of Fame</div>
     <div style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
+  </div>
+  <div class="tourn-tab-bar" style="margin-bottom:14px">
+    <button id="hof-tab-ucl" class="tourn-tab tab-active" onclick="switchHofTab('ucl')">🏆 UCL</button>
+    <button id="hof-tab-copa" class="tourn-tab" onclick="switchHofTab('copa')">🌎 Copa</button>
+    <button id="hof-tab-wc" class="tourn-tab" onclick="switchHofTab('wc')">🌍 World Cup</button>
   </div>
   <div id="hof-loading" style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Caricamento...</div>
   <div id="hof-entries" style="display:none"></div>
@@ -4639,43 +4643,73 @@ document.addEventListener('DOMContentLoaded',function(){
 
 // ── Hall of Fame ──────────────────────────────────────────────────────────────
 var _hofLoaded=false;
+var _hofData=[];
+var _hofActiveMode='ucl';
+
+function switchHofTab(mode){
+  _hofActiveMode=mode;
+  ['ucl','copa','wc'].forEach(function(m){
+    var tb=document.getElementById('hof-tab-'+m);
+    if(tb) tb.classList.toggle('tab-active',m===mode);
+  });
+  if(_hofLoaded) _renderHofEntries();
+}
+
+function _modeLabel(m){
+  return m==='copa'?'🌎 Copa':m==='wc'?'🌍 World Cup':'🏆 UCL';
+}
+
+function _renderHofEntries(){
+  var container=document.getElementById('hof-entries');
+  var filtered=_hofData.filter(function(e){
+    var em=e.mode||'ucl';
+    return em===_hofActiveMode;
+  });
+  container.style.display='block';
+  if(!filtered.length){
+    container.innerHTML='<div style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Nessun risultato per questo torneo. Sii il primo!</div>';
+    return;
+  }
+  container.innerHTML=filtered.map(function(e,i){
+    var gClass='hof-grade-'+(e.grade||'C');
+    var lu=e.lineup||{};
+    var lineupHtml=[
+      lu.GK&&lu.GK.length?'🧤 '+lu.GK.join(', '):'',
+      lu.DEF&&lu.DEF.length?'🛡️ '+lu.DEF.join(', '):'',
+      lu.MID&&lu.MID.length?'⚙️ '+lu.MID.join(', '):'',
+      lu.FWD&&lu.FWD.length?'⚡ '+lu.FWD.join(', '):'',
+    ].filter(Boolean).join('<br>');
+    return '<div class="hof-card">'
+      +'<div class="hof-card-header">'
+      +'<div>'
+      +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
+      +'<div class="hof-meta">'+_modeLabel(e.mode||'ucl')+' · '+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
+      +'</div>'
+      +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
+      +'</div>'
+      +'<div class="hof-stats"><div>⚽ <span>Record</span> '+e.record+'</div><div>🥅 <span>Gol</span> '+e.goals+'</div>'+(e.topScorer?'<div>🌟 '+e.topScorer+'</div>':'')+'</div>'
+      +(lineupHtml?'<div class="hof-lineup">'+lineupHtml+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
 function openHallOfFame(){
+  // Sync active tab to current game mode if in-game, else keep last
+  if(G.gameMode) _hofActiveMode=G.gameMode;
+  ['ucl','copa','wc'].forEach(function(m){
+    var tb=document.getElementById('hof-tab-'+m);
+    if(tb) tb.classList.toggle('tab-active',m===_hofActiveMode);
+  });
   showScreen('screen-hof');
-  if(_hofLoaded)return;
+  if(_hofLoaded){_renderHofEntries();return;}
   var url='https://raw.githubusercontent.com/FuroSeo/decempionz/main/hall-of-fame.json';
   fetch(url)
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){
       _hofLoaded=true;
+      _hofData=data.entries||[];
       document.getElementById('hof-loading').style.display='none';
-      var container=document.getElementById('hof-entries');
-      container.style.display='block';
-      var entries=data.entries||[];
-      if(!entries.length){
-        container.innerHTML='<div style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Nessun risultato ancora. Sii il primo!</div>';
-        return;
-      }
-      container.innerHTML=entries.map(function(e,i){
-        var gClass='hof-grade-'+(e.grade||'C');
-        var lu=e.lineup||{};
-        var lineupHtml=[
-          lu.GK&&lu.GK.length?'🧤 '+lu.GK.join(', '):'',
-          lu.DEF&&lu.DEF.length?'🛡️ '+lu.DEF.join(', '):'',
-          lu.MID&&lu.MID.length?'⚙️ '+lu.MID.join(', '):'',
-          lu.FWD&&lu.FWD.length?'⚡ '+lu.FWD.join(', '):'',
-        ].filter(Boolean).join('<br>');
-        return '<div class="hof-card">'
-          +'<div class="hof-card-header">'
-          +'<div>'
-          +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
-          +'<div class="hof-meta">'+(e.mode==='copa'?'🌎 Copa · ':'🏆 UCL · ')+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
-          +'</div>'
-          +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
-          +'</div>'
-          +'<div class="hof-stats"><div>⚽ <span>Record</span> '+e.record+'</div><div>🥅 <span>Gol</span> '+e.goals+'</div>'+(e.topScorer?'<div>🌟 '+e.topScorer+'</div>':'')+'</div>'
-          +(lineupHtml?'<div class="hof-lineup">'+lineupHtml+'</div>':'')
-          +'</div>';
-      }).join('');
+      _renderHofEntries();
     })
     .catch(function(err){
       document.getElementById('hof-loading').style.display='none';
