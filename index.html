@@ -3268,10 +3268,11 @@ function renderThreeCards(){
   container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0;overflow:hidden">'
     +G.draftCards.map(function(p,i){
       const empSlots=compatibleEmptySlots(p);
-      const teamKey=p.teamId||(Object.entries(TEAMS).find(([k,t])=>t.name===p.club)||[])[0]||'';
-      const teamEntry=TEAMS[teamKey]||null;
-      const season=teamEntry?teamEntry.season.slice(2):'';
+      var _aDB=_activeTeams();
+      const teamEntry=_aDB[p.teamId]||TEAMS[p.teamId]||null;
+      const season=teamEntry?(teamEntry.season.length<=4?teamEntry.season:"'"+teamEntry.season.slice(-2)):'';
       const displayClub=teamEntry?teamEntry.name:p.club;
+      const countryFlag=teamEntry&&teamEntry.country?teamEntry.country+' ':'';
       const col=(WC_JERSEY_COLORS[p.teamId]||COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
       const tierCss=slotTierCss(p.r);
       const targetSlot=empSlots[0]?empSlots[0].pos:'';
@@ -3289,7 +3290,7 @@ function renderThreeCards(){
         +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
         +playerSprite(col)
         +starBadge
-        +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+displayClub+" '"+season+'</div>'
+        +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+countryFlag+displayClub+(season?' · '+season:'')+'</div>'
         +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.15;max-width:100%;overflow:hidden;word-break:break-word">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
