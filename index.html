@@ -2173,6 +2173,205 @@ const COPPA_OPPS = {
   final:[{name:'Ajax 1971-72',str:9.0,id:'aja_7172'},{name:'Bayern Munich 1974-75',str:9.2,id:'bay_7475'},{name:'Barcelona 1991-92',str:9.1,id:'bar_9192'},{name:'Red Star 1990-91',str:8.9,id:'red_9091'}],
 };
 
+
+/* ═══════════════════════════════════════════════════════
+   COPA LIBERTADORES — DATASET
+   24 rose storiche · 4 ere · 1960–2024
+═══════════════════════════════════════════════════════ */
+const COPA_TEAMS = {
+  /* ── Los Pioneros 1960–1975 ── */
+  pen_6061:{name:'Peñarol',season:'1960-61',country:'🇺🇾',club:'penarol',players:[
+    {n:'Alberto Spencer',p:'ST',r:10},{n:'Luis Cubilla',p:'RW',r:9},{n:'Nestor Goncalves',p:'CM',r:9},
+    {n:'Pedro Rocha',p:'CM',r:8},{n:'Jose Sasia',p:'ST',r:8},{n:'Ladislao Mazurkiewicz',p:'GK',r:8},
+    {n:'Juan Hohberg',p:'CAM',r:7},{n:'Omar Caetano',p:'CB',r:7},{n:'Jorge Manicera',p:'CB',r:7},
+    {n:'Julio Abbadie',p:'LW',r:7},{n:'Eliseo Alvarez',p:'RB',r:7},{n:'Carlos Borges',p:'LW',r:7}]},
+
+  san_6263:{name:'Santos',season:'1962-63',country:'🇧🇷',club:'santos_fc',players:[
+    {n:'Pelé',p:'ST',r:10},{n:'Gilmar',p:'GK',r:9},{n:'Coutinho',p:'ST',r:9},
+    {n:'Zito',p:'CM',r:9},{n:'Pepe',p:'LW',r:8},{n:'Dorval',p:'RW',r:8},
+    {n:'Mengalvio',p:'CAM',r:8},{n:'Mauro',p:'CB',r:8},{n:'Dalmo',p:'LB',r:7},
+    {n:'Lima',p:'RB',r:7},{n:'Calvet',p:'CB',r:7},{n:'Olavo',p:'LM',r:7}]},
+
+  ind_6465:{name:'Independiente',season:'1964-65',country:'🇦🇷',club:'independiente',players:[
+    {n:'Raul Savoy',p:'CM',r:8},{n:'Alfredo Rojas',p:'ST',r:8},{n:'Ruben Marcos',p:'CM',r:8},
+    {n:'Miguel Santoro',p:'CDM',r:7},{n:'Ruben Navarro',p:'CB',r:7},{n:'Roque Avallay',p:'RB',r:7},
+    {n:'Vicente De La Mata',p:'CAM',r:7},{n:'Pedro Caceres',p:'ST',r:7},{n:'Oscar Malbernat',p:'CB',r:7},
+    {n:'Carlos Del Bono',p:'GK',r:7},{n:'Jorge Taddei',p:'LB',r:7},{n:'Alberto Acosta',p:'LW',r:7}]},
+
+  est_6870:{name:'Estudiantes',season:'1968-70',country:'🇦🇷',club:'estudiantes',players:[
+    {n:'Juan Ramón Verón',p:'LW',r:9},{n:'Carlos Bilardo',p:'CM',r:8},{n:'Héctor Pachame',p:'CDM',r:8},
+    {n:'Eduardo Flores',p:'ST',r:8},{n:'Carlos Manera',p:'LB',r:7},{n:'Raúl Madero',p:'CB',r:7},
+    {n:'Alberto Poletti',p:'GK',r:7},{n:'Oscar Aguirre Suarez',p:'RB',r:7},{n:'Conigliaro',p:'RW',r:7},
+    {n:'Ribaudo',p:'CM',r:7},{n:'Medina',p:'CB',r:7},{n:'Juan Echecopar',p:'CAM',r:7}]},
+
+  ind_7275:{name:'Independiente',season:'1972-75',country:'🇦🇷',club:'independiente',players:[
+    {n:'Ricardo Bochini',p:'CAM',r:9},{n:'Daniel Bertoni',p:'RW',r:8},{n:'Juan Pastoriza',p:'CM',r:8},
+    {n:'Pedro Caceres',p:'ST',r:8},{n:'Mario Galván',p:'CB',r:8},{n:'Miguel Santoro',p:'CDM',r:7},
+    {n:'Jorge Veira',p:'CM',r:7},{n:'Ricardo Pavoni',p:'LW',r:7},{n:'Francisco Sá',p:'GK',r:7},
+    {n:'Jorge Taddei',p:'RB',r:7},{n:'Oscar Malbernat',p:'CB',r:7},{n:'Roque Avallay',p:'LB',r:7}]},
+
+  nac_7172:{name:'Nacional',season:'1971',country:'🇺🇾',club:'nacional_uru',players:[
+    {n:'Luis Cubilla',p:'RW',r:9},{n:'Julio Montero Castillo',p:'CB',r:8},{n:'Ildo Maneiro',p:'ST',r:8},
+    {n:'Ladislao Mazurkiewicz',p:'GK',r:8},{n:'Atilio Ancheta',p:'CDM',r:7},{n:'Victor Esparrago',p:'ST',r:7},
+    {n:'Marcos Castro',p:'CM',r:7},{n:'Rodolfo Rodriguez',p:'CB',r:7},{n:'Luis Garisto',p:'LB',r:7},
+    {n:'Ruben Paz',p:'CAM',r:7},{n:'Mario Corbo',p:'RB',r:7},{n:'Nelson Carballo',p:'LW',r:7}]},
+
+  /* ── Años Dorados 1976–1992 ── */
+  boc_7778:{name:'Boca Juniors',season:'1977-78',country:'🇦🇷',club:'boca_juniors',players:[
+    {n:'Hugo Gatti',p:'GK',r:9},{n:'Alberto Tarantini',p:'LB',r:8},{n:'Miguel Brindisi',p:'CAM',r:8},
+    {n:'Carlos Córdoba',p:'ST',r:8},{n:'Rubén Suñe',p:'CB',r:8},{n:'Héctor Scotta',p:'ST',r:8},
+    {n:'Mario Zanabria',p:'CM',r:7},{n:'Oscar Benítez',p:'CDM',r:7},{n:'Juan Impini',p:'RB',r:7},
+    {n:'Julio Salinas',p:'RW',r:7},{n:'Ricardo Lavolpe',p:'GK',r:7},{n:'Beto Márcico',p:'CM',r:7}]},
+
+  fla_8182:{name:'Flamengo',season:'1981',country:'🇧🇷',club:'flamengo',players:[
+    {n:'Zico',p:'CAM',r:10},{n:'Junior',p:'LB',r:9},{n:'Adílio',p:'CM',r:9},
+    {n:'Leandro',p:'RB',r:8},{n:'Nunes',p:'ST',r:8},{n:'Tita',p:'LW',r:8},
+    {n:'Carlos Mozer',p:'CB',r:8},{n:'Andrade',p:'CM',r:8},{n:'Raúl',p:'GK',r:7},
+    {n:'Marinho',p:'CB',r:7},{n:'Nei Dias',p:'CDM',r:7},{n:'Anselmo',p:'RW',r:7}]},
+
+  gre_8384:{name:'Grêmio',season:'1983',country:'🇧🇷',club:'gremio',players:[
+    {n:'Renato Gaúcho',p:'LW',r:9},{n:'Batista',p:'CDM',r:8},{n:'Caio',p:'CM',r:8},
+    {n:'Mauro Galvão',p:'CB',r:8},{n:'João Mário',p:'CM',r:8},{n:'Cesar',p:'GK',r:7},
+    {n:'Paulo Roberto',p:'RB',r:7},{n:'Tarcísio',p:'CB',r:7},{n:'Carlos Olavo',p:'LB',r:7},
+    {n:'Osvaldo Cruz',p:'ST',r:7},{n:'Baltazar',p:'ST',r:7},{n:'Mussi',p:'RM',r:7}]},
+
+  riv_8687:{name:'River Plate',season:'1986',country:'🇦🇷',club:'river_plate',players:[
+    {n:'Nery Pumpido',p:'GK',r:9},{n:'Oscar Ruggeri',p:'CB',r:9},{n:'Juan Gilberto Funes',p:'ST',r:9},
+    {n:'Norberto Alonso',p:'CAM',r:8},{n:'Héctor Enrique',p:'CM',r:8},{n:'Americo Gallego',p:'CDM',r:8},
+    {n:'Antonio Alzamendi',p:'LW',r:8},{n:'Nelson Gutiérrez',p:'RB',r:7},{n:'Alejandro Montenegro',p:'CB',r:7},
+    {n:'Jorge Gordillo',p:'LB',r:7},{n:'Roque Alfaro',p:'RW',r:7},{n:'Ramon Centurion',p:'CM',r:7}]},
+
+  atl_8990:{name:'Atlético Nacional',season:'1989',country:'🇨🇴',club:'atletico_nacional',players:[
+    {n:'René Higuita',p:'GK',r:9},{n:'Andrés Escobar',p:'CB',r:9},{n:'Luis Carlos Perea',p:'CB',r:8},
+    {n:'Leonel Álvarez',p:'CDM',r:8},{n:'Albeiro Usuriaga',p:'ST',r:8},{n:'Gildardo Gómez',p:'RB',r:7},
+    {n:'Luis Fdo Suárez',p:'CM',r:7},{n:'Juan Jairo Galeano',p:'LW',r:7},{n:'Iván Darío Castañeda',p:'LB',r:7},
+    {n:'Alexis García',p:'RW',r:7},{n:'Jairo Arango',p:'CAM',r:7},{n:'Ricardo Pérez',p:'CM',r:7}]},
+
+  col_9091:{name:'Colo-Colo',season:'1991',country:'🇨🇱',club:'colo_colo',players:[
+    {n:'Patricio Yáñez',p:'ST',r:8},{n:'Marcelo Barticciotto',p:'LW',r:8},{n:'Jaime Vera',p:'CAM',r:8},
+    {n:'Ivo Basay',p:'ST',r:7},{n:'Patricio Mardones',p:'CB',r:7},{n:'Héctor Puebla',p:'GK',r:7},
+    {n:'Fernando Orellana',p:'CM',r:7},{n:'Lizardo Garrido',p:'CDM',r:7},{n:'Eduardo Vilches',p:'RB',r:7},
+    {n:'Hugo Tabilo',p:'CB',r:7},{n:'Fernando Cornejo',p:'LB',r:7},{n:'Leonel Contreras',p:'RW',r:7}]},
+
+  /* ── Era Clásica 1992–2007 ── */
+  sao_9293:{name:'São Paulo',season:'1992-93',country:'🇧🇷',club:'sao_paulo',players:[
+    {n:'Cafu',p:'RB',r:9},{n:'Raí',p:'CAM',r:9},{n:'Toninho Cerezo',p:'CDM',r:8},
+    {n:'Müller',p:'ST',r:8},{n:'Zetti',p:'GK',r:8},{n:'Aldair',p:'CB',r:8},
+    {n:'Leonardo',p:'LB',r:8},{n:'Pintado',p:'CB',r:7},{n:'Dinei',p:'ST',r:7},
+    {n:'Mazinho',p:'CM',r:7},{n:'Dinho',p:'LW',r:7},{n:'Doriva',p:'CM',r:7}]},
+
+  riv_9596:{name:'River Plate',season:'1996',country:'🇦🇷',club:'river_plate',players:[
+    {n:'Enzo Francescoli',p:'CAM',r:10},{n:'Hernán Crespo',p:'ST',r:9},{n:'Ariel Ortega',p:'RW',r:9},
+    {n:'Marcelo Gallardo',p:'CM',r:8},{n:'Matías Almeyda',p:'CDM',r:8},{n:'Daniel Passarella',p:'CB',r:8},
+    {n:'Roberto Bonano',p:'GK',r:7},{n:'José Chamot',p:'LB',r:7},{n:'Norberto Ortiz',p:'LW',r:7},
+    {n:'Rodrigo Mora',p:'RW',r:7},{n:'Oscar Pompei',p:'CB',r:7},{n:'Claudio Lopez',p:'ST',r:8}]},
+
+  pal_9900:{name:'Palmeiras',season:'1999',country:'🇧🇷',club:'palmeiras',players:[
+    {n:'Marcos',p:'GK',r:9},{n:'Roque Júnior',p:'CB',r:8},{n:'Vampeta',p:'CDM',r:8},
+    {n:'Edilson',p:'RW',r:8},{n:'Alex',p:'CAM',r:8},{n:'César Sampaio',p:'CM',r:8},
+    {n:'Júnior Baiano',p:'CB',r:7},{n:'Rogério',p:'LW',r:7},{n:'Cafu',p:'RB',r:9},
+    {n:'Paulo Nunes',p:'ST',r:7},{n:'Zinho',p:'CM',r:8},{n:'Oséas',p:'ST',r:7}]},
+
+  boc_0001:{name:'Boca Juniors',season:'2000-01',country:'🇦🇷',club:'boca_juniors',players:[
+    {n:'Juan Román Riquelme',p:'CAM',r:10},{n:'Martín Palermo',p:'ST',r:9},{n:'Claudio Caniggia',p:'LW',r:8},
+    {n:'Roberto Abbondanzieri',p:'GK',r:8},{n:'Rolando Schiavi',p:'CB',r:8},{n:'Sebastián Battaglia',p:'CDM',r:8},
+    {n:'Mauricio Serna',p:'CM',r:7},{n:'Hugo Ibarra',p:'RB',r:7},{n:'Ariel Garcé',p:'LB',r:7},
+    {n:'Guillermo Barros Schelotto',p:'RW',r:7},{n:'Nicolas Burdisso',p:'CB',r:7},{n:'Diego Cagna',p:'CM',r:7}]},
+
+  boc_0304:{name:'Boca Juniors',season:'2003',country:'🇦🇷',club:'boca_juniors',players:[
+    {n:'Carlos Tévez',p:'ST',r:9},{n:'Rodrigo Palacio',p:'LW',r:8},{n:'Neri Cardozo',p:'CM',r:8},
+    {n:'Roberto Abbondanzieri',p:'GK',r:8},{n:'Nicolás Burdisso',p:'CB',r:8},{n:'Rolando Schiavi',p:'CB',r:8},
+    {n:'Sebastián Battaglia',p:'CDM',r:7},{n:'Hugo Ibarra',p:'RB',r:7},{n:'Mauricio Serna',p:'CM',r:7},
+    {n:'Diego Cagna',p:'RW',r:7},{n:'Ernesto Farías',p:'ST',r:7},{n:'Pablo Ledesma',p:'LM',r:7}]},
+
+  int_0607:{name:'Internacional',season:'2006',country:'🇧🇷',club:'internacional',players:[
+    {n:'Fernandão',p:'ST',r:9},{n:'Tinga',p:'CDM',r:8},{n:'Nilmar',p:'ST',r:8},
+    {n:'Rafael Sóbis',p:'CM',r:8},{n:'Clemer',p:'GK',r:7},{n:'Ceará',p:'CB',r:7},
+    {n:'Rogério',p:'LB',r:7},{n:'Índio',p:'RB',r:7},{n:'Éderson',p:'CM',r:7},
+    {n:'Gustavo Nery',p:'LB',r:7},{n:'Bolívar',p:'CB',r:7},{n:'Adriano Gabiru',p:'RW',r:7}]},
+
+  /* ── Era Moderna 2008–2024 ── */
+  san_1112:{name:'Santos',season:'2011',country:'🇧🇷',club:'santos_fc',players:[
+    {n:'Neymar',p:'LW',r:10},{n:'Ganso',p:'CAM',r:9},{n:'Robinho',p:'RW',r:9},
+    {n:'Elano',p:'CM',r:8},{n:'Arouca',p:'CDM',r:8},{n:'André',p:'CB',r:7},
+    {n:'Rafael',p:'RB',r:7},{n:'Durval',p:'CB',r:7},{n:'Léo',p:'LB',r:7},
+    {n:'Rafael Cabral',p:'GK',r:7},{n:'Alan Patrick',p:'SS',r:7},{n:'Danilo',p:'RB',r:7}]},
+
+  riv_1819:{name:'River Plate',season:'2018',country:'🇦🇷',club:'river_plate',players:[
+    {n:'Franco Armani',p:'GK',r:9},{n:'Gonzalo Martínez',p:'RW',r:9},{n:'Enzo Pérez',p:'CM',r:9},
+    {n:'Lucas Pratto',p:'ST',r:8},{n:'Javier Pinola',p:'CB',r:8},{n:'Exequiel Palacios',p:'CM',r:8},
+    {n:'Ignacio Scocco',p:'ST',r:8},{n:'Milton Casco',p:'LB',r:7},{n:'Montiel',p:'RB',r:7},
+    {n:'Jonatan Maidana',p:'CB',r:7},{n:'Leonardo Ponzio',p:'CDM',r:7},{n:'Rafael Borré',p:'ST',r:7}]},
+
+  fla_1920:{name:'Flamengo',season:'2019',country:'🇧🇷',club:'flamengo',players:[
+    {n:'Gabriel Barbosa',p:'ST',r:9},{n:'Giorgian de Arrascaeta',p:'CAM',r:9},{n:'Everton Ribeiro',p:'CM',r:8},
+    {n:'Bruno Henrique',p:'LW',r:8},{n:'Gerson',p:'CM',r:8},{n:'Felipe Luís',p:'LB',r:8},
+    {n:'Diego Alves',p:'GK',r:8},{n:'Rodrigo Caio',p:'CB',r:7},{n:'Pablo Marí',p:'CB',r:7},
+    {n:'Rafinha',p:'RB',r:7},{n:'Willian Arão',p:'CDM',r:7},{n:'Diego Ribas',p:'SS',r:7}]},
+
+  pal_2021:{name:'Palmeiras',season:'2021',country:'🇧🇷',club:'palmeiras',players:[
+    {n:'Dudu',p:'RW',r:9},{n:'Raphael Veiga',p:'CAM',r:8},{n:'Gustavo Scarpa',p:'LW',r:8},
+    {n:'Felipe Melo',p:'CDM',r:8},{n:'Weverton',p:'GK',r:8},{n:'Rony',p:'ST',r:8},
+    {n:'Murilo',p:'CB',r:7},{n:'Marcos Rocha',p:'RB',r:7},{n:'Renan Lodi',p:'LB',r:7},
+    {n:'Danilo',p:'CM',r:7},{n:'Luan',p:'CB',r:7},{n:'Patrick de Paula',p:'CM',r:7}]},
+
+  fla_2223:{name:'Flamengo',season:'2022',country:'🇧🇷',club:'flamengo',players:[
+    {n:'Gabriel Barbosa',p:'ST',r:9},{n:'Giorgian de Arrascaeta',p:'CAM',r:9},{n:'Pedro',p:'ST',r:8},
+    {n:'Everton Ribeiro',p:'CM',r:8},{n:'David Luiz',p:'CB',r:8},{n:'Felipe Luís',p:'LB',r:8},
+    {n:'Rodinei',p:'RB',r:7},{n:'Léo Pereira',p:'CB',r:7},{n:'Santos',p:'GK',r:7},
+    {n:'Marinho',p:'RW',r:7},{n:'Diego Ribas',p:'CM',r:7},{n:'Willian Arão',p:'CDM',r:7}]},
+
+  flu_2324:{name:'Fluminense',season:'2023',country:'🇧🇷',club:'fluminense',players:[
+    {n:'Marcelo',p:'LB',r:9},{n:'Germán Cano',p:'ST',r:9},{n:'André',p:'CM',r:8},
+    {n:'Ganso',p:'CAM',r:8},{n:'Fábio',p:'GK',r:8},{n:'Nino',p:'CB',r:8},
+    {n:'Felipe Melo',p:'CDM',r:8},{n:'Jhon Arias',p:'RW',r:8},{n:'John Kennedy',p:'ST',r:7},
+    {n:'Samuel Xavier',p:'RB',r:7},{n:'Diogo Barbosa',p:'LB',r:7},{n:'Alexsander',p:'CM',r:7}]}
+};
+
+const COPA_TOURNAMENTS = [
+  {id:'copa_pioneros', name:'Los Pioneros', years:'1960–75', emoji:'🏅',
+   desc:'Peñarol bicampione, Santos di Pelé, Independiente imbattibile. Le radici del calcio sudamericano.',
+   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172']},
+  {id:'copa_dorados', name:'Años Dorados', years:'1976–92', emoji:'⭐',
+   desc:'Zico, il Bocha, Higuita visionario. L\'era d\'oro della Copa Libertadores.',
+   teams:['boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091']},
+  {id:'copa_clasica', name:'Era Clásica', years:'1992–2007', emoji:'🔵',
+   desc:'São Paulo dominante, River di Francescoli, Boca di Riquelme e Tévez. Il decennio d\'oro.',
+   teams:['sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607']},
+  {id:'copa_moderna', name:'Era Moderna', years:'2008–2024', emoji:'🚀',
+   desc:'Neymar a Santos, il Superclásico 2018, Flamengo di Jorge Jesus. Il Brasile conquista tutto.',
+   teams:['san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324']},
+  {id:'copa_alltime', name:'All Time', years:'1960–2024', emoji:'🌎',
+   desc:'Tutte le leggende sudamericane senza limite d\'era. Il draft definitivo della Libertadores.',
+   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172',
+          'boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091',
+          'sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607',
+          'san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324'],
+   allTime:true}
+];
+
+const COPA_KNOCKOUT_OPPS = {
+  r16:  [{name:'Olimpia 2002',str:7.8,id:'olimpia'},{name:'São Paulo 1993',str:8.0,id:'sao_9293'},
+          {name:'Colo-Colo 1991',str:7.9,id:'col_9091'},{name:'Grêmio 1995',str:7.8,id:'gre_8384'}],
+  qf:   [{name:'Boca Juniors 2003',str:8.4,id:'boc_0304'},{name:'River Plate 1986',str:8.5,id:'riv_8687'},
+          {name:'Estudiantes 1970',str:8.3,id:'est_6870'},{name:'Palmeiras 1999',str:8.2,id:'pal_9900'}],
+  sf:   [{name:'Flamengo 2019',str:8.9,id:'fla_1920'},{name:'River Plate 2018',str:9.0,id:'riv_1819'},
+          {name:'Santos 1963',str:9.1,id:'san_6263'},{name:'Boca Juniors 2001',str:8.8,id:'boc_0001'}],
+  final:[{name:'Independiente 1975',str:9.3,id:'ind_7275'},{name:'Flamengo 1981',str:9.4,id:'fla_8182'},
+          {name:'Peñarol 1966',str:9.2,id:'pen_6061'},{name:'River Plate 1996',str:9.5,id:'riv_9596'}]
+};
+
+const COPA_JERSEY_COLORS = {
+  pen_6061:'#f5c800', san_6263:'#f0f0f0', ind_6465:'#cc0000',
+  est_6870:'#002d6e', ind_7275:'#cc0000', nac_7172:'#cc0000',
+  boc_7778:'#003087', fla_8182:'#cc0000', gre_8384:'#1c3fa8',
+  riv_8687:'#f0f0f0', atl_8990:'#1e8c1e', col_9091:'#f0f0f0',
+  sao_9293:'#f0f0f0', riv_9596:'#f0f0f0', pal_9900:'#1e8c1e',
+  boc_0001:'#003087', boc_0304:'#003087', int_0607:'#cc0000',
+  san_1112:'#f0f0f0', riv_1819:'#f0f0f0', fla_1920:'#cc0000',
+  pal_2021:'#1e8c1e', fla_2223:'#cc0000', flu_2324:'#8b1a1a'
+};
+
 const JERSEY_COLORS={
   por_8687:'#003087',rm_6566:'#f5f5f5',fey_6970:'#cc0000',
   ben_6162:'#cc0000',int_6465:'#1c3fa8',cel_6667:'#1e8c1e',
