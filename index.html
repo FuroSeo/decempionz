@@ -2625,6 +2625,20 @@ function updateEraDisplay(){
 }
 function browseEraFromFormat(){_eraFromFormat=true;showEraGrid();}
 function eraBack(){showScreen('screen-format');}
+function _syncFormatCards(){
+  var nuovoCard=document.getElementById('fc-nuovo');
+  if(!nuovoCard)return;
+  if(G.gameMode==='copa'){
+    nuovoCard.style.display='none';
+    if(selectedFormat==='nuovo'){
+      selectedFormat='classic';
+      document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
+      var cl=document.getElementById('fc-classic');if(cl)cl.classList.add('fc-sel');
+    }
+  } else {
+    nuovoCard.style.display='';
+  }
+}
 function startGame(){
   G.gameMode='ucl';
   selectedFormat='classic';
@@ -2636,6 +2650,7 @@ function startGame(){
   const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
+  _syncFormatCards();
 }
 function replayGame(){
   // Keep current era (G.tournament), format (G.format), difficulty (G.difficulty)
@@ -2700,6 +2715,7 @@ function startGameCopa(){
   const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
+  _syncFormatCards();
 }
 function selectFormat(f,el){
   selectedFormat=f;
