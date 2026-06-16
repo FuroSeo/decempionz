@@ -2869,7 +2869,7 @@ function eraBack(){showScreen('screen-format');}
 function _syncFormatCards(){
   var nuovoCard=document.getElementById('fc-nuovo');
   if(!nuovoCard)return;
-  if(G.gameMode==='copa'){
+  if(G.gameMode==='copa'||G.gameMode==='wc'){
     nuovoCard.style.display='none';
     if(selectedFormat==='nuovo'){
       selectedFormat='classic';
