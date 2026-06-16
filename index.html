@@ -81,6 +81,9 @@
 [data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#fca5a5;}
 [data-theme="light"][data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#dc6060;}
 .tourn-card.tourn-wc{border-color:#5a1212}
+.tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
+.tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
+.tourn-tab.tab-active{background:var(--s1);color:var(--text)}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -650,10 +653,17 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen active" id="screen-home">
 
   <!-- Hero -->
-  <div style="text-align:center;margin-bottom:22px;padding-top:16px">
+  <div style="text-align:center;margin-bottom:16px;padding-top:12px">
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Il Draft di Calcio Definitivo</div>
     <h1 class="logo">Decempionz</h1>
     <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:10px;font-size:.85rem;line-height:1.5;font-style:italic">Scegli il torneo</p>
+  </div>
+
+  <!-- Tournament tab switcher -->
+  <div class="tourn-tab-bar">
+    <button id="tab-ucl" class="tourn-tab tab-active" onclick="switchTournTab('ucl')">🏆 UCL</button>
+    <button id="tab-copa" class="tourn-tab" onclick="switchTournTab('copa')">🌎 Copa</button>
+    <button id="tab-wc" class="tourn-tab" onclick="switchTournTab('wc')">🌍 World Cup</button>
   </div>
 
   <!-- UCL Legends card -->
@@ -687,7 +697,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Copa Libertadores -->
-  <div class="tourn-card tourn-copa" id="tourn-copa">
+  <div class="tourn-card tourn-copa" id="tourn-copa" style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌎</div>
       <div>
@@ -708,7 +718,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- World Cup Legends -->
-  <div class="tourn-card tourn-wc" id="tourn-wc">
+  <div class="tourn-card tourn-wc" id="tourn-wc" style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌍</div>
       <div>
@@ -2980,6 +2990,14 @@ function startGameWC(){
   updateEraDisplay();
   _syncFormatCards();
   applyTournamentTheme('wc');
+}
+function switchTournTab(mode){
+  ['ucl','copa','wc'].forEach(function(m){
+    var card=document.getElementById('tourn-'+m);
+    var tab=document.getElementById('tab-'+m);
+    if(card) card.style.display=(m===mode)?'':'none';
+    if(tab) tab.classList.toggle('tab-active',m===mode);
+  });
 }
 function selectFormat(f,el){
   selectedFormat=f;
