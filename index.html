@@ -21,13 +21,13 @@
 <style>
 :root{
   --bg:#07090f;--s1:#0f1520;--s2:#17202e;--brd:#1e2d42;
-  --gold:#c9a227;--gold2:#e8c04a;--blue:#1a3a7a;--blue2:#2451a8;
+  --gold:#c9a227;--gold2:#e8c04a;--blue:#1a3a7a;--blue2:#2451a8;--blue-lt:#93c5fd;
   --text:#e8edf5;--mut:#6b7e95;
   --grn:#16a34a;--grn2:#22c55e;--red:#dc2626;--red2:#f87171;--star:#fbbf24;
 }
 [data-theme="light"]{
   --bg:#f0f4f8;--s1:#ffffff;--s2:#e8edf3;--brd:#c0ccd8;
-  --gold:#8a6200;--gold2:#a87a00;--blue:#1a3a7a;--blue2:#2451a8;
+  --gold:#8a6200;--gold2:#a87a00;--blue:#1a3a7a;--blue2:#2451a8;--blue-lt:#4a90d9;
   --text:#111827;--mut:#546a7a;
   --grn:#15803d;--grn2:#16a34a;--red:#b91c1c;--red2:#dc2626;--star:#92570a;
 }
@@ -75,7 +75,9 @@
 [data-theme="light"] .tour-card::before{background:radial-gradient(circle,rgba(26,58,122,.12),transparent 70%)}
 [data-theme="light"] .tc-team{background:rgba(0,0,0,.03);border-color:#c0ccd8}
 [data-theme="light"] .tc-name{color:#111827}
-[data-theme="light"] .tc-badge{background:#1a3a7a;color:#93c5fd}
+[data-theme="light"] .tc-badge{background:var(--blue);color:var(--blue-lt)}
+[data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#86efac;}
+[data-theme="light"][data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#2d9e50;}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -195,13 +197,13 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .step-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--brd)}
 .step-row:last-child{border-bottom:none}
-.sn{background:var(--blue);color:#93c5fd;border-radius:6px;padding:4px 10px;font-weight:900;font-size:.82rem;flex-shrink:0;min-width:34px;text-align:center}
+.sn{background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 10px;font-weight:900;font-size:.82rem;flex-shrink:0;min-width:34px;text-align:center}
 .st{color:var(--mut);font-size:.87rem;line-height:1.5}.st strong{color:var(--text)}
 
 /* ── TOURNAMENT REVEAL ── */
 .tour-card{background:linear-gradient(145deg,#0f1a2e,#131f35);border:1px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;position:relative;overflow:hidden}
 .tour-card::before{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,162,39,.18),transparent 70%);pointer-events:none}
-.tc-badge{display:inline-block;background:var(--blue);color:#93c5fd;border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
+.tc-badge{display:inline-block;background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
 .tc-name{font-size:2rem;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
 .tc-years{color:var(--mut);font-size:.9rem;margin-bottom:18px}
 .tc-teams{display:grid;grid-template-columns:1fr 1fr;gap:7px}
@@ -363,7 +365,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
 @keyframes cardIn{from{opacity:0;transform:rotateY(-20deg) scale(.93)}to{opacity:1;transform:rotateY(0) scale(1)}}
 .prc-pg{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.pg-gk{background:#1a3a7a;color:#93c5fd}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
+.pg-gk{background:var(--blue);color:var(--blue-lt)}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
 .prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
 .prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px}
 .prc-name{font-size:1.25rem;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
@@ -1152,6 +1154,7 @@ const STRINGS={
     'trophy.nuovo':'Campioni New Wave',
     'grade.s':'Campagna perfetta!',
     'grade.a':'Campioni d\'Europa',
+    'grade.a.copa':'Campioni del Sud America',
     'grade.b':'Campioni di carattere',
     'grade.c':'Vinta a fatica',
     'stats.top_scorer':'⚽ Capocannoniere',
@@ -1364,6 +1367,7 @@ const STRINGS={
     'trophy.nuovo':'New Wave Champions',
     'grade.s':'Perfect campaign!',
     'grade.a':'Champions of Europe',
+    'grade.a.copa':'Champions of South America',
     'grade.b':'Gritty champions',
     'grade.c':'Won it the hard way',
     'stats.top_scorer':'⚽ Top scorer',
@@ -2541,7 +2545,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function showScreen(id){if(id==='screen-home')applyTournamentTheme('ucl');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -2668,6 +2672,7 @@ function _syncFormatCards(){
     nuovoCard.style.display='';
   }
 }
+function applyTournamentTheme(mode){if(mode==='copa'){document.body.setAttribute('data-mode','copa');}else{document.body.removeAttribute('data-mode');}}
 function startGame(){
   G.gameMode='ucl';
   selectedFormat='classic';
@@ -2680,6 +2685,7 @@ function startGame(){
   showScreen('screen-format');
   updateEraDisplay();
   _syncFormatCards();
+  applyTournamentTheme('ucl');
 }
 function replayGame(){
   // Keep current era (G.tournament), format (G.format), difficulty (G.difficulty)
@@ -2714,6 +2720,7 @@ function quickStart(){
     document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
     var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
   },0);
+  applyTournamentTheme('ucl');
   showScreen('screen-formation');
 }
 function quickStartCopa(){
@@ -2731,6 +2738,7 @@ function quickStartCopa(){
     document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
     var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
   },0);
+  applyTournamentTheme('copa');
   showScreen('screen-formation');
 }
 function startGameCopa(){
@@ -2745,6 +2753,7 @@ function startGameCopa(){
   showScreen('screen-format');
   updateEraDisplay();
   _syncFormatCards();
+  applyTournamentTheme('copa');
 }
 function selectFormat(f,el){
   selectedFormat=f;
@@ -4248,7 +4257,7 @@ function showTrophy(){
   const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
-  const gradeMsg={'S':t('grade.s'),'A':t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
+  const gradeMsg={'S':t('grade.s'),'A':_isCopa?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
   const campL=all.filter(r=>r.myG<r.oppG).length;
@@ -4415,7 +4424,7 @@ function openHallOfFame(){
           +'<div class="hof-card-header">'
           +'<div>'
           +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
-          +'<div class="hof-meta">'+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
+          +'<div class="hof-meta">'+(e.mode==='copa'?'🌎 Copa · ':'🏆 UCL · ')+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
           +'</div>'
           +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
           +'</div>'
@@ -4728,6 +4737,7 @@ function submitToHoF(){
   if(!nick){document.getElementById('hof-nickname').focus();return;}
   var d=_shareData();
   var eraName=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
+  var _hofMode=G.gameMode||'ucl';
   var diffMap={easy:'🟢 Facile',normal:'🟡 Normale',hard:'🔴 Difficile'};
   var diffLbl=diffMap[G.difficulty||'normal']||'🟡';
   var grpMap=d.grpMap;
@@ -4748,6 +4758,7 @@ function submitToHoF(){
     '| **Nickname** | '+nick+' |',
     '| **Grade** | '+d.grade+' |',
     '| **Esito** | '+(d.isWinner?'Campione 🏆':'Eliminato 💔')+' |',
+    '| **Torneo** | '+(_hofMode==='copa'?'🌎 Copa Libertadores':'🏆 UCL Legends')+' |',
     '| **Era** | '+eraName+' |',
     '| **Formato** | '+d.formatLabel+' |',
     '| **Formazione** | '+G.formation+' |',
