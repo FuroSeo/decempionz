@@ -109,6 +109,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tourn-badge-soon{position:absolute;top:14px;right:14px;background:var(--s2);color:var(--mut);font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--brd)}
 .tourn-card.tourn-locked{opacity:.5;pointer-events:none}
 .tourn-card.tourn-ucl{border-color:#1e3a6a}
+.tourn-card.tourn-copa{border-color:#1a4a1a}
 .tourn-bottom-btns{display:flex;gap:8px;margin-top:6px}
 .tourn-bottom-btns .btn{margin-top:0}
 #btn-start-draft{position:sticky;bottom:16px;z-index:10;box-shadow:0 -4px 16px var(--bg);}
@@ -680,9 +681,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
   </div>
 
-  <!-- Copa Libertadores — Coming Soon -->
-  <div class="tourn-card tourn-locked" id="tourn-copa">
-    <span class="tourn-badge-soon" data-i18n="tourn.soon">Prossimamente</span>
+  <!-- Copa Libertadores -->
+  <div class="tourn-card tourn-copa" id="tourn-copa">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌎</div>
       <div>
@@ -695,7 +695,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
       <div class="tourn-stat"><div class="tourn-stat-val" style="color:var(--mut)">?</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
-    <button class="btn btn-ghost" disabled data-i18n="tourn.soon" style="margin-top:4px">Prossimamente</button>
+    <button class="btn btn-gold" onclick="quickStartCopa()" style="font-size:1rem;padding:15px">
+      <span data-i18n="copa.btn_quick">⚽ Gioca subito</span>
+      <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+    </button>
+    <button data-i18n="copa.btn_custom" class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px">⚙️ Personalizza</button>
   </div>
 
   <!-- Bottom actions -->
@@ -1054,6 +1058,9 @@ const STRINGS={
     'tourn.copa.name':'Copa Libertadores',
     'tourn.copa.sub':'Sud America · 1960 – 2024',
     'tourn.soon':'Prossimamente',
+    'copa.btn_quick':'⚽ Gioca subito',
+    'copa.btn_quick_sub':'Classic · All Time · Normale',
+    'copa.btn_custom':'⚙️ Personalizza',
     'home.btn_quick':'⚽ Gioca subito',
     'home.btn_quick_sub':'Classic · All Time · Normale',
     'home.btn_custom':'⚙️ Personalizza',
@@ -1261,6 +1268,9 @@ const STRINGS={
     'tourn.copa.name':'Copa Libertadores',
     'tourn.copa.sub':'South America · 1960 – 2024',
     'tourn.soon':'Coming Soon',
+    'copa.btn_quick':'⚽ Play Now',
+    'copa.btn_quick_sub':'Classic · All Time · Normal',
+    'copa.btn_custom':'⚙️ Customize',
     'home.btn_quick':'⚽ Play Now',
     'home.btn_quick_sub':'Classic · All Time · Normal',
     'home.btn_custom':'⚙️ Customize',
@@ -2372,6 +2382,8 @@ const COPA_JERSEY_COLORS = {
   pal_2021:'#1e8c1e', fla_2223:'#cc0000', flu_2324:'#8b1a1a'
 };
 
+function _activeTeams(){ return G.gameMode==='copa' ? COPA_TEAMS : TEAMS; }
+function _activeJerseyColors(){ return G.gameMode==='copa' ? COPA_JERSEY_COLORS : JERSEY_COLORS; }
 const JERSEY_COLORS={
   por_8687:'#003087',rm_6566:'#f5f5f5',fey_6970:'#cc0000',
   ben_6162:'#cc0000',int_6465:'#1c3fa8',cel_6667:'#1e8c1e',
@@ -2456,7 +2468,7 @@ function slotTierClass(r){
   return'tier-low';
 }
 function filledSlotHTML(player,grp){
-  const col=JERSEY_COLORS[player.teamId]||'#555555';
+  const col=(COPA_JERSEY_COLORS[player.teamId]||JERSEY_COLORS[player.teamId])||'#555555';
   const tierCss=slotTierCss(player.r);
   const tierCls=slotTierClass(player.r);
   const isElite=player.r>=9.5;
@@ -2475,6 +2487,7 @@ function filledSlotHTML(player,grp){
 const G = {
   tournament: null,
   format: 'classic',
+  gameMode: 'ucl', // 'ucl' | 'copa'
   formation: null,
   // draft
   draftPool: [], draftIdx: 0, draftCards: [],
@@ -2505,9 +2518,9 @@ function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 function pickKnockSeq(rounds,usedClubs){
   var used=new Set(usedClubs||[]);
   return rounds.map(function(pool){
-    var avail=pool.filter(function(o){return!used.has(TEAMS[o.id]?TEAMS[o.id].name:'');});
+    var _aDB=_activeTeams();var avail=pool.filter(function(o){return!used.has(_aDB[o.id]?_aDB[o.id].name:o.name||'');});
     var chosen=avail.length?pick(avail):pick(pool); // graceful fallback if pool too small
-    if(TEAMS[chosen.id])used.add(TEAMS[chosen.id].name);
+    var _aDB2=_activeTeams();if(_aDB2[chosen.id])used.add(_aDB2[chosen.id].name);
     return chosen;
   });
 }
@@ -2521,8 +2534,8 @@ function posGroup(pos){
   return'FWD';
 }
 function pgClass(pg){return{GK:'pg-gk',DEF:'pg-def',MID:'pg-mid',FWD:'pg-fwd'}[pg]}
-function teamStrength(teamId){const t=TEAMS[teamId];return avg(t.players.map(p=>p.r))}
-function topPlayers(teamId,n){return [...TEAMS[teamId].players].sort((a,b)=>b.r-a.r).slice(0,n).map(p=>p.n).join(', ')}
+function teamStrength(teamId){const t=(_activeTeams()[teamId]||TEAMS[teamId]);return avg(t.players.map(p=>p.r))}
+function topPlayers(teamId,n){const t=(_activeTeams()[teamId]||TEAMS[teamId]);return [...t.players].sort((a,b)=>b.r-a.r).slice(0,n).map(p=>p.n).join(', ')}
 
 /* ═══════════════════════════════════════
    START
@@ -2533,10 +2546,12 @@ function topPlayers(teamId,n){return [...TEAMS[teamId].players].sort((a,b)=>b.r-
 ═══════════════════════════════════════ */
 function showEraGrid(){
   // _eraFromFormat is set by browseEraFromFormat(), not here
+  var _tourList = G.gameMode==='copa' ? COPA_TOURNAMENTS : TOURNAMENTS;
+  var _teamDb   = G.gameMode==='copa' ? COPA_TEAMS : TEAMS;
   var grid = document.getElementById('era-grid');
-  grid.innerHTML = TOURNAMENTS.filter(function(trn){return !trn.allTime;}).map(function(trn){
-    var i=TOURNAMENTS.indexOf(trn);
-    var str = trn.teams.map(function(id){return avg(TEAMS[id].players.map(function(p){return p.r;}));});
+  grid.innerHTML = _tourList.filter(function(trn){return !trn.allTime;}).map(function(trn){
+    var i=_tourList.indexOf(trn);
+    var str = trn.teams.map(function(id){return avg(_teamDb[id].players.map(function(p){return p.r;}));});
     var avgStr = (str.reduce(function(a,b){return a+b;},0)/str.length).toFixed(1);
     return '<div class="era-card" id="ec-'+i+'" onclick="selectEra('+i+',this)">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
@@ -2546,7 +2561,7 @@ function showEraGrid(){
       +'<div style="font-size:1rem;font-weight:900;color:var(--gold)">'+avgStr+'</div></div></div>'
       +'<div class="era-desc">'+(t('era.'+trn.id+'.desc')||trn.desc)+'</div>'
       +'<div class="era-teams">'+trn.teams.map(function(id){
-        var tm=TEAMS[id];return '<span class="era-team-chip">'+tm.country+' '+tm.name+' ('+tm.season+')</span>';
+        var tm=_teamDb[id];return '<span class="era-team-chip">'+tm.country+' '+tm.name+' ('+tm.season+')</span>';
       }).join('')+'</div></div>';
   }).join('');
   document.getElementById('btn-era-confirm').classList.add('btn-inactive');
@@ -2561,7 +2576,8 @@ function selectEra(idx, el){
   document.getElementById('btn-era-confirm').classList.remove('btn-inactive');
 }
 function selectAllTime(){
-  const t=TOURNAMENTS.find(t=>t.id==='alltime');
+  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
+  const t=_tourList.find(function(x){return x.allTime;});
   if(_eraFromFormat){
     selectedEraT=null; // null = All Time
     _eraFromFormat=false;
@@ -2573,13 +2589,14 @@ function selectAllTime(){
 }
 function confirmEra(){
   if(selectedEraIdx < 0) return;
+  var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:TOURNAMENTS;
   if(_eraFromFormat){
-    selectedEraT=TOURNAMENTS[selectedEraIdx];
+    selectedEraT=_tourList[selectedEraIdx];
     _eraFromFormat=false;
     updateEraDisplay();
     showScreen('screen-format');
   } else {
-    applyTournament(TOURNAMENTS[selectedEraIdx]);
+    applyTournament(_tourList[selectedEraIdx]);
   }
 }
 function applyTournament(t){
@@ -2609,6 +2626,7 @@ function updateEraDisplay(){
 function browseEraFromFormat(){_eraFromFormat=true;showEraGrid();}
 function eraBack(){showScreen('screen-format');}
 function startGame(){
+  G.gameMode='ucl';
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
@@ -2638,6 +2656,7 @@ function replayGame(){
 }
 
 function quickStart(){
+  G.gameMode='ucl';
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
@@ -2652,6 +2671,35 @@ function quickStart(){
     var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
   },0);
   showScreen('screen-formation');
+}
+function quickStartCopa(){
+  G.gameMode='copa';
+  selectedFormat='classic';
+  selectedEraT=null;
+  selectedDiff='normal';
+  G.format='classic';
+  G.difficulty='normal';
+  const era=COPA_TOURNAMENTS.find(function(t){return t.allTime;});
+  applyTournament(era);
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  showScreen('screen-formation');
+}
+function startGameCopa(){
+  G.gameMode='copa';
+  selectedFormat='classic';
+  selectedEraT=null;
+  selectedDiff='normal';
+  document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
+  const def=document.getElementById('fc-classic');if(def)def.classList.add('fc-sel');
+  document.querySelectorAll('.diff-card').forEach(function(c){c.classList.remove('diff-sel');});
+  const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
+  showScreen('screen-format');
+  updateEraDisplay();
 }
 function selectFormat(f,el){
   selectedFormat=f;
@@ -2736,13 +2784,14 @@ function initDraft(){
   // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
   // Key by teamId (not club name) so multiple seasons of the same club each get fair representation
   // AllTime cap: max 3 versions per club (top avg rating)
+  var _DB=_activeTeams();
   let _teamsToUse=G.tournament.teams;
   if(G.tournament.allTime){
     const _byClub={};
     _teamsToUse.forEach(function(id){
-      const _club=(TEAMS[id]&&TEAMS[id].club)||id;
+      const _club=(_DB[id]&&_DB[id].club)||id;
       if(!_byClub[_club])_byClub[_club]=[];
-      const _avg=TEAMS[id].players.reduce(function(s,p){return s+p.r;},0)/TEAMS[id].players.length;
+      const _avg=_DB[id].players.reduce(function(s,p){return s+p.r;},0)/_DB[id].players.length;
       _byClub[_club].push({id:id,avg:_avg});
     });
     _teamsToUse=[];
@@ -2753,7 +2802,7 @@ function initDraft(){
   }
   const clubBuckets={};
   _teamsToUse.forEach(id=>{
-    const t=TEAMS[id];
+    const t=_DB[id];
     const sorted=[...t.players].sort((a,b)=>b.r-a.r);
     const key=id;
     clubBuckets[key]={top:null,rest:[]};
@@ -2921,7 +2970,7 @@ function renderThreeCards(){
       const teamEntry=TEAMS[teamKey]||null;
       const season=teamEntry?teamEntry.season.slice(2):'';
       const displayClub=teamEntry?teamEntry.name:p.club;
-      const col=JERSEY_COLORS[p.teamId]||'#555';
+      const col=(COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
       const tierCss=slotTierCss(p.r);
       const targetSlot=empSlots[0]?empSlots[0].pos:'';
       const isElite=p.r>=9.5;
@@ -3092,40 +3141,46 @@ function pickCoach(i){
 
 function setupCampaign(){
   const t=G.tournament;
+  var _DB=_activeTeams();
+  var _KNOCK=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:KNOCKOUT_OPPS;
 
   if(G.format==='coppa'){
     // Pure knockout — no group stage
+    var _COPPA=G.gameMode==='copa'?COPA_KNOCKOUT_OPPS:COPPA_OPPS;
     G.groupTeams=[];G.groupOppResults=[];
-    G.knockOpps=pickKnockSeq([COPPA_OPPS.r1,COPPA_OPPS.r2,COPPA_OPPS.qf,COPPA_OPPS.sf,COPPA_OPPS.final],[]);
+    G.knockOpps=pickKnockSeq(
+      G.gameMode==='copa'
+        ?[_COPPA.r16,_COPPA.qf,_COPPA.sf,_COPPA.final]
+        :[COPPA_OPPS.r1,COPPA_OPPS.r2,COPPA_OPPS.qf,COPPA_OPPS.sf,COPPA_OPPS.final],
+      []);
     G.phase='knockout';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
     return;
   }
 
   if(G.format==='nuovo'){
-    // 6 league phase matches vs random teams from ALL squads
-    const allKeys=Object.keys(TEAMS);
+    const allKeys=Object.keys(_DB);
     const shuffledN=[...allKeys].sort(()=>Math.random()-.5);
     const seenN=new Set();const pickedN=[];
-    for(const id of shuffledN){const club=TEAMS[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
-    G.groupTeams=pickedN.map(id=>({id,team:TEAMS[id]}));
-    G.groupOppResults=[]; // no inter-opponent simulation for league phase
+    for(const id of shuffledN){const club=_DB[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
+    G.groupTeams=pickedN.map(id=>({id,team:_DB[id]}));
+    G.groupOppResults=[];
     var _nuovoUsed=G.groupTeams.map(function(g){return g.team.name;});
-    G.knockOpps=pickKnockSeq([KNOCKOUT_OPPS.r16,KNOCKOUT_OPPS.qf,KNOCKOUT_OPPS.sf,KNOCKOUT_OPPS.final],_nuovoUsed);
+    G.knockOpps=pickKnockSeq([_KNOCK.r16,_KNOCK.qf,_KNOCK.sf,_KNOCK.final],_nuovoUsed);
     G.phase='group';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
     return;
   }
 
   // Classic: 3 group opponents from different clubs
   {const seen=new Set();const pool=[...t.teams].sort(()=>Math.random()-.5);const picked=[];
-  for(const id of pool){const club=TEAMS[id].name;if(!seen.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}
-  G.groupTeams=picked.map(id=>({id,team:TEAMS[id]}));}
+  for(const id of pool){const club=_DB[id].name;if(!seen.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}
+  G.groupTeams=picked.map(id=>({id,team:_DB[id]}));}
   const [t1,t2,t3] = G.groupTeams;
   G.groupOppResults = [
     simGroupMatch(t1.id,t2.id),
     simGroupMatch(t1.id,t3.id),
     simGroupMatch(t2.id,t3.id)];
   var _classicUsed=G.groupTeams.map(function(g){return g.team.name;});
-  G.knockOpps=pickKnockSeq([KNOCKOUT_OPPS.r16,KNOCKOUT_OPPS.qf,KNOCKOUT_OPPS.sf,KNOCKOUT_OPPS.final],_classicUsed);
+  G.knockOpps=pickKnockSeq([_KNOCK.r16,_KNOCK.qf,_KNOCK.sf,_KNOCK.final],_classicUsed);
   G.phase='group';G.groupRound=0;G.groupUserResults=[];G.knockRound=0;G.knockResults=[];G.momentum=0;
 }
 
@@ -3358,7 +3413,7 @@ function _runMatch(){
     _awayXI=oppPlayerPool.slice(0,11).map(function(p){return{n:p.n,p:p.p};});
   }
 
-  const _oppCol=(_oppTid&&JERSEY_COLORS[_oppTid])||'#888';
+  const _oppCol=(_oppTid&&(COPA_JERSEY_COLORS[_oppTid]||JERSEY_COLORS[_oppTid]))||'#888';
 
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
   document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">Decempionz FC</span>';
@@ -3834,7 +3889,7 @@ function showResult(){
     _pendingMatch={oppTactic:_nOt};  // playRound() will pick this up
     var _nBeats=Object.keys(TACTIC_WINS).find(function(k){return TACTIC_WINS[k]===_nOt;});
     var _rNextScout=document.getElementById('r-next-scout');
-    var _nCol=(_nextInfo.oppId&&JERSEY_COLORS[_nextInfo.oppId])||'#888';
+    var _nCol=(_nextInfo.oppId&&(COPA_JERSEY_COLORS[_nextInfo.oppId]||JERSEY_COLORS[_nextInfo.oppId]))||'#888';
     if(_rNextScout)_rNextScout.innerHTML=
       '<div style="font-size:.55rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-bottom:5px;display:flex;justify-content:space-between">'+t('next.opponent')+(_nextInfo.nextRoundLabel?'<span style="font-weight:400;text-transform:none;letter-spacing:0">'+_nextInfo.nextRoundLabel+'</span>':'')+'</div>'
       +'<div style="font-size:.95rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:8px">'+jerseyIcon(_nCol,24)+_nextInfo.oppName+'</div>'
