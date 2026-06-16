@@ -999,7 +999,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='4.9.8';
+const GAME_VERSION='4.9.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4886,6 +4886,25 @@ function _devSetMom(v){
 </div>
 
 <!-- Modal: Fan Project -->
+<div id="share-modal" onclick="closeShareModal()">
+  <div id="share-modal-box" onclick="event.stopPropagation()">
+    <div class="share-modal-header">
+      <span class="share-modal-title">📤 Condividi il risultato</span>
+      <button class="share-modal-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <canvas id="share-canvas"></canvas>
+    <div class="share-modal-btns">
+      <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
+      <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
+      <button class="btn" onclick="copyShareText()">📋 Copia</button>
+    </div>
+    <div class="hof-submit-area">
+      <input type="text" id="hof-nickname" maxlength="24" placeholder="Il tuo nickname (max 24 caratteri)">
+      <button class="btn btn-gold" style="width:100%;font-size:.8rem" onclick="submitToHoF()">🏆 Invia in Hall of Fame</button>
+      <p class="hof-notice">⏳ I risultati vengono pubblicati dopo approvazione del moderatore</p>
+    </div>
+  </div>
+</div>
 <div id="modal-fanproject" class="modal-overlay" onclick="closeFanProject()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-title">⚽ Fan Project</div>
