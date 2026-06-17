@@ -5898,4 +5898,52 @@ function _devSetMom(v){
 </div>
 
 <!-- Modal: Privacy -->
-<div id="modal-priv
+<div id="modal-privacy" class="modal-overlay" onclick="closePrivacy()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-title">🔒 Privacy Policy</div>
+    <div class="modal-section">
+      <h3>Titolare del trattamento</h3>
+      <p>Il titolare del trattamento è il creatore del progetto fan Decempionz, contattabile all'indirizzo: <a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
+    </div>
+    <div class="modal-section">
+      <h3>Dati raccolti</h3>
+      <p>Decempionz non raccoglie, non archivia e non trasmette dati personali degli utenti. Non sono presenti form di registrazione, login o sistemi di account.</p>
+    </div>
+    <div class="modal-section">
+      <h3>Archiviazione locale (localStorage)</h3>
+      <p>Il gioco utilizza il localStorage del browser esclusivamente per salvare preferenze locali (tema grafico, lingua, trofei sbloccati). Questi dati rimangono sul dispositivo dell'utente e non vengono mai inviati a server esterni.</p>
+    </div>
+    <div class="modal-section">
+      <h3>Google Analytics 4</h3>
+      <p>Questo sito utilizza Google Analytics 4 con IP anonimizzato per raccogliere statistiche aggregate di utilizzo (pagine visitate, sessioni). I dati sono trattati da Google LLC secondo la sua <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">Privacy Policy</a>. Per disattivare il tracciamento: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">Google Analytics Opt-out</a>.</p>
+    </div>
+    <div class="modal-section">
+      <h3>Cookie</h3>
+      <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
+    </div>
+    <div class="modal-section">
+      <h3>I tuoi diritti (GDPR – Reg. UE 2016/679)</h3>
+      <p>Ai sensi degli artt. 15-20 del GDPR hai diritto di accesso, rettifica, cancellazione, limitazione e portabilità dei tuoi dati. Per esercitare questi diritti scrivi a: <a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
+    </div>
+    <div class="modal-section">
+      <h3>Aggiornamenti</h3>
+      <p>Questa policy può essere aggiornata in caso di modifiche al gioco o alla normativa. Ultimo aggiornamento: giugno 2025.</p>
+    </div>
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
+  </div>
+</div>
+
+<!-- Challenge Modal -->
+<div id="challenge-modal" onclick="closeChallengeModal()">
+  <div id="challenge-modal-box" onclick="event.stopPropagation()">
+    <div style="font-size:2.2rem;margin-bottom:10px">⚔️</div>
+    <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
+    <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
+    <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
+  </div>
+</div>
+
+<div id="share-toast">📋</div>
+
+</body></html>
