@@ -5161,11 +5161,13 @@ function _devSetMode(mode){
   applyTournamentTheme(mode);
   // auto-force format compatibile
   var fmtSel=document.getElementById('dv-format');
-  if(fmtSel&&(mode==='copa'||mode==='wc')){
-    fmtSel.value='coppa';
-    fmtSel.disabled=true;
-  } else if(fmtSel){
-    fmtSel.disabled=false;
+  if(fmtSel){
+    // Copa/WC non supportano 'nuovo' — se selezionato, forza 'classic'
+    if((mode==='copa'||mode==='wc')&&fmtSel.value==='nuovo') fmtSel.value='classic';
+    // Disabilita l'opzione nuovo per Copa/WC
+    Array.from(fmtSel.options).forEach(function(o){
+      if(o.value==='nuovo') o.disabled=(mode==='copa'||mode==='wc');
+    });
   }
   _devRenderJumpPanel();
 }
@@ -5185,7 +5187,7 @@ function _devRenderJumpPanel(){
   var _fmtSel=document.getElementById('dv-format');
   var fmt=(_fmtSel?_fmtSel.value:null)||G.format||'classic';
   var isCoWC=(G.gameMode==='copa'||G.gameMode==='wc');
-  var isCoppa=fmt==='coppa'||isCoWC;
+  var isCoppa=fmt==='coppa';
   var isNuovo=fmt==='nuovo'&&!isCoWC;
   var makeBtn=function(label,phase,round,color){
     var b=document.createElement('button');
