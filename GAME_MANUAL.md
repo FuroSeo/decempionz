@@ -1,8 +1,8 @@
 # Decempionz — Developer Manual
 
-**Version:** 4.9.5
-**Last updated:** 2026-06-15
-**File:** `index.html` (single-file game, ~4500 lines)
+**Version:** 5.2.0
+**Last updated:** 2026-06-17
+**File:** `index.html` (single-file game, ~5900 lines)
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)
 **Repo:** [github.com/FuroSeo/decempionz](https://github.com/FuroSeo/decempionz)
 
@@ -12,42 +12,22 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 5.2.0 | 2026-06-17 | **RELEASE** Sistema trofei 15 achievement (localStorage), screen-trophies, about.html SEO, fix fine file troncata |
+| 5.1.x-dev | 2026-06-17 | Fix dev panel: Jump to Round dinamico per gameMode/format; Copa/WC Classic con gironi; _devSetMode non forza più coppa |
+| 5.1.0-dev | 2026-06-17 | World Cup Legends completo (65 nazionali, 4 ere 1930–2022, WC_TEAMS, WC_JERSEY_COLORS, routing gameMode=wc) |
+| 5.0.x-dev | 2026-06-17 | Fix UI: nomi slot — wrap 2 righe; light mode slot opachi; fix WC country prefix rimosso; logo più grande; HoF form + i18n placeholder |
+| 5.0.0-dev | 2026-06-17 | Copa Libertadores completo (24 rose, 4 ere 1960–2024, COPA_TEAMS, routing gameMode=copa, tema verde, i18n) |
+| 4.9.9 | 2026-06-16 | Fix: ripristino share modal HTML rimosso in 4.9.7 |
+| 4.9.8 | 2026-06-16 | Fix top scorer bug: safe pick + use ev.scorer directly |
 | 4.9.5 | 2026-06-15 | PWA: web app manifest + service worker; installabile da smartphone |
 | 4.9.4 | 2026-06-15 | Fix: Hall of Fame fetch puntava a `master` invece di `main` |
 | 4.9.3 | 2026-06-15 | Hall of Fame: schermata + fetch JSON da GitHub; social share canvas |
-| 4.9.2 | 2026-06-15 | Fix: skip (⏭) durante rigori non riavvia la sequenza (`_simPenaltiesInstant`) |
-| 4.9.1 | 2026-06-15 | Implementazioni social e Hall of Fame (primo rilascio) |
-| 4.9.0 | 2026-06-15 | Dataset audit: riduzione ★10 da 77 a 31 istanze; solo valutazioni intere (9/10) |
-| 4.8.9 | 2026-06-13 | Fix theme-switch name color: tier backgrounds via CSS classes, not inline styles |
-| 4.8.8 | 2026-06-13 | Remove duplicate showTrophy(); fix doubled CSS selector |
-| 4.8.7 | 2026-06-13 | Replace CSS ::before SVG pitch lines with JS DOM injection (injectPitchLines) |
-| 4.8.6 | 2026-06-13 | Fix match timer (neutral events get min property); fix group elim pitch render |
-| 4.8.5 | 2026-06-13 | Fix dev panel mock screens (Result nav, Trophy/GameOver guards) |
-| 4.8.4 | 2026-06-13 | Add pitch SVG field lines; fix dark-theme player name visibility on end screens |
-| 4.8.3 | 2026-06-13 | Fix _diffLabel() missing; fix knockout elimination crash |
-| 4.8.2 | 2026-06-13 | Fix showGroupElimination() using stale IDs from old redesign |
-| 4.8.1 | 2026-06-13 | Fix missing pieces of v4.8.0 redesign (HTML, CSS, JS, i18n, showTrophy, _diffLabel) |
-| 4.8.0 | 2026-06-13 | Endgame screen redesign: unified .end-* CSS classes, pitch on gameover/trophy |
-| 4.7.0 | 2026-06-12 | Sprite system: ghost/colored/complete (filledSlotHTML, ghostSprite, targetSprite) |
-| 4.6.4 | 2026-06-12 | Fix home subtitle; misc UI polish |
-| 4.6.3 | 2026-06-12 | FORMATIONS with attack/balanced/defend variants; fmtPositions/fmtRows helpers |
-| 4.6.2 | 2026-06-12 | Simplify flow: coach in draft, remove campaign screen, tactic in result |
-| 4.6.1 | 2026-06-12 | Split modal Fan Project / Privacy; fix Close; remove Ko-fi |
-| 4.6.0 | 2026-06-12 | "Gioca subito" quick-start + "Personalizza" full flow; home redesign |
-| 4.5.3 | 2026-06-11 | Dev panel: stress test, coach, tactic, mock screens |
-| 4.5.2 | 2026-06-11 | Update OG meta tag (58 → 66 squads) |
-| 4.5.1 | 2026-06-11 | Add press/tap feedback on draft cards; improve era/format card hover |
-| 4.5.0 | 2026-06-11 | Fix light theme: logo gradient, era-sel, tour cards, tc-team cells |
-| 4.4.0 | 2026-06-10 | AC Milan 1988-89; Abedi Pelé; RM/LM reclassification; SLOT_COMPAT tightening |
-| 4.3.4 | 2026-06-10 | Game manual added; coach section updated |
-| 4.3.3 | 2026-06-10 | Share: full lineup, coach, lang, no double URL |
-| 4.3.0 | 2026-06-10 | Coach system: post-draft pick, formDMA/coachCompat, xG boost |
-| 4.2.0 | 2026-06-10 | i18n system: STRINGS, t(), toggleLang(), data-i18n, default Italian |
-| 4.1.0 | 2026-06-10 | Versioning, sprite graphics, draft polish, Dev Panel |
-| 4.0.0 | 2026 | Draft 3-card pick-1 + Reroll mechanic |
-| 3.0.0 | 2026 | Rebranding Golacticos → Decempionz; light/dark theme; compliance |
-| 2.0.0 | 2026 | 3 tournament formats + era picker + SLOT_COMPAT |
-| 1.0.0 | 2026 | First complete game: blind draft, positional slots, group + knockout |
+| 4.9.0 | 2026-06-15 | Dataset audit: riduzione ★10 da 77 a 31; solo valutazioni intere |
+| 4.8.x | 2026-06-13 | Endgame screen redesign; pitch SVG; sprite system; vari fix |
+| 4.6.x | 2026-06-12 | Coach system; quick-start; formazioni 3-tactic; modal Fan Project/Privacy |
+| 4.2.0 | 2026-06-10 | i18n system: STRINGS, t(), toggleLang(), data-i18n |
+| 4.1.0 | 2026-06-10 | Versioning, sprite graphics, Dev Panel |
+| 1.0–4.0 | 2026 | Draft, formazioni, gironi, knockout, light/dark theme, rebranding |
 
 ---
 
@@ -59,10 +39,31 @@ Single HTML file. No build step, no dependencies, no backend. All game logic is 
 
 | Variable | Type | Purpose |
 |----------|------|---------|
-| `G` | Object | Persistent campaign state (squad, coach, results, momentum, format…) |
+| `G` | Object | Persistent campaign state (squad, coach, results, momentum, format, gameMode…) |
 | `M` | Object | Active match state (scores, log, xG, penalties…) |
 | `P` | Object | Penalty shootout state |
 | `_pendingMatch` | Object | Tactic + opponent data bridging `playRound()` → `_runMatch()` |
+
+**Tournament routing — `G.gameMode`:**
+
+| Value | Tournament | Dataset | Opps |
+|-------|-----------|---------|------|
+| `'ucl'` | UCL Legends | `TEAMS` (66 rose) | `KNOCKOUT_OPPS` / `COPPA_OPPS` |
+| `'copa'` | Copa Libertadores | `COPA_TEAMS` (24 rose) | `COPA_KNOCKOUT_OPPS` / `COPA_COPPA_OPPS` |
+| `'wc'` | World Cup Legends | `WC_TEAMS` (65 nazionali) | `WC_KNOCKOUT_OPPS` / `WC_COPPA_OPPS` |
+
+`_activeTeams()` e `_activeJerseyColors()` leggono `G.gameMode` e restituiscono il dataset corretto. Usare **sempre** queste funzioni, mai `TEAMS` direttamente.
+
+`G.format` determina la struttura interna: `'classic'` (gironi+KO), `'coppa'` (solo KO), `'nouveau'` (lega+KO, solo UCL).
+
+**Trophy system — `localStorage`:**
+
+| Key | Valore | Scopo |
+|-----|--------|-------|
+| `dcz_trophies` | JSON object `{id: {unlocked, date}}` | 15 achievement personali |
+| `dcz_formations_won` | JSON array di stringhe | Formazioni con cui si è vinto (per Formation Master) |
+
+`checkTrophies(G)` — chiamata da `showTrophy()` — verifica tutte le condizioni, salva i nuovi unlock, mostra toast dorato.
 
 ---
 
@@ -426,7 +427,7 @@ Triggered by **5 rapid clicks on the version number** (bottom of home screen).
 |---------|----------|-------|
 | Quick Draft — Top XI | `_devQuickDraft('top')` | Uses all TEAMS, fills squad, shows in panel |
 | Quick Draft — Random XI | `_devQuickDraft('random')` | Same, random selection |
-| Jump to Round | per-round buttons | Sets G.phase + round directly |
+| Jump to Round | `_devRenderJumpPanel()` | Bottoni dinamici per fase/round; si adattano a gameMode+format corrente |
 | Force Score | `_DEV_FORCE_SCORE = [my, opp]` | Overrides next Poisson draw, cleared after use |
 | Stress Test | `_devStressTest()` | N simulated matches, W/D/L bar + avg goals |
 | Mock Result | `_devMockResult()` | Sets up match elements, navigates to screen-match |
@@ -440,47 +441,57 @@ Triggered by **5 rapid clicks on the version number** (bottom of home screen).
 ## Versioning
 
 ```js
-const GAME_VERSION = '4.9.5';
+const GAME_VERSION = '5.2.0';
 ```
 
 Displayed via `<span class="gv"></span>` (populated on DOMContentLoaded). 5× rapid clicks → dev panel.
 
 **Bump rules:** patch (bug fix / tweak) · minor (new mechanic / screen) · major (redesign)
 
+**Suffisso `-dev`:** usato su branch `dev`. Va rimosso prima del merge su `main`.
+
 ---
 
 ## Development Workflow
 
 ```bash
-# Clone fresh each session (/tmp is ephemeral)
-cd /tmp && rm -rf repo4
-git clone https://furini31:<TOKEN>@github.com/FuroSeo/decempionz.git repo4
+# Clone fresh each session (/tmp è effimero — serve ogni volta)
+cd /tmp && rm -rf repodev
+git clone https://furini31:<TOKEN>@github.com/FuroSeo/decempionz.git repodev
+cd repodev
+git checkout dev   # lavorare SEMPRE su dev, mai su main
 
-# Edit via Python str.replace() — NEVER use the Edit tool directly on index.html
-# Workspace: /sessions/epic-gracious-johnson/mnt/Golacticos/index.html
-# Repo:      /tmp/repo4/index.html
-# Work on /tmp/repo4/index.html, then cp to workspace
+# Edit via Python (NEVER Edit tool direttamente su index.html per evitare problemi di encoding)
+# Workspace (persistente): /sessions/<id>/mnt/Golacticos/index.html
+# Repo (effimero):         /tmp/repodev/index.html
+# Lavorare su /tmp/repodev/index.html, poi cp verso workspace
 
-# Validate JS syntax
+# CRITICO — node --check DEVE usare il blocco JS più grande (non il primo)
 python3 -c "
-import re, subprocess
-with open('/tmp/repo4/index.html') as f: src=f.read()
-scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',src,re.DOTALL)
-open('/tmp/check.js','w').write('\n'.join(scripts))
-r=subprocess.run(['node','--check','/tmp/check.js'],capture_output=True,text=True)
-print('SYNTAX OK' if r.returncode==0 else r.stderr)
-"
+import re
+with open('/tmp/repodev/index.html') as f: html=f.read()
+blocks=re.findall(r'<script[^>]*>([\s\S]*?)</script>', html)
+main=max(blocks, key=len)   # <-- NON usare findall()[0]: il primo è Google Analytics!
+open('/tmp/_check.js','w').write(main)
+" && node --check /tmp/_check.js && echo SYNTAX OK
 
-# Copy and push
-cp /tmp/repo4/index.html /sessions/epic-gracious-johnson/mnt/Golacticos/index.html
-cd /tmp/repo4
+# Copy to workspace e push su dev
+cp /tmp/repodev/index.html /sessions/<id>/mnt/Golacticos/index.html
+cd /tmp/repodev
 git config user.email "furini31@gmail.com" && git config user.name "FuroSeo"
-git add index.html GAME_MANUAL.md
-git commit -m "vX.X.X — description"
-git push origin main
+git add index.html
+git commit -m "feat/fix: descrizione"
+git push origin dev
+
+# Merge su main SOLO per release
+git checkout main
+git checkout dev -- index.html about.html   # prende i file da dev (evita conflitti)
+# Rimuovere suffisso -dev da GAME_VERSION prima del merge
+sed -i "s/GAME_VERSION='X.X.X-dev'/GAME_VERSION='X.X.X'/" index.html
+git add index.html && git commit -m "release: vX.X.X" && git push origin main
 ```
 
-**Rules:** always Python str.replace() for edits · always node --check before commit · always bump GAME_VERSION · always cp to keep workspace and repo in sync.
+**Regole:** sempre Python str.replace() per le edits · sempre `node --check` con `max(blocks, key=len)` · rimuovi `-dev` dal version prima del merge su main · mai pushare direttamente su `main` · sempre `cp` per tenere workspace e repo in sync.
 
 **Cache:** GitHub Pages caches aggressively. Hard-refresh (Ctrl+Shift+R) or `?v=N` to bypass.
 
@@ -490,8 +501,9 @@ git push origin main
 
 ```
 decempionz/
-├── index.html           ← entire game (~4700 lines)
-├── GAME_MANUAL.md       ← this file
+├── index.html           ← intero gioco (~5900 lines)
+├── about.html           ← pagina SEO statica (bilingue IT/EN)
+├── GAME_MANUAL.md       ← questo file
 ├── hall-of-fame.json    ← HoF data (aggiornato manualmente)
 ├── manifest.json        ← PWA manifest
 ├── sw.js                ← service worker
@@ -524,6 +536,46 @@ decempionz/
 **★10 confermati (31 istanze):** Puskas, Eusebio, Mazzola, Charlton, Best, Rivera, Cruyff, Beckenbauer, Muller G, Scirea, Platini, Baresi (×2), Maldini (×3), van Basten, Gullit, Zidane (×2), Ronaldo R9, Kaka, CR7 (×3), Iniesta (×2), Messi (×2), Modric (×2).
 
 **Opponent str vs dataset:** I valori `str` in `KNOCKOUT_OPPS` e `COPPA_OPPS` sono **hardcodati manualmente** e NON corrispondono alla media dei rating della rosa. Sono calibrati per la curva di difficoltà del torneo e vanno tenuti separati dal dataset. Non aggiornare automaticamente in base alle medie.
+
+---
+
+## Sistema Trofei Personali
+
+15 achievement salvati in `localStorage` (`dcz_trophies`). Sbloccati automaticamente al termine di ogni vittoria (`showTrophy()` → `checkTrophies(G)`).
+
+**Tier Base (7)** — vinci il torneo:
+
+| ID | Torneo | Condizione |
+|----|--------|-----------|
+| `ucl_classic` | UCL | format=classic |
+| `ucl_oldcup` | UCL | format=coppa |
+| `ucl_newwave` | UCL | format=nouveau |
+| `copa_classic` | Copa | format=classic |
+| `copa_oldcup` | Copa | format=coppa |
+| `wc_classic` | WC | format=classic |
+| `wc_oldcup` | WC | format=coppa |
+
+**Tier Challenge (5):**
+
+| ID | Nome | Condizione |
+|----|------|-----------|
+| `grade_s` | Perfezione | stars/max ≥ 90% |
+| `hard_winner` | Iron Man | difficulty='hard' |
+| `unbeaten` | Imbattuto | 0 sconfitte in tutta la campagna |
+| `triple_crown` | Triple Crown | ≥1 vittoria per ciascuno dei 3 tornei |
+| `formation_master` | Tattico Totale | vittorie con ≥5 formazioni diverse (`dcz_formations_won`) |
+
+**Tier Elite (3):**
+
+| ID | Nome | Condizione |
+|----|------|-----------|
+| `all_star` | All Stars | ≥3 giocatori con rating ≥9.5 in rosa |
+| `clean_final` | Finale Pulita | ultimo `knockResults` con oppG=0 |
+| `legend` | Leggenda | tutti e 7 i trofei base sbloccati |
+
+**Schermata:** `screen-trophies` — griglia 3×5 con card colorate (unlocked) / dimmate (locked). Accessibile dal pulsante 🏅 Trofei in home.
+
+**Toast:** `#trophy-toast` — appare in fondo alla schermata per 3.5s al momento dell'unlock.
 
 ---
 
@@ -582,31 +634,4 @@ Il gioco è installabile come app nativa su smartphone.
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Decempionz">
-```
-
-**Registrazione SW** (in `<script>`, fine file):
-
-```js
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js').catch(function(){});
-}
-```
-
-**Cache name in `sw.js`:** `decempionz-vX.X.X` — da aggiornare ad ogni release per invalidare la cache degli utenti esistenti.
-
----
-
-## Multiverse Roadmap (branch `dev`)
-
-Questa sezione documenta il piano di espansione del gioco verso un sistema multi-torneo. Lo sviluppo avviene **esclusivamente sul branch `dev`** — il branch `main` serve il gioco live e non va mai toccato durante questo sviluppo.
-
-### Visione
-
-La home diventa una **lobby selettore torneo**. Ogni torneo ha la sua card con identità grafica, dataset e formato. Il motore di gioco (draft, simulazione, formazioni, coach, i18n) resta identico e condiviso.
-
-```
-Home Lobby
-├── UCL Legends        ← già esistente, invariato
-├── Copa Libertadores  ← primo nuovo torneo (pri
+<meta name="apple
