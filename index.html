@@ -5185,24 +5185,26 @@ function _devRenderJumpPanel(){
   var isCoWC=(G.gameMode==='copa'||G.gameMode==='wc');
   var isCoppa=fmt==='coppa';
   var isNuovo=fmt==='nuovo'&&!isCoWC;
-  var btn=function(label,phase,round,color){
-    return'<button onclick="_devJumpRound(''+phase+'','+round+')" style="background:#1a1a1a;border:1px solid '+(color||'#333')+';color:'+(color||'#ccc')+';border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">'+label+'</button>';
+  var makeBtn=function(label,phase,round,color){
+    var b=document.createElement('button');
+    b.textContent=label;
+    b.style.cssText='background:#1a1a1a;border:1px solid '+(color||'#333')+';color:'+(color||'#ccc')+';border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer';
+    b.onclick=function(){_devJumpRound(phase,round);};
+    return b;
   };
-  var out='';
+  el.innerHTML='';
   if(!isCoppa){
     var gCount=isNuovo?6:3;
-    for(var i=0;i<gCount;i++) out+=btn('G'+(i+1),'group',i);
-    out+='<span style="color:#444;font-size:.65rem;padding:0 2px">|</span>';
+    for(var i=0;i<gCount;i++) el.appendChild(makeBtn('G'+(i+1),'group',i));
+    var sep=document.createElement('span');
+    sep.style.cssText='color:#444;font-size:.65rem;padding:0 2px';
+    sep.textContent='|';
+    el.appendChild(sep);
   }
-  if(isCoppa||isCoWC){
-    out+=btn('R1','knockout',0,'#eab308');
-  } else {
-    out+=btn('R16','knockout',0,'#eab308');
-  }
-  out+=btn('QF','knockout',1,'#eab308');
-  out+=btn('SF','knockout',2,'#eab308');
-  out+=btn('FIN','knockout',3,'#f87171');
-  el.innerHTML=out;
+  el.appendChild(makeBtn(isCoppa||isCoWC?'R1':'R16','knockout',0,'#eab308'));
+  el.appendChild(makeBtn('QF','knockout',1,'#eab308'));
+  el.appendChild(makeBtn('SF','knockout',2,'#eab308'));
+  el.appendChild(makeBtn('FIN','knockout',3,'#f87171'));
 }
 function closeDevPanel(){
   document.getElementById('dev-panel').style.display='none';
