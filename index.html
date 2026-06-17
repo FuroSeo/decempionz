@@ -1533,11 +1533,15 @@ function _syncLangBtn(lang){
   if(ele){ele.style.fontWeight=it?'400':'700';ele.style.color=it?'var(--mut)':'var(--text)';}
 }
 function toggleLang(){
+  // Blocca lo switch durante la campagna (dal draft in poi)
+  var _safeScreens=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof'];
+  var _active=document.querySelector('.screen.active');
+  var _activeId=_active?_active.id:'screen-home';
+  if(_safeScreens.indexOf(_activeId)===-1) return; // mid-campaign: ignora
   var cur=(typeof G!=='undefined'&&G&&G.lang)?G.lang:'it';
   var next=cur==='it'?'en':'it';
   if(typeof G!=='undefined'&&G)G.lang=next;
   try{localStorage.setItem('dcz_lang',next);}catch(e){}
-  var btn=document.getElementById('lang-btn');
   _syncLangBtn(next);
   applyLang();
 }
@@ -2763,7 +2767,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home')switchTournTab(G.gameMode||'ucl');if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function showScreen(id){if(id==='screen-home')switchTournTab(G.gameMode||'ucl');if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
