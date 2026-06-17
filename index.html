@@ -5862,15 +5862,16 @@ function _devSetMom(v){
     <div class="modal-title">⚽ Fan Project</div>
     <div class="modal-section">
       <h3>Cos'è Decempionz?</h3>
-      <p>Decempionz è un progetto fan non ufficiale, sviluppato per celebrare 60 anni di storia della UEFA Champions League. Non è affiliato, sponsorizzato o approvato da UEFA, FIFA o da alcun club calcistico.</p>
+      <p>Decempionz è un progetto fan non ufficiale e gratuito, nato dalla passione per la storia del calcio internazionale. Celebra decenni di Champions League, Copa Libertadores e Mondiali attraverso un gioco di draft strategico. Non è affiliato, sponsorizzato né approvato da UEFA, FIFA, CONMEBOL o da alcun club calcistico.</p>
     </div>
     <div class="modal-section">
-      <h3>Licenze</h3>
-      <p>Tutti i nomi di calciatori, allenatori e squadre sono utilizzati a puro scopo di intrattenimento culturale e storico, senza fini commerciali. Nessun dato ufficiale protetto da copyright viene riprodotto.</p>
+      <h3>Uso dei nomi</h3>
+      <p>I nomi di calciatori, allenatori e squadre sono utilizzati esclusivamente a scopo di intrattenimento culturale e storico, senza fini commerciali. Nessun dato ufficiale protetto da copyright viene riprodotto.</p>
     </div>
     <div class="modal-section">
       <h3>Contatti</h3>
-      <p>Per segnalazioni, suggerimenti o collaborazioni: <strong style="color:var(--gold)">decempionz.com</strong></p>
+      <p style="margin-bottom:8px">Per segnalazioni, suggerimenti o collaborazioni:</p>
+      <button class="btn btn-ghost" style="font-size:.8rem;width:100%" onclick="closeFanProject();setTimeout(openContatti,150)">📬 Apri Contatti</button>
     </div>
     <button class="modal-legal-close" onclick="closeFanProject()">Chiudi</button>
   </div>
@@ -5897,8 +5898,4 @@ function _devSetMom(v){
 </div>
 
 <!-- Modal: Privacy -->
-<div id="modal-privacy" class="modal-overlay" onclick="closePrivacy()">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-title">🔒 Privacy</div>
-    <div class="modal-section">
-      <h3 data-i18n="priv.h_data">Nessuna raccolta
+<div id="mod
