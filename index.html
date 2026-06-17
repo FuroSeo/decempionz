@@ -52,10 +52,10 @@
 [data-theme="light"] .dp-slot.filled{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.25)}[data-theme="light"] .dp-slot.tier-elite{background:rgba(255,248,200,.97);}[data-theme="light"] .dp-slot.tier-high{background:rgba(255,252,230,.9);}[data-theme="light"] .dp-slot.tier-mid{background:rgba(235,235,245,.9);}[data-theme="light"] .dp-slot.tier-low{background:rgba(240,237,228,.9);}
 [data-theme="light"] .dp-slot.filled .dp-name{color:#111827}
 [data-theme="light"] .dp-slot.filled .dp-rating{color:#8a6200}
-[data-theme="light"] .dp-gk.filled{border-color:#1d4ed8;background:rgba(29,78,216,.1)}
-[data-theme="light"] .dp-def.filled{border-color:#15803d;background:rgba(21,128,61,.1)}
-[data-theme="light"] .dp-mid.filled{border-color:#92400e;background:rgba(146,64,14,.1)}
-[data-theme="light"] .dp-fwd.filled{border-color:#b91c1c;background:rgba(185,28,28,.1)}
+[data-theme="light"] .dp-gk.filled{border-color:#1d4ed8;background:rgba(219,229,255,.95)}
+[data-theme="light"] .dp-def.filled{border-color:#15803d;background:rgba(209,240,220,.95)}
+[data-theme="light"] .dp-mid.filled{border-color:#92400e;background:rgba(255,237,209,.95)}
+[data-theme="light"] .dp-fwd.filled{border-color:#b91c1c;background:rgba(255,215,215,.95)}
 [data-theme="light"] .btn-gold{color:#ffffff}
 [data-theme="light"] .prc{background:#ffffff;border-color:var(--brd)}
 [data-theme="light"] .prc-team-name,[data-theme="light"] .prc-name{color:#111827}
@@ -333,10 +333,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .dp-fwd.target .dp-slot-pos{color:#fca5a5;}
 /* Filled: compact rounded card */
 .dp-slot.filled{
-  width:50px;height:50px;border:2px solid rgba(255,255,255,.3);
+  width:50px;min-height:50px;border:2px solid rgba(255,255,255,.3);
   background:rgba(5,8,20,.85);border-radius:10px;gap:1px;}
-.dp-slot.filled .dp-name{font-size:.48rem;font-weight:800;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;max-width:46px;color:#eef2ff;text-align:center;line-height:1.1;}
+.dp-slot.filled .dp-name{font-size:.44rem;font-weight:800;white-space:normal;overflow:hidden;
+  overflow-wrap:break-word;max-width:46px;max-height:2.2em;color:#eef2ff;text-align:center;line-height:1.1;}
 .dp-slot.filled .dp-rating{font-size:.62rem;font-weight:900;color:var(--gold);line-height:1;}.dp-slot.tier-elite{background:rgba(28,16,0,.92);}.dp-slot.tier-high{background:rgba(16,8,0,.82);}.dp-slot.tier-mid{background:rgba(10,10,16,.82);}.dp-slot.tier-low{background:rgba(8,8,8,.75);}
 .dp-gk.filled{border-color:rgba(96,165,250,.9);background:rgba(10,22,65,.9);}
 .dp-def.filled{border-color:rgba(52,211,153,.85);background:rgba(0,35,28,.9);}
@@ -2730,12 +2730,8 @@ function filledSlotHTML(player,grp){
   const ratingLine=isElite
     ?'<div class="dp-rating" style="color:#d4a800;font-weight:900">\u2605'+player.r+'</div>'
     :'<div class="dp-rating">'+player.r+'</div>';
-  // WC: prefisso bandiera al nome per riconoscibilità della nazionale
+  // Nome visibile nello slot: solo cognome/nome (il colore maglia identifica la nazionale)
   var displayName=player.n;
-  if(G.gameMode==='wc'&&player.teamId){
-    var _wcEntry=WC_TEAMS[player.teamId];
-    if(_wcEntry&&_wcEntry.country) displayName=_wcEntry.country+' '+player.n;
-  }
   return'<div class="dp-slot filled '+tierCls+' dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
     +playerSprite(col)
     +'<div class="dp-name"'+(isElite?' style="font-weight:900"':'')+'>'+displayName+'</div>'
