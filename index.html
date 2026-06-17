@@ -5213,7 +5213,7 @@ function _saveFormationsWon(a){try{localStorage.setItem(_DCZ_FORM_KEY,JSON.strin
 function confirmClearTrophies(){
   if(confirm('Sei sicuro? Questa azione cancellerà tutti i tuoi trofei in modo permanente.')){
     try{localStorage.removeItem(_DCZ_TROPHY_KEY);localStorage.removeItem(_DCZ_FORM_KEY);}catch(e){}
-    showTrophies();
+    openTrophiesScreen();
   }
 }
 
@@ -5901,4 +5901,4 @@ function _devSetMom(v){
     <div class="modal-title">🔒 Privacy</div>
     <div class="modal-section">
       <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
-      <p data-i18n-htm
+      <p data-i1
