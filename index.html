@@ -3808,6 +3808,7 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
 let P={};
 
 function startPenalties(){
+  var _aDB=_activeTeams();
   const squad11=(G.squad&&G.squad.length?G.squad:G.slotPlayers.filter(Boolean));
   const shuffled=[...squad11].sort(()=>Math.random()-.5);
   // Opponent player names for penalty kicks
@@ -3822,15 +3823,17 @@ function startPenalties(){
   if(!oppPenNames.length) oppPenNames=[M.oppName]; // fallback
   P={round:0,side:'home',h:0,a:0,hKicks:[],aKicks:[],maxRounds:5,
      names:shuffled.map(p=>p.n),oppNames:oppPenNames,oppName:M.oppName,done:false};
-  showScreen('screen-match');
+  // Non richiamare showScreen (siamo già su screen-match e scrollerebbe in cima)
   var _si=document.getElementById('m-speed-icons');if(_si)_si.style.display='none';
-  document.getElementById('pen-zone').style.display='block';
+  document.getElementById('btn-mact').style.display='none';
+  const penZone=document.getElementById('pen-zone');
+  penZone.style.display='block';
+  setTimeout(function(){penZone.scrollIntoView({behavior:'smooth',block:'start'});},80);
   document.getElementById('pen-rows').innerHTML='';
   document.getElementById('pen-score').textContent='0 – 0';
   document.getElementById('pen-msg').textContent='';
   const sdBanner=document.getElementById('pen-sd-banner');
   if(sdBanner){sdBanner.style.display='none';sdBanner.textContent='';}
-  document.getElementById('btn-mact').style.display='none';
   const rows=document.getElementById('pen-rows');
   const hRow=document.createElement('div');
   hRow.style='display:flex;align-items:center;gap:6px';
