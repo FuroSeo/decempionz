@@ -2716,9 +2716,15 @@ function filledSlotHTML(player,grp){
   const ratingLine=isElite
     ?'<div class="dp-rating" style="color:#d4a800;font-weight:900">\u2605'+player.r+'</div>'
     :'<div class="dp-rating">'+player.r+'</div>';
+  // WC: prefisso bandiera al nome per riconoscibilità della nazionale
+  var displayName=player.n;
+  if(G.gameMode==='wc'&&player.teamId){
+    var _wcEntry=WC_TEAMS[player.teamId];
+    if(_wcEntry&&_wcEntry.country) displayName=_wcEntry.country+' '+player.n;
+  }
   return'<div class="dp-slot filled '+tierCls+' dp-'+grp+'" style="'+tierCss+';display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 4px;min-width:44px">'
     +playerSprite(col)
-    +'<div class="dp-name"'+(isElite?' style="font-weight:900"':'')+'>'+player.n+'</div>'
+    +'<div class="dp-name"'+(isElite?' style="font-weight:900"':'')+'>'+displayName+'</div>'
     +ratingLine
     +'</div>';
 }
