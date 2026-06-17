@@ -5175,7 +5175,34 @@ function openDevPanel(){
   var curMode=G.gameMode||'ucl';
   if(modeSel) modeSel.value=curMode;
   _devSetMode(curMode);
+  _devRenderJumpPanel();
   document.getElementById('dev-panel').style.display='block';
+}
+function _devRenderJumpPanel(){
+  var el=document.getElementById('dv-jump-btns');
+  if(!el)return;
+  var fmt=G.format||'classic';
+  var isCoWC=(G.gameMode==='copa'||G.gameMode==='wc');
+  var isCoppa=fmt==='coppa';
+  var isNuovo=fmt==='nuovo'&&!isCoWC;
+  var btn=function(label,phase,round,color){
+    return'<button onclick="_devJumpRound(''+phase+'','+round+')" style="background:#1a1a1a;border:1px solid '+(color||'#333')+';color:'+(color||'#ccc')+';border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">'+label+'</button>';
+  };
+  var out='';
+  if(!isCoppa){
+    var gCount=isNuovo?6:3;
+    for(var i=0;i<gCount;i++) out+=btn('G'+(i+1),'group',i);
+    out+='<span style="color:#444;font-size:.65rem;padding:0 2px">|</span>';
+  }
+  if(isCoppa||isCoWC){
+    out+=btn('R1','knockout',0,'#eab308');
+  } else {
+    out+=btn('R16','knockout',0,'#eab308');
+  }
+  out+=btn('QF','knockout',1,'#eab308');
+  out+=btn('SF','knockout',2,'#eab308');
+  out+=btn('FIN','knockout',3,'#f87171');
+  el.innerHTML=out;
 }
 function closeDevPanel(){
   document.getElementById('dev-panel').style.display='none';
@@ -5530,14 +5557,8 @@ function _devSetMom(v){
     <!-- Jump to Round -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
       <div style="color:#34d399;font-size:.72rem;font-weight:700;margin-bottom:8px">⏭️ JUMP TO ROUND</div>
-      <div style="display:flex;gap:4px;flex-wrap:wrap">
-        <button onclick="_devJumpRound('group',0)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G1</button>
-        <button onclick="_devJumpRound('group',1)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G2</button>
-        <button onclick="_devJumpRound('group',2)" style="background:#1a1a1a;border:1px solid #333;color:#ccc;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">G3</button>
-        <button onclick="_devJumpRound('knockout',0)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">R16</button>
-        <button onclick="_devJumpRound('knockout',1)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">QF</button>
-        <button onclick="_devJumpRound('knockout',2)" style="background:#1a1a1a;border:1px solid #333;color:#eab308;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer">SF</button>
-        <button onclick="_devJumpRound('knockout',3)" style="background:#1a1a1a;border:1px solid #f87171;color:#f87171;border-radius:4px;padding:3px 8px;font-size:.65rem;cursor:pointer;font-weight:700">FIN</button>
+      <div id="dv-jump-btns" style="display:flex;gap:4px;flex-wrap:wrap">
+        <!-- rendered dynamically by _devRenderJumpPanel() -->
       </div>
       <div id="dv-force-status" style="font-size:.65rem;color:#555;margin-top:6px"></div>
     </div>
