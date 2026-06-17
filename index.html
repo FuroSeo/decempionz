@@ -838,7 +838,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <button id="btn-start-draft" data-i18n="form.start_draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
   <button class="btn btn-ghost" onclick="showScreen('screen-format')">← Back</button>
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="_startGameByMode()">↺ New Game</button>
 </div>
 
 <!-- BLIND DRAFT -->
@@ -865,7 +865,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button class="btn-pass" id="btn-pss" onclick="draftReroll()" style="width:100%;font-size:.85rem">↺ Reroll <span id="d-pc"></span></button>
   </div>
 
-  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
+  <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="_startGameByMode()">↺ New Game</button>
 </div>
 
 <!-- CAMPAIGN -->
@@ -974,7 +974,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="r-rnd" style="display:none"></div>
     <div id="r-sc" style="display:none"></div>
 
-    <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.8" onclick="startGame()">↺ New Game</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:.72rem;opacity:.8" onclick="_startGameByMode()">↺ New Game</button>
   </div>
 </div>
 <!-- GAME OVER -->
@@ -1002,7 +1002,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <button class="btn btn-gold" style="flex:1;margin-top:0" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
       <button class="btn btn-share" style="flex:1;margin-top:0" data-i18n="btn.share" onclick="shareResult()">📤 Condividi</button>
     </div>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="_startGameByMode()">⚙️ Cambia regole</button>
   </div>
 </div>
 <!-- TROPHY -->
@@ -1031,7 +1031,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <button class="btn btn-gold" style="flex:1;margin-top:0;font-size:.95rem" data-i18n="btn.replay" onclick="replayGame()">⚽ Nuova Partita</button>
       <button class="btn btn-share" style="flex:1;margin-top:0" data-i18n="btn.share" onclick="shareResult()">📤 Condividi</button>
     </div>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="startGame()">⚙️ Cambia regole</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="_startGameByMode()">⚙️ Cambia regole</button>
   </div>
 </div>
 <!-- HALL OF FAME -->
@@ -2894,6 +2894,12 @@ function _syncFormatCards(){
   }
 }
 function applyTournamentTheme(mode){if(mode==='copa'){document.body.setAttribute('data-mode','copa');}else if(mode==='wc'){document.body.setAttribute('data-mode','wc');}else{document.body.removeAttribute('data-mode');}}
+function _startGameByMode(){
+  var m=G.gameMode||'ucl';
+  if(m==='copa') startGameCopa();
+  else if(m==='wc') startGameWC();
+  else startGame();
+}
 function startGame(){
   G.gameMode='ucl';
   selectedFormat='classic';
