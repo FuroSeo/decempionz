@@ -2766,7 +2766,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home')applyTournamentTheme('ucl');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function showScreen(id){if(id==='screen-home')switchTournTab(G.gameMode||'ucl');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -3027,6 +3027,7 @@ function switchTournTab(mode){
       if(m===mode) tab.classList.add('tab-active-'+mode);
     }
   });
+  applyTournamentTheme(mode);
 }
 function selectFormat(f,el){
   selectedFormat=f;
