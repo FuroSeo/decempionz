@@ -3648,8 +3648,9 @@ function playRound(){
     roundTag='group';
   } else {
     const isCoppaR=G.format==='coppa';
-    const KNAMES=isCoppaR?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
-    const KTAGS=isCoppaR?['r1','r2','qf','sf','final']:['r16','qf','sf','final'];
+    var _isCoWC=G.gameMode==='copa'||G.gameMode==='wc';
+    const KNAMES=isCoppaR?(_isCoWC?[t('round.r1'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]):[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
+    const KTAGS=isCoppaR?(_isCoWC?['r1','qf','sf','final']:['r1','r2','qf','sf','final']):['r16','qf','sf','final'];
     const opp=G.knockOpps[G.knockRound];
     oppName=opp.name;
     oppStr=opp.str;
@@ -4418,8 +4419,9 @@ function showGroupElimination(pos,pts){
 
 function _diffLabel(){const isIt=(G.lang||'it')=='it';return isIt?{'easy':'Facile','normal':'Normale','hard':'Difficile'}[G.difficulty||'normal']||'Normale':{'easy':'Easy','normal':'Normal','hard':'Hard'}[G.difficulty||'normal']||'Normal';}
 function showGameOver(){
-  const KNAMES=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
-  const KNAMES2=G.format==='coppa'?['R1','R2','QF','SF','Final']:['R16','QF','SF','Final'];
+  var _isCoWC2=G.gameMode==='copa'||G.gameMode==='wc';
+  const KNAMES=G.format==='coppa'?(_isCoWC2?[t('round.r1'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]):[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
+  const KNAMES2=G.format==='coppa'?(_isCoWC2?['R1','QF','SF','Final']:['R1','R2','QF','SF','Final']):['R16','QF','SF','Final'];
   const ri=Math.min(G.knockRound,KNAMES.length-1);
   const allRes=[...G.groupUserResults,...G.knockResults];
   const total=allRes.reduce((s,r)=>s+(r.stars||0),0);
@@ -4547,7 +4549,8 @@ function renderTrophyPitch(){
 function showTrophy(){
   var _isCopa=G.gameMode==='copa';var _isWC=G.gameMode==='wc';
   const formatTitle=_isCopa?{coppa:t('trophy.copa_old_cup'),classic:t('trophy.copa_classic'),nuovo:t('trophy.copa_classic')}:_isWC?{coppa:t('trophy.wc_old_cup'),classic:t('trophy.wc_classic'),nuovo:t('trophy.wc_classic')}:{coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
-  const KNAMES=G.format==='coppa'?['R1','R2','QF','SF',t('round.final')]:['R16','QF','SF',t('round.final')];
+  var _isCoWC3=G.gameMode==='copa'||G.gameMode==='wc';
+  const KNAMES=G.format==='coppa'?(_isCoWC3?['R1','QF','SF',t('round.final')]:['R1','R2','QF','SF',t('round.final')]):['R16','QF','SF',t('round.final')];
   const gLabel=G.format==='nuovo'?'LG':'GP';
   const all=[...G.groupUserResults,...G.knockResults];
   const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
