@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Progetto Decempionz | Gioco Draft Calcio Storico Online</title>
+  <meta name="description" content="Decempionz è un fan project gratuito di draft calcio storico. Scopri l'idea dietro il gioco: costruisci il tuo XI con le leggende di Champions League, Copa Libertadores e World Cup.">
+  <meta name="keywords" content="decempionz, gioco draft calcio, draft calcio storico, leggende calcio, Champions League storia, Copa Libertadores leggende, World Cup leggende, fantasy football storico, gioco calcio gratis, blind draft calcio">
+  <meta property="og:title" content="Il Progetto Decempionz | Gioco Draft Calcio Storico">
+  <meta property="og:description" content="Un fan project gratuito per tutti gli appassionati di calcio storico. Fai il draft delle leggende di Champions League, Copa Libertadores e World Cup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://decempionz.com/about.html">
+  <link rel="canonical" href="https://decempionz.com/about.html">
+  <style>
+    :root {
+      --bg:#070a12;--surface:#0d1320;--text:#e8edf5;--mut:#6b7e95;
+      --gold:#c9a227;--gold2:#e8c84a;--brd:#1e2d42;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:16px;line-height:1.7}
+    a{color:var(--gold);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .site-header{background:linear-gradient(180deg,#0a0f1e,#070a12);border-bottom:1px solid var(--brd);padding:16px 20px;text-align:center}
+    .site-logo{font-size:1.1rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block}
+    .lang-bar{display:flex;justify-content:center;gap:8px;padding:14px 20px}
+    .lang-btn{background:none;border:1px solid var(--brd);color:var(--mut);border-radius:20px;padding:4px 14px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .18s}
+    .lang-btn.active{background:rgba(201,162,39,.12);border-color:rgba(201,162,39,.4);color:var(--gold)}
+    .hero{background:linear-gradient(135deg,#0a0f20,#0d1a2e 50%,#0a1218);border-bottom:1px solid var(--brd);padding:52px 20px 44px;text-align:center}
+    .hero-badge{display:inline-block;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px}
+    .hero h1{font-size:clamp(1.5rem,5vw,2.4rem);font-weight:900;line-height:1.15;margin-bottom:14px;max-width:660px;margin-left:auto;margin-right:auto}
+    .hero h1 span{color:var(--gold)}
+    .hero-sub{color:var(--mut);font-size:.97rem;max-width:520px;margin:0 auto 26px}
+    .btn-play{display:inline-block;background:linear-gradient(135deg,#c9a227,#e8c84a);color:#07090f;font-weight:800;font-size:.95rem;padding:12px 30px;border-radius:30px;transition:opacity .18s}
+    .btn-play:hover{opacity:.88;text-decoration:none}
+    .container{max-width:760px;margin:0 auto;padding:0 20px}
+    section{padding:48px 0;border-bottom:1px solid var(--brd)}
+    section:last-of-type{border-bottom:none}
+    .section-label{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+    h2{font-size:clamp(1.2rem,3.5vw,1.6rem);font-weight:800;line-height:1.2;margin-bottom:16px}
+    p{color:var(--mut);margin-bottom:14px;font-size:.96rem}
+    p strong{color:var(--text)}
+    p:last-child{margin-bottom:0}
+    .tourn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:24px}
+    .tourn-card{background:var(--surface);border:1px solid var(--brd);border-radius:14px;padding:18px 16px}
+    .tourn-card .icon{font-size:1.6rem;margin-bottom:8px}
+    .tourn-card h3{font-size:.92rem;font-weight:800;color:var(--text);margin-bottom:6px}
+    .tourn-card p{font-size:.77rem;margin:0}
+    .steps{display:flex;flex-direction:column;gap:18px;margin-top:22px}
+    .step{display:flex;gap:14px;align-items:flex-start}
+    .step-num{flex-shrink:0;width:32px;height:32px;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:var(--gold)}
+    .step-body h4{font-size:.93rem;font-weight:700;color:var(--text);margin-bottom:4px}
+    .step-body p{font-size:.85rem;margin:0}
+    footer{text-align:center;padding:22px 20px 30px;font-size:.72rem;color:var(--mut);border-top:1px solid var(--brd)}
+    footer a{color:var(--mut)}
+    footer a:hover{color:var(--gold)}
+    [data-lang]{display:none}
+    [data-lang].visible{display:block}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="site-logo" aria-label="Torna al gioco Decempionz">Decempionz</a>
+  </header>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" id="btn-it" onclick="setLang('it')">🇮🇹 Italiano</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+  </div>
+
+  <!-- ITALIANO -->
+  <div data-lang="it" class="visible">
+    <div class="hero">
+      <div class="hero-badge">Fan Project · Gratuito · No registrazione</div>
+      <h1>Il gioco di <span>draft calcio storico</span> che aspettavi</h1>
+      <p class="hero-sub">Decempionz nasce dalla passione per la storia del calcio. Niente FIFA, niente carte, niente paywall. Solo le leggende vere, una formazione da scegliere e un torneo da vincere.</p>
+      <a href="/" class="btn-play">⚽ Gioca ora — è gratis</a>
+    </div>
+    <div class="container">
+      <section>
+        <div class="section-label">Il Progetto</div>
+        <h2>Perché esiste Decempionz</h2>
+        <p>Decempionz nasce da una domanda semplice: <strong>e se potessi costruire la tua squadra dei sogni con le leggende reali del calcio storico</strong> — non carte inventate, non statistiche arbitrarie, ma i giocatori che hanno davvero vinto Champions League, Copa Libertadores e Mondiali?</p>
+        <p>È un <strong>fan project completamente gratuito</strong>, creato per passione da un appassionato di calcio e game design. Non ci sono microtransazioni, non serve creare un account, non si raccolgono dati. Si carica, si gioca, si vince (o si perde).</p>
+        <p>Il nome "Decempionz" richiama i dieci che scendono in campo con il portiere — un omaggio alla squadra come unità, non alla singola stella.</p>
+      </section>
+      <section>
+        <div class="section-label">I Tornei</div>
+        <h2>Tre competizioni, sessant'anni di calcio</h2>
+        <p>Ogni torneo ha il suo database di squadre storiche, le sue ere, i suoi colori. Puoi giocare con rose che hanno fatto la storia del calcio mondiale.</p>
+        <div class="tourn-grid">
+          <div class="tourn-card"><div class="icon">🏆</div><h3>UCL Legends</h3><p>Champions League 1956–2024. <strong>66 rose storiche</strong>, 29 club, dalle grandi Real Madrid degli anni '60 al City di Guardiola. Formato Classic, Old Cup e New Wave.</p></div>
+          <div class="tourn-card"><div class="icon">🌿</div><h3>Copa Libertadores</h3><p>Il calcio sudamericano 1960–2024. <strong>24 squadre leggendarie</strong>: Santos di Pelé, Estudiantes, Nacional, Boca Juniors, River Plate. Pura intensità.</p></div>
+          <div class="tourn-card"><div class="icon">🌍</div><h3>World Cup Legends</h3><p>Mondiali 1930–2022. <strong>65 nazionali storiche</strong>: dall'Uruguay del '30 all'Argentina di Messi, passando per il Brasile del '70 e la Germania del '74.</p></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">Come si gioca</div>
+        <h2>Un draft alla cieca, match dopo match</h2>
+        <p>Decempionz è un gioco di <strong>blind draft</strong>: scegli una formazione, poi ti vengono proposti tre giocatori alla volta — uno va nel tuo XI, gli altri spariscono. Niente certezze, solo intuito e strategia.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Scegli il torneo e il formato</h4><p>UCL, Copa o World Cup. Classic (girone + playoff), Old Cup (solo knockout) o New Wave (fase a lega UCL). Difficoltà facile, normale o difficile.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Scegli un'era storica</h4><p>Anni '60, '70, '80, '90, 2000s, 2010s oppure All Time per pescare da ogni epoca. Ogni era ha il suo pool di squadre e giocatori.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Fai il draft del tuo XI</h4><p>Formazione a scelta (4-3-3, 4-4-2, 3-5-2 e altre), poi un blind draft per riempire tutti gli slot. I giocatori con valutazione ★ (9.5+) danno un bonus ai tiri.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Gioca il torneo</h4><p>Ogni partita è simulata con meccaniche di momentum, tattica e scout report avversario. Pareggi ai 90? Si va ai rigori.</p></div></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">Aspetti tecnici</div>
+        <h2>Un gioco in un singolo file HTML</h2>
+        <p>Decempionz è costruito in <strong>JavaScript vanilla</strong>, senza framework, senza dipendenze esterne, senza database. Un file HTML di circa 6.000 righe che contiene tutto: logica, dati storici, grafica e animazioni.</p>
+        <p>Funziona su qualsiasi browser moderno, si carica in meno di un secondo e può essere salvato e giocato anche offline. È un esperimento di game design minimalista: <strong>quanta profondità si può mettere in un singolo file?</strong></p>
+        <p>Il codice è open source su GitHub per chi vuole esplorarlo, contribuire o fare un fork per il proprio torneo storico preferito.</p>
+      </section>
+      <section>
+        <div class="section-label">FAQ</div>
+        <h2>Domande frequenti</h2>
+        <p><strong>È gratuito?</strong> Sì, completamente. Nessun acquisto, nessuna registrazione.</p>
+        <p><strong>I dati dei giocatori sono reali?</strong> Sì, le rose sono storicamente accurate. I rating sono una stima soggettiva basata su performance reali.</p>
+        <p><strong>Posso salvare i progressi?</strong> Ogni sessione è indipendente. Stiamo lavorando a un sistema di trofei personali salvati localmente nel browser.</p>
+        <p><strong>Su quali dispositivi funziona?</strong> Su qualsiasi dispositivo con un browser moderno: desktop, tablet e smartphone.</p>
+        <p><strong>Perché non c'è la Serie A o la Premier League?</strong> Decempionz è focalizzato sulle competizioni internazionali. Potremmo aggiungere altri tornei in futuro.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ENGLISH -->
+  <div data-lang="en">
+    <div class="hero">
+      <div class="hero-badge">Fan Project · Free · No sign-up required</div>
+      <h1>The <span>historical football draft</span> game you've been waiting for</h1>
+      <p class="hero-sub">Decempionz was born from a love of football history. No FIFA, no cards, no paywall. Just real legends, a formation to pick, and a tournament to win.</p>
+      <a href="/" class="btn-play">⚽ Play now — it's free</a>
+    </div>
+    <div class="container">
+      <section>
+        <div class="section-label">The Project</div>
+        <h2>Why Decempionz exists</h2>
+        <p>Decempionz started with a simple question: <strong>what if you could build your dream team using real historical football legends</strong> — not made-up cards, not arbitrary stats, but the players who actually won the Champions League, Copa Libertadores, and World Cup?</p>
+        <p>It's a <strong>completely free fan project</strong>, built out of passion by a football and game design enthusiast. No microtransactions, no account required, no data collected. Load it, play it, win it (or lose it).</p>
+        <p>The name "Decempionz" is a play on "ten" (the outfield players) and "champions" — a tribute to the team as a unit, not just the star player.</p>
+      </section>
+      <section>
+        <div class="section-label">The Tournaments</div>
+        <h2>Three competitions, sixty years of football</h2>
+        <p>Each tournament has its own historical squad database, its own eras, and its own visual identity.</p>
+        <div class="tourn-grid">
+          <div class="tourn-card"><div class="icon">🏆</div><h3>UCL Legends</h3><p>Champions League 1956–2024. <strong>66 historical squads</strong>, 29 clubs — from Real Madrid's 1960s dynasty to Guardiola's Man City. Classic, Old Cup and New Wave formats.</p></div>
+          <div class="tourn-card"><div class="icon">🌿</div><h3>Copa Libertadores</h3><p>South American football 1960–2024. <strong>24 legendary squads</strong>: Pelé's Santos, Estudiantes, Nacional, Boca Juniors, River Plate. Pure intensity.</p></div>
+          <div class="tourn-card"><div class="icon">🌍</div><h3>World Cup Legends</h3><p>FIFA World Cup 1930–2022. <strong>65 historic national teams</strong>: from Uruguay 1930 to Messi's Argentina, via Brazil 1970 and West Germany 1974.</p></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">How to play</div>
+        <h2>A blind draft, match by match</h2>
+        <p>Decempionz is a <strong>blind draft game</strong>: pick a formation, then three player cards appear at once — choose one for your XI, the others disappear. No guarantees, only instinct and strategy.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Choose tournament and format</h4><p>UCL, Copa or World Cup. Classic (group stage + playoffs), Old Cup (pure knockout) or New Wave (league phase, UCL only). Easy, Normal or Hard difficulty.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Pick a historical era</h4><p>1960s, 1970s, 1980s, 1990s, 2000s, 2010s — or All Time to draw from every era.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Draft your XI</h4><p>Choose a formation (4-3-3, 4-4-2, 3-5-2 and more), then fill every slot through blind draft. Players rated ★ (9.5+) give an xG shooting bonus.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Play the tournament</h4><p>Each match is simulated with momentum mechanics, tactics and an opponent scout report. Draw after 90 minutes? Penalty shootout.</p></div></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">Technical</div>
+        <h2>An entire game in one HTML file</h2>
+        <p>Decempionz is built in <strong>vanilla JavaScript</strong> — no frameworks, no external dependencies, no database. A single ~6,000-line HTML file containing everything: game logic, historical data, graphics and animations.</p>
+        <p>It runs in any modern browser, loads in under a second, and can be saved and played offline. It's an exercise in minimalist game design: <strong>how much depth can you pack into a single file?</strong></p>
+        <p>The source code is open source on GitHub for anyone who wants to explore it, contribute, or fork it.</p>
+      </section>
+      <section>
+        <div class="section-label">FAQ</div>
+        <h2>Frequently Asked Questions</h2>
+        <p><strong>Is it free?</strong> Yes, completely. No purchases, no registration required.</p>
+        <p><strong>Is the player data accurate?</strong> Yes, squads are historically accurate. Ratings are a subjective estimate based on real performances.</p>
+        <p><strong>Can I save my progress?</strong> Each session is independent. We are working on a personal trophy system saved locally in your browser.</p>
+        <p><strong>What devices does it work on?</strong> Any device with a modern browser: desktop, tablet and smartphone.</p>
+        <p><strong>Why no Serie A or Premier League?</strong> Decempionz focuses on international competitions. More tournaments may be added in the future.</p>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">← Torna al gioco / Back to the game</a>
+    &nbsp;·&nbsp; © 2026 Decempionz &nbsp;·&nbsp;
+    <a href="/about.html">About</a>
+  </footer>
+
+  <script>
+    function setLang(lang){
+      document.querySelectorAll('[data-lang]').forEach(function(el){
+        el.classList.toggle('visible',el.dataset.lang===lang);
+      });
+      document.getElementById('btn-it').classList.toggle('active',lang==='it');
+      document.getElementById('btn-en').classList.toggle('active',lang==='en');
+      document.documentElement.lang=lang;
+    }
+  </script>
+</body>
+</html>
