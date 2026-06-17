@@ -1097,8 +1097,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="trophies-count" style="font-size:.72rem;color:var(--mut);margin-top:4px"></div>
   </div>
   <div class="trophies-grid" id="trophies-grid"></div>
-  <div style="margin-top:8px;text-align:center">
+  <div style="margin-top:8px;text-align:center;display:flex;flex-direction:column;gap:8px">
     <button class="btn btn-ghost" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
+    <button class="btn" onclick="confirmClearTrophies()" style="font-size:.75rem;background:transparent;border:1px solid #ef444466;color:#ef4444;padding:8px">🗑️ Svuota Bacheca</button>
   </div>
 </div>
 
@@ -5209,6 +5210,12 @@ function _loadTrophyData(){try{return JSON.parse(localStorage.getItem(_DCZ_TROPH
 function _saveTrophyData(d){try{localStorage.setItem(_DCZ_TROPHY_KEY,JSON.stringify(d));}catch(e){}}
 function _loadFormationsWon(){try{return JSON.parse(localStorage.getItem(_DCZ_FORM_KEY)||'[]');}catch(e){return [];}}
 function _saveFormationsWon(a){try{localStorage.setItem(_DCZ_FORM_KEY,JSON.stringify(a));}catch(e){}}
+function confirmClearTrophies(){
+  if(confirm('Sei sicuro? Questa azione cancellerà tutti i tuoi trofei in modo permanente.')){
+    try{localStorage.removeItem(_DCZ_TROPHY_KEY);localStorage.removeItem(_DCZ_FORM_KEY);}catch(e){}
+    showTrophies();
+  }
+}
 
 function checkTrophies(g){
   var data=_loadTrophyData();
@@ -5894,16 +5901,4 @@ function _devSetMom(v){
     <div class="modal-title">🔒 Privacy</div>
     <div class="modal-section">
       <h3 data-i18n="priv.h_data">Nessuna raccolta di dati</h3>
-      <p data-i18n-html="priv.p_data"></p>
-    </div>
-    <div class="modal-section">
-      <h3 data-i18n="priv.h_cookies">Cookie e archiviazione locale</h3>
-      <p data-i18n-html="priv.p_cookies"></p>
-    </div>
-    <div class="modal-section">      <h3 data-i18n="priv.h_scripts">Script di terze parti</h3>
-      <p data-i18n-html="priv.p_scripts"></p>
-    </div>
-    <div class="modal-section">
-      <h3 data-i18n="priv.h_gdpr">I tuoi diritti (GDPR)</h3>
-      <p data-i18n-html="priv.p_gdpr"></p>
-    </d
+      <p data-i18n-htm
