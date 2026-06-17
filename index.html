@@ -3823,6 +3823,7 @@ function startPenalties(){
   P={round:0,side:'home',h:0,a:0,hKicks:[],aKicks:[],maxRounds:5,
      names:shuffled.map(p=>p.n),oppNames:oppPenNames,oppName:M.oppName,done:false};
   showScreen('screen-match');
+  var _si=document.getElementById('m-speed-icons');if(_si)_si.style.display='none';
   document.getElementById('pen-zone').style.display='block';
   document.getElementById('pen-rows').innerHTML='';
   document.getElementById('pen-score').textContent='0 – 0';
