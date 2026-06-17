@@ -1035,6 +1035,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <button class="btn btn-share" style="flex:1;margin-top:0" data-i18n="btn.share" onclick="shareResult()">📤 Condividi</button>
     </div>
     <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="_startGameByMode()">⚙️ Cambia regole</button>
+    <div class="hof-submit-area">
+      <div style="font-size:.7rem;color:var(--mut);margin-bottom:6px;text-align:center" data-i18n="hof.submit_label">Entra nella Hall of Fame</div>
+      <input id="hof-nickname" type="text" maxlength="24" placeholder="Il tuo nickname…" data-i18n-placeholder="hof.nick_placeholder" style="padding:8px 10px;font-size:.82rem;color:var(--text);margin-bottom:6px"/>
+      <button class="btn btn-gold" style="width:100%;font-size:.8rem;margin-top:0" onclick="submitToHoF()">🏆 Invia alla Hall of Fame</button>
+    </div>
   </div>
 </div>
 <!-- HALL OF FAME -->
@@ -1196,6 +1201,9 @@ const STRINGS={
     'trophy.copa_old_cup':'Campioni Copa Old Cup',
     'trophy.copa_classic':'Campioni Copa Libertadores',
     'trophy.nuovo':'Campioni New Wave',
+    'hof.submit_label':'Entra nella Hall of Fame',
+    'hof.nick_placeholder':'Il tuo nickname…',
+    'hof.btn_submit':'🏆 Invia alla Hall of Fame',
     'grade.s':'Campagna perfetta!',
     'grade.a':'Campioni d\'Europa',
     'grade.a.copa':'Campioni del Sud America',
@@ -1416,6 +1424,9 @@ const STRINGS={
     'trophy.copa_old_cup':'Copa Old Cup Champions',
     'trophy.copa_classic':'Copa Libertadores Champions',
     'trophy.nuovo':'New Wave Champions',
+    'hof.submit_label':'Enter the Hall of Fame',
+    'hof.nick_placeholder':'Your nickname…',
+    'hof.btn_submit':'🏆 Submit to Hall of Fame',
     'grade.s':'Perfect campaign!',
     'grade.a':'Champions of Europe',
     'grade.a.copa':'Champions of South America',
@@ -1563,6 +1574,11 @@ function applyLang(){
     var k=el.getAttribute('data-i18n-html');
     var v=t(k);
     if(v)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-placeholder');
+    var v=t(k);
+    if(v)el.placeholder=v;
   });
 }
 
