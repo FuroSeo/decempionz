@@ -646,7 +646,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 (function(){var t=localStorage.getItem('gl-theme');if(t==='light')document.body.setAttribute('data-theme','light');})();
 </script>
 <button id="theme-icon" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:10px;right:10px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);color:var(--mut);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">☀️</button>
-<button id="lang-btn" onclick="toggleLang()" aria-label="Toggle language" style="position:fixed;top:10px;right:48px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.65);background:var(--s2);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">🇬🇧</button>
+<button id="lang-btn" onclick="toggleLang()" aria-label="Toggle language" style="position:fixed;top:10px;right:48px;z-index:9999;height:30px;padding:0 9px;border-radius:15px;border:1px solid var(--brd);background:var(--s2);font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0;white-space:nowrap;line-height:1"><span id="lb-it" style="font-weight:700;color:var(--text)">IT</span><span style="color:var(--mut);padding:0 3px">·</span><span id="lb-en" style="font-weight:400;color:var(--mut)">EN</span></button>
 <div class="app">
 
 <!-- HOME -->
@@ -1528,13 +1528,20 @@ function t(key){
   return(STRINGS[lang]||STRINGS.it)[key]||(STRINGS.it[key])||key;
 }
 
+function _syncLangBtn(lang){
+  var it=lang==='it';
+  var eli=document.getElementById('lb-it');
+  var ele=document.getElementById('lb-en');
+  if(eli){eli.style.fontWeight=it?'700':'400';eli.style.color=it?'var(--text)':'var(--mut)';}
+  if(ele){ele.style.fontWeight=it?'400':'700';ele.style.color=it?'var(--mut)':'var(--text)';}
+}
 function toggleLang(){
   var cur=(typeof G!=='undefined'&&G&&G.lang)?G.lang:'it';
   var next=cur==='it'?'en':'it';
   if(typeof G!=='undefined'&&G)G.lang=next;
   try{localStorage.setItem('dcz_lang',next);}catch(e){}
   var btn=document.getElementById('lang-btn');
-  if(btn)btn.textContent=next==='it'?'🇬🇧':'🇮🇹';
+  _syncLangBtn(next);
   applyLang();
 }
 
@@ -4624,7 +4631,7 @@ document.addEventListener('DOMContentLoaded',function(){
   try{_initLang=localStorage.getItem('dcz_lang')||'it';}catch(e){}
   if(typeof G!=='undefined'&&G)G.lang=_initLang;
   var _lb=document.getElementById('lang-btn');
-  if(_lb)_lb.textContent=_initLang==='it'?'🇬🇧':'🇮🇹';
+  _syncLangBtn(_initLang);
   applyLang();
   checkChallengeURL();
 });
