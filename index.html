@@ -1196,6 +1196,7 @@ const STRINGS={
     'grade.s':'Campagna perfetta!',
     'grade.a':'Campioni d\'Europa',
     'grade.a.copa':'Campioni del Sud America',
+    'grade.a.wc':'Campioni del Mondo',
     'grade.b':'Campioni di carattere',
     'grade.c':'Vinta a fatica',
     'stats.top_scorer':'⚽ Capocannoniere',
@@ -1412,6 +1413,7 @@ const STRINGS={
     'grade.s':'Perfect campaign!',
     'grade.a':'Champions of Europe',
     'grade.a.copa':'Champions of South America',
+    'grade.a.wc':'World Champions',
     'grade.b':'Gritty champions',
     'grade.c':'Won it the hard way',
     'stats.top_scorer':'⚽ Top scorer',
@@ -4524,7 +4526,7 @@ function showTrophy(){
   const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
-  const gradeMsg={'S':t('grade.s'),'A':(_isCopa||_isWC)?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
+  const gradeMsg={'S':t('grade.s'),'A':_isWC?t('grade.a.wc'):_isCopa?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
   const campL=all.filter(r=>r.myG<r.oppG).length;
