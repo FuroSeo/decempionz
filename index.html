@@ -2901,10 +2901,13 @@ function replayGame(){
   var era=G.tournament;
   var fmt=G.format;
   var diff=G.difficulty||'normal';
+  var mode=G.gameMode||'ucl';
   applyTournament(era);
-  G.format=fmt;G.difficulty=diff;
+  G.format=fmt;G.difficulty=diff;G.gameMode=mode;
   G.phase=(fmt==='coppa')?'knockout':'group';
   G.tactic='balanced';
+  applyTournamentTheme(mode);
+  _syncFormatCards();
   renderFormationGrid();
   setTimeout(function(){
     document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
@@ -5046,7 +5049,7 @@ function submitToHoF(){
     '| **Nickname** | '+nick+' |',
     '| **Grade** | '+d.grade+' |',
     '| **Esito** | '+(d.isWinner?'Campione 🏆':'Eliminato 💔')+' |',
-    '| **Torneo** | '+(_hofMode==='copa'?'🌎 Copa Libertadores':'🏆 UCL Legends')+' |',
+    '| **Torneo** | '+(_hofMode==='copa'?'🌎 Copa Libertadores':_hofMode==='wc'?'🌍 World Cup Legends':'🏆 UCL Legends')+' |',
     '| **Era** | '+eraName+' |',
     '| **Formato** | '+d.formatLabel+' |',
     '| **Formazione** | '+G.formation+' |',
