@@ -5167,6 +5167,7 @@ function _devSetMode(mode){
   } else if(fmtSel){
     fmtSel.disabled=false;
   }
+  _devRenderJumpPanel();
 }
 function openDevPanel(){
   document.querySelectorAll('#dev-panel .gv').forEach(function(v){v.textContent=GAME_VERSION;});
@@ -5181,9 +5182,10 @@ function openDevPanel(){
 function _devRenderJumpPanel(){
   var el=document.getElementById('dv-jump-btns');
   if(!el)return;
-  var fmt=G.format||'classic';
+  var _fmtSel=document.getElementById('dv-format');
+  var fmt=(_fmtSel?_fmtSel.value:null)||G.format||'classic';
   var isCoWC=(G.gameMode==='copa'||G.gameMode==='wc');
-  var isCoppa=fmt==='coppa';
+  var isCoppa=fmt==='coppa'||isCoWC;
   var isNuovo=fmt==='nuovo'&&!isCoWC;
   var makeBtn=function(label,phase,round,color){
     var b=document.createElement('button');
