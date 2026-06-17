@@ -3026,6 +3026,7 @@ function startGameWC(){
   applyTournamentTheme('wc');
 }
 function switchTournTab(mode){
+  G.gameMode=mode; // sync gameMode al tab visivo — safety net per tutti i percorsi di navigazione
   ['ucl','copa','wc'].forEach(function(m){
     var card=document.getElementById('tourn-'+m);
     var tab=document.getElementById('tab-'+m);
