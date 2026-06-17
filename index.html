@@ -763,7 +763,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="format-card" id="fc-coppa" onclick="selectFormat('coppa',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">🏆 Old Cup</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">1956 – 1992</div></div>
-        <div data-i18n-html="fmt.coppa.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">5 matches<br>pure knockout</div>
+        <div id="fc-coppa-meta" data-i18n-html="fmt.coppa.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">5 matches<br>pure knockout</div>
       </div>
       <div data-i18n="fmt.coppa.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">Pure knockout from round one — no group stage. Every match is do-or-die.</div>
     </div>
@@ -1254,6 +1254,7 @@ const STRINGS={
     'fmt.title':'Scegli il Formato',
     'fmt.subtitle':'Ogni formato ha struttura, pool e numero di partite diversi.',
     'fmt.coppa.meta':'5 partite<br>solo knockout',
+    'fmt.coppa.meta4':'4 partite<br>solo knockout',
     'fmt.coppa.desc':'Eliminazione diretta dal primo turno — niente fase a gironi. Ogni partita è decisiva.',
     'fmt.classic.meta':'7 partite<br>gironi + knockout',
     'fmt.classic.desc':'3 partite a gironi per qualificarsi, poi Ottavi → QF → SF → Finale. Il formato classico.',
@@ -1473,6 +1474,7 @@ const STRINGS={
     'fmt.title':'Choose Tournament Format',
     'fmt.subtitle':'Each format has a different structure, era pool and number of matches.',
     'fmt.coppa.meta':'5 matches<br>pure knockout',
+    'fmt.coppa.meta4':'4 matches<br>pure knockout',
     'fmt.coppa.desc':'Pure knockout from round one — no group stage. Every match is do-or-die.',
     'fmt.classic.meta':'7 matches<br>group + knockout',
     'fmt.classic.desc':'3 group stage matches to qualify, then R16 → QF → SF → Final. The classic format.',
@@ -2894,6 +2896,12 @@ function _syncFormatBadge(){
   document.querySelectorAll('.tourn-badge').forEach(function(el){
     el.textContent=cfg.label;el.style.background=cfg.bg;el.style.color=cfg.color;
   });
+  // Aggiorna conteggio partite Old Cup: 4 per Copa/WC, 5 per UCL
+  var coppaMetaEl=document.getElementById('fc-coppa-meta');
+  if(coppaMetaEl){
+    var metaKey=(m==='copa'||m==='wc')?'fmt.coppa.meta4':'fmt.coppa.meta';
+    coppaMetaEl.innerHTML=t(metaKey);
+  }
 }
 function _syncFormatCards(){
   var nuovoCard=document.getElementById('fc-nuovo');
