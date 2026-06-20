@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: no-cache');
 header('Access-Control-Allow-Origin: https://decempionz.com');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -35,8 +37,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     flock($fh, LOCK_UN);
     fclose($fh);
     echo json_encode(['total' => $total]);
-    exit;
-}
-
-http_response_code(405);
-echo json_encode(['error' => 'Method not allowed']);
+ 

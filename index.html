@@ -5225,7 +5225,7 @@ function _incGamesTotal(){
 function _renderGamesCounter(){
   var el=document.getElementById('home-games-counter');
   if(!el)return;
-  fetch('/game-counter.php').then(function(r){return r.json();}).then(function(d){
+  fetch('/game-counter.php?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
     var n=d.total||0;
     var isIt=(G&&G.lang)?G.lang==='it':true;
     document.getElementById('home-games-num').textContent=_fmtCount(n);
@@ -5943,5 +5943,4 @@ function _devSetMom(v){
       <h3>Cookie</h3>
       <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
     </div>
-    <div class="modal-section">
-      <h3>I tuoi diritti (GDPR
+    <div class="modal-section
