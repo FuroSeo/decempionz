@@ -762,6 +762,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button data-i18n="wc.btn_custom" class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px">⚙️ Personalizza</button>
   </div>
 
+  <!-- Contatore partite -->
+  <div id="home-games-counter" style="text-align:center;margin:10px 0 2px;font-size:.72rem;color:var(--mut);display:none">
+    ⚽ <span id="home-games-num">0</span> <span id="home-games-lbl">partite giocate</span>
+  </div>
+
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
     <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.82rem">❓ Come si gioca</button>
@@ -1065,6 +1070,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div style="font-size:.7rem;color:var(--mut);margin-bottom:6px;text-align:center" data-i18n="hof.submit_label">Entra nella Hall of Fame</div>
       <input id="hof-nickname" type="text" maxlength="24" placeholder="Il tuo nickname…" data-i18n-placeholder="hof.nick_placeholder" style="padding:8px 10px;font-size:.82rem;color:var(--text);margin-bottom:6px"/>
       <button class="btn btn-gold" style="width:100%;font-size:.8rem;margin-top:0" onclick="submitToHoF()">🏆 Invia alla Hall of Fame</button>
+      <p class="hof-notice" style="font-size:.65rem;color:var(--mut);text-align:center;margin-top:6px">⏳ Pubblicato dopo approvazione del moderatore</p>
     </div>
   </div>
 </div>
@@ -2830,7 +2836,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home')switchTournTab(G.gameMode||'ucl');if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -4534,6 +4540,7 @@ function showGameOver(){
   const kRows=G.knockResults.map(function(r,i){return _jRow(KNAMES2[Math.min(i,KNAMES2.length-1)],r.opp,r.myG,r.oppG);}).join('');
   document.getElementById('go-journey').innerHTML=gRows+kRows;
 
+  _incGamesTotal();
   renderGameOverPitch();
   showScreen('screen-gameover');
 }
@@ -4671,6 +4678,7 @@ function showTrophy(){
     wrap.appendChild(el);
   }
   checkTrophies(G);
+  _incGamesTotal();
   showScreen('screen-trophy');
 }
 
@@ -5200,6 +5208,23 @@ var TROPHIES=[
 ];
 var _DCZ_TROPHY_KEY='dcz_trophies';
 var _DCZ_FORM_KEY='dcz_formations_won';
+var _DCZ_GAMES_KEY='dcz_games_total';
+
+function _loadGamesTotal(){try{return parseInt(localStorage.getItem(_DCZ_GAMES_KEY)||'0',10)||0;}catch(e){return 0;}}
+function _incGamesTotal(){try{localStorage.setItem(_DCZ_GAMES_KEY,String(_loadGamesTotal()+1));}catch(e){}}
+function _renderGamesCounter(){
+  var n=_loadGamesTotal();
+  var el=document.getElementById('home-games-counter');
+  if(!el)return;
+  if(n>0){
+    document.getElementById('home-games-num').textContent=n;
+    var isIt=(G&&G.lang)?G.lang==='it':true;
+    document.getElementById('home-games-lbl').textContent=isIt?'partite giocate':'games played';
+    el.style.display='block';
+  }else{
+    el.style.display='none';
+  }
+}
 
 function _loadTrophyData(){try{return JSON.parse(localStorage.getItem(_DCZ_TROPHY_KEY)||'{}');}catch(e){return {};}}
 function _saveTrophyData(d){try{localStorage.setItem(_DCZ_TROPHY_KEY,JSON.stringify(d));}catch(e){}}
@@ -5845,11 +5870,6 @@ function _devSetMom(v){
       <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
       <button class="btn" onclick="copyShareText()">📋 Copia</button>
     </div>
-    <div class="hof-submit-area">
-      <input type="text" id="hof-nickname" maxlength="24" placeholder="Il tuo nickname (max 24 caratteri)">
-      <button class="btn btn-gold" style="width:100%;font-size:.8rem" onclick="submitToHoF()">🏆 Invia in Hall of Fame</button>
-      <p class="hof-notice">⏳ I risultati vengono pubblicati dopo approvazione del moderatore</p>
-    </div>
   </div>
 </div>
 <div id="modal-fanproject" class="modal-overlay" onclick="closeFanProject()">
@@ -5928,17 +5948,4 @@ function _devSetMom(v){
   </div>
 </div>
 
-<!-- Challenge Modal -->
-<div id="challenge-modal" onclick="closeChallengeModal()">
-  <div id="challenge-modal-box" onclick="event.stopPropagation()">
-    <div style="font-size:2.2rem;margin-bottom:10px">⚔️</div>
-    <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
-    <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
-    <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
-  </div>
-</div>
-
-<div id="share-toast">📋</div>
-
-</body></html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+<!-- Cha
