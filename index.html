@@ -629,9 +629,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 [data-theme="light"] .hof-submit-area input{background:#fff;border-color:rgba(0,0,0,.2);color:#111827}
 [data-theme="light"] .hof-submit-area input::placeholder{color:#9ca3af}
 .hof-notice{font-size:.65rem;color:#6b7e95;text-align:center;margin-top:6px;line-height:1.4}
-/* HoF temporaneamente disabilitata */
-.hof-submit-area{display:none!important}
-.btn-hof-entry{display:none!important}
 /* ── Trofei screen ── */
 .trophies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .trophy-card{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:10px 8px 8px;text-align:center;position:relative;transition:border-color .2s}
@@ -768,7 +765,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
     <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.82rem">❓ Come si gioca</button>
-    <button class="btn btn-ghost" onclick="openHallOfFame()" style="font-size:.82rem;display:none">🏆 Hall of Fame</button>
+    <button class="btn btn-ghost" onclick="openHallOfFame()" style="font-size:.82rem">🏆 Hall of Fame</button>
     <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.82rem" data-i18n="trophies.btn">🏅 Trofei</button>
   </div>
 
@@ -5140,46 +5137,41 @@ function submitToHoF(){
   var nick=(document.getElementById('hof-nickname').value||'').trim();
   if(!nick){document.getElementById('hof-nickname').focus();return;}
   var d=_shareData();
-  var eraName=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
-  var _hofMode=G.gameMode||'ucl';
-  var diffMap={easy:'🟢 Facile',normal:'🟡 Normale',hard:'🔴 Difficile'};
-  var diffLbl=diffMap[G.difficulty||'normal']||'🟡';
-  var grpMap=d.grpMap;
-  var lineup=[
-    grpMap.GK.length?'🧤 '+grpMap.GK.join(', '):'',
-    grpMap.DEF.length?'🛡️ '+grpMap.DEF.join(', '):'',
-    grpMap.MID.length?'⚙️ '+grpMap.MID.join(', '):'',
-    grpMap.FWD.length?'⚡ '+grpMap.FWD.join(', '):'',
-  ].filter(Boolean).join('\n');
-  var wdlLabel=d.campW+'V '+d.campD+'P '+d.campL+'S';
-  var goalLabel=G.campaignGF+'-'+G.campaignGA+' gol';
   var topScorer=Object.entries(G.campaignScorers||{}).sort(function(a,b){return b[1]-a[1];})[0];
-  var topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'--';
-  var title='[HoF] Grade '+d.grade+' – '+d.formatLabel+' – '+nick;
-  var rows=[
-    '## 🏆 Hall of Fame Submission','',
-    '| Campo | Valore |','|---|---|',
-    '| **Nickname** | '+nick+' |',
-    '| **Grade** | '+d.grade+' |',
-    '| **Esito** | '+(d.isWinner?'Campione 🏆':'Eliminato 💔')+' |',
-    '| **Torneo** | '+(_hofMode==='copa'?'🌎 Copa Libertadores':_hofMode==='wc'?'🌍 World Cup Legends':'🏆 UCL Legends')+' |',
-    '| **Era** | '+eraName+' |',
-    '| **Formato** | '+d.formatLabel+' |',
-    '| **Formazione** | '+G.formation+' |',
-    '| **Difficoltà** | '+diffLbl+' |',
-    '| **Record** | '+wdlLabel+' |',
-    '| **Gol** | '+goalLabel+' |',
-    '| **Capocannoniere** | '+topScorerStr+' |','',
-    '### Rosa','```',lineup,'```','','---','*Inviato da decempionz.com*'
-  ];
-  var body=rows.join('\n');
-  var url='https://github.com/FuroSeo/decempionz/issues/new'
-    +'?title='+encodeURIComponent(title)
-    +'&body='+encodeURIComponent(body)
-    +'&labels=hall-of-fame';
-  window.open(url,'_blank');
-  document.getElementById('hof-nickname').value='';
-  showShareToast('🏆 Submission inviata!');
+  var topScorerStr=topScorer?topScorer[0]+' ('+topScorer[1]+'g)':'--';
+  var payload={
+    nickname: nick,
+    grade: d.grade,
+    winner: !!d.isWinner,
+    tournament: G.gameMode||'ucl',
+    era: G.tournament?(G.tournament.emoji||'')+' '+(G.tournament.name||''):'All Time',
+    format: d.formatLabel||'',
+    formation: G.formation||'',
+    difficulty: G.difficulty||'normal',
+    record: d.campW+'V '+d.campD+'P '+d.campL+'S',
+    goals: G.campaignGF+'-'+G.campaignGA,
+    topScorer: topScorerStr,
+    lineup: d.grpMap
+  };
+  var btns=document.querySelectorAll('[onclick="submitToHoF()"]');
+  btns.forEach(function(b){b.disabled=true;b.textContent='Invio…';});
+  fetch('/hof-submit.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();}).then(function(res){
+    if(res.success){
+      btns.forEach(function(b){b.textContent='✅ Inviato!';});
+      document.querySelectorAll('#hof-nickname').forEach(function(el){el.value='';});
+      showShareToast('🏆 Risultato inviato!');
+    } else {
+      btns.forEach(function(b){b.disabled=false;b.textContent='🏆 Invia in Hall of Fame';});
+      alert(res.error||'Errore durante l\'invio.');
+    }
+  }).catch(function(){
+    btns.forEach(function(b){b.disabled=false;b.textContent='🏆 Invia in Hall of Fame';});
+    alert('Errore di connessione. Riprova.');
+  });
 }
 
 
@@ -5943,4 +5935,10 @@ function _devSetMom(v){
     <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
     <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
     <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" oncl
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
+  </div>
+</div>
+
+<div id="share-toast">📋</div>
+
+</body></html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
