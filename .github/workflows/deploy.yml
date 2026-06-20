@@ -24,3 +24,6 @@ jobs:
             **/.git*/**
             **/node_modules/**
             .cpanel.yml
+            game-counter.json
+            hall-of-fame-pending.json
+            hall-of-fame.json
