@@ -5224,13 +5224,17 @@ function _incGamesTotal(){
 }
 function _renderGamesCounter(){
   var el=document.getElementById('home-games-counter');
-  if(!el)return;
-  fetch('/game-counter.php?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
-    var n=d.total||0;
-    var isIt=(G&&G.lang)?G.lang==='it':true;
-    document.getElementById('home-games-num').textContent=_fmtCount(n);
-    document.getElementById('home-games-lbl').textContent=isIt?'partite giocate su Decempionz':'games played on Decempionz';
-  }).catch(function(){});
+  if(!el){console.warn('[counter] elemento non trovato');return;}
+  fetch('/game-counter.php?_='+Date.now(),{cache:'no-store'})
+    .then(function(r){console.log('[counter] status',r.status,r.url);return r.json();})
+    .then(function(d){
+      console.log('[counter] data',JSON.stringify(d));
+      var n=d.total||0;
+      var isIt=(G&&G.lang)?G.lang==='it':true;
+      document.getElementById('home-games-num').textContent=_fmtCount(n);
+      document.getElementById('home-games-lbl').textContent=isIt?'partite giocate su Decempionz':'games played on Decempionz';
+    })
+    .catch(function(e){console.error('[counter] errore',e);});
 }
 
 function _loadTrophyData(){try{return JSON.parse(localStorage.getItem(_DCZ_TROPHY_KEY)||'{}');}catch(e){return {};}}
@@ -5943,4 +5947,29 @@ function _devSetMom(v){
       <h3>Cookie</h3>
       <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
     </div>
-    <div class="
+    <div class="modal-section">
+      <h3>I tuoi diritti (GDPR – Reg. UE 2016/679)</h3>
+      <p>Ai sensi degli artt. 15-20 del GDPR hai diritto di accesso, rettifica, cancellazione, limitazione e portabilità dei tuoi dati. Per esercitare questi diritti scrivi a: <a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
+    </div>
+    <div class="modal-section">
+      <h3>Aggiornamenti</h3>
+      <p>Questa policy può essere aggiornata in caso di modifiche al gioco o alla normativa. Ultimo aggiornamento: giugno 2025.</p>
+    </div>
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
+  </div>
+</div>
+
+<!-- Challenge Modal -->
+<div id="challenge-modal" onclick="closeChallengeModal()">
+  <div id="challenge-modal-box" onclick="event.stopPropagation()">
+    <div style="font-size:2.2rem;margin-bottom:10px">⚔️</div>
+    <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
+    <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
+    <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
+    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
+  </div>
+</div>
+
+<div id="share-toast">📋</div>
+
+</body></html>
