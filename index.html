@@ -763,7 +763,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Contatore partite globale -->
-  <div id="home-games-counter" style="display:none;text-align:center;margin:14px 0 4px">
+  <div id="home-games-counter" style="text-align:center;margin:14px 0 4px">
     <span style="font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">⚽ <span id="home-games-num">0</span></span>
     <span style="font-size:.65rem;color:var(--mut);margin-left:4px" id="home-games-lbl">partite giocate su Decempionz</span>
     <span style="font-size:.6rem;color:var(--mut);opacity:.6;margin-left:4px">· dal 20 giu 2026</span>
@@ -5224,17 +5224,16 @@ function _incGamesTotal(){
 }
 function _renderGamesCounter(){
   var el=document.getElementById('home-games-counter');
-  if(!el){console.warn('[counter] elemento non trovato');return;}
+  if(!el)return;
   fetch('/game-counter.php?_='+Date.now(),{cache:'no-store'})
-    .then(function(r){console.log('[counter] status',r.status,r.url);return r.json();})
+    .then(function(r){return r.json();})
     .then(function(d){
-      console.log('[counter] data',JSON.stringify(d));
       var n=d.total||0;
       var isIt=(G&&G.lang)?G.lang==='it':true;
       document.getElementById('home-games-num').textContent=_fmtCount(n);
       document.getElementById('home-games-lbl').textContent=isIt?'partite giocate su Decempionz':'games played on Decempionz';
     })
-    .catch(function(e){console.error('[counter] errore',e);});
+    .catch(function(){});
 }
 
 function _loadTrophyData(){try{return JSON.parse(localStorage.getItem(_DCZ_TROPHY_KEY)||'{}');}catch(e){return {};}}
@@ -5972,4 +5971,4 @@ function _devSetMom(v){
 
 <div id="share-toast">📋</div>
 
-</body></html>
+</body></html>                                                                                                                                                                                                         
