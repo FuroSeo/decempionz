@@ -63,6 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: hof-admin.php');
         exit;
     }
+
+    if ($action === 'delete' && isset($_POST['id'])) {
+        $id       = $_POST['id'];
+        $approved = loadJson($approvedFile);
+        $approved['entries'] = array_values(array_filter($approved['entries'], fn($e) => ($e['id'] ?? '') !== $id));
+        saveJson($approvedFile, $approved);
+        header('Location: hof-admin.php#tab-approved');
+        exit;
+    }
 }
 
 show_page:
@@ -220,6 +229,23 @@ input[type=password]:focus{border-color:var(--gold)}
           &nbsp;·&nbsp; <?= htmlspecialchars($e['formation'] ?? '') ?>
           &nbsp;·&nbsp; <?= $diffLabels[$e['difficulty'] ?? 'normal'] ?? '' ?>
           &nbsp;·&nbsp; <?= htmlspecialchars($e['record'] ?? '') ?>
+          &nbsp;·&nbsp; Gol: <?= htmlspecialchars($e['goals'] ?? '') ?>
+          <?php if(!empty($e['topScorer'])): ?>&nbsp;·&nbsp; ⚽ <?= htmlspecialchars($e['topScorer']) ?><?php endif; ?>
+        </div>
+        <?php if(!empty($e['lineup'])): ?>
+        <div class="lineup">
+          🧤 <?= implode(', ', $e['lineup']['GK'] ?? []) ?><br>
+          🛡️ <?= implode(', ', $e['lineup']['DEF'] ?? []) ?><br>
+          ⚙️ <?= implode(', ', $e['lineup']['MID'] ?? []) ?><br>
+          ⚡ <?= implode(', ', $e['lineup']['FWD'] ?? []) ?>
+        </div>
+        <?php endif; ?>
+        <div class="actions">
+          <form method="post" style="margin:0" onsubmit="return confirm('Eliminare definitivamente questa entry di <?= htmlspecialchars(addslashes($e['nickname'])) ?>?')">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($e['id'] ?? '') ?>">
+            <button class="btn btn-red" type="submit">🗑 Elimina</button>
+          </form>
         </div>
       </div>
       <?php endforeach; ?>
