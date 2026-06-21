@@ -3846,7 +3846,7 @@ function _runMatch(){
   document.getElementById('m-score').className='m-score';
   document.getElementById('m-timer').textContent="1'";
   document.getElementById('m-ev1-min').textContent='';
-  document.getElementById('m-ev1-txt').textContent='⚽ Kick off!';
+  document.getElementById('m-ev1-txt').textContent=(G.lang||'it')==='it'?'⚽ Calcio d\'inizio!':'⚽ Kick off!';
   document.getElementById('m-ev1-txt').className='';
   document.getElementById('m-ev2-min').textContent='';
   document.getElementById('m-ev2-txt').textContent='';
@@ -3882,21 +3882,24 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   for(let i=0;i<3;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
   let ms=0,os=0;
   const allEvs=[...myMins.map(m=>({m,t:'my'})),...oppMins.map(m=>({m,t:'opp'})),...nMins.map(m=>({m,t:'n',tpl:pick(nTpls)}))].sort((a,b)=>a.m-b.m);
+  const _isIt=(G.lang||'it')==='it';
+  const _myGoalPhrases=_isIt?['in rete!','GOL!','che conclusione!','non perdona!']:['fires home!','scores!','brilliant finish!','makes it count!'];
+  const _oppGoalPhrases=_isIt?['pareggia!','risponde!','segna!']:['levels it!','responds!','scores!'];
   allEvs.forEach(ev=>{
     if(ev.t==='my'){
       ms++;
       const s=pick(scorers)?.n||pick(scorers)||'Unknown';
-      evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+pick(['fires home!','scores!','brilliant finish!','makes it count!'])+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
+      evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+pick(_myGoalPhrases)+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
     } else if(ev.t==='opp'){
       os++;
       const oppSc=oppPlayers&&oppPlayers.length?pick(oppPlayers):null;
       const scName=oppSc?(oppSc.n||oppSc):oppName;
-      evs.push({min:ev.m,scorer:scName,text:`${ev.m}' ⚽ ${scName} (${oppName}) — `+pick(['levels it!','responds!','scores!'])+` ${ms}–${os}`,cls:'lc',goal:true,mine:false});
+      evs.push({min:ev.m,scorer:scName,text:`${ev.m}' ⚽ ${scName} (${oppName}) — `+pick(_oppGoalPhrases)+` ${ms}–${os}`,cls:'lc',goal:true,mine:false});
     } else {
       evs.push({min:ev.m,text:ev.tpl(ev.m),cls:'ln',goal:false});
     }
   });
-  evs.push({min:90,text:`90' 🔔 Full time — ${myG}–${oppG}`,cls:'lw',final:true});
+  evs.push({min:90,text:`90' 🔔 ${_isIt?'Fischio finale':'Full time'} — ${myG}–${oppG}`,cls:'lw',final:true});
   return evs;
 }
 
@@ -3963,8 +3966,9 @@ function runPenaltyKick(){
   ic.textContent='';
   document.getElementById(cid).appendChild(ic);
   document.getElementById('pen-score').textContent=P.h+' – '+P.a;
+  const _pit=(G.lang||'it')==='it';
   document.getElementById('pen-msg').textContent=
-    lastName(name)+(scored?' scores!':(isHome?' misses!':' saved!'));
+    lastName(name)+(scored?(_pit?' segna!':' scores!'):isHome?(_pit?' sbaglia!':' misses!'):(_pit?' parato!':' saved!'));
   if(checkPenDone())return;
   if(isHome){P.side='away';}
   else{P.side='home';P.round++;}
@@ -5965,10 +5969,4 @@ function _devSetMom(v){
     <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
     <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
     <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
-  </div>
-</div>
-
-<div id="share-toast">📋</div>
-
-</body></html>                                                                                                                                                                                                         
+    <button class="btn btn-
