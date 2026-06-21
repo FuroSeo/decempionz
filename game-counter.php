@@ -1,40 +1,24 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Access-Control-Allow-Origin: https://decempionz.com');
-header('Access-Control-Allow-Methods: GET, POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Cache-Control: no-store');
 
 $file = __DIR__ . '/game-counter.json';
 
-function loadCount($file) {
-    if (!file_exists($file)) return 0;
-    $d = json_decode(file_get_contents($file), true);
-    return isset($d['total']) ? (int)$d['total'] : 0;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo json_encode(['total' => loadCount($file)]);
+    $raw = @file_get_contents($file);
+    $d   = $raw ? json_decode($raw, true) : null;
+    echo json_encode(['total' => isset($d['total']) ? (int)$d['total'] : 0]);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fh = fopen($file, 'c+');
-    if (!$fh) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Internal error']);
-        exit;
-    }
-    flock($fh, LOCK_EX);
-    $content = stream_get_contents($fh);
-    $data = json_decode($content, true);
-    $total = isset($data['total']) ? (int)$data['total'] : 0;
-    $total++;
-    ftruncate($fh, 0);
-    rewind($fh);
-    fwrite($fh, json_encode(['total' => $total]));
-    flock($fh, LOCK_UN);
-    fclose($fh);
+    $raw   = @file_get_contents($file);
+    $d     = $raw ? json_decode($raw, true) : null;
+    $total = isset($d['total']) ? (int)$d['total'] + 1 : 1;
+    @file_put_contents($file, json_encode(['total' => $total]), LOCK_EX);
     echo json_encode(['total' => $total]);
- 
+    exit;
+}
+
+http_response_code(405);
+echo json_encode(['error' => 'method not allowed']);
