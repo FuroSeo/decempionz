@@ -1135,7 +1135,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.0';
+const GAME_VERSION='5.5.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4720,6 +4720,7 @@ function showGroupElimination(pos,pts){
       +'<span class="end-j-score">'+r.myG+'–'+r.oppG+'</span>'
       +'<span class="end-j-res" style="'+rc+'">'+rv+'</span></div>';
   }).join('');
+  _incGamesTotal();
   renderGameOverPitch();
   showScreen('screen-gameover');
 }
@@ -5070,7 +5071,7 @@ function openHallOfFame(){
   });
   showScreen('screen-hof');
   if(_hofLoaded){_renderHofEntries();return;}
-  var url='https://raw.githubusercontent.com/FuroSeo/decempionz/main/hall-of-fame.json';
+  var url='/hall-of-fame.json';
   fetch(url)
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){
@@ -5940,6 +5941,7 @@ function _devSetMom(v){
       <div style="color:#eab308;font-weight:700;font-size:.85rem">⚙️ DEV PANEL — v<span class="gv"></span></div>
       <button onclick="closeDevPanel()" style="background:#333;border:none;color:#ccc;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:.8rem">✕ Chiudi</button>
     </div>
+    <div style="margin-bottom:10px"><a href="/hof-admin.php" target="_blank" style="display:block;text-align:center;background:#1a1200;border:1px solid #eab308;color:#eab308;border-radius:8px;padding:7px;font-size:.75rem;text-decoration:none;font-weight:700">🏆 Admin Hall of Fame →</a></div>
 
     <!-- Quick Draft -->
     <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px">
