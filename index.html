@@ -935,10 +935,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Score bar -->
-  <div style="display:flex;justify-content:space-between;align-items:center;background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;margin-bottom:10px;gap:6px">
-    <div class="m-tname" id="m-home" style="font-size:.68rem"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(160deg,var(--s1),var(--s2));border:1px solid var(--blue);border-radius:10px;padding:10px 12px;margin-bottom:10px;gap:6px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--gold) 50%,var(--blue))"></div>
+    <div class="m-tname" id="m-home" style="font-size:.78rem"></div>
     <div class="m-score" id="m-score" style="font-size:2rem;margin:0;letter-spacing:-2px">0 — 0</div>
-    <div class="m-tname r" id="m-away" style="font-size:.68rem"></div>
+    <div class="m-tname r" id="m-away" style="font-size:.78rem"></div>
   </div>
 
   <!-- Two-column lineups -->
@@ -952,9 +953,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- 2-line event box -->
-  <div style="background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;min-height:54px;margin-bottom:8px">
-    <div id="m-ev1" style="font-size:.72rem;color:var(--mut);line-height:1.7;display:flex;gap:8px;align-items:flex-start"><span id="m-ev1-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev1-txt">⚽ Fischio d'inizio</span></div>
-    <div id="m-ev2" style="font-size:.68rem;color:var(--mut);line-height:1.7;display:flex;gap:8px;align-items:flex-start;opacity:.4"><span id="m-ev2-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev2-txt"></span></div>
+  <div style="background:var(--s1);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:8px">
+    <div id="m-ev1" style="font-size:.76rem;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid var(--brd)"><span id="m-ev1-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev1-txt">⚽ Fischio d'inizio</span></div>
+    <div id="m-ev2" style="font-size:.71rem;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start;padding:8px 12px;opacity:.5"><span id="m-ev2-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev2-txt"></span></div>
   </div>
 
   <button class="btn btn-gold" id="btn-mact" onclick="matchNext()" style="margin-top:4px;display:none"></button>
