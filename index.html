@@ -18,9 +18,10 @@
 <meta name="theme-color" content="#07090f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 <title>Decempionz — Draft le Leggende del Calcio e Conquista l'Europa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07090f;--s1:#0f1520;--s2:#17202e;--brd:#1e2d42;
+  --bg:#07090f;--s1:#111928;--s2:#1a2336;--brd:#1e2d42;
   --gold:#c9a227;--gold2:#e8c04a;--blue:#1a3a7a;--blue2:#2451a8;--blue-lt:#93c5fd;
   --text:#e8edf5;--mut:#6b7e95;
   --grn:#16a34a;--grn2:#22c55e;--red:#dc2626;--red2:#f87171;--star:#fbbf24;
@@ -80,7 +81,8 @@
 [data-theme="light"][data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#2d9e50;}
 [data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#fca5a5;}
 [data-theme="light"][data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#dc6060;}
-.tourn-card.tourn-wc{border-color:#5a1212}
+.tourn-card.tourn-wc{border-color:#6a1a1a;background:linear-gradient(160deg,#1a0909 0%,#170d0d 100%)}
+.tourn-card.tourn-wc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c1a1a,#fca5a5 50%,#7c1a1a)}
 .tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
 .tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
 .tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}
@@ -93,7 +95,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 /* base */
 h1{font-size:2.8rem;font-weight:900;letter-spacing:-2px;line-height:1}
-h2{font-size:1.35rem;font-weight:800}
+h2{font-size:1.35rem;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.5px}
 h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
 .card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:20px}
 .btn{width:100%;padding:15px;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .13s;display:block;margin-top:10px;text-align:center}
@@ -107,17 +109,19 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tourn-card{background:var(--s1);border:1.5px solid var(--brd);border-radius:16px;padding:18px 18px 14px;margin-bottom:14px;position:relative;overflow:hidden}
 .tourn-card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .tourn-icon{font-size:2rem;line-height:1;flex-shrink:0}
-.tourn-name{font-size:1.1rem;font-weight:900;letter-spacing:-.4px;color:var(--text)}
+.tourn-name{font-size:1.15rem;font-weight:700;letter-spacing:.3px;color:var(--text);font-family:'Oswald',sans-serif}
 .tourn-sub{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-top:3px}
 .tourn-stats{display:flex;gap:0;margin-bottom:14px;background:var(--s2);border-radius:10px;overflow:hidden}
 .tourn-stat{flex:1;text-align:center;padding:10px 6px}
 .tourn-stat+.tourn-stat{border-left:1px solid var(--brd)}
-.tourn-stat-val{font-size:1.1rem;font-weight:900;color:var(--gold)}
+.tourn-stat-val{font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'Oswald',sans-serif;line-height:1}
 .tourn-stat-lbl{font-size:.54rem;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
 .tourn-badge-soon{position:absolute;top:14px;right:14px;background:var(--s2);color:var(--mut);font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--brd)}
 .tourn-card.tourn-locked{opacity:.5;pointer-events:none}
-.tourn-card.tourn-ucl{border-color:#1e3a6a}
-.tourn-card.tourn-copa{border-color:#1a4a1a}
+.tourn-card.tourn-ucl{border-color:#2a4a8a;background:linear-gradient(160deg,#0d1728 0%,#111928 100%)}
+.tourn-card.tourn-ucl::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a3a7a,#c9a227 50%,#1a3a7a)}
+.tourn-card.tourn-copa{border-color:#1e5a1e;background:linear-gradient(160deg,#0a1e0a 0%,#0d1a0d 100%)}
+.tourn-card.tourn-copa::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a5a1a,#86efac 50%,#1a5a1a)}
 .tourn-bottom-btns{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .tourn-bottom-btns .btn{margin-top:0}
 #btn-start-draft{position:sticky;bottom:16px;z-index:10;box-shadow:0 -4px 16px var(--bg);}
@@ -192,7 +196,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .era-card{background:var(--s1);border:2px solid var(--brd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .13s}
 .era-card:hover{border-color:var(--blue2);background:var(--s2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .era-card.era-sel{border-color:var(--gold);background:#1a1600}
-.era-name{font-size:1rem;font-weight:800;margin-bottom:2px}
+.era-name{font-size:1rem;font-weight:700;margin-bottom:2px;font-family:'Oswald',sans-serif;letter-spacing:.3px}
 .era-years{font-size:.72rem;color:var(--mut);margin-bottom:6px}
 .era-desc{font-size:.78rem;color:var(--mut);margin-bottom:8px;line-height:1.4}
 .era-teams{display:flex;flex-wrap:wrap;gap:4px}
@@ -200,7 +204,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 
 /* ── HOME ── */
-.logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Oswald',sans-serif;letter-spacing:0px}
 .step-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--brd)}
 .step-row:last-child{border-bottom:none}
 .sn{background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 10px;font-weight:900;font-size:.82rem;flex-shrink:0;min-width:34px;text-align:center}
@@ -210,7 +214,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tour-card{background:linear-gradient(145deg,#0f1a2e,#131f35);border:1px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;position:relative;overflow:hidden}
 .tour-card::before{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,162,39,.18),transparent 70%);pointer-events:none}
 .tc-badge{display:inline-block;background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
-.tc-name{font-size:2rem;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.tc-name{font-size:2rem;font-weight:700;letter-spacing:0;margin-bottom:4px;font-family:'Oswald',sans-serif}
 .tc-years{color:var(--mut);font-size:.9rem;margin-bottom:18px}
 .tc-teams{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .tc-team{background:rgba(255,255,255,.04);border:1px solid var(--brd);border-radius:8px;padding:9px 11px;text-align:left}
@@ -349,8 +353,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .draft-info{font-size:.82rem;color:var(--mut)}
 .draft-count{font-size:1rem;font-weight:900;text-align:right}
 .draft-passes{font-size:.78rem;color:var(--mut);text-align:right}
-.pbar-wrap{background:var(--brd);border-radius:4px;height:3px;margin-bottom:16px;overflow:hidden}
-.pbar-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
+.pbar-wrap{background:var(--brd);border-radius:4px;height:5px;margin-bottom:16px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:4px;transition:width .3s}
 
 /* Slot tracker */
 .slot-tracker{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
@@ -374,16 +378,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .pg-gk{background:var(--blue);color:var(--blue-lt)}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
 .prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
 .prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px}
-.prc-name{font-size:1.25rem;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
+.prc-name{font-size:1.4rem;font-weight:700;letter-spacing:.2px;margin-bottom:3px;font-family:'Oswald',sans-serif}
 .prc-pos{font-size:.76rem;color:var(--mut)}
 
 .draft-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
 .btn-accept{padding:15px;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;border:2px solid var(--grn2);background:rgba(22,163,74,.12);color:var(--grn2);transition:all .13s}
 .btn-accept:hover:not(:disabled){background:rgba(22,163,74,.28)}
 .btn-accept:disabled{opacity:.25;cursor:not-allowed}
-.btn-pass{padding:15px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;border:2px solid var(--brd);background:transparent;color:var(--mut);transition:all .13s}
-.btn-pass:hover:not(:disabled){border-color:var(--mut);color:var(--text)}
-.btn-pass:disabled{opacity:.22;cursor:not-allowed}
+.btn-pass{padding:15px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;border:1.5px solid rgba(201,162,39,.3);background:rgba(201,162,39,.05);color:var(--gold);transition:all .13s}
+.btn-pass:hover:not(:disabled){border-color:var(--gold);background:rgba(201,162,39,.14);color:var(--gold2)}
+.btn-pass:disabled{opacity:.2;cursor:not-allowed;border-color:var(--brd);background:transparent;color:var(--mut)}
 
 .squad-built{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:11px 13px}
 .chips-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;min-height:26px}
@@ -434,8 +438,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .m-ev-goal-row{border-left:2px solid var(--grn2);padding-left:6px;margin-left:-2px}
 .m-ev-opp-goal-row{border-left:2px solid var(--red2);padding-left:6px;margin-left:-2px}
 .m-ev-opp{color:var(--red2)!important}
-.spd-ico{width:26px;height:26px;border-radius:6px;border:1px solid var(--brd);background:var(--s1);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;padding:0;color:var(--mut);flex-shrink:0;transition:all .13s}
-.spd-ico.spd-ico-active{border-color:var(--gold);background:rgba(201,162,39,.15);color:var(--gold)}
+.spd-ico{width:26px;height:26px;border-radius:20px;border:none;background:transparent;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;padding:0;color:var(--mut);flex-shrink:0;transition:all .13s}
+.spd-ico.spd-ico-active{background:rgba(201,162,39,.2);color:var(--gold)}
+#m-speed-icons{background:var(--s1);border:1px solid var(--brd);border-radius:20px;padding:3px;gap:2px!important}
 [data-theme="light"] #m-timer{color:var(--red)}
 .m-squads{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut);margin-bottom:12px;gap:8px}
 .m-squad-names{flex:1;line-height:1.6}
@@ -508,15 +513,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .end-btns-row{display:flex;gap:8px}
 
 /* ── Difficulty cards ── */
-.diff-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.diff-card{padding:14px 16px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.diff-card{padding:10px 8px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s;text-align:center}
 .diff-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .diff-card.diff-sel{border-color:var(--gold);background:rgba(234,179,8,.08)}
 .diff-title{font-size:.9rem;font-weight:700;margin-bottom:3px}
 .diff-easy .diff-title{color:#4ade80}
 .diff-normal .diff-title{color:var(--gold)}
 .diff-hard .diff-title{color:#f97316}
-.diff-desc{font-size:.72rem;color:var(--mut)}
+.diff-desc{font-size:.65rem;color:var(--mut);line-height:1.3;margin-top:2px}
 /* ── Tactic screen ── */
 .tact-grid{display:flex;gap:10px;margin-bottom:16px}
 .mini-tact-row{display:flex;gap:7px;margin-bottom:0}
@@ -540,6 +545,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
   .format-card:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
   .format-card.fc-sel{border-color:var(--gold);background:rgba(234,179,8,.07)}
+  #fc-coppa{border-left:3px solid var(--gold);padding-left:11px}
+  #fc-classic{border-left:3px solid var(--blue2);padding-left:11px}
+  #fc-nuovo{border-left:3px solid #7c3aed;padding-left:11px}
 
 /* ── Legal footer ── */
 .legal-footer{text-align:center;padding:12px 16px 18px;font-size:.58rem;color:var(--mut);
@@ -572,11 +580,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .btn-banner-legal{background:transparent;color:var(--mut);border:1px solid var(--brd)}
 
 /* ── Screen nav logo ── */
-.screen-logo{display:block;font-size:.85rem;font-weight:900;letter-spacing:3px;
+.screen-logo{display:block;font-size:.85rem;font-weight:700;letter-spacing:3px;
   text-transform:uppercase;cursor:pointer;margin-bottom:16px;
   background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  opacity:.9;transition:opacity .18s}
+  opacity:.9;transition:opacity .18s;font-family:'Oswald',sans-serif}
 .screen-logo:hover{opacity:1}
 
 
@@ -677,7 +685,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen active" id="screen-home">
 
   <!-- Hero -->
-  <div style="text-align:center;margin-bottom:16px;padding-top:12px">
+  <div style="text-align:center;margin-bottom:16px;padding-top:20px;background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(201,162,39,.07),transparent 70%)">
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Il Draft di Calcio Definitivo</div>
     <h1 class="logo">Decempionz</h1>
     <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:10px;font-size:.85rem;line-height:1.5;font-style:italic">Scegli il torneo</p>
@@ -771,9 +779,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
-    <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.82rem">❓ Come si gioca</button>
-    <button class="btn btn-ghost" onclick="openHallOfFame()" style="font-size:.82rem">🏆 Hall of Fame</button>
-    <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.82rem" data-i18n="trophies.btn">🏅 Trofei</button>
+    <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.28);color:var(--gold)">🏆 Hall of Fame</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.78rem;margin-top:0">❓ Come si gioca</button>
+      <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.78rem;margin-top:0" data-i18n="trophies.btn">🏅 Trofei</button>
+    </div>
   </div>
 
   <div class="legal-footer">
