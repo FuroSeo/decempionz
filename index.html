@@ -1036,6 +1036,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="go-journey"></div>
     <div class="end-extra" id="go-extra"></div>
   </div>
+  <div id="go-documentary-lbl" style="display:none;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:14px 0 4px">📖 Cronaca della campagna</div>
+  <div id="go-documentary" style="display:none;margin-bottom:8px;font-size:.76rem;color:var(--mut);line-height:1.7;padding:11px 14px;background:var(--s2);border-radius:10px;border:1px solid var(--brd);font-style:italic"></div>
   <div class="end-fold-hint">▼</div>
   <div class="end-btns">
     <div class="end-btns-row">
@@ -4871,6 +4873,10 @@ function showGroupElimination(pos,pts){
   }).join('');
   _incGamesTotal();
   renderGameOverPitch();
+  var _goDoc=generateDocumentary();
+  var _goDocEl=document.getElementById('go-documentary');
+  var _goDocLbl=document.getElementById('go-documentary-lbl');
+  if(_goDocEl){if(_goDoc){_goDocEl.textContent=_goDoc;_goDocEl.style.display='block';if(_goDocLbl)_goDocLbl.style.display='block';}else{_goDocEl.style.display='none';if(_goDocLbl)_goDocLbl.style.display='none';}}
   showScreen('screen-gameover');
 }
 
@@ -4928,6 +4934,10 @@ function showGameOver(){
 
   _incGamesTotal();
   renderGameOverPitch();
+  var _goDoc=generateDocumentary();
+  var _goDocEl=document.getElementById('go-documentary');
+  var _goDocLbl=document.getElementById('go-documentary-lbl');
+  if(_goDocEl){if(_goDoc){_goDocEl.textContent=_goDoc;_goDocEl.style.display='block';if(_goDocLbl)_goDocLbl.style.display='block';}else{_goDocEl.style.display='none';if(_goDocLbl)_goDocLbl.style.display='none';}}
   showScreen('screen-gameover');
 }
 
