@@ -909,7 +909,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="draft-hdr">
     <div>
       <div style="font-weight:800;font-size:1.05rem" id="d-title"></div>
-      <div class="draft-info" id="d-info"></div>
       <div class="tourn-badge" style="display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.6px;padding:2px 8px;border-radius:20px;margin-top:3px"></div>
     </div>
     <div style="padding-right:36px">
@@ -924,6 +923,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="force-banner" id="d-force">⚠️ No passes left — must accept all remaining</div>
   <div class="cant-banner" id="d-cant"></div>
   <div class="reveal-zone" id="d-reveal"></div>
+  <div id="d-pool-wrap" style="text-align:center;margin:8px 0 2px;font-size:.65rem;color:var(--mut)"><span id="d-pool-lbl" style="margin-right:5px;opacity:.7"></span><span id="d-info"></span></div>
   <div class="draft-btns" style="grid-template-columns:1fr">
     <button class="btn-pass" id="btn-pss" onclick="draftReroll()" style="width:100%;font-size:.85rem">↺ Reroll <span id="d-pc"></span></button>
   </div>
@@ -3695,6 +3695,9 @@ function updateDraftScreen(){
   const noReroll=G.passes<=0||_rerollLocked;
 
   var _tc=G.draftTiers||{10:[],9:[],8:[],7:[]};
+  var _lbl=G.lang==='es'?'Jugadores restantes:':G.lang==='en'?'Remaining players:':'Giocatori rimanenti:';
+  var _lblEl=document.getElementById('d-pool-lbl');
+  if(_lblEl)_lblEl.textContent=_lbl;
   document.getElementById('d-info').innerHTML=
     '<span style="color:var(--gold2);font-weight:800">★★★★</span> '+_tc[10].length
     +' &nbsp;·&nbsp; <span style="color:#94a3b8;font-weight:800">★★★</span> '+_tc[9].length
