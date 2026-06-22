@@ -838,6 +838,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
     <button id="btn-format-confirm" data-i18n="fmt.choose_formation" class="btn btn-gold" onclick="confirmFormat()">Choose Formation →</button>
+  <button class="btn btn-ghost" style="margin-top:8px" onclick="showScreen('screen-home')" data-i18n="btn.back_home">← Home</button>
 </div>
 
 <!-- ERA PICKER -->
@@ -1135,7 +1136,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.2';
+const GAME_VERSION='5.5.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1257,6 +1258,7 @@ const STRINGS={
     'hof.submit_label':'Entra nella Hall of Fame',
     'hof.nick_placeholder':'Il tuo nickname…',
     'hof.btn_submit':'🏆 Invia alla Hall of Fame',
+    'btn.back_home':'← Home',
     'hof.loading':'Caricamento…',
     'hof.empty':'Nessun risultato per questo torneo. Sii il primo!',
     'hof.label_record':'Record',
@@ -1487,6 +1489,7 @@ const STRINGS={
     'hof.submit_label':'Enter the Hall of Fame',
     'hof.nick_placeholder':'Your nickname…',
     'hof.btn_submit':'🏆 Submit to Hall of Fame',
+    'btn.back_home':'← Home',
     'hof.loading':'Loading…',
     'hof.empty':'No entries for this tournament yet. Be the first!',
     'hof.label_record':'Record',
@@ -1717,6 +1720,7 @@ const STRINGS={
     'hof.submit_label':'Entrar al Hall of Fame',
     'hof.nick_placeholder':'Tu apodo…',
     'hof.btn_submit':'🏆 Enviar al Hall of Fame',
+    'btn.back_home':'← Inicio',
     'hof.loading':'Cargando…',
     'hof.empty':'Sin resultados para este torneo. ¡Sé el primero!',
     'hof.label_record':'Récord',
@@ -1872,6 +1876,11 @@ function applyLang(){
     var v=t(k);
     if(v)el.placeholder=v;
   });
+  // Re-render dynamic screens if active
+  var _shof=document.getElementById('screen-hof');
+  if(_shof&&_shof.classList.contains('active')&&_hofLoaded)_renderHofEntries();
+  var _stro=document.getElementById('screen-trophies');
+  if(_stro&&_stro.classList.contains('active'))openTrophiesScreen();
 }
 
 /* ═══════════════════════════════════════

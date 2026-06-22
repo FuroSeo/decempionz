@@ -72,6 +72,7 @@
   <div class="lang-bar">
     <button class="lang-btn active" id="btn-it" onclick="setLang('it')">🇮🇹 Italiano</button>
     <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">🇪🇸 Español</button>
   </div>
 
   <!-- ITALIANO -->
@@ -187,4 +188,186 @@
         <div class="section-label">The Story</div>
         <h2>From a European simulation to a global game</h2>
         <p>It all started as a simple <strong>European Cup / Champions League</strong> simulation. The idea was to recreate the great European nights with a draft mechanic that forced tough choices — like a real sporting director facing an unpredictable transfer window.</p>
-        <p>The concept took off, so we expanded. The <strong>Copa Libertadores historical squads</strong> came next — South American football with its unique intensity — followed by <strong>World Cup national teams</strong>, from Uruguay 1930 to Messi's Argentina
+        <p>The concept took off, so we expanded. The <strong>Copa Libertadores historical squads</strong> came next — South American football with its unique intensity — followed by <strong>World Cup national teams</strong>, from Uruguay 1930 to Messi's Argentina. Three competitions, sixty years of football history in one game.</p>
+        <p>And it's not over: the roadmap includes new competitions, new mechanics, and features we're building based on community feedback.</p>
+      </section>
+
+      <section>
+        <div class="section-label">Inspiration</div>
+        <h2>Not a copy — an original game</h2>
+        <p>Decempionz grew out of our love for games like <strong>7-0</strong>, <strong>38-0-0</strong>, and others we played hundreds of times. That feeling of building a squad, piecing together the right players, and watching what happens on the pitch — it's an experience that holds up today.</p>
+        <p>There are plenty of browser games inspired by these classics, some well-made, many less so. But none had exactly what we were looking for: <strong>a blind draft system with real historical legends</strong>, a simulation with tactical depth that doesn't become overcomplicated, and above all a visual and gameplay identity that was genuinely its own.</p>
+        <p>So we built it ourselves. Decempionz doesn't want to be anyone's copy — it wants to be its own thing, with its own style and its own rules.</p>
+      </section>
+
+      <section>
+        <div class="section-label">The Tournaments</div>
+        <h2>Three competitions, sixty years of football</h2>
+        <p>Each tournament has its own historical squad database, its own eras, and its own visual identity.</p>
+        <div class="tourn-grid">
+          <div class="tourn-card"><div class="icon">🏆</div><h3>UCL Legends</h3><p>Champions League 1956–2024. <strong>66 historical squads</strong>, 29 clubs — from Real Madrid's 1960s dynasty to Guardiola's Man City. Classic, Old Cup and New Wave formats.</p></div>
+          <div class="tourn-card"><div class="icon">🌿</div><h3>Copa Libertadores</h3><p>South American football 1960–2024. <strong>24 legendary squads</strong>: Pelé's Santos, Estudiantes, Nacional, Boca Juniors, River Plate. Pure intensity.</p></div>
+          <div class="tourn-card"><div class="icon">🌍</div><h3>World Cup Legends</h3><p>FIFA World Cup 1930–2022. <strong>65 historic national teams</strong>: from Uruguay 1930 to Messi's Argentina, via Brazil 1970 and West Germany 1974.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Roadmap</div>
+        <h2>What's coming</h2>
+        <p>Decempionz is in active development. Some features are already live, others are being built, others are on the radar.</p>
+        <div class="roadmap-list">
+          <div class="roadmap-item"><strong>UCL, Copa Libertadores, World Cup</strong> <span class="tag tag-done">Live</span></div>
+          <div class="roadmap-item"><strong>Trophy system and Hall of Fame</strong> <span class="tag tag-done">Live</span></div>
+          <div class="roadmap-item"><strong>Offline mode (installable PWA)</strong> <span class="tag tag-done">Live</span></div>
+          <div class="roadmap-item"><strong>Redesigned post-match screen</strong> <span class="tag tag-wip">In progress</span></div>
+          <div class="roadmap-item"><strong>New historical competitions</strong> <span class="tag tag-soon">Coming soon</span></div>
+          <div class="roadmap-item"><strong>Community challenge mode</strong> <span class="tag tag-soon">Coming soon</span></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">How to play</div>
+        <h2>A blind draft, match by match</h2>
+        <p>Decempionz is a <strong>blind draft game</strong>: pick a formation, then three player cards appear at once — choose one for your XI, the others disappear. No guarantees, only instinct and strategy.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Choose tournament and format</h4><p>UCL, Copa or World Cup. Classic (group stage + playoffs), Old Cup (pure knockout) or New Wave (league phase, UCL only). Easy, Normal or Hard difficulty.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Pick a historical era</h4><p>1960s, 1970s, 1980s, 1990s, 2000s, 2010s — or All Time to draw from every era.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Draft your XI</h4><p>Choose a formation (4-3-3, 4-4-2, 3-5-2 and more), then fill every slot through blind draft. Players rated ★ (9.5+) give an xG shooting bonus.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Play the tournament</h4><p>Each match is simulated with momentum mechanics, tactics and an opponent scout report. Draw after 90 minutes? Penalty shootout.</p></div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Technical</div>
+        <h2>An entire game in one HTML file</h2>
+        <p>Decempionz is built in <strong>vanilla JavaScript</strong> — no frameworks, no external dependencies, no database. A single ~6,000-line HTML file containing everything: game logic, historical data, graphics and animations.</p>
+        <p>It runs in any modern browser, loads in under a second, and can be installed and played offline as a PWA. It's an exercise in minimalist game design: <strong>how much depth can you pack into a single file?</strong></p>
+        <p>The source code is open source on GitHub for anyone who wants to explore it, contribute, or fork it for their own favourite historical tournament.</p>
+      </section>
+
+      <section>
+        <div class="section-label">FAQ</div>
+        <h2>Frequently Asked Questions</h2>
+        <p><strong>Is it free?</strong> Yes, completely. No purchases, no registration, no ads.</p>
+        <p><strong>Is the player data accurate?</strong> Yes, squads are historically accurate. Ratings are a subjective estimate based on real performances and historical impact.</p>
+        <p><strong>Can I play offline?</strong> Yes, Decempionz is installable as a PWA. In your browser, select "Add to home screen" or "Install app".</p>
+        <p><strong>What devices does it work on?</strong> Any device with a modern browser: desktop, tablet and smartphone.</p>
+        <p><strong>Will there be more tournaments?</strong> Yes, it's on the roadmap. If you have suggestions, use the Contact form inside the game.</p>
+        <p><strong>Why no Serie A or Premier League?</strong> Decempionz started focused on international club and national team competitions. Domestic leagues may come in the future.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ESPAÑOL -->
+  <div data-lang="es">
+    <div class="hero">
+      <div class="hero-badge">Fan Project · Gratuito · Sin registro</div>
+      <h1>El juego de <span>draft de fútbol histórico</span> que esperabas</h1>
+      <p class="hero-sub">Decempionz nació de la pasión por la historia del fútbol. Sin FIFA, sin cartas, sin paywall. Solo leyendas reales, una alineación que construir y un torneo que ganar.</p>
+      <a href="/" class="btn-play">⚽ Jugar ahora — es gratis</a>
+    </div>
+    <div class="container">
+
+      <section>
+        <div class="section-label">El Nombre</div>
+        <h2>Por qué "Decempionz"</h2>
+        <p>El nombre es una versión del icónico coro <em>"The Champioooooonnnnnnssssssss"</em> que retumba en los estadios de todo el mundo en las noches de Champions League. Ese grito colectivo y visceral que une a millones de aficionados frente a sus pantallas o en las gradas — ese es exactamente el espíritu que quisimos capturar.</p>
+        <p><strong>"Decempionz"</strong> es un homenaje a ese momento: la música arranca, el coro explota, y por unos segundos vuelves a ser un niño viendo el partido más importante del mundo.</p>
+      </section>
+
+      <section>
+        <div class="section-label">La Historia</div>
+        <h2>De una simulación europea a un juego global</h2>
+        <p>Todo empezó como una simple simulación de la <strong>Copa de Europa / Champions League</strong>. La idea era recrear las grandes noches europeas con un sistema de draft que obligara a tomar decisiones difíciles — como un director deportivo real ante un mercado imprevisible.</p>
+        <p>El éxito de la idea nos empujó a ampliar el proyecto. Llegaron los <strong>equipos históricos de la Copa Libertadores</strong> — el fútbol sudamericano con su intensidad única — y después las <strong>selecciones de los Mundiales</strong>, desde Uruguay 1930 hasta la Argentina de Messi. Tres competiciones, sesenta años de historia del fútbol en un solo juego.</p>
+        <p>Y no ha terminado: la hoja de ruta incluye nuevas competiciones, nuevas mecánicas y funcionalidades que estamos desarrollando con el feedback de la comunidad.</p>
+      </section>
+
+      <section>
+        <div class="section-label">Inspiración</div>
+        <h2>No es una copia — es un juego original</h2>
+        <p>Decempionz nació de nuestro amor por juegos como <strong>7-0</strong>, <strong>38-0-0</strong> y otros que jugamos cientos de veces. Esa sensación de construir un equipo, encajar a los jugadores correctos y ver qué pasa en el campo — es una experiencia que sigue vigente hoy.</p>
+        <p>Hay muchos juegos de navegador inspirados en estos clásicos, algunos bien hechos, muchos menos. Pero ninguno tenía exactamente lo que buscábamos: <strong>un sistema de draft ciego con leyendas históricas reales</strong>, una simulación con profundidad táctica que no se complica en exceso y, sobre todo, una identidad visual y de juego genuinamente propia.</p>
+        <p>Así que lo construimos nosotros. Decempionz no quiere ser la copia de nadie — quiere ser su propia cosa, con su propio estilo y sus propias reglas.</p>
+      </section>
+
+      <section>
+        <div class="section-label">Los Torneos</div>
+        <h2>Tres competiciones, sesenta años de fútbol</h2>
+        <p>Cada torneo tiene su propia base de datos histórica de equipos, sus propias eras y su propia identidad visual.</p>
+        <div class="tourn-grid">
+          <div class="tourn-card"><div class="icon">🏆</div><h3>UCL Legends</h3><p>Champions League 1956–2024. <strong>66 equipos históricos</strong>, 29 clubes — desde la dinastía del Real Madrid de los años 60 hasta el Manchester City de Guardiola. Formatos Classic, Old Cup y New Wave.</p></div>
+          <div class="tourn-card"><div class="icon">🌿</div><h3>Copa Libertadores</h3><p>Fútbol sudamericano 1960–2024. <strong>24 equipos legendarios</strong>: el Santos de Pelé, Estudiantes, Nacional, Boca Juniors, River Plate. Intensidad pura.</p></div>
+          <div class="tourn-card"><div class="icon">🌍</div><h3>World Cup Legends</h3><p>Copa del Mundo FIFA 1930–2022. <strong>65 selecciones históricas</strong>: desde Uruguay 1930 hasta la Argentina de Messi, pasando por Brasil 1970 y Alemania Occidental 1974.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Hoja de Ruta</div>
+        <h2>Lo que está por venir</h2>
+        <p>Decempionz está en desarrollo activo. Algunas funcionalidades ya están en vivo, otras en construcción, otras en el radar.</p>
+        <div class="roadmap-list">
+          <div class="roadmap-item"><strong>UCL, Copa Libertadores, World Cup</strong> <span class="tag tag-done">En vivo</span></div>
+          <div class="roadmap-item"><strong>Sistema de trofeos y Hall of Fame</strong> <span class="tag tag-done">En vivo</span></div>
+          <div class="roadmap-item"><strong>Modo offline (PWA instalable)</strong> <span class="tag tag-done">En vivo</span></div>
+          <div class="roadmap-item"><strong>Pantalla post-partido rediseñada</strong> <span class="tag tag-wip">En progreso</span></div>
+          <div class="roadmap-item"><strong>Nuevas competiciones históricas</strong> <span class="tag tag-soon">Próximamente</span></div>
+          <div class="roadmap-item"><strong>Modo desafío comunitario</strong> <span class="tag tag-soon">Próximamente</span></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Cómo se juega</div>
+        <h2>Un draft ciego, partido a partido</h2>
+        <p>Decempionz es un <strong>juego de draft ciego</strong>: elige una formación, luego aparecen tres cartas de jugadores a la vez — elige uno para tu XI, los otros desaparecen. Sin garantías, solo instinto y estrategia.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-body"><h4>Elige torneo y formato</h4><p>UCL, Copa o World Cup. Classic (fase de grupos + eliminatorias), Old Cup (eliminación directa) o New Wave (fase de liga, solo UCL). Dificultad Fácil, Normal o Difícil.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-body"><h4>Elige una era histórica</h4><p>Años 60, 70, 80, 90, 2000, 2010 — o All Time para extraer de todas las eras.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-body"><h4>Haz el draft de tu XI</h4><p>Elige una formación (4-3-3, 4-4-2, 3-5-2 y más), luego llena cada posición a través del draft ciego. Los jugadores con ★ (9.5+) dan un bonus de xG al disparo.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-body"><h4>Juega el torneo</h4><p>Cada partido se simula con mecánicas de momento, tácticas y un informe de scouting del rival. ¿Empate tras 90 minutos? Tanda de penaltis.</p></div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Técnico</div>
+        <h2>Un juego entero en un solo archivo HTML</h2>
+        <p>Decempionz está construido en <strong>JavaScript vanilla</strong> — sin frameworks, sin dependencias externas, sin base de datos. Un único archivo HTML de ~6.000 líneas que contiene todo: lógica de juego, datos históricos, gráficos y animaciones.</p>
+        <p>Funciona en cualquier navegador moderno, carga en menos de un segundo y se puede instalar y jugar sin conexión como PWA. Es un ejercicio de diseño de juegos minimalista: <strong>¿cuánta profundidad puedes meter en un solo archivo?</strong></p>
+        <p>El código fuente está disponible en GitHub para quien quiera explorarlo, contribuir o adaptarlo para su propio torneo histórico favorito.</p>
+      </section>
+
+      <section>
+        <div class="section-label">FAQ</div>
+        <h2>Preguntas Frecuentes</h2>
+        <p><strong>¿Es gratis?</strong> Sí, completamente. Sin compras, sin registro, sin anuncios.</p>
+        <p><strong>¿Son precisos los datos de los jugadores?</strong> Sí, los equipos son históricamente correctos. Las valoraciones son una estimación subjetiva basada en rendimientos reales e impacto histórico.</p>
+        <p><strong>¿Puedo jugar sin conexión?</strong> Sí, Decempionz es instalable como PWA. En tu navegador, selecciona "Añadir a pantalla de inicio" o "Instalar app".</p>
+        <p><strong>¿En qué dispositivos funciona?</strong> En cualquier dispositivo con navegador moderno: escritorio, tablet y smartphone.</p>
+        <p><strong>¿Habrá más torneos?</strong> Sí, está en la hoja de ruta. Si tienes sugerencias, usa el formulario de Contacto dentro del juego.</p>
+        <p><strong>¿Por qué no hay Serie A ni Premier League?</strong> Decempionz empezó centrado en competiciones internacionales de clubes y selecciones nacionales. Las ligas domésticas podrían llegar en el futuro.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">← Torna al gioco / Back to the game</a>
+    &nbsp;·&nbsp; © 2026 Decempionz &nbsp;·&nbsp;
+    <a href="/about.html">About</a>
+  </footer>
+
+  <script>
+    function setLang(lang){
+      document.querySelectorAll('[data-lang]').forEach(function(el){
+        el.classList.toggle('visible',el.dataset.lang===lang);
+      });
+      ['it','en','es'].forEach(function(l){
+        var b=document.getElementById('btn-'+l);
+        if(b)b.classList.toggle('active',l===lang);
+      });
+      document.documentElement.lang=lang;
+    }
+  </script>
+</body>
+</html>
