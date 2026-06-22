@@ -5188,12 +5188,83 @@ document.addEventListener('DOMContentLoaded',function(){
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
 function openLegal(){document.getElementById('modal-legal').classList.add('open');}
 function closeLegal(){document.getElementById('modal-legal').classList.remove('open');}
-function openFanProject(){applyLang();document.getElementById('modal-fanproject').style.display='flex';}
+function openFanProject(){
+  var lang=G.lang||'it';
+  var c={
+    it:{title:'⚽ Fan Project',s1h:"Cos'è Decempionz?",s1p:"Decempionz è un progetto fan non ufficiale e gratuito, nato dalla passione per la storia del calcio internazionale. Celebra decenni di Champions League, Copa Libertadores e Mondiali attraverso un gioco di draft strategico. Non è affiliato, sponsorizzato né approvato da UEFA, FIFA, CONMEBOL o da alcun club calcistico.",s2h:'Uso dei nomi',s2p:"I nomi di calciatori, allenatori e squadre sono utilizzati esclusivamente a scopo di intrattenimento culturale e storico, senza fini commerciali. Nessun dato ufficiale protetto da copyright viene riprodotto.",s3h:'Contatti',s3p:'Per segnalazioni, suggerimenti o collaborazioni:',s3btn:'📬 Apri Contatti',close:'Chiudi'},
+    en:{title:'⚽ Fan Project',s1h:'What is Decempionz?',s1p:"Decempionz is a free, unofficial fan project born from a passion for the history of international football. It celebrates decades of Champions League, Copa Libertadores and World Cups through a strategic draft game. It is not affiliated with, sponsored by, or endorsed by UEFA, FIFA, CONMEBOL, or any football club.",s2h:'Use of names',s2p:"Player, coach, and club names are used purely for cultural and historical entertainment, with no commercial intent. No officially copyrighted data is reproduced.",s3h:'Contact',s3p:'For reports, suggestions or collaborations:',s3btn:'📬 Open Contacts',close:'Close'},
+    es:{title:'⚽ Fan Project',s1h:'¿Qué es Decempionz?',s1p:"Decempionz es un proyecto fan gratuito y no oficial, nacido de la pasión por la historia del fútbol internacional. Celebra décadas de Champions League, Copa Libertadores y Mundiales a través de un juego de draft estratégico. No está afiliado, patrocinado ni avalado por la UEFA, la FIFA, la CONMEBOL ni ningún club de fútbol.",s2h:'Uso de nombres',s2p:"Los nombres de jugadores, entrenadores y equipos se utilizan exclusivamente con fines de entretenimiento cultural e histórico, sin propósito comercial. No se reproduce ningún dato oficial protegido por derechos de autor.",s3h:'Contacto',s3p:'Para reportes, sugerencias o colaboraciones:',s3btn:'📬 Abrir Contactos',close:'Cerrar'}
+  }[lang];
+  document.getElementById('modal-fanproject').querySelector('.modal-sheet').innerHTML=
+    '<div class="modal-title">'+c.title+'</div>'
+    +'<div class="modal-section"><h3>'+c.s1h+'</h3><p>'+c.s1p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s2h+'</h3><p>'+c.s2p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s3h+'</h3><p style="margin-bottom:8px">'+c.s3p+'</p>'
+    +'<button class="btn btn-ghost" style="font-size:.8rem;width:100%" onclick="closeFanProject();setTimeout(openContatti,150)">'+c.s3btn+'</button></div>'
+    +'<button class="modal-legal-close" onclick="closeFanProject()">'+c.close+'</button>';
+  document.getElementById('modal-fanproject').style.display='flex';
+}
 function closeFanProject(){document.getElementById('modal-fanproject').style.display='none';}
-function openPrivacy(){applyLang();document.getElementById('modal-privacy').style.display='flex';}
-function closePrivacy(){document.getElementById('modal-privacy').style.display='none';}
-function openContatti(){document.getElementById('modal-contatti').style.display='flex';}
+function openContatti(){
+  var lang=G.lang||'it';
+  var c={
+    it:{title:'📬 Contatti',close:'Chiudi'},
+    en:{title:'📬 Contacts',close:'Close'},
+    es:{title:'📬 Contactos',close:'Cerrar'}
+  }[lang];
+  document.getElementById('modal-contatti').querySelector('.modal-sheet').innerHTML=
+    '<div class="modal-title">'+c.title+'</div>'
+    +'<div class="modal-section"><h3>Email</h3><p><a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p></div>'
+    +'<div class="modal-section"><h3>Reddit</h3><p><a href="https://www.reddit.com/user/CurrencyPlane2186/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">u/CurrencyPlane2186</a></p></div>'
+    +'<div class="modal-section"><h3>TikTok</h3><p><a href="https://www.tiktok.com/@decempionzdraftgame" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">@decempionzdraftgame</a></p></div>'
+    +'<button class="modal-legal-close" onclick="closeContatti()">'+c.close+'</button>';
+  document.getElementById('modal-contatti').style.display='flex';
+}
 function closeContatti(){document.getElementById('modal-contatti').style.display='none';}
+function openPrivacy(){
+  var lang=G.lang||'it';
+  var ga_link='<a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">'+(lang==='it'?'Privacy Policy':lang==='es'?'Política de Privacidad':'Privacy Policy')+'</a>';
+  var ga_opt='<a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">Google Analytics Opt-out</a>';
+  var mail='<a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a>';
+  var c={
+    it:{title:'🔒 Privacy Policy',
+      s1h:'Titolare del trattamento',s1p:'Il titolare del trattamento è il creatore del progetto fan Decempionz, contattabile all\'indirizzo: '+mail,
+      s2h:'Dati raccolti',s2p:'Decempionz non raccoglie, non archivia e non trasmette dati personali degli utenti. Non sono presenti form di registrazione, login o sistemi di account.',
+      s3h:'Archiviazione locale (localStorage)',s3p:'Il gioco utilizza il localStorage del browser esclusivamente per salvare preferenze locali (tema, lingua, trofei sbloccati). Questi dati rimangono sul dispositivo dell\'utente e non vengono mai inviati a server esterni.',
+      s4h:'Google Analytics 4',s4p:'Questo sito utilizza Google Analytics 4 con IP anonimizzato per raccogliere statistiche aggregate di utilizzo. I dati sono trattati da Google LLC secondo la sua '+ga_link+'. Per disattivare il tracciamento: '+ga_opt+'.',
+      s5h:'Cookie',s5p:'Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.',
+      s6h:'I tuoi diritti (GDPR – Reg. UE 2016/679)',s6p:'Ai sensi degli artt. 15-20 del GDPR hai diritto di accesso, rettifica, cancellazione, limitazione e portabilità dei tuoi dati. Per esercitare questi diritti scrivi a: '+mail,
+      s7h:'Aggiornamenti',s7p:'Questa policy può essere aggiornata in caso di modifiche al gioco o alla normativa. Ultimo aggiornamento: giugno 2025.',close:'Chiudi'},
+    en:{title:'🔒 Privacy Policy',
+      s1h:'Data Controller',s1p:'The data controller is the creator of the Decempionz fan project, reachable at: '+mail,
+      s2h:'Data collected',s2p:'Decempionz does not collect, store, or transmit any personal user data. There are no registration forms, login systems, or user accounts.',
+      s3h:'Local storage (localStorage)',s3p:"The game uses the browser's localStorage solely to save local preferences (theme, language, unlocked trophies). This data stays on the user's device and is never sent to external servers.",
+      s4h:'Google Analytics 4',s4p:'This site uses Google Analytics 4 with anonymised IP to collect aggregate usage statistics. Data is processed by Google LLC under its '+ga_link+'. To opt out: '+ga_opt+'.',
+      s5h:'Cookies',s5p:'No profiling or marketing cookies are used. Google Analytics may set its own technical cookies (_ga, _gid) to distinguish sessions. These cookies contain no personally identifiable data.',
+      s6h:'Your rights (GDPR – EU Reg. 2016/679)',s6p:'Under arts. 15–20 of the GDPR you have the right of access, rectification, erasure, restriction, and portability of your data. To exercise these rights write to: '+mail,
+      s7h:'Updates',s7p:'This policy may be updated following changes to the game or applicable regulations. Last updated: June 2025.',close:'Close'},
+    es:{title:'🔒 Política de Privacidad',
+      s1h:'Responsable del tratamiento',s1p:'El responsable del tratamiento es el creador del proyecto fan Decempionz, contactable en: '+mail,
+      s2h:'Datos recopilados',s2p:'Decempionz no recopila, almacena ni transmite datos personales de los usuarios. No existen formularios de registro, sistemas de inicio de sesión ni cuentas de usuario.',
+      s3h:'Almacenamiento local (localStorage)',s3p:'El juego usa el localStorage del navegador exclusivamente para guardar preferencias locales (tema, idioma, trofeos desbloqueados). Estos datos permanecen en el dispositivo del usuario y nunca se envían a servidores externos.',
+      s4h:'Google Analytics 4',s4p:'Este sitio usa Google Analytics 4 con IP anonimizada para recopilar estadísticas agregadas de uso. Los datos son tratados por Google LLC según su '+ga_link+'. Para desactivar el seguimiento: '+ga_opt+'.',
+      s5h:'Cookies',s5p:'No se utilizan cookies de perfilado ni de marketing. Google Analytics puede establecer sus propias cookies técnicas (_ga, _gid) para distinguir sesiones. Estas cookies no contienen datos personales identificativos.',
+      s6h:'Tus derechos (RGPD – Reg. UE 2016/679)',s6p:'De conformidad con los arts. 15-20 del RGPD, tienes derecho de acceso, rectificación, supresión, limitación y portabilidad de tus datos. Para ejercer estos derechos escribe a: '+mail,
+      s7h:'Actualizaciones',s7p:'Esta política puede actualizarse ante cambios en el juego o en la normativa aplicable. Última actualización: junio de 2025.',close:'Cerrar'}
+  }[lang];
+  document.getElementById('modal-privacy').querySelector('.modal-sheet').innerHTML=
+    '<div class="modal-title">'+c.title+'</div>'
+    +'<div class="modal-section"><h3>'+c.s1h+'</h3><p>'+c.s1p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s2h+'</h3><p>'+c.s2p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s3h+'</h3><p>'+c.s3p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s4h+'</h3><p>'+c.s4p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s5h+'</h3><p>'+c.s5p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s6h+'</h3><p>'+c.s6p+'</p></div>'
+    +'<div class="modal-section"><h3>'+c.s7h+'</h3><p>'+c.s7p+'</p></div>'
+    +'<button class="modal-legal-close" onclick="closePrivacy()">'+c.close+'</button>';
+  document.getElementById('modal-privacy').style.display='flex';
+}
+function closePrivacy(){document.getElementById('modal-privacy').style.display='none';}
 function closeBanner(){
   document.getElementById('banner-disclaimer').style.display='none';
   try{localStorage.setItem('dcz_disclaimer','1');}catch(e){}
@@ -6381,7 +6452,7 @@ function _devSetMom(v){
     </div>
     <div class="modal-section">
       <h3>Archiviazione locale (localStorage)</h3>
-      <p>Il gioco utilizza il localStorage del browser esclusivamente per salvare preferenze locali (tema grafico, lingua, trofei sbloccati). Questi dati rimangono sul dispositivo dell'utente e non vengono mai inviati a server esterni.</p>
+      <p>Il gioco utilizza il localStorage del browser esclusivamente per salvare preferenze locali (tema grafico, lingua, trofei sbloccati). Questi dati rimangono sul dispositivo dell\'utente e non vengono mai inviati a server esterni.</p>
     </div>
     <div class="modal-section">
       <h3>Google Analytics 4</h3>
