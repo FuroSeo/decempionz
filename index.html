@@ -3554,6 +3554,15 @@ function initDraft(){
   all.sort(function(a,b){return b.r-a.r;}); // keep highest-rated version if dupes
   all.forEach(function(p){if(!_seenNames.has(p.n)){_seenNames.add(p.n);_deduped.push(p);}});
   G.draftPool = _deduped.sort(()=>Math.random()-.5);
+  // Partition pool into rating tiers
+  G.draftTiers={10:[],9:[],8:[],7:[]};
+  G.draftPool.forEach(function(p){
+    var t=p.r>=10?10:p.r>=9?9:p.r>=8?8:7;
+    G.draftTiers[t].push(p);
+  });
+  [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
+  G.draftCurrentTier=null;
+  G._drawnFromTier=[];
   G.draftIdx = 0;
   G.draftCards = [];
   G.draftLock = false;
@@ -3648,18 +3657,32 @@ function renderDraftPitch(currentPlayer){
 
 function drawDraftCards(){
   G.draftCards=[];
-
-  while(G.draftCards.length<3 && G.draftIdx<G.draftPool.length){
-    const p=G.draftPool[G.draftIdx];
-    G.draftIdx++;
-    if(compatibleEmptySlots(p).length>0) G.draftCards.push(p);
+  G._drawnFromTier=[];
+  // Find tiers with at least one compatible player
+  var available=[10,9,8,7].filter(function(t){
+    return G.draftTiers[t].some(function(p){return compatibleEmptySlots(p).length>0;});
+  });
+  if(available.length===0)return;
+  // Pick a random available tier
+  var tier=available[Math.floor(Math.random()*available.length)];
+  G.draftCurrentTier=tier;
+  // Draw up to 3 compatible from this tier, remove from pool
+  var pool=G.draftTiers[tier];
+  var drawn=[],rest=[];
+  for(var i=0;i<pool.length;i++){
+    if(drawn.length<3&&compatibleEmptySlots(pool[i]).length>0) drawn.push(pool[i]);
+    else rest.push(pool[i]);
   }
+  G.draftTiers[tier]=rest;
+  G.draftCards=drawn;
+  G._drawnFromTier=drawn;
 }
 
 function updateDraftScreen(){
   if(filledCount()>=11){finalizeDraft();return;}
   if(!G.draftCards||G.draftCards.length===0){
-    if(G.draftIdx>=G.draftPool.length){finalizeDraft();return;}
+    var _allEmpty=[10,9,8,7].every(function(t){return G.draftTiers[t].length===0;});
+    if(_allEmpty){finalizeDraft();return;}
     drawDraftCards();
   }
   const hasCompat=G.draftCards.some(p=>compatibleEmptySlots(p).length>0);
@@ -3667,10 +3690,16 @@ function updateDraftScreen(){
 
   const filled=filledCount();
   const remaining=G.draftPool.length-G.draftIdx;
-  const noReroll=G.passes<=0;
+  var _emptySlotsNow=G.slotPlayers.filter(function(p){return p===null;}).length;
+  var _rerollLocked=(G.difficulty||'normal')!=='easy'&&_emptySlotsNow<=3;
+  const noReroll=G.passes<=0||_rerollLocked;
 
-  document.getElementById('d-info').textContent=
-    'Formation '+G.formation+' · '+remaining+' in pool';
+  var _tc=G.draftTiers||{10:[],9:[],8:[],7:[]};
+  document.getElementById('d-info').innerHTML=
+    '<span style="color:var(--gold2);font-weight:800">★★★★</span> '+_tc[10].length
+    +' &nbsp;·&nbsp; <span style="color:#94a3b8;font-weight:800">★★★</span> '+_tc[9].length
+    +' &nbsp;·&nbsp; <span style="color:#b07050;font-weight:800">★★</span> '+_tc[8].length
+    +' &nbsp;·&nbsp; <span style="color:var(--mut)">★</span> '+_tc[7].length;
   document.getElementById('d-count').textContent=filled+'/11';
   document.getElementById('d-passes').innerHTML=
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
@@ -3771,8 +3800,16 @@ function draftPick(i){
 
 function draftReroll(){
   if(G.passes<=0)return;
+  var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
+  if((G.difficulty||'normal')!=='easy'&&_emptySlots<=3)return;
   G.passes--;
+  // Return current cards to their tier pool
+  if(G._drawnFromTier&&G._drawnFromTier.length>0&&G.draftCurrentTier){
+    G.draftTiers[G.draftCurrentTier]=G.draftTiers[G.draftCurrentTier].concat(G._drawnFromTier);
+    G.draftTiers[G.draftCurrentTier].sort(function(){return Math.random()-.5;});
+  }
   G.draftCards=[];
+  G._drawnFromTier=[];
   drawDraftCards();
   updateDraftScreen();
 }
@@ -3790,8 +3827,9 @@ function finalizeDraft(){
     // Force fill remaining from pool — prefer exact position match
     var i=0;
     var _draftedNames=new Set(G.squad.map(function(p){return p.n;}));
-    while(G.squad.length<11 && i<G.draftPool.length){
-      var fp=G.draftPool[i];
+    var _flatPool=[10,9,8,7].reduce(function(a,t){return a.concat(G.draftTiers[t]);},G._drawnFromTier||[]);
+    while(G.squad.length<11 && i<_flatPool.length){
+      var fp=_flatPool[i];
       var slots=compatibleEmptySlots(fp);
       if(slots.length>0 && !_draftedNames.has(fp.n)){
         var bestS=slots.slice().sort(function(a,b){
