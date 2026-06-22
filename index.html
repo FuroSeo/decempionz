@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Decempionz — Fai il draft delle leggende del calcio e conquista l'Europa. Un gioco di carte blind draft con 60 anni di storia della Champions League.">
+<meta name="description" content="Decempionz — Blind draft delle leggende del calcio: costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali. 90+ rose storiche, 3 tornei, 3 formati.">
 <meta name="author" content="Decempionz">
-<meta property="og:title" content="Decempionz — Il Draft delle Leggende del Calcio">
-<meta property="og:description" content="Scegli i giocatori leggendari, costruisci il tuo XI e conquista l'Europa. 66 rose storiche, 3 formati di torneo.">
+<meta property="og:title" content="Decempionz — Draft le Leggende: UCL, Copa Libertadores, Mondiali">
+<meta property="og:description" content="Scegli le leggende del calcio storico, costruisci il tuo XI e conquista UCL, Copa o Mondiali. 90+ rose storiche, blind draft, 3 tornei.">
 <meta property="og:image" content="https://decempionz.com/og-image.png">
 <meta property="og:url" content="https://decempionz.com">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="it_IT">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Decempionz — Il Draft delle Leggende del Calcio">
-<meta name="twitter:description" content="Fai il draft delle leggende. Costruisci il tuo XI. Conquista l'Europa.">
+<meta name="twitter:title" content="Decempionz — Draft le Leggende: UCL, Copa Libertadores, Mondiali">
+<meta name="twitter:description" content="Draft le leggende del calcio. Costruisci il tuo XI. Conquista UCL, Copa o Mondiali.">
 <meta name="twitter:image" content="https://decempionz.com/og-image.png">
 <meta name="theme-color" content="#07090f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
-<title>Decempionz — Draft le Leggende del Calcio e Conquista l'Europa</title>
+<title>Decempionz — Draft le Leggende: Champions League, Copa Libertadores, Mondiali</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.26';
+const GAME_VERSION='5.5.27';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3748,7 +3748,8 @@ function updateDraftScreen(){
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
   var _dfEl=document.getElementById('d-force');
-  if(G.passes<=0){_dfEl.textContent=t('draft.pool_exhausted');_dfEl.style.display='block';}
+  var _cardsAvail=(G.draftCards||[]).filter(Boolean).length;
+  if(G.passes<=0||_cardsAvail<3){_dfEl.textContent=t('draft.pool_exhausted');_dfEl.style.display='block';}
   else if(_rerollLocked){_dfEl.textContent=t('draft.reroll_locked');_dfEl.style.display='block';}
   else{_dfEl.style.display='none';}
   document.getElementById('d-warn').style.display='none';
