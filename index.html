@@ -814,13 +814,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       </div>
       <div data-i18n="fmt.nuovo.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.</div>
     </div>
-    <div class="format-card" id="fc-random" onclick="selectFormat('random',this)">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-size:1rem;font-weight:800">🎲 Random</div><div data-i18n="fmt.random.sub" style="font-size:.72rem;color:var(--mut);margin-top:2px">format + formation drawn randomly</div></div>
-        <div data-i18n-html="fmt.random.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">? matches<br>random</div>
-      </div>
-      <div data-i18n="fmt.random.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">Format and formation are drawn at random — no choices, just play.</div>
-    </div>
   </div>
   <div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
     <div style="min-width:0;flex:1">
@@ -1148,7 +1141,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.8';
+const GAME_VERSION='5.5.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3400,31 +3393,17 @@ function selectFormat(f,el){
   el.classList.add('fc-sel');
 }
 function confirmFormat(){
-  var _isRandom=selectedFormat==='random';
-  if(_isRandom){
-    var _fmts=G.gameMode==='ucl'?['coppa','classic','nuovo']:['coppa','classic'];
-    G.format=_fmts[Math.floor(Math.random()*_fmts.length)];
-    G.formation=FKEYS[Math.floor(Math.random()*FKEYS.length)];
-  } else {
-    G.format=selectedFormat;
-  }
+  G.format=selectedFormat;
   G.difficulty=selectedDiff||'normal';
   const era=selectedEraT||(G.gameMode==='copa'?COPA_TOURNAMENTS.find(function(t){return t.allTime;}):G.gameMode==='wc'?WC_TOURNAMENTS.find(function(t){return t.allTime;}):TOURNAMENTS.find(t=>t.id==='alltime'));
   applyTournament(era);
   G.tactic='balanced';
-  if(_isRandom){
-    var _fmtNames={coppa:'Old Cup',classic:'Classic',nuovo:'New Wave'};
-    var _toastEl=document.getElementById('share-toast');
-    if(_toastEl){_toastEl.textContent='🎲 '+(_fmtNames[G.format]||G.format)+' · '+G.formation;_toastEl.classList.add('show');setTimeout(function(){_toastEl.classList.remove('show');},3000);}
-    initDraft();
-  } else {
-    renderFormationGrid();
-    setTimeout(()=>{
-      document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
-      const fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
-    },0);
-    showScreen('screen-formation');
-  }
+  renderFormationGrid();
+  setTimeout(()=>{
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
+    const fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  showScreen('screen-formation');
 }
 
 
@@ -3436,6 +3415,7 @@ function renderFormationGrid(){
   var grid=document.getElementById('form-grid');
   G.formation=null;
   var db=document.getElementById('btn-start-draft');if(db)db.classList.add('btn-inactive');
+  var _rndLbl={it:'Formazione estratta a sorpresa.',en:'Formation drawn at random.',es:'Formaci\u00f3n elegida al azar.'}[G.lang||'it'];
   grid.innerHTML=FKEYS.map(function(key){
     var f=FORMATIONS[key];
     var safeKey=key.replace(/[^a-z0-9]/gi,'-');
@@ -3448,7 +3428,11 @@ function renderFormationGrid(){
       '<div class="form-name">'+key+'</div>'+
       '<div class="form-pitch">'+dots+'</div>'+
       '<div class="form-desc">'+t('form.desc.'+key.replace(/-/g,''))+'</div></div>';
-  }).join('');
+  }).join('')
+  +'<div class="form-card" id="fc-formation-random" onclick="selectRandomFormation()" style="border-style:dashed;opacity:.85">'+
+    '<div class="form-name">&#x1F3B2;</div>'+
+    '<div class="form-pitch" style="display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.8rem">?</div>'+
+    '<div class="form-desc">'+_rndLbl+'</div></div>';
 }
 
 function selectFormation(el, key){
@@ -3457,6 +3441,15 @@ function selectFormation(el, key){
   el.classList.add('sel');
   var btn = document.getElementById('btn-start-draft');
   btn.classList.remove('btn-inactive');
+}
+function selectRandomFormation(){
+  var key=FKEYS[Math.floor(Math.random()*FKEYS.length)];
+  G.formation=key;
+  document.querySelectorAll('.form-card').forEach(function(c){c.classList.remove('sel');});
+  var el=document.getElementById('fc-formation-random');if(el)el.classList.add('sel');
+  var _t=document.getElementById('share-toast');
+  if(_t){_t.textContent='\u1F3B2 '+key;_t.classList.add('show');setTimeout(function(){_t.classList.remove('show');},2500);}
+  initDraft();
 }
 
 /* ═══════════════════════════════════════
