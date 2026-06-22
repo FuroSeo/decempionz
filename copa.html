@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copa Libertadores Legends — Storia e Squadre | Decempionz</title>
+  <meta name="description" content="Scopri la storia della Copa Libertadores: formato, curiosità, vincitori storici e le 24 rose leggendarie disponibili in Decempionz — dal Peñarol 1960-61 al Fluminense 2023.">
+  <meta name="keywords" content="copa libertadores storia, copa libertadores leggende, draft calcio sudamericano, santos pelé, boca juniors storia, flamengo copa libertadores, decempionz copa">
+  <meta property="og:title" content="Copa Libertadores Legends | Decempionz">
+  <meta property="og:description" content="24 rose leggendarie della Copa Libertadores. Dal Peñarol 1960-61 al Fluminense 2023.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://decempionz.com/copa.html">
+  <link rel="canonical" href="https://decempionz.com/copa.html">
+  <style>
+
+    :root {
+      --bg:#070a12;--surface:#0d1320;--text:#e8edf5;--mut:#6b7e95;
+      --gold:#c9a227;--gold2:#e8c84a;--brd:#1e2d42;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:16px;line-height:1.7}
+    a{color:var(--gold);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .site-header{background:linear-gradient(180deg,#0a0f1e,#070a12);border-bottom:1px solid var(--brd);padding:16px 20px;text-align:center}
+    .site-logo{font-size:1.1rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block}
+    .lang-bar{display:flex;justify-content:center;gap:8px;padding:14px 20px}
+    .lang-btn{background:none;border:1px solid var(--brd);color:var(--mut);border-radius:20px;padding:4px 14px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .18s}
+    .lang-btn.active{background:rgba(201,162,39,.12);border-color:rgba(201,162,39,.4);color:var(--gold)}
+    .hero{background:linear-gradient(135deg,#0a0f20,#0d1a2e 50%,#0a1218);border-bottom:1px solid var(--brd);padding:52px 20px 44px;text-align:center}
+    .hero-badge{display:inline-block;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:18px}
+    .hero h1{font-size:clamp(1.5rem,5vw,2.4rem);font-weight:900;line-height:1.15;margin-bottom:14px;max-width:660px;margin-left:auto;margin-right:auto}
+    .hero h1 span{color:var(--gold)}
+    .hero-sub{color:var(--mut);font-size:.97rem;max-width:520px;margin:0 auto 26px}
+    .btn-play{display:inline-block;background:linear-gradient(135deg,#c9a227,#e8c84a);color:#07090f;font-weight:800;font-size:.95rem;padding:12px 30px;border-radius:30px;transition:opacity .18s}
+    .btn-play:hover{opacity:.88;text-decoration:none}
+    .container{max-width:760px;margin:0 auto;padding:0 20px}
+    section{padding:40px 0;border-bottom:1px solid var(--brd)}
+    section:last-of-type{border-bottom:none}
+    .section-label{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+    h2{font-size:clamp(1.15rem,3vw,1.5rem);font-weight:800;line-height:1.2;margin-bottom:14px}
+    p{color:var(--mut);margin-bottom:12px;font-size:.95rem}
+    p strong{color:var(--text)}
+    p:last-child{margin-bottom:0}
+    .trivia-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:20px}
+    .trivia-card{background:var(--surface);border:1px solid var(--brd);border-radius:12px;padding:16px}
+    .trivia-card .t-icon{font-size:1.4rem;margin-bottom:6px}
+    .trivia-card p{font-size:.82rem;margin:0}
+    footer{text-align:center;padding:22px 20px 30px;font-size:.72rem;color:var(--mut);border-top:1px solid var(--brd)}
+    footer a{color:var(--mut)}
+    footer a:hover{color:var(--gold)}
+    [data-lang]{display:none}
+    [data-lang].visible{display:block}
+    .era-group{margin-bottom:24px}
+    .era-label{font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--brd);padding-bottom:6px;margin-bottom:10px}
+    .squad-card{border:1px solid var(--brd);border-radius:10px;margin-bottom:8px;overflow:hidden;background:var(--surface)}
+    .squad-header{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;transition:background .15s}
+    .squad-header:hover{background:rgba(255,255,255,.03)}
+    .sq-flag{font-size:1.2rem;flex-shrink:0}
+    .sq-name{font-size:.9rem;font-weight:700;color:var(--text);flex:1}
+    .sq-season{font-size:.75rem;color:var(--mut);flex-shrink:0}
+    .sq-arrow{font-size:.65rem;color:var(--mut);flex-shrink:0;transition:transform .2s}
+    .sq-arrow.open{transform:rotate(180deg)}
+    .squad-roster{display:none;padding:0 14px 12px;border-top:1px solid var(--brd)}
+    .squad-roster.open{display:block}
+    .pl-row{display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid rgba(30,45,66,.6);font-size:.78rem}
+    .pl-row:last-child{border-bottom:none}
+    .pl-pos{width:34px;font-size:.66rem;font-weight:700;color:var(--mut);flex-shrink:0}
+    .pl-name{flex:1;color:var(--text)}
+    .pl-r{width:22px;text-align:center;font-size:.72rem;font-weight:800;border-radius:4px;padding:1px 0}
+    .r-gold{background:rgba(201,162,39,.18);color:var(--gold2)}
+    .r-sil{background:rgba(148,163,184,.12);color:#94a3b8}
+    .r-brz{background:rgba(180,130,90,.1);color:#b07050}
+    .cta-wrap{text-align:center;padding:36px 0 48px}
+
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="site-logo" aria-label="Torna al gioco Decempionz">Decempionz</a>
+  </header>
+
+  <div class="lang-bar">
+    <button class="lang-btn active" id="btn-it" onclick="setLang('it')">🇮🇹 Italiano</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    <button class="lang-btn" id="btn-es" onclick="setLang('es')">🇪🇸 Español</button>
+  </div>
+
+  <!-- ITALIANO -->
+  <div data-lang="it" class="visible">
+    <div class="hero">
+      <div class="container">
+        <div class="hero-badge">🏆 Copa Libertadores Legends</div>
+        <h1>La storia della <span>Copa Libertadores</span></h1>
+        <p class="hero-sub">Il trofeo più ambito del calcio sudamericano, dal 1960 a oggi: 24 rose leggendarie, 4 ere storiche.</p>
+        <a href="/" class="btn-play">Gioca ora →</a>
+      </div>
+    </div>
+    <div class="container">
+      <section>
+        <div class="section-label">Storia</div>
+        <h2>Il sogno continental del calcio sudamericano</h2>
+        <p>La Copa Libertadores de América nasce nel <strong>1960</strong> come risposta sudamericana alla Coppa dei Campioni europea. Il nome omaggia i libertadores — i grandi liberatori del continente come Bolívar e San Martín. Inizialmente riservata ai campioni nazionali, si è espansa nel corso dei decenni fino a includere 47 club da 10 paesi.</p>
+        <p>I primi anni sono dominati da <strong>Uruguay e Argentina</strong>: Peñarol e Nacional da una parte, Independiente e Estudiantes dall'altra. Gli anni '80 vedono l'ascesa del calcio brasiliano con Flamengo e Grêmio. Negli anni '90 e 2000 il Boca Juniors diventa la squadra più vincente dell'era moderna, mentre il River Plate domina gli anni 2010.</p>
+        <p>Nell'era contemporanea il Brasile si impone come la nazione più forte: tra il 2019 e il 2023 quattro finali su cinque hanno visto trionfare club brasiliani, con Flamengo, Palmeiras e Fluminense protagonisti.</p>
+      </section>
+      <section>
+        <div class="section-label">Formato</div>
+        <h2>Come funziona il torneo</h2>
+        <p>Il torneo parte con fasi di qualificazione seguite da una <strong>fase a gironi</strong>. Le prime due di ogni gruppo avanzano agli ottavi di finale. Da lì è eliminazione diretta <strong>andata e ritorno</strong> fino alla finale, anch'essa a doppia gara fino al 2018. Dal 2019 la finale è a gara unica in campo neutro.</p>
+        <p>In Decempionz il formato rispecchia la struttura storica del torneo: girone eliminatorio poi knockout fino alla grande finale.</p>
+      </section>
+      <section>
+        <div class="section-label">Curiosità</div>
+        <h2>Numeri e record storici</h2>
+        <div class="trivia-grid">
+          <div class="trivia-card"><div class="t-icon">🥇</div><p><strong>Independiente</strong> è il club più vincente con 7 titoli, guadagnandosi il soprannome di "Rey de Copas".</p></div>
+          <div class="trivia-card"><div class="t-icon">⚽</div><p>Il <strong>Santos di Pelé</strong> vinse la Libertadores nel 1962 e 1963. Pelé segnò 54 gol in 82 partite nella competizione.</p></div>
+          <div class="trivia-card"><div class="t-icon">🔥</div><p>La finale del 2018 tra <strong>Boca Juniors e River Plate</strong> — el Superclásico — è la più attesa della storia della Copa.</p></div>
+          <div class="trivia-card"><div class="t-icon">🌎</div><p>Dieci paesi hanno espresso almeno un vincitore: Argentina (26), Brasile (23), Uruguay (8), Colombia (1), Cile (1), Paraguay (3), Ecuador (1), Perù (1), Bolivia (0), Venezuela (0).</p></div>
+          <div class="trivia-card"><div class="t-icon">🐓</div><p><strong>Flamengo 2019</strong> — la rimonta epica in finale contro il River Plate: 1-0 al 89', poi Gabriel Barbosa segnò due gol negli ultimi 4 minuti per il 2-1 finale.</p></div>
+          <div class="trivia-card"><div class="t-icon">🏙️</div><p>Buenos Aires e São Paulo sono le città con più club vincitori. Nessuna capitale europea può vantare una rivalità calcistica paragonabile.</p></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">24 Rose leggendarie</div>
+        <h2>Le squadre disponibili in Decempionz</h2>
+        <p>Clicca su una squadra per espandere la rosa completa con ruoli e rating.</p>
+        <div class="era-group"><div class="era-label">Los Pioneros 1960–1975</div><div class="squad-card" id="squad-0">
+  <div class="squad-header" onclick="toggleSquad(0)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Peñarol</span>
+    <span class="sq-season">1960-61</span>
+    <span class="sq-arrow" id="arrow-0">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-0">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eliseo Alvarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Omar Caetano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jorge Manicera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Nestor Goncalves</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Pedro Rocha</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Hohberg</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Julio Abbadie</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Carlos Borges</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alberto Spencer</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Jose Sasia</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-1">
+  <div class="squad-header" onclick="toggleSquad(1)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">1962-63</span>
+    <span class="sq-arrow" id="arrow-1">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-1">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Gilmar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Lima</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Calvet</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Dalmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zito</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Mengalvio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dorval</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Pepe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pelé</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Coutinho</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-2">
+  <div class="squad-header" onclick="toggleSquad(2)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1964-65</span>
+    <span class="sq-arrow" id="arrow-2">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-2">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Carlos Del Bono</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ruben Navarro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Raul Savoy</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ruben Marcos</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Vicente De La Mata</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Alberto Acosta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alfredo Rojas</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-3">
+  <div class="squad-header" onclick="toggleSquad(3)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Estudiantes</span>
+    <span class="sq-season">1968-70</span>
+    <span class="sq-arrow" id="arrow-3">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-3">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Alberto Poletti</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Oscar Aguirre Suarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Raúl Madero</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Medina</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Manera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Héctor Pachame</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Carlos Bilardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ribaudo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Echecopar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Conigliaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Ramón Verón</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Eduardo Flores</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-4">
+  <div class="squad-header" onclick="toggleSquad(4)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1972-75</span>
+    <span class="sq-arrow" id="arrow-4">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-4">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Francisco Sá</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mario Galván</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Juan Pastoriza</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Jorge Veira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ricardo Bochini</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Daniel Bertoni</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Ricardo Pavoni</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-5">
+  <div class="squad-header" onclick="toggleSquad(5)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Nacional</span>
+    <span class="sq-season">1971</span>
+    <span class="sq-arrow" id="arrow-5">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-5">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Mario Corbo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Julio Montero Castillo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodolfo Rodriguez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Luis Garisto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Atilio Ancheta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcos Castro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ruben Paz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Nelson Carballo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ildo Maneiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Victor Esparrago</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Años Dorados 1976–1992</div><div class="squad-card" id="squad-6">
+  <div class="squad-header" onclick="toggleSquad(6)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">1977-78</span>
+    <span class="sq-arrow" id="arrow-6">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-6">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Hugo Gatti</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ricardo Lavolpe</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Juan Impini</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rubén Suñe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Alberto Tarantini</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Oscar Benítez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mario Zanabria</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Beto Márcico</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Miguel Brindisi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Julio Salinas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Córdoba</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Héctor Scotta</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-7">
+  <div class="squad-header" onclick="toggleSquad(7)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">1981</span>
+    <span class="sq-arrow" id="arrow-7">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-7">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Raúl</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Leandro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Carlos Mozer</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Junior</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Nei Dias</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Adílio</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Andrade</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Zico</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Anselmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Tita</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nunes</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-8">
+  <div class="squad-header" onclick="toggleSquad(8)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Grêmio</span>
+    <span class="sq-season">1983</span>
+    <span class="sq-arrow" id="arrow-8">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-8">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Cesar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Paulo Roberto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro Galvão</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Tarcísio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Batista</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Caio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">João Mário</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RM</span><span class="pl-name">Mussi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Renato Gaúcho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Osvaldo Cruz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Baltazar</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-9">
+  <div class="squad-header" onclick="toggleSquad(9)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1986</span>
+    <span class="sq-arrow" id="arrow-9">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-9">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Nery Pumpido</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Nelson Gutiérrez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Ruggeri</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Alejandro Montenegro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Gordillo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Americo Gallego</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Héctor Enrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ramon Centurion</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Norberto Alonso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Roque Alfaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Antonio Alzamendi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Juan Gilberto Funes</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-10">
+  <div class="squad-header" onclick="toggleSquad(10)">
+    <span class="sq-flag">🇨🇴</span>
+    <span class="sq-name">Atlético Nacional</span>
+    <span class="sq-season">1989</span>
+    <span class="sq-arrow" id="arrow-10">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-10">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">René Higuita</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Gildardo Gómez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Andrés Escobar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luis Carlos Perea</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Iván Darío Castañeda</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonel Álvarez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Luis Fdo Suárez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ricardo Pérez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jairo Arango</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Alexis García</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Jairo Galeano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Albeiro Usuriaga</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-11">
+  <div class="squad-header" onclick="toggleSquad(11)">
+    <span class="sq-flag">🇨🇱</span>
+    <span class="sq-name">Colo-Colo</span>
+    <span class="sq-season">1991</span>
+    <span class="sq-arrow" id="arrow-11">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-11">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Héctor Puebla</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eduardo Vilches</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Patricio Mardones</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Hugo Tabilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Fernando Cornejo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Lizardo Garrido</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Fernando Orellana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jaime Vera</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Leonel Contreras</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Marcelo Barticciotto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Patricio Yáñez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ivo Basay</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Clásica 1992–2007</div><div class="squad-card" id="squad-12">
+  <div class="squad-header" onclick="toggleSquad(12)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">São Paulo</span>
+    <span class="sq-season">1992-93</span>
+    <span class="sq-arrow" id="arrow-12">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-12">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Zetti</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Aldair</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pintado</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Leonardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Toninho Cerezo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mazinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Doriva</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raí</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Dinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Müller</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Dinei</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-13">
+  <div class="squad-header" onclick="toggleSquad(13)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1996</span>
+    <span class="sq-arrow" id="arrow-13">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-13">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Bonano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Daniel Passarella</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Pompei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">José Chamot</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Matías Almeyda</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcelo Gallardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Enzo Francescoli</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Ariel Ortega</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Rodrigo Mora</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Norberto Ortiz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Hernán Crespo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Claudio Lopez</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-14">
+  <div class="squad-header" onclick="toggleSquad(14)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">1999</span>
+    <span class="sq-arrow" id="arrow-14">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-14">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Marcos</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Roque Júnior</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Júnior Baiano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Vampeta</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">César Sampaio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zinho</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Alex</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Edilson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Paulo Nunes</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Oséas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-15">
+  <div class="squad-header" onclick="toggleSquad(15)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2000-01</span>
+    <span class="sq-arrow" id="arrow-15">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-15">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolas Burdisso</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Ariel Garcé</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Román Riquelme</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Guillermo Barros Schelotto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Claudio Caniggia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Martín Palermo</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-16">
+  <div class="squad-header" onclick="toggleSquad(16)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2003</span>
+    <span class="sq-arrow" id="arrow-16">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-16">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolás Burdisso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Neri Cardozo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Pablo Ledesma</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rodrigo Palacio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Tévez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ernesto Farías</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-17">
+  <div class="squad-header" onclick="toggleSquad(17)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Internacional</span>
+    <span class="sq-season">2006</span>
+    <span class="sq-arrow" id="arrow-17">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-17">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Clemer</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Índio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ceará</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Bolívar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Gustavo Nery</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Tinga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Rafael Sóbis</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Éderson</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Adriano Gabiru</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Fernandão</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nilmar</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Moderna 2008–2024</div><div class="squad-card" id="squad-18">
+  <div class="squad-header" onclick="toggleSquad(18)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">2011</span>
+    <span class="sq-arrow" id="arrow-18">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-18">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Rafael Cabral</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafael</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">André</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Durval</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Léo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Arouca</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Elano</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Robinho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Neymar</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Alan Patrick</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-19">
+  <div class="squad-header" onclick="toggleSquad(19)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">2018</span>
+    <span class="sq-arrow" id="arrow-19">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-19">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Franco Armani</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Montiel</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Javier Pinola</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jonatan Maidana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Milton Casco</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonardo Ponzio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Enzo Pérez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Exequiel Palacios</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Gonzalo Martínez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Lucas Pratto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ignacio Scocco</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rafael Borré</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-20">
+  <div class="squad-header" onclick="toggleSquad(20)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2019</span>
+    <span class="sq-arrow" id="arrow-20">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-20">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Diego Alves</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafinha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodrigo Caio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pablo Marí</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Gerson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Bruno Henrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-21">
+  <div class="squad-header" onclick="toggleSquad(21)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">2021</span>
+    <span class="sq-arrow" id="arrow-21">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-21">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Weverton</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Marcos Rocha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Murilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luan</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Renan Lodi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Patrick de Paula</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raphael Veiga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dudu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Gustavo Scarpa</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rony</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-22">
+  <div class="squad-header" onclick="toggleSquad(22)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2022</span>
+    <span class="sq-arrow" id="arrow-22">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-22">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Santos</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rodinei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">David Luiz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Léo Pereira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-23">
+  <div class="squad-header" onclick="toggleSquad(23)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Fluminense</span>
+    <span class="sq-season">2023</span>
+    <span class="sq-arrow" id="arrow-23">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-23">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Fábio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Samuel Xavier</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nino</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Marcelo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Diogo Barbosa</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">André</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Alexsander</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Jhon Arias</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Germán Cano</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">John Kennedy</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div>
+      </section>
+    </div>
+    <div class="cta-wrap">
+      <a href="/" class="btn-play">🏆 Gioca con le leggende Copa →</a>
+    </div>
+  </div>
+
+  <!-- ENGLISH -->
+  <div data-lang="en">
+    <div class="hero">
+      <div class="container">
+        <div class="hero-badge">🏆 Copa Libertadores Legends</div>
+        <h1>The history of the <span>Copa Libertadores</span></h1>
+        <p class="hero-sub">South America's most coveted trophy, from 1960 to today: 24 legendary squads, 4 historical eras.</p>
+        <a href="/" class="btn-play">Play now →</a>
+      </div>
+    </div>
+    <div class="container">
+      <section>
+        <div class="section-label">History</div>
+        <h2>South American football's continental dream</h2>
+        <p>The Copa Libertadores de América was born in <strong>1960</strong> as South America's answer to the European Cup. The name honors the libertadores — the great liberators of the continent like Bolívar and San Martín. Initially reserved for national champions, it expanded over the decades to include 47 clubs from 10 countries.</p>
+        <p>The early years were dominated by <strong>Uruguay and Argentina</strong>: Peñarol and Nacional on one side, Independiente and Estudiantes on the other. The 1980s saw the rise of Brazilian football with Flamengo and Grêmio. In the 1990s and 2000s Boca Juniors became the most successful club of the modern era, while River Plate dominated the 2010s.</p>
+        <p>In the contemporary era Brazil has emerged as the strongest nation: between 2019 and 2023, four out of five finals were won by Brazilian clubs, with Flamengo, Palmeiras and Fluminense as the protagonists.</p>
+      </section>
+      <section>
+        <div class="section-label">Format</div>
+        <h2>How the tournament works</h2>
+        <p>The tournament starts with qualifying phases followed by a <strong>group stage</strong>. The top two from each group advance to the Round of 16. From there it is knockout with <strong>home and away legs</strong> all the way to the final, also a two-legged affair until 2018. From 2019 the final is a single match at a neutral venue.</p>
+        <p>In Decempionz the format mirrors the historical structure: a group stage then knockout rounds through to the grand final.</p>
+      </section>
+      <section>
+        <div class="section-label">Trivia</div>
+        <h2>Numbers and historical records</h2>
+        <div class="trivia-grid">
+          <div class="trivia-card"><div class="t-icon">🥇</div><p><strong>Independiente</strong> are the most successful club with 7 titles, earning the nickname "Rey de Copas" (King of Cups).</p></div>
+          <div class="trivia-card"><div class="t-icon">⚽</div><p><strong>Pelé's Santos</strong> won the Libertadores in 1962 and 1963. Pelé scored 54 goals in 82 appearances in the competition.</p></div>
+          <div class="trivia-card"><div class="t-icon">🔥</div><p>The 2018 final between <strong>Boca Juniors and River Plate</strong> — el Superclásico — is the most anticipated in Copa history.</p></div>
+          <div class="trivia-card"><div class="t-icon">🌎</div><p>Ten countries have produced at least one winner. Argentina (26) and Brazil (23) dominate, with Uruguay (8) in third.</p></div>
+          <div class="trivia-card"><div class="t-icon">🐓</div><p><strong>Flamengo 2019</strong> — the epic comeback in the final against River Plate: 0-1 at the 89th minute, then two Gabriel Barbosa goals in the final 4 minutes.</p></div>
+          <div class="trivia-card"><div class="t-icon">🏙️</div><p>Buenos Aires and São Paulo are the cities with the most winning clubs. No European capital can claim a comparable footballing rivalry.</p></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">24 Legendary squads</div>
+        <h2>Teams available in Decempionz</h2>
+        <p>Click a team to expand the full squad with positions and ratings.</p>
+        <div class="era-group"><div class="era-label">Los Pioneros 1960–1975</div><div class="squad-card" id="squad-0">
+  <div class="squad-header" onclick="toggleSquad(0)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Peñarol</span>
+    <span class="sq-season">1960-61</span>
+    <span class="sq-arrow" id="arrow-0">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-0">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eliseo Alvarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Omar Caetano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jorge Manicera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Nestor Goncalves</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Pedro Rocha</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Hohberg</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Julio Abbadie</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Carlos Borges</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alberto Spencer</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Jose Sasia</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-1">
+  <div class="squad-header" onclick="toggleSquad(1)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">1962-63</span>
+    <span class="sq-arrow" id="arrow-1">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-1">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Gilmar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Lima</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Calvet</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Dalmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zito</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Mengalvio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dorval</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Pepe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pelé</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Coutinho</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-2">
+  <div class="squad-header" onclick="toggleSquad(2)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1964-65</span>
+    <span class="sq-arrow" id="arrow-2">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-2">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Carlos Del Bono</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ruben Navarro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Raul Savoy</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ruben Marcos</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Vicente De La Mata</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Alberto Acosta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alfredo Rojas</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-3">
+  <div class="squad-header" onclick="toggleSquad(3)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Estudiantes</span>
+    <span class="sq-season">1968-70</span>
+    <span class="sq-arrow" id="arrow-3">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-3">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Alberto Poletti</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Oscar Aguirre Suarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Raúl Madero</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Medina</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Manera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Héctor Pachame</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Carlos Bilardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ribaudo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Echecopar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Conigliaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Ramón Verón</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Eduardo Flores</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-4">
+  <div class="squad-header" onclick="toggleSquad(4)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1972-75</span>
+    <span class="sq-arrow" id="arrow-4">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-4">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Francisco Sá</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mario Galván</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Juan Pastoriza</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Jorge Veira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ricardo Bochini</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Daniel Bertoni</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Ricardo Pavoni</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-5">
+  <div class="squad-header" onclick="toggleSquad(5)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Nacional</span>
+    <span class="sq-season">1971</span>
+    <span class="sq-arrow" id="arrow-5">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-5">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Mario Corbo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Julio Montero Castillo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodolfo Rodriguez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Luis Garisto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Atilio Ancheta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcos Castro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ruben Paz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Nelson Carballo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ildo Maneiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Victor Esparrago</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Años Dorados 1976–1992</div><div class="squad-card" id="squad-6">
+  <div class="squad-header" onclick="toggleSquad(6)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">1977-78</span>
+    <span class="sq-arrow" id="arrow-6">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-6">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Hugo Gatti</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ricardo Lavolpe</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Juan Impini</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rubén Suñe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Alberto Tarantini</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Oscar Benítez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mario Zanabria</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Beto Márcico</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Miguel Brindisi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Julio Salinas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Córdoba</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Héctor Scotta</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-7">
+  <div class="squad-header" onclick="toggleSquad(7)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">1981</span>
+    <span class="sq-arrow" id="arrow-7">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-7">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Raúl</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Leandro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Carlos Mozer</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Junior</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Nei Dias</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Adílio</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Andrade</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Zico</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Anselmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Tita</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nunes</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-8">
+  <div class="squad-header" onclick="toggleSquad(8)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Grêmio</span>
+    <span class="sq-season">1983</span>
+    <span class="sq-arrow" id="arrow-8">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-8">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Cesar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Paulo Roberto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro Galvão</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Tarcísio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Batista</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Caio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">João Mário</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RM</span><span class="pl-name">Mussi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Renato Gaúcho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Osvaldo Cruz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Baltazar</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-9">
+  <div class="squad-header" onclick="toggleSquad(9)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1986</span>
+    <span class="sq-arrow" id="arrow-9">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-9">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Nery Pumpido</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Nelson Gutiérrez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Ruggeri</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Alejandro Montenegro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Gordillo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Americo Gallego</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Héctor Enrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ramon Centurion</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Norberto Alonso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Roque Alfaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Antonio Alzamendi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Juan Gilberto Funes</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-10">
+  <div class="squad-header" onclick="toggleSquad(10)">
+    <span class="sq-flag">🇨🇴</span>
+    <span class="sq-name">Atlético Nacional</span>
+    <span class="sq-season">1989</span>
+    <span class="sq-arrow" id="arrow-10">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-10">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">René Higuita</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Gildardo Gómez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Andrés Escobar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luis Carlos Perea</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Iván Darío Castañeda</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonel Álvarez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Luis Fdo Suárez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ricardo Pérez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jairo Arango</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Alexis García</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Jairo Galeano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Albeiro Usuriaga</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-11">
+  <div class="squad-header" onclick="toggleSquad(11)">
+    <span class="sq-flag">🇨🇱</span>
+    <span class="sq-name">Colo-Colo</span>
+    <span class="sq-season">1991</span>
+    <span class="sq-arrow" id="arrow-11">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-11">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Héctor Puebla</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eduardo Vilches</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Patricio Mardones</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Hugo Tabilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Fernando Cornejo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Lizardo Garrido</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Fernando Orellana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jaime Vera</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Leonel Contreras</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Marcelo Barticciotto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Patricio Yáñez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ivo Basay</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Clásica 1992–2007</div><div class="squad-card" id="squad-12">
+  <div class="squad-header" onclick="toggleSquad(12)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">São Paulo</span>
+    <span class="sq-season">1992-93</span>
+    <span class="sq-arrow" id="arrow-12">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-12">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Zetti</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Aldair</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pintado</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Leonardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Toninho Cerezo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mazinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Doriva</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raí</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Dinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Müller</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Dinei</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-13">
+  <div class="squad-header" onclick="toggleSquad(13)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1996</span>
+    <span class="sq-arrow" id="arrow-13">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-13">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Bonano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Daniel Passarella</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Pompei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">José Chamot</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Matías Almeyda</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcelo Gallardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Enzo Francescoli</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Ariel Ortega</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Rodrigo Mora</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Norberto Ortiz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Hernán Crespo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Claudio Lopez</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-14">
+  <div class="squad-header" onclick="toggleSquad(14)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">1999</span>
+    <span class="sq-arrow" id="arrow-14">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-14">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Marcos</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Roque Júnior</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Júnior Baiano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Vampeta</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">César Sampaio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zinho</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Alex</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Edilson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Paulo Nunes</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Oséas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-15">
+  <div class="squad-header" onclick="toggleSquad(15)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2000-01</span>
+    <span class="sq-arrow" id="arrow-15">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-15">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolas Burdisso</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Ariel Garcé</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Román Riquelme</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Guillermo Barros Schelotto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Claudio Caniggia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Martín Palermo</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-16">
+  <div class="squad-header" onclick="toggleSquad(16)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2003</span>
+    <span class="sq-arrow" id="arrow-16">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-16">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolás Burdisso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Neri Cardozo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Pablo Ledesma</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rodrigo Palacio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Tévez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ernesto Farías</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-17">
+  <div class="squad-header" onclick="toggleSquad(17)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Internacional</span>
+    <span class="sq-season">2006</span>
+    <span class="sq-arrow" id="arrow-17">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-17">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Clemer</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Índio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ceará</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Bolívar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Gustavo Nery</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Tinga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Rafael Sóbis</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Éderson</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Adriano Gabiru</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Fernandão</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nilmar</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Moderna 2008–2024</div><div class="squad-card" id="squad-18">
+  <div class="squad-header" onclick="toggleSquad(18)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">2011</span>
+    <span class="sq-arrow" id="arrow-18">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-18">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Rafael Cabral</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafael</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">André</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Durval</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Léo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Arouca</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Elano</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Robinho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Neymar</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Alan Patrick</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-19">
+  <div class="squad-header" onclick="toggleSquad(19)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">2018</span>
+    <span class="sq-arrow" id="arrow-19">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-19">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Franco Armani</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Montiel</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Javier Pinola</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jonatan Maidana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Milton Casco</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonardo Ponzio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Enzo Pérez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Exequiel Palacios</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Gonzalo Martínez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Lucas Pratto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ignacio Scocco</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rafael Borré</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-20">
+  <div class="squad-header" onclick="toggleSquad(20)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2019</span>
+    <span class="sq-arrow" id="arrow-20">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-20">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Diego Alves</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafinha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodrigo Caio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pablo Marí</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Gerson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Bruno Henrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-21">
+  <div class="squad-header" onclick="toggleSquad(21)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">2021</span>
+    <span class="sq-arrow" id="arrow-21">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-21">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Weverton</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Marcos Rocha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Murilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luan</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Renan Lodi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Patrick de Paula</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raphael Veiga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dudu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Gustavo Scarpa</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rony</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-22">
+  <div class="squad-header" onclick="toggleSquad(22)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2022</span>
+    <span class="sq-arrow" id="arrow-22">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-22">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Santos</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rodinei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">David Luiz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Léo Pereira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-23">
+  <div class="squad-header" onclick="toggleSquad(23)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Fluminense</span>
+    <span class="sq-season">2023</span>
+    <span class="sq-arrow" id="arrow-23">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-23">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Fábio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Samuel Xavier</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nino</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Marcelo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Diogo Barbosa</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">André</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Alexsander</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Jhon Arias</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Germán Cano</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">John Kennedy</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div>
+      </section>
+    </div>
+    <div class="cta-wrap">
+      <a href="/" class="btn-play">🏆 Play with Copa Legends →</a>
+    </div>
+  </div>
+
+  <!-- ESPAÑOL -->
+  <div data-lang="es">
+    <div class="hero">
+      <div class="container">
+        <div class="hero-badge">🏆 Copa Libertadores Legends</div>
+        <h1>La historia de la <span>Copa Libertadores</span></h1>
+        <p class="hero-sub">El trofeo más preciado del fútbol sudamericano, desde 1960 hasta hoy: 24 plantillas legendarias, 4 eras históricas.</p>
+        <a href="/" class="btn-play">Jugar ahora →</a>
+      </div>
+    </div>
+    <div class="container">
+      <section>
+        <div class="section-label">Historia</div>
+        <h2>El sueño continental del fútbol sudamericano</h2>
+        <p>La Copa Libertadores de América nació en <strong>1960</strong> como respuesta sudamericana a la Copa de Europa. El nombre homenajea a los libertadores — los grandes liberadores del continente como Bolívar y San Martín. Inicialmente reservada a los campeones nacionales, se fue ampliando hasta incluir 47 clubes de 10 países.</p>
+        <p>Los primeros años estuvieron dominados por <strong>Uruguay y Argentina</strong>: Peñarol y Nacional por un lado, Independiente y Estudiantes por el otro. Los años 80 vieron el ascenso del fútbol brasileño con Flamengo y Grêmio. En los 90 y 2000 el Boca Juniors se convirtió en el club más ganador de la era moderna, mientras el River Plate dominó los años 2010.</p>
+        <p>En la era contemporánea Brasil se ha impuesto como la nación más fuerte: entre 2019 y 2023 cuatro de cinco finales fueron ganadas por clubes brasileños, con Flamengo, Palmeiras y Fluminense como protagonistas.</p>
+      </section>
+      <section>
+        <div class="section-label">Formato</div>
+        <h2>Cómo funciona el torneo</h2>
+        <p>El torneo comienza con fases clasificatorias y luego una <strong>fase de grupos</strong>. Los dos primeros de cada grupo avanzan a octavos de final. Desde ahí es eliminación directa <strong>con ida y vuelta</strong> hasta la final, también a doble partido hasta 2018. Desde 2019 la final es a partido único en campo neutral.</p>
+        <p>En Decempionz el formato refleja la estructura histórica del torneo: fase de grupos y luego eliminatorias hasta la gran final.</p>
+      </section>
+      <section>
+        <div class="section-label">Curiosidades</div>
+        <h2>Números y récords históricos</h2>
+        <div class="trivia-grid">
+          <div class="trivia-card"><div class="t-icon">🥇</div><p>El <strong>Independiente</strong> es el club más ganador con 7 títulos, ganándose el apodo de "Rey de Copas".</p></div>
+          <div class="trivia-card"><div class="t-icon">⚽</div><p>El <strong>Santos de Pelé</strong> ganó la Libertadores en 1962 y 1963. Pelé marcó 54 goles en 82 partidos en la competición.</p></div>
+          <div class="trivia-card"><div class="t-icon">🔥</div><p>La final de 2018 entre <strong>Boca Juniors y River Plate</strong> — el Superclásico — es la más esperada en la historia de la Copa.</p></div>
+          <div class="trivia-card"><div class="t-icon">🌎</div><p>Diez países han tenido al menos un ganador. Argentina (26) y Brasil (23) dominan, con Uruguay (8) en tercer lugar.</p></div>
+          <div class="trivia-card"><div class="t-icon">🐓</div><p><strong>Flamengo 2019</strong> — la épica remontada en la final ante el River Plate: 0-1 al 89', luego dos goles de Gabriel Barbosa en los últimos 4 minutos.</p></div>
+          <div class="trivia-card"><div class="t-icon">🏙️</div><p>Buenos Aires y São Paulo son las ciudades con más clubes ganadores. Ninguna capital europea puede presumir de una rivalidad futbolística comparable.</p></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-label">24 Plantillas legendarias</div>
+        <h2>Los equipos disponibles en Decempionz</h2>
+        <p>Haz clic en un equipo para ver la plantilla completa con posiciones y valoraciones.</p>
+        <div class="era-group"><div class="era-label">Los Pioneros 1960–1975</div><div class="squad-card" id="squad-0">
+  <div class="squad-header" onclick="toggleSquad(0)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Peñarol</span>
+    <span class="sq-season">1960-61</span>
+    <span class="sq-arrow" id="arrow-0">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-0">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eliseo Alvarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Omar Caetano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jorge Manicera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Nestor Goncalves</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Pedro Rocha</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Hohberg</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Julio Abbadie</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Carlos Borges</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alberto Spencer</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Jose Sasia</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-1">
+  <div class="squad-header" onclick="toggleSquad(1)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">1962-63</span>
+    <span class="sq-arrow" id="arrow-1">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-1">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Gilmar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Lima</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Calvet</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Dalmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zito</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Mengalvio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dorval</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Pepe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pelé</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Coutinho</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-2">
+  <div class="squad-header" onclick="toggleSquad(2)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1964-65</span>
+    <span class="sq-arrow" id="arrow-2">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-2">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Carlos Del Bono</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ruben Navarro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Raul Savoy</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ruben Marcos</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Vicente De La Mata</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Alberto Acosta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Alfredo Rojas</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-3">
+  <div class="squad-header" onclick="toggleSquad(3)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Estudiantes</span>
+    <span class="sq-season">1968-70</span>
+    <span class="sq-arrow" id="arrow-3">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-3">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Alberto Poletti</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Oscar Aguirre Suarez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Raúl Madero</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Medina</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Manera</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Héctor Pachame</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Carlos Bilardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ribaudo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Echecopar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Conigliaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Ramón Verón</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Eduardo Flores</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-4">
+  <div class="squad-header" onclick="toggleSquad(4)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Independiente</span>
+    <span class="sq-season">1972-75</span>
+    <span class="sq-arrow" id="arrow-4">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-4">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Francisco Sá</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Jorge Taddei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mario Galván</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Malbernat</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Roque Avallay</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Miguel Santoro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Juan Pastoriza</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Jorge Veira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ricardo Bochini</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Daniel Bertoni</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Ricardo Pavoni</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro Caceres</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-5">
+  <div class="squad-header" onclick="toggleSquad(5)">
+    <span class="sq-flag">🇺🇾</span>
+    <span class="sq-name">Nacional</span>
+    <span class="sq-season">1971</span>
+    <span class="sq-arrow" id="arrow-5">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-5">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ladislao Mazurkiewicz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Mario Corbo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Julio Montero Castillo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodolfo Rodriguez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Luis Garisto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Atilio Ancheta</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcos Castro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ruben Paz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Luis Cubilla</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Nelson Carballo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ildo Maneiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Victor Esparrago</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Años Dorados 1976–1992</div><div class="squad-card" id="squad-6">
+  <div class="squad-header" onclick="toggleSquad(6)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">1977-78</span>
+    <span class="sq-arrow" id="arrow-6">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-6">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Hugo Gatti</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Ricardo Lavolpe</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Juan Impini</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rubén Suñe</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Alberto Tarantini</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Oscar Benítez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mario Zanabria</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Beto Márcico</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Miguel Brindisi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Julio Salinas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Córdoba</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Héctor Scotta</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-7">
+  <div class="squad-header" onclick="toggleSquad(7)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">1981</span>
+    <span class="sq-arrow" id="arrow-7">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-7">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Raúl</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Leandro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Carlos Mozer</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Junior</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Nei Dias</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Adílio</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Andrade</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Zico</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Anselmo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Tita</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nunes</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-8">
+  <div class="squad-header" onclick="toggleSquad(8)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Grêmio</span>
+    <span class="sq-season">1983</span>
+    <span class="sq-arrow" id="arrow-8">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-8">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Cesar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Paulo Roberto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Mauro Galvão</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Tarcísio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Carlos Olavo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Batista</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Caio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">João Mário</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RM</span><span class="pl-name">Mussi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Renato Gaúcho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Osvaldo Cruz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Baltazar</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-9">
+  <div class="squad-header" onclick="toggleSquad(9)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1986</span>
+    <span class="sq-arrow" id="arrow-9">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-9">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Nery Pumpido</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Nelson Gutiérrez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Ruggeri</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Alejandro Montenegro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Jorge Gordillo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Americo Gallego</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Héctor Enrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ramon Centurion</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Norberto Alonso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Roque Alfaro</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Antonio Alzamendi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Juan Gilberto Funes</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-10">
+  <div class="squad-header" onclick="toggleSquad(10)">
+    <span class="sq-flag">🇨🇴</span>
+    <span class="sq-name">Atlético Nacional</span>
+    <span class="sq-season">1989</span>
+    <span class="sq-arrow" id="arrow-10">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-10">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">René Higuita</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Gildardo Gómez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Andrés Escobar</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luis Carlos Perea</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Iván Darío Castañeda</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonel Álvarez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Luis Fdo Suárez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Ricardo Pérez</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jairo Arango</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Alexis García</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Juan Jairo Galeano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Albeiro Usuriaga</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-11">
+  <div class="squad-header" onclick="toggleSquad(11)">
+    <span class="sq-flag">🇨🇱</span>
+    <span class="sq-name">Colo-Colo</span>
+    <span class="sq-season">1991</span>
+    <span class="sq-arrow" id="arrow-11">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-11">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Héctor Puebla</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Eduardo Vilches</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Patricio Mardones</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Hugo Tabilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Fernando Cornejo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Lizardo Garrido</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Fernando Orellana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Jaime Vera</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Leonel Contreras</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Marcelo Barticciotto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Patricio Yáñez</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ivo Basay</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Clásica 1992–2007</div><div class="squad-card" id="squad-12">
+  <div class="squad-header" onclick="toggleSquad(12)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">São Paulo</span>
+    <span class="sq-season">1992-93</span>
+    <span class="sq-arrow" id="arrow-12">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-12">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Zetti</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Aldair</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pintado</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Leonardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Toninho Cerezo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mazinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Doriva</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raí</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Dinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Müller</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Dinei</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-13">
+  <div class="squad-header" onclick="toggleSquad(13)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">1996</span>
+    <span class="sq-arrow" id="arrow-13">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-13">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Bonano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Daniel Passarella</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Oscar Pompei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">José Chamot</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Matías Almeyda</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Marcelo Gallardo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Enzo Francescoli</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Ariel Ortega</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Rodrigo Mora</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Norberto Ortiz</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Hernán Crespo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Claudio Lopez</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-14">
+  <div class="squad-header" onclick="toggleSquad(14)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">1999</span>
+    <span class="sq-arrow" id="arrow-14">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-14">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Marcos</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Cafu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Roque Júnior</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Júnior Baiano</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Vampeta</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">César Sampaio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Zinho</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Alex</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Edilson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Paulo Nunes</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Oséas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-15">
+  <div class="squad-header" onclick="toggleSquad(15)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2000-01</span>
+    <span class="sq-arrow" id="arrow-15">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-15">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolas Burdisso</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Ariel Garcé</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Juan Román Riquelme</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Guillermo Barros Schelotto</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Claudio Caniggia</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Martín Palermo</span><span class="pl-r r-gold">9</span></div>
+  </div>
+</div><div class="squad-card" id="squad-16">
+  <div class="squad-header" onclick="toggleSquad(16)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">Boca Juniors</span>
+    <span class="sq-season">2003</span>
+    <span class="sq-arrow" id="arrow-16">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-16">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Roberto Abbondanzieri</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Hugo Ibarra</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nicolás Burdisso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rolando Schiavi</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Sebastián Battaglia</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Neri Cardozo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Mauricio Serna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LM</span><span class="pl-name">Pablo Ledesma</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Diego Cagna</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Rodrigo Palacio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Carlos Tévez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ernesto Farías</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-17">
+  <div class="squad-header" onclick="toggleSquad(17)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Internacional</span>
+    <span class="sq-season">2006</span>
+    <span class="sq-arrow" id="arrow-17">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-17">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Clemer</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Índio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Ceará</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Bolívar</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Rogério</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Gustavo Nery</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Tinga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Rafael Sóbis</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Éderson</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Adriano Gabiru</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Fernandão</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Nilmar</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div></div><div class="era-group"><div class="era-label">Era Moderna 2008–2024</div><div class="squad-card" id="squad-18">
+  <div class="squad-header" onclick="toggleSquad(18)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Santos</span>
+    <span class="sq-season">2011</span>
+    <span class="sq-arrow" id="arrow-18">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-18">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Rafael Cabral</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafael</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">André</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Durval</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Léo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Arouca</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Elano</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Robinho</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Neymar</span><span class="pl-r r-gold">10</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Alan Patrick</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-19">
+  <div class="squad-header" onclick="toggleSquad(19)">
+    <span class="sq-flag">🇦🇷</span>
+    <span class="sq-name">River Plate</span>
+    <span class="sq-season">2018</span>
+    <span class="sq-arrow" id="arrow-19">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-19">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Franco Armani</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Montiel</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Javier Pinola</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Jonatan Maidana</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Milton Casco</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Leonardo Ponzio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Enzo Pérez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Exequiel Palacios</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Gonzalo Martínez</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Lucas Pratto</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Ignacio Scocco</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rafael Borré</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-20">
+  <div class="squad-header" onclick="toggleSquad(20)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2019</span>
+    <span class="sq-arrow" id="arrow-20">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-20">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Diego Alves</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rafinha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Rodrigo Caio</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Pablo Marí</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Gerson</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Bruno Henrique</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">SS</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div><div class="squad-card" id="squad-21">
+  <div class="squad-header" onclick="toggleSquad(21)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Palmeiras</span>
+    <span class="sq-season">2021</span>
+    <span class="sq-arrow" id="arrow-21">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-21">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Weverton</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Marcos Rocha</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Murilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Luan</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Renan Lodi</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Danilo</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Patrick de Paula</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Raphael Veiga</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Dudu</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LW</span><span class="pl-name">Gustavo Scarpa</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Rony</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-22">
+  <div class="squad-header" onclick="toggleSquad(22)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Flamengo</span>
+    <span class="sq-season">2022</span>
+    <span class="sq-arrow" id="arrow-22">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-22">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Santos</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Rodinei</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">David Luiz</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Léo Pereira</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Felipe Luís</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Willian Arão</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Everton Ribeiro</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Diego Ribas</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Giorgian de Arrascaeta</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Marinho</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Gabriel Barbosa</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Pedro</span><span class="pl-r r-sil">8</span></div>
+  </div>
+</div><div class="squad-card" id="squad-23">
+  <div class="squad-header" onclick="toggleSquad(23)">
+    <span class="sq-flag">🇧🇷</span>
+    <span class="sq-name">Fluminense</span>
+    <span class="sq-season">2023</span>
+    <span class="sq-arrow" id="arrow-23">▼</span>
+  </div>
+  <div class="squad-roster" id="roster-23">
+    <div class="pl-row"><span class="pl-pos">GK</span><span class="pl-name">Fábio</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RB</span><span class="pl-name">Samuel Xavier</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CB</span><span class="pl-name">Nino</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Marcelo</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">LB</span><span class="pl-name">Diogo Barbosa</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CDM</span><span class="pl-name">Felipe Melo</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">André</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">CM</span><span class="pl-name">Alexsander</span><span class="pl-r r-brz">7</span></div><div class="pl-row"><span class="pl-pos">CAM</span><span class="pl-name">Ganso</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">RW</span><span class="pl-name">Jhon Arias</span><span class="pl-r r-sil">8</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">Germán Cano</span><span class="pl-r r-gold">9</span></div><div class="pl-row"><span class="pl-pos">ST</span><span class="pl-name">John Kennedy</span><span class="pl-r r-brz">7</span></div>
+  </div>
+</div></div>
+      </section>
+    </div>
+    <div class="cta-wrap">
+      <a href="/" class="btn-play">🏆 Jugar con las Legends Copa →</a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">← Torna al gioco</a> · © 2026 Decempionz · <a href="/about.html">About</a> · <a href="/ucl.html">Champions League</a> · <a href="/worldcup.html">World Cup</a>
+  </footer>
+
+  <script>
+
+  function setLang(lang) {
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.classList.toggle('visible', el.dataset.lang === lang);
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'btn-' + lang);
+    });
+    localStorage.setItem('lang', lang);
+  }
+  function toggleSquad(idx) {
+    var roster = document.getElementById('roster-' + idx);
+    var arrow = document.getElementById('arrow-' + idx);
+    if (roster) {
+      roster.classList.toggle('open');
+      if (arrow) arrow.classList.toggle('open');
+    }
+  }
+  window.addEventListener('DOMContentLoaded', function() {
+    var saved = localStorage.getItem('lang') || 'it';
+    setLang(saved);
+  });
+
+  </script>
+</body>
+</html>
