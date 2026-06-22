@@ -355,6 +355,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .draft-passes{font-size:.78rem;color:var(--mut);text-align:right}
 .pbar-wrap{background:var(--brd);border-radius:4px;height:5px;margin-bottom:16px;overflow:hidden}
 .pbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:4px;transition:width .3s}
+#d-slot-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.slot-chip{font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:6px;border:1px solid;transition:background .15s,border-color .15s,color .15s,transform .15s;letter-spacing:.3px}
+.slot-chip.sc-empty{background:rgba(107,126,149,.08);border-color:rgba(107,126,149,.22);color:var(--mut)}
+.slot-chip.sc-filled{background:rgba(201,162,39,.14);border-color:rgba(201,162,39,.38);color:var(--gold2)}
+.slot-chip.sc-compat{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.45);color:#4ade80;transform:scale(1.1)}
 
 /* Slot tracker */
 .slot-tracker{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
@@ -913,6 +918,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
   <div class="pbar-wrap"><div class="pbar-fill" id="d-bar" style="width:100%"></div></div>
+  <div id="d-slot-chips"></div>
   <div class="draft-pitch" id="draft-pitch"></div>
   <div class="warn-banner" id="d-warn"></div>
   <div class="force-banner" id="d-force">⚠️ No passes left — must accept all remaining</div>
@@ -3680,9 +3686,21 @@ function updateDraftScreen(){
   }
 
   renderThreeCards();
+  renderSlotChips(null);
   renderDraftPitch(null);
 }
 
+function renderSlotChips(compatIndices){
+  var el=document.getElementById('d-slot-chips');
+  if(!el)return;
+  var positions=fmtPositions(G.formation,G.tactic);
+  el.innerHTML=positions.map(function(pos,i){
+    var filled=G.slotPlayers[i]!==null;
+    var compat=!filled&&compatIndices&&compatIndices.indexOf(i)>=0;
+    var cls=filled?'sc-filled':(compat?'sc-compat':'sc-empty');
+    return'<span class="slot-chip '+cls+'">'+pos+'</span>';
+  }).join('');
+}
 function renderThreeCards(){
   const container=document.getElementById('d-reveal');
   if(!container)return;
@@ -3706,7 +3724,8 @@ function renderThreeCards(){
       const maxW=n===1?'260px':n===2?'180px':'140px';
       const nameSz=draftNameSz(p.n,isElite);
       const starBadge=isElite?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
-      return'<div onclick="draftPick('+i+')" class="draft-pick-card"'
+      var _ci=empSlots.map(function(s){return s.i;});
+      return'<div onclick="draftPick('+i+')" onmouseenter="renderSlotChips(['+_ci.join(',')+'])" onmouseleave="renderSlotChips(null)" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
         +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
