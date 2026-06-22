@@ -1066,6 +1066,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="t-journey"></div>
     <div class="end-extra" id="t-extra"></div>
   </div>
+  <div id="t-documentary-lbl" style="display:none;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:14px 0 4px">📖 Cronaca della campagna</div>
   <div id="t-documentary" style="display:none;margin-bottom:8px;font-size:.76rem;color:var(--mut);line-height:1.7;padding:11px 14px;background:var(--s2);border-radius:10px;border:1px solid var(--brd);font-style:italic"></div>
 
   <div class="end-fold-hint">▼</div>
@@ -4421,33 +4422,73 @@ function generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,i
   // Frase 1 — narrativa del risultato
   if(diff>0){
     if(diff>=3){
-      s1={it:'Prestazione di forza contro '+oppName+': il punteggio non lascia spazio a interpretazioni.',en:'A commanding display against '+oppName+' — the scoreline speaks for itself.',es:'Una actuación de fuerza ante '+oppName+': el marcador no necesita interpretación.'}[lang];
+      s1=pick([
+        {it:'Prestazione di forza contro '+oppName+': il punteggio non lascia spazio a interpretazioni.',en:'A commanding display against '+oppName+' — the scoreline speaks for itself.',es:'Una actuación de fuerza ante '+oppName+': el marcador no necesita interpretación.'}[lang],
+        {it:oppName+' travolto. Il dominio in campo si è tradotto in reti — e la differenza recita '+myG+'-'+oppG+'.',en:oppName+' swept aside. Dominance on the pitch turned into goals — '+myG+'-'+oppG+' on the board.',es:oppName+' arrollado. El dominio en el campo se tradujo en goles: '+myG+'-'+oppG+'.'}[lang],
+        {it:'Partita chiusa in anticipo contro '+oppName+'. Quando la squadra è in giornata, si vede.',en:'Match wrapped up early against '+oppName+'. When this team is on form, it shows.',es:'Partido cerrado antes de tiempo ante '+oppName+'. Cuando el equipo está en estado, se nota.'}[lang],
+        {it:myG+'-'+oppG+' contro '+oppName+'. Numeri che raccontano tutto senza bisogno di aggiunte.',en:myG+'-'+oppG+' against '+oppName+'. Numbers that tell the whole story.',es:myG+'-'+oppG+' ante '+oppName+'. Los números lo dicen todo.'}[lang]
+      ]);
     } else if(diff===2){
-      s1={it:'Vittoria meritata contro '+oppName+', con un margine che riflette il controllo esercitato in campo.',en:'A deserved win against '+oppName+', with a margin that reflects the control shown throughout.',es:'Victoria merecida ante '+oppName+', con un margen que refleja el control ejercido en el campo.'}[lang];
+      s1=pick([
+        {it:'Vittoria meritata contro '+oppName+', con un margine che riflette il controllo esercitato in campo.',en:'A deserved win against '+oppName+', with a margin that reflects the control shown throughout.',es:'Victoria merecida ante '+oppName+', con un margen que refleja el control ejercido en el campo.'}[lang],
+        {it:oppName+' battuto con merito. Due reti di margine: non una passeggiata, ma mai davvero in dubbio.',en:oppName+' beaten on merit. Two goals clear — not a stroll, but never truly in doubt.',es:oppName+' batido con mérito. Dos goles de margen: no fue fácil, pero tampoco hubo dudas.'}[lang],
+        {it:myG+'-'+oppG+' sul tabellone. Un risultato che dà fiducia e manda un segnale al resto del torneo.',en:myG+'-'+oppG+' on the board. A result that builds confidence and sends a message.',es:myG+'-'+oppG+' en el marcador. Un resultado que da confianza y manda un mensaje.'}[lang],
+        {it:'Contro '+oppName+' la squadra non ha mai perso il filo. Due gol di vantaggio, tre punti in tasca.',en:'Against '+oppName+' the team never lost the thread. Two goals clear, three points secured.',es:'Ante '+oppName+' el equipo nunca perdió el hilo. Dos goles arriba, tres puntos en el bolsillo.'}[lang]
+      ]);
     } else {
-      s1={it:'Un gol di scarto su '+oppName+'. Sufficiente — ma la partita poteva andare diversamente.',en:'One goal margin over '+oppName+'. Enough — but the game could have gone the other way.',es:'Un gol de diferencia ante '+oppName+'. Suficiente, aunque el partido pudo haber ido de otro modo.'}[lang];
+      s1=pick([
+        {it:'Un gol di scarto su '+oppName+'. Sufficiente — ma la partita poteva andare diversamente.',en:'One goal margin over '+oppName+'. Enough — but the game could have gone the other way.',es:'Un gol de diferencia ante '+oppName+'. Suficiente, aunque el partido pudo haber ido de otro modo.'}[lang],
+        {it:'Vittoria sofferta contro '+oppName+'. I tre punti contano, indipendentemente da come arrivano.',en:'Hard-fought win against '+oppName+'. Three points count, no matter how they come.',es:'Victoria sufrida ante '+oppName+'. Los tres puntos valen, independientemente de cómo lleguen.'}[lang],
+        {it:oppName+' ci ha tenuto testa fino in fondo. Un gol ha fatto la differenza — e va bene così.',en:oppName+' pushed all the way. One goal made the difference — and that\'s fine.',es:oppName+' aguantó hasta el final. Un gol marcó la diferencia, y eso es suficiente.'}[lang],
+        {it:'Tre punti strappati con le unghie a '+oppName+'. Queste sono le vittorie che costruiscono campioni.',en:'Three points clawed from '+oppName+'. These are the wins that build champions.',es:'Tres puntos arrancados a '+oppName+'. Estas son las victorias que forjan campeones.'}[lang]
+      ]);
     }
   } else if(diff===0){
     if(isKnockout&&M.penResult){
       s1={it:'Novanta minuti non bastano. I rigori decidono il destino di questa sfida contro '+oppName+'.',en:'Ninety minutes were not enough. Penalties decide the fate of this clash with '+oppName+'.',es:'Noventa minutos no son suficientes. Los penales deciden el duelo ante '+oppName+'.'}[lang];
     } else {
-      s1={it:'Pareggio contro '+oppName+'. Un punto che può sembrare poco, ma il campo ha parlato chiaro.',en:'A draw against '+oppName+'. One point feels small, but the pitch told its own story.',es:'Empate ante '+oppName+'. Un punto que parece poco, pero el campo habló claro.'}[lang];
+      s1=pick([
+        {it:'Pareggio contro '+oppName+'. Un punto che può sembrare poco, ma il campo ha parlato chiaro.',en:'A draw against '+oppName+'. One point feels small, but the pitch told its own story.',es:'Empate ante '+oppName+'. Un punto que parece poco, pero el campo habló claro.'}[lang],
+        {it:oppName+' riesce a fermarci: si dividono la posta. La campagna continua.',en:oppName+' manages to hold on. Points shared. The campaign goes on.',es:oppName+' logra frenarnos: se reparten los puntos. La campaña continúa.'}[lang],
+        {it:'Uno a testa, alla fine. '+oppName+' non era avversario da sottovalutare, e si è visto.',en:'One each in the end. '+oppName+' was not to be underestimated, and it showed.',es:'Uno a uno, al final. '+oppName+' no era rival para subestimar, y se notó.'}[lang]
+      ]);
     }
   } else {
     if(isKnockout){
-      s1={it:oppName+' mette fine all\'avventura. Una sconfitta che fa male, ma questa campagna rimarrà.',en:oppName+' ends the run. A defeat that stings, but this campaign will be remembered.',es:oppName+' pone fin a la aventura. Una derrota que duele, pero esta campaña quedará en la memoria.'}[lang];
+      s1=pick([
+        {it:oppName+' mette fine all\'avventura. Una sconfitta che fa male, ma questa campagna rimarrà.',en:oppName+' ends the run. A defeat that stings, but this campaign will be remembered.',es:oppName+' pone fin a la aventura. Una derrota que duele, pero esta campaña quedará en la memoria.'}[lang],
+        {it:'Eliminati da '+oppName+'. Il torneo si chiude qui — ma la storia costruita partita dopo partita resta.',en:'Knocked out by '+oppName+'. The tournament ends here — but the story built match by match remains.',es:'Eliminados por '+oppName+'. El torneo termina aquí, pero la historia construida partido a partido permanece.'}[lang],
+        {it:oppName+' passa il turno. La squadra ha dato tutto — oggi non è bastato.',en:oppName+' goes through. The team gave everything — today it was not enough.',es:oppName+' avanza. El equipo lo dio todo, pero hoy no fue suficiente.'}[lang],
+        {it:'Uscire contro '+oppName+' brucia. Ma ogni campagna ha un epilogo — e questo ha lasciato il segno.',en:'Going out against '+oppName+' hurts. But every campaign has an ending — and this one left a mark.',es:'Caer ante '+oppName+' duele. Pero toda campaña tiene un final, y este dejó huella.'}[lang]
+      ]);
     } else {
-      s1={it:oppName+' porta a casa i tre punti. Non è ancora il momento di abbattersi — la corsa è lunga.',en:oppName+' takes the three points. No time to drop your head — the race is long.',es:oppName+' se lleva los tres puntos. No es momento de bajar la cabeza — la carrera es larga.'}[lang];
+      s1=pick([
+        {it:oppName+' porta a casa i tre punti. Non è ancora il momento di abbattersi — la corsa è lunga.',en:oppName+' takes the three points. No time to drop your head — the race is long.',es:oppName+' se lleva los tres puntos. No es momento de bajar la cabeza — la carrera es larga.'}[lang],
+        {it:'Sconfitta contro '+oppName+'. Una battuta d\'arresto che fa riflettere, ma il girone non è ancora chiuso.',en:'Defeat against '+oppName+'. A setback worth reflecting on, but the group stage is not over.',es:'Derrota ante '+oppName+'. Un tropiezo que hace reflexionar, pero la fase de grupos no ha terminado.'}[lang],
+        {it:oppName+' ha fatto valere la qualità oggi. Tre punti persi che peseranno nel calcolo finale.',en:oppName+' showed their quality today. Three points dropped that will count at the final reckoning.',es:oppName+' hizo valer su calidad hoy. Tres puntos perdidos que pesarán en el cómputo final.'}[lang],
+        {it:'Non è andata. '+oppName+' meritava la vittoria — e il tabellone lo certifica.',en:'It was not to be. '+oppName+' deserved the win — and the scoreboard confirms it.',es:'No pudo ser. '+oppName+' mereció la victoria, y el marcador lo certifica.'}[lang]
+      ]);
     }
   }
 
-  // Frase 2 — dettaglio chiave (marcatori / clean sheet / assenza gol)
+  // Frase 2 — dettaglio chiave (marcatori / clean sheet / gol)
   if(oppG===0&&myG>0){
-    s2={it:'Porta inviolata: la difesa è stata un muro oggi.',en:'Clean sheet: the defense was a wall today.',es:'Portería a cero: la defensa fue un muro hoy.'}[lang];
+    s2=pick([
+      {it:'Porta inviolata: la difesa è stata un muro oggi.',en:'Clean sheet: the defense was a wall today.',es:'Portería a cero: la defensa fue un muro hoy.'}[lang],
+      {it:'Zero subiti. Il reparto difensivo non ha concesso niente.',en:'Nothing conceded. The defensive line gave nothing away.',es:'Cero encajados. La línea defensiva no concedió nada.'}[lang],
+      {it:'Clean sheet. Solidità che fa la differenza nelle campagne lunghe.',en:'Clean sheet. Solidity that makes the difference in long campaigns.',es:'Portería a cero. La solidez que marca la diferencia en las campañas largas.'}[lang]
+    ]);
   } else if(myG===0&&oppG===0){
-    s2={it:'Zero a zero — intensità alta, gol nessuno.',en:'Goalless — high intensity, no breakthrough.',es:'Cero a cero — alta intensidad, sin goles.'}[lang];
+    s2=pick([
+      {it:'Zero a zero — intensità alta, gol nessuno.',en:'Goalless — high intensity, no breakthrough.',es:'Cero a cero — alta intensidad, sin goles.'}[lang],
+      {it:'Nessuno riesce a sbloccarla. Un punto ciascuno e tante occasioni sprecate.',en:'Neither side could find the net. One point each and plenty of wasted chances.',es:'Nadie logró marcar. Un punto para cada uno y muchas ocasiones desperdiciadas.'}[lang]
+    ]);
   } else if(myG===0){
-    s2={it:'L\'attacco non riesce a sbloccarsi: un aspetto su cui lavorare.',en:'The attack could not find the net: something to fix.',es:'El ataque no logr\u00f3 marcar: algo en lo que trabajar.'}[lang];
+    s2=pick([
+      {it:'L\'attacco non riesce a sbloccarsi: un aspetto su cui lavorare.',en:'The attack could not find the net: something to fix.',es:'El ataque no logró marcar: algo en lo que trabajar.'}[lang],
+      {it:'Nessun gol in attacco. La mira era spenta oggi.',en:'No goals from the attacking end. The shooting was off today.',es:'Sin goles en ataque. La puntería no acompañó hoy.'}[lang],
+      {it:'Problemi in fase realizzativa: le occasioni c\'erano, i gol no.',en:'Problems in front of goal: the chances were there, the goals were not.',es:'Problemas en la fase realizadora: las ocasiones estaban, los goles no.'}[lang]
+    ]);
   } else if(myScorers.length===1){
     s2={it:myScorers[0].name+' firma il gol decisivo al '+myScorers[0].min+"'.",en:myScorers[0].name+' scores the decisive goal in the '+myScorers[0].min+"'.",es:myScorers[0].name+' firma el gol decisivo en el '+myScorers[0].min+"'."}[lang];
   } else if(myScorers.length>=2){
@@ -5069,7 +5110,8 @@ function showTrophy(){
   _incGamesTotal();
   var _doc=generateDocumentary();
   var _docEl=document.getElementById('t-documentary');
-  if(_docEl){if(_doc){_docEl.textContent=_doc;_docEl.style.display='block';}else{_docEl.style.display='none';}}
+  var _docLbl=document.getElementById('t-documentary-lbl');
+  if(_docEl){if(_doc){_docEl.textContent=_doc;_docEl.style.display='block';if(_docLbl)_docLbl.style.display='block';}else{_docEl.style.display='none';if(_docLbl)_docLbl.style.display='none';}}
   showScreen('screen-trophy');
 }
 
