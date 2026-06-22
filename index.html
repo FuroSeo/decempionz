@@ -1084,7 +1084,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
   <div style="text-align:center;margin-bottom:14px">
     <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">Hall of Fame</div>
-    <div style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
+    <div data-i18n="hof.subtitle" style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
   </div>
   <div class="tourn-tab-bar" style="margin-bottom:14px">
     <button id="hof-tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchHofTab('ucl')">🏆 UCL</button>
@@ -1095,7 +1095,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div id="hof-entries" style="display:none"></div>
   <div id="hof-error" style="display:none;text-align:center;color:var(--red);font-size:.8rem;padding:30px 0"></div>
   <div style="margin-top:24px;text-align:center">
-    <button class="btn btn-ghost" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
+    <button class="btn btn-ghost" data-i18n="hof.back_home" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
   </div>
 </div>
 
@@ -1109,7 +1109,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
   <div class="trophies-grid" id="trophies-grid"></div>
   <div style="margin-top:8px;text-align:center;display:flex;flex-direction:column;gap:8px">
-    <button class="btn btn-ghost" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
+    <button class="btn btn-ghost" data-i18n="hof.back_home" onclick="showScreen('screen-home')" style="font-size:.8rem">← Torna alla home</button>
     <button class="btn" onclick="confirmClearTrophies()" style="font-size:.75rem;background:transparent;border:1px solid #ef444466;color:#ef4444;padding:8px">🗑️ Svuota Bacheca</button>
   </div>
 </div>
@@ -1136,7 +1136,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.3';
+const GAME_VERSION='5.5.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1264,6 +1264,8 @@ const STRINGS={
     'hof.label_record':'Record',
     'hof.label_goals':'Gol',
     'hof.error':'Impossibile caricare la Hall of Fame. Riprova più tardi.',
+    'hof.subtitle':'I migliori risultati della community',
+    'hof.back_home':'← Torna alla home',
     'grade.s':'Campagna perfetta!',
     'grade.a':'Campioni d\'Europa',
     'grade.a.copa':'Campioni del Sud America',
@@ -1495,6 +1497,8 @@ const STRINGS={
     'hof.label_record':'Record',
     'hof.label_goals':'Goals',
     'hof.error':'Unable to load the Hall of Fame. Please try again.',
+    'hof.subtitle':'The best results from the community',
+    'hof.back_home':'← Back to home',
     'grade.s':'Perfect campaign!',
     'grade.a':'Champions of Europe',
     'grade.a.copa':'Champions of South America',
@@ -1726,6 +1730,8 @@ const STRINGS={
     'hof.label_record':'Récord',
     'hof.label_goals':'Goles',
     'hof.error':'No se puede cargar el Hall of Fame. Inténtalo de nuevo.',
+    'hof.subtitle':'Los mejores resultados de la comunidad',
+    'hof.back_home':'← Volver al inicio',
     'grade.s':'¡Campaña perfecta!',
     'grade.a':'Campeones de Europa',
     'grade.a.copa':'Campeones de Sudamérica',
