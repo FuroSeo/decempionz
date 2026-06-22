@@ -1136,7 +1136,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.4';
+const GAME_VERSION='5.5.5';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -5100,8 +5100,11 @@ function openHallOfFame(){
     }
   });
   showScreen('screen-hof');
-  if(_hofLoaded){_renderHofEntries();return;}
-  var url='/hall-of-fame.json';
+  // Sempre fetch fresco — evita dati stale dopo approvazioni/eliminazioni admin
+  document.getElementById('hof-loading').style.display='block';
+  document.getElementById('hof-entries').style.display='none';
+  var errEl2=document.getElementById('hof-error');if(errEl2)errEl2.style.display='none';
+  var url='/hall-of-fame.json?_='+Date.now();
   fetch(url)
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){
