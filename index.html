@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.22';
+const GAME_VERSION='5.5.23';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3746,7 +3746,7 @@ function updateDraftScreen(){
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
   var _dfEl=document.getElementById('d-force');
   _dfEl.textContent=t('draft.pool_exhausted');
-  _dfEl.style.display=G.passes<=0?'block':'none';
+  _dfEl.style.display=noReroll?'block':'none';
   document.getElementById('d-warn').style.display='none';
   document.getElementById('d-cant').style.display='none';
 
@@ -4075,7 +4075,7 @@ function calcStandings(){
   }
 
   // Reveal inter-opponent results progressively (one per round played)
-  const revealedCount=G.format==='nuovo'?0:Math.min(G.groupRound,G.groupOppResults.length);
+  const revealedCount=G.format==='nuovo'?0:Math.min(G.groupRound+1,G.groupOppResults.length);
   G.groupOppResults.slice(0,revealedCount).forEach(r=>applyResult(r.homeId,r.awayId,r.hG,r.aG));
 
   // User results
@@ -4889,7 +4889,7 @@ function showResult(){
   if(elim)lbl=t('btn.view_stats');
   else if(groupElim)lbl=t('btn.group_exit');
   else if(gDone)lbl=_nextInfo?t('camp.kickoff'):t('btn.knockouts');
-  else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'?5:4))lbl=t('btn.trophy');
+  else if(G.phase==='knockout'&&G.knockRound+1>=(G.format==='coppa'&&G.gameMode==='ucl'?5:4))lbl=t('btn.trophy');
   else lbl=_nextInfo?t('camp.kickoff'):t('btn.continue');
   const cb=document.getElementById('btn-rcont'); cb.textContent=lbl; cb.className='btn btn-gold';
   // Reveal result zone in-place (no screen transition)
@@ -4943,7 +4943,7 @@ function continueResult(){
     playRound();
   } else {
     G.knockRound++;
-    const maxKnock=G.format==='coppa'?5:4;
+    const maxKnock=G.format==='coppa'&&G.gameMode==='ucl'?5:4;
     if(G.knockRound>=maxKnock){showTrophy();return;}
     playRound();
   }
@@ -4953,7 +4953,7 @@ function continueResult(){
    Called from showResult() — G.groupRound/knockRound not yet incremented. */
 function getNextMatchInfo(){
   const maxGroupRounds=G.format==='nuovo'?6:3;
-  const maxKnock=G.format==='coppa'?5:4;
+  const maxKnock=G.format==='coppa'&&G.gameMode==='ucl'?5:4;
   if(G.phase==='group'){
     const groupDone=G.groupUserResults.length>=maxGroupRounds;
     if(!groupDone){
