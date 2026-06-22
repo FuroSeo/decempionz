@@ -920,7 +920,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div id="d-slot-chips"></div>
   <div class="draft-pitch" id="draft-pitch"></div>
   <div class="warn-banner" id="d-warn"></div>
-  <div class="force-banner" id="d-force">⚠️ No passes left — must accept all remaining</div>
+  <div class="force-banner" id="d-force"></div>
   <div class="cant-banner" id="d-cant"></div>
   <div class="reveal-zone" id="d-reveal"></div>
   <div id="d-pool-wrap" style="text-align:center;margin:14px 0 10px;font-size:.65rem;color:var(--mut);letter-spacing:.2px"><span id="d-pool-lbl" style="margin-right:5px;opacity:.7"></span><span id="d-info"></span></div>
@@ -969,7 +969,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- 2-line event box -->
-  <div style="background:var(--s1);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:8px">
+  <div id="m-ev-box" style="background:var(--s1);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:8px">
     <div id="m-ev1" style="font-size:.76rem;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid var(--brd)"><span id="m-ev1-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev1-txt">⚽ Fischio d'inizio</span></div>
     <div id="m-ev2" style="font-size:.71rem;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start;padding:8px 12px;opacity:.5"><span id="m-ev2-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev2-txt"></span></div>
   </div>
@@ -1171,7 +1171,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.18';
+const GAME_VERSION='5.5.19';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1225,6 +1225,7 @@ const STRINGS={
     'diff.easy':'🟢 Facile',
     'diff.normal':'🟡 Normale',
     'diff.hard':'🔴 Difficile',
+    'draft.no_passes':'⚠️ Reroll esauriti — accetta i giocatori rimasti',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
     'diff.hard_desc':'2 reroll · Avversari più forti',
@@ -1461,6 +1462,7 @@ const STRINGS={
     'diff.easy':'🟢 Easy',
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Hard',
+    'draft.no_passes':'⚠️ No rerolls left — must accept remaining players',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
     'diff.hard_desc':'2 rerolls · Opponents stronger',
@@ -1697,6 +1699,7 @@ const STRINGS={
     'diff.easy':'🟢 Fácil',
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Difícil',
+    'draft.no_passes':'⚠️ Sin rerolls — acepta los jugadores restantes',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
     'diff.hard_desc':'2 rerolls · Rivales más fuertes',
@@ -3742,7 +3745,9 @@ function updateDraftScreen(){
   document.getElementById('d-passes').innerHTML=
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
-  document.getElementById('d-force').style.display=noReroll?'block':'none';
+  var _dfEl=document.getElementById('d-force');
+  _dfEl.textContent=t('draft.no_passes');
+  _dfEl.style.display=noReroll?'block':'none';
   document.getElementById('d-warn').style.display='none';
   document.getElementById('d-cant').style.display='none';
 
@@ -4845,6 +4850,8 @@ function showResult(){
   // Reveal result zone in-place (no screen transition)
   var rz=document.getElementById('m-result-zone');
   if(rz){rz.style.display='block';}
+  var _evb=document.getElementById('m-ev-box');
+  if(_evb)setTimeout(function(){_evb.style.display='none';},1000);
   var si=document.getElementById('m-speed-icons');
   if(si)si.style.display='none';
   // Reset stats panel
