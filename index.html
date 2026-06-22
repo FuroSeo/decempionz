@@ -1171,7 +1171,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.19';
+const GAME_VERSION='5.5.20';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3797,7 +3797,7 @@ function renderThreeCards(){
       const nameSz=draftNameSz(p.n,isElite);
       const starBadge=isElite?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
       var _ci=empSlots.map(function(s){return s.i;});
-      return'<div onclick="draftPick('+i+')" onmouseenter="renderSlotChips(['+_ci.join(',')+'])" onmouseleave="renderSlotChips(null)" class="draft-pick-card"'
+      return'<div onclick="draftTap('+i+')" onmouseenter="previewCard('+i+')" onmouseleave="clearPreview()" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
         +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
@@ -3840,6 +3840,50 @@ function draftPick(i){
     try{updateDraftScreen();}catch(e2){console.error('recovery failed:',e2);}
   }
 }
+
+
+function previewCard(i){
+  if(G.draftCards&&G.draftCards[i]){
+    var p=G.draftCards[i];
+    var empSlots=compatibleEmptySlots(p);
+    var _ci=empSlots.map(function(s){return s.i;});
+    renderSlotChips(_ci);
+    renderDraftPitch(p);
+  }
+}
+function clearPreview(){
+  renderSlotChips(null);
+  renderDraftPitch(null);
+}
+var _draftPreviewIdx=-1;
+function draftTap(i){
+  if(!('ontouchstart' in window)){draftPick(i);return;}
+  if(_draftPreviewIdx===i){
+    _draftPreviewIdx=-1;
+    var cards=document.querySelectorAll('.draft-pick-card');
+    cards.forEach(function(c){c.style.opacity='1';c.style.transform='';});
+    draftPick(i);
+  }else{
+    _draftPreviewIdx=i;
+    previewCard(i);
+    var cards=document.querySelectorAll('.draft-pick-card');
+    cards.forEach(function(c,j){
+      c.style.opacity=j===i?'1':'0.4';
+      c.style.transform=j===i?'scale(1.05)':'scale(0.96)';
+    });
+  }
+}
+document.addEventListener('touchstart',function(e){
+  if(_draftPreviewIdx>=0){
+    var cards=document.querySelectorAll('.draft-pick-card');
+    var tappedCard=Array.from(cards).some(function(c){return c.contains(e.target);});
+    if(!tappedCard){
+      _draftPreviewIdx=-1;
+      clearPreview();
+      cards.forEach(function(c){c.style.opacity='1';c.style.transform='';});
+    }
+  }
+},{passive:true});
 
 function draftReroll(){
   if(G.passes<=0)return;
