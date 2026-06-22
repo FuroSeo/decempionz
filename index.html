@@ -997,9 +997,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <!-- Match comment -->
     <div id="m-match-comment" style="display:none;font-size:.75rem;color:var(--mut);line-height:1.65;margin:8px 0 10px;padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--brd);font-style:italic"></div>
 
+    <!-- Primary CTA -->
+    <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
+    <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-bottom:10px"></button>
+
     <!-- Next match: opponent + tactic -->
     <div id="r-next-match" style="display:none;margin-bottom:10px">
-      <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
       <div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 13px">
         <div class="pmp-scout" id="r-next-scout"></div>
         <div data-i18n="pmp.tactic_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Tactic for this match</div>
@@ -1010,10 +1013,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         </div>
       </div>
     </div>
-
-    <!-- Primary CTA -->
-    <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
-    <button class="btn btn-gold" id="btn-rcont" onclick="continueResult()" style="margin-bottom:10px"></button>
 
     <!-- Stats toggle -->
     <button id="m-stats-toggle" class="btn btn-ghost" style="width:100%;font-size:.75rem;margin-bottom:0" onclick="toggleMatchStats()"><span id="m-stats-toggle-lbl" data-i18n="btn.stats_open">📊 Statistiche ▼</span></button>
@@ -1171,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.21';
+const GAME_VERSION='5.5.22';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
