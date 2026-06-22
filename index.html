@@ -814,6 +814,13 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       </div>
       <div data-i18n="fmt.nuovo.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.</div>
     </div>
+    <div class="format-card" id="fc-random" onclick="selectFormat('random',this)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:1rem;font-weight:800">🎲 Random</div><div data-i18n="fmt.random.sub" style="font-size:.72rem;color:var(--mut);margin-top:2px">format + formation drawn randomly</div></div>
+        <div data-i18n-html="fmt.random.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">? matches<br>random</div>
+      </div>
+      <div data-i18n="fmt.random.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">Format and formation are drawn at random — no choices, just play.</div>
+    </div>
   </div>
   <div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
     <div style="min-width:0;flex:1">
@@ -967,6 +974,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="stars" id="r-stars" style="flex-shrink:0;font-size:.95rem"></div>
     </div>
 
+    <!-- Match comment -->
+    <div id="m-match-comment" style="display:none;font-size:.75rem;color:var(--mut);line-height:1.65;margin:8px 0 10px;padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--brd);font-style:italic"></div>
+
     <!-- Next match: opponent + tactic -->
     <div id="r-next-match" style="display:none;margin-bottom:10px">
       <hr style="border:none;border-top:1px solid var(--brd);margin:0 0 10px">
@@ -1063,6 +1073,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="t-journey"></div>
     <div class="end-extra" id="t-extra"></div>
   </div>
+  <div id="t-documentary" style="display:none;margin-bottom:8px;font-size:.76rem;color:var(--mut);line-height:1.7;padding:11px 14px;background:var(--s2);border-radius:10px;border:1px solid var(--brd);font-style:italic"></div>
+
   <div class="end-fold-hint">▼</div>
   <div class="end-btns">
     <div class="end-btns-row">
@@ -1136,7 +1148,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.5';
+const GAME_VERSION='5.5.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1334,6 +1346,9 @@ const STRINGS={
     'fmt.browse_era':'Sfoglia Era →',
     'fmt.choose_formation':'Scegli Formazione →',
     'fmt.difficulty':'Difficoltà',
+    'fmt.random.sub':'formato + formazione estratti a caso',
+    'fmt.random.meta':'? partite<br>casuale',
+    'fmt.random.desc':'Formato e formazione vengono estratti a caso — nessuna scelta, si gioca.',
     'era.title':'Scegli un\'Era',
     'era.subtitle':'Scegli un\'era specifica o All Time per il pool più ampio.',
     'era.alltime_tag':'— 66 rose, tutte le ere, massimo caos',
@@ -1567,6 +1582,9 @@ const STRINGS={
     'fmt.browse_era':'Browse Era →',
     'fmt.choose_formation':'Choose Formation →',
     'fmt.difficulty':'Difficulty',
+    'fmt.random.sub':'format + formation drawn randomly',
+    'fmt.random.meta':'? matches<br>random',
+    'fmt.random.desc':'Format and formation are drawn at random — no choices, just play.',
     'era.title':'Choose an Era',
     'era.subtitle':'Pick a specific era or go All Time for the widest possible draft pool.',
     'era.alltime_tag':'— 66 squads, all eras, maximum chaos',
@@ -1800,6 +1818,9 @@ const STRINGS={
     'fmt.browse_era':'Ver Era →',
     'fmt.choose_formation':'Elegir Formación →',
     'fmt.difficulty':'Dificultad',
+    'fmt.random.sub':'formato + formación elegidos al azar',
+    'fmt.random.meta':'? partidos<br>aleatorio',
+    'fmt.random.desc':'El formato y la formación se eligen al azar — sin elecciones, solo juega.',
     'era.title':'Elige una Era',
     'era.subtitle':'Elige una era específica o All Time para el pool más amplio posible.',
     'era.alltime_tag':'— 66 plantillas, todas las eras, máximo caos',
@@ -3379,17 +3400,31 @@ function selectFormat(f,el){
   el.classList.add('fc-sel');
 }
 function confirmFormat(){
-  G.format=selectedFormat;
+  var _isRandom=selectedFormat==='random';
+  if(_isRandom){
+    var _fmts=G.gameMode==='ucl'?['coppa','classic','nuovo']:['coppa','classic'];
+    G.format=_fmts[Math.floor(Math.random()*_fmts.length)];
+    G.formation=FKEYS[Math.floor(Math.random()*FKEYS.length)];
+  } else {
+    G.format=selectedFormat;
+  }
   G.difficulty=selectedDiff||'normal';
   const era=selectedEraT||(G.gameMode==='copa'?COPA_TOURNAMENTS.find(function(t){return t.allTime;}):G.gameMode==='wc'?WC_TOURNAMENTS.find(function(t){return t.allTime;}):TOURNAMENTS.find(t=>t.id==='alltime'));
   applyTournament(era);
   G.tactic='balanced';
-  renderFormationGrid();
-  setTimeout(()=>{
-    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
-    const fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
-  },0);
-  showScreen('screen-formation');
+  if(_isRandom){
+    var _fmtNames={coppa:'Old Cup',classic:'Classic',nuovo:'New Wave'};
+    var _toastEl=document.getElementById('share-toast');
+    if(_toastEl){_toastEl.textContent='🎲 '+(_fmtNames[G.format]||G.format)+' · '+G.formation;_toastEl.classList.add('show');setTimeout(function(){_toastEl.classList.remove('show');},3000);}
+    initDraft();
+  } else {
+    renderFormationGrid();
+    setTimeout(()=>{
+      document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
+      const fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+    },0);
+    showScreen('screen-formation');
+  }
 }
 
 
@@ -4385,6 +4420,55 @@ function matchNext(){showResult();}
 /* ═══════════════════════════════════════
    RESULT
 ═══════════════════════════════════════ */
+function generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,isKnockout,poss){
+  var lang=G.lang||'it';
+  var diff=myG-oppG;
+  var s1='',s2='';
+
+  // Frase 1 — narrativa del risultato
+  if(diff>0){
+    if(diff>=3){
+      s1={it:'Prestazione di forza contro '+oppName+': il punteggio non lascia spazio a interpretazioni.',en:'A commanding display against '+oppName+' — the scoreline speaks for itself.',es:'Una actuación de fuerza ante '+oppName+': el marcador no necesita interpretación.'}[lang];
+    } else if(diff===2){
+      s1={it:'Vittoria meritata contro '+oppName+', con un margine che riflette il controllo esercitato in campo.',en:'A deserved win against '+oppName+', with a margin that reflects the control shown throughout.',es:'Victoria merecida ante '+oppName+', con un margen que refleja el control ejercido en el campo.'}[lang];
+    } else {
+      s1={it:'Un gol di scarto su '+oppName+'. Sufficiente — ma la partita poteva andare diversamente.',en:'One goal margin over '+oppName+'. Enough — but the game could have gone the other way.',es:'Un gol de diferencia ante '+oppName+'. Suficiente, aunque el partido pudo haber ido de otro modo.'}[lang];
+    }
+  } else if(diff===0){
+    if(isKnockout&&M.penResult){
+      s1={it:'Novanta minuti non bastano. I rigori decidono il destino di questa sfida contro '+oppName+'.',en:'Ninety minutes were not enough. Penalties decide the fate of this clash with '+oppName+'.',es:'Noventa minutos no son suficientes. Los penales deciden el duelo ante '+oppName+'.'}[lang];
+    } else {
+      s1={it:'Pareggio contro '+oppName+'. Un punto che può sembrare poco, ma il campo ha parlato chiaro.',en:'A draw against '+oppName+'. One point feels small, but the pitch told its own story.',es:'Empate ante '+oppName+'. Un punto que parece poco, pero el campo habló claro.'}[lang];
+    }
+  } else {
+    if(isKnockout){
+      s1={it:oppName+' mette fine all\'avventura. Una sconfitta che fa male, ma questa campagna rimarrà.',en:oppName+' ends the run. A defeat that stings, but this campaign will be remembered.',es:oppName+' pone fin a la aventura. Una derrota que duele, pero esta campaña quedará en la memoria.'}[lang];
+    } else {
+      s1={it:oppName+' porta a casa i tre punti. Non è ancora il momento di abbattersi — la corsa è lunga.',en:oppName+' takes the three points. No time to drop your head — the race is long.',es:oppName+' se lleva los tres puntos. No es momento de bajar la cabeza — la carrera es larga.'}[lang];
+    }
+  }
+
+  // Frase 2 — dettaglio chiave (marcatori / clean sheet / assenza gol)
+  if(oppG===0&&myG>0){
+    s2={it:'Porta inviolata: la difesa è stata un muro oggi.',en:'Clean sheet: the defense was a wall today.',es:'Portería a cero: la defensa fue un muro hoy.'}[lang];
+  } else if(myG===0&&oppG===0){
+    s2={it:'Zero a zero — intensità alta, gol nessuno.',en:'Goalless — high intensity, no breakthrough.',es:'Cero a cero — alta intensidad, sin goles.'}[lang];
+  } else if(myG===0){
+    s2={it:'L\'attacco non riesce a sbloccarsi: un aspetto su cui lavorare.',en:'The attack could not find the net: something to fix.',es:'El ataque no logr\u00f3 marcar: algo en lo que trabajar.'}[lang];
+  } else if(myScorers.length===1){
+    s2={it:myScorers[0].name+' firma il gol decisivo al '+myScorers[0].min+"'.",en:myScorers[0].name+' scores the decisive goal in the '+myScorers[0].min+"'.",es:myScorers[0].name+' firma el gol decisivo en el '+myScorers[0].min+"'."}[lang];
+  } else if(myScorers.length>=2){
+    var others=myScorers.slice(1).map(function(sc){return sc.name;}).join(', ');
+    s2={it:myScorers[0].name+' apre le marcature; poi si aggiungono '+others+'.',en:myScorers[0].name+' opens the scoring; '+others+' add their names after.',es:myScorers[0].name+' abre el marcador; luego se suman '+others+'.'}[lang];
+  }
+
+  var el=document.getElementById('m-match-comment');
+  if(!el)return;
+  var txt=[s1,s2].filter(Boolean).join(' ');
+  if(txt){el.textContent=txt;el.style.display='block';}
+  else{el.style.display='none';}
+}
+
 function showResult(){
   const {myG,oppG,myXG,oppXG,isKnockout,roundLabel,oppName}=M;
   const diff=myG-oppG;
@@ -4467,6 +4551,7 @@ function showResult(){
   document.getElementById('r-sc').textContent=myG+' – '+oppG;
   document.getElementById('r-stars').innerHTML=sh(stars);
   document.getElementById('r-msg').textContent=msg;
+  generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,isKnockout,poss);
 
   // Two-col stats + possession
   document.getElementById('r-two-col-stats').innerHTML=
@@ -4885,6 +4970,49 @@ function renderTrophyPitch(){
   injectPitchLines(pitchEl);
 }
 
+function generateDocumentary(){
+  var lang=G.lang||'it';
+  var all=[].concat(G.groupUserResults||[]).concat(G.knockResults||[]);
+  if(!all.length)return '';
+  var campW=all.filter(function(r){return r.myG>r.oppG;}).length;
+  var campD=all.filter(function(r){return r.myG===r.oppG;}).length;
+  var campL=all.filter(function(r){return r.myG<r.oppG;}).length;
+  var topSc=Object.entries(G.campaignScorers||{}).sort(function(a,b){return b[1]-a[1];})[0];
+  var finalM=(G.knockResults||[]).slice(-1)[0];
+  var bw=G.campaignBestWin;
+  var tn=G.tournament?G.tournament.name:'';
+  var fmtStr={coppa:{it:'in formato Old Cup',en:'in Old Cup format',es:'en formato Old Cup'},nuovo:{it:'nel nuovo formato',en:'in the new format',es:'en el nuevo formato'},classic:{it:'nel formato Classic',en:'in Classic format',es:'en formato Classic'}}[G.format]||{it:'',en:'',es:''};
+  var lines=[];
+
+  // Frase 1: intro — formazione, torneo, record
+  lines.push({
+    it:'La rosa in '+G.formation+' ha conquistato '+tn+' '+fmtStr[lang]+', chiudendo la campagna con '+campW+'V '+campD+'P '+campL+'S e '+G.campaignGF+' gol segnati.',
+    en:'The '+G.formation+' squad claimed '+tn+' '+fmtStr[lang]+', finishing the campaign with '+campW+'W '+campD+'D '+campL+'L and '+G.campaignGF+' goals scored.',
+    es:'El equipo en '+G.formation+' conquistó '+tn+' '+fmtStr[lang]+', con un registro de '+campW+'V '+campD+'E '+campL+'D y '+G.campaignGF+' goles marcados.'
+  }[lang]);
+
+  // Frase 2: top scorer + best win
+  var s2parts=[];
+  if(topSc){s2parts.push({it:topSc[0]+' si dimostra il trascinatore offensivo con '+topSc[1]+' reti.',en:topSc[0]+' leads the scoring charts with '+topSc[1]+' goals.',es:topSc[0]+' lidera el marcador con '+topSc[1]+' goles.'}[lang]);}
+  if(bw){s2parts.push({it:'La vittoria di misura maggiore arriva contro '+bw.opp+' per '+bw.myG+'-'+bw.oppG+'.',en:'The biggest win comes against '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.',es:'La victoria mas amplia llega ante '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.'}[lang]);}
+  if(s2parts.length)lines.push(s2parts.join(' '));
+
+  // Frase 3: finale + chiusura
+  if(finalM){
+    var totalSt=all.reduce(function(s,r){return s+(r.stars||0);},0);
+    var maxSt=all.length*3;
+    var g=maxSt>0?(totalSt/maxSt>=.9?'S':totalSt/maxSt>=.7?'A':totalSt/maxSt>=.5?'B':'C'):'C';
+    var gAdj={S:{it:'magistrale',en:'masterful',es:'magistral'},A:{it:'solida',en:'solid',es:'solida'},B:{it:'dignitosa',en:'decent',es:'digna'},C:{it:'da rivedere',en:'to improve on',es:'por mejorar'}}[g];
+    lines.push({
+      it:'In finale contro '+finalM.opp+' arriva il risultato che consacra questa avventura. Una campagna '+gAdj[lang]+'.',
+      en:'The final against '+finalM.opp+' delivers the result that seals this campaign. A '+gAdj[lang]+' run, start to finish.',
+      es:'La final ante '+finalM.opp+' llega el resultado que consagra esta aventura. Una campana '+gAdj[lang]+'.'
+    }[lang]);
+  }
+
+  return lines.filter(Boolean).join(' ');
+}
+
 function showTrophy(){
   var _isCopa=G.gameMode==='copa';var _isWC=G.gameMode==='wc';
   const formatTitle=_isCopa?{coppa:t('trophy.copa_old_cup'),classic:t('trophy.copa_classic'),nuovo:t('trophy.copa_classic')}:_isWC?{coppa:t('trophy.wc_old_cup'),classic:t('trophy.wc_classic'),nuovo:t('trophy.wc_classic')}:{coppa:t('trophy.old_cup'),classic:t('trophy.classic'),nuovo:t('trophy.nuovo')};
@@ -4946,6 +5074,9 @@ function showTrophy(){
   }
   checkTrophies(G);
   _incGamesTotal();
+  var _doc=generateDocumentary();
+  var _docEl=document.getElementById('t-documentary');
+  if(_docEl){if(_doc){_docEl.textContent=_doc;_docEl.style.display='block';}else{_docEl.style.display='none';}}
   showScreen('screen-trophy');
 }
 
@@ -5896,6 +6027,7 @@ function _devMockResult(){
   document.getElementById('m-lineup-away').innerHTML='';
   var si=document.getElementById('m-speed-icons');if(si)si.style.display='none';
   var rz=document.getElementById('m-result-zone');if(rz)rz.style.display='none';
+  var mc=document.getElementById('m-match-comment');if(mc){mc.textContent='';mc.style.display='none';}
   var pz=document.getElementById('pen-zone');if(pz)pz.style.display='none';
   // Match state
   M.myG=2;M.oppG=1;M.myXG=1.8;M.oppXG=0.7;M.myS=2;M.oppS=1;
