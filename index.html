@@ -429,6 +429,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .m-lineup-row:nth-child(even){background:rgba(255,255,255,.06)}
 .m-lineup-row:last-child{border-bottom:none}
 .m-lp-pos{color:var(--mut);font-weight:700;font-size:.5rem;flex-shrink:0;min-width:22px}
+.m-lp-pos.pos-gk{color:#60a5fa}
+.m-lp-pos.pos-def{color:#4ade80}
+.m-lp-pos.pos-mid{color:#fbbf24}
+.m-lp-pos.pos-fwd{color:#f87171}
 .m-lp-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .m-lp-goals{font-size:.6rem;flex-shrink:0;min-width:14px;text-align:right}
 .m-lineup-row.away{flex-direction:row-reverse;text-align:right}
@@ -4310,13 +4314,14 @@ function renderMatchLineups(){
   const hl=document.getElementById('m-lineup-home');
   const al=document.getElementById('m-lineup-away');
   if(!hl||!al||!M.homeXI)return;
+  function _pc(pos){var p=pos.toUpperCase();if(p==='GK')return'pos-gk';if(['LB','CB','RB','LWB','RWB','SW','DC'].indexOf(p)>=0)return'pos-def';if(['ST','CF','SS','FW','CA'].indexOf(p)>=0)return'pos-fwd';return'pos-mid';}
   hl.innerHTML=M.homeXI.map(function(p){
     var g=M.homeGoals&&M.homeGoals[p.n]?'⚽'.repeat(M.homeGoals[p.n]):'';
-    return'<div class="m-lineup-row home"><span class="m-lp-pos">'+p.p+'</span><span class="m-lp-name">'+p.n+'</span><span class="m-lp-goals">'+g+'</span></div>';
+    return'<div class="m-lineup-row home"><span class="m-lp-pos '+_pc(p.p)+'">'+p.p+'</span><span class="m-lp-name">'+p.n+'</span><span class="m-lp-goals">'+g+'</span></div>';
   }).join('');
   al.innerHTML=M.awayXI.map(function(p){
     var g=M.awayGoals&&M.awayGoals[p.n]?'⚽'.repeat(M.awayGoals[p.n]):'';
-    return'<div class="m-lineup-row away"><span class="m-lp-goals">'+g+'</span><span class="m-lp-name">'+p.n+'</span><span class="m-lp-pos">'+p.p+'</span></div>';
+    return'<div class="m-lineup-row away"><span class="m-lp-goals">'+g+'</span><span class="m-lp-name">'+p.n+'</span><span class="m-lp-pos '+_pc(p.p)+'">'+p.p+'</span></div>';
   }).join('');
 }
 
