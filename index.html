@@ -3448,7 +3448,7 @@ function selectRandomFormation(){
   document.querySelectorAll('.form-card').forEach(function(c){c.classList.remove('sel');});
   var el=document.getElementById('fc-formation-random');if(el)el.classList.add('sel');
   var _t=document.getElementById('share-toast');
-  if(_t){_t.textContent='\u1F3B2 '+key;_t.classList.add('show');setTimeout(function(){_t.classList.remove('show');},2500);}
+  if(_t){_t.textContent='🎲 '+key;_t.classList.add('show');setTimeout(function(){_t.classList.remove('show');},2500);}
   initDraft();
 }
 
