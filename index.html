@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.25';
+const GAME_VERSION='5.5.26';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1225,6 +1225,7 @@ const STRINGS={
     'diff.normal':'🟡 Normale',
     'diff.hard':'🔴 Difficile',
     'draft.pool_exhausted':'⚠️ Pool esaurito — accetta solo i giocatori disponibili',
+    'draft.reroll_locked':'⚠️ Ultimi 3 slot — scegli tra i disponibili',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
     'diff.hard_desc':'2 reroll · Avversari più forti',
@@ -1462,6 +1463,7 @@ const STRINGS={
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Hard',
     'draft.pool_exhausted':'⚠️ Pool exhausted — you must accept the available players',
+    'draft.reroll_locked':'⚠️ Last 3 slots — pick from the available cards',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
     'diff.hard_desc':'2 rerolls · Opponents stronger',
@@ -1699,6 +1701,7 @@ const STRINGS={
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Difícil',
     'draft.pool_exhausted':'⚠️ Pool agotado — acepta solo los jugadores disponibles',
+    'draft.reroll_locked':'⚠️ Últimos 3 huecos — elige entre los disponibles',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
     'diff.hard_desc':'2 rerolls · Rivales más fuertes',
@@ -3745,8 +3748,9 @@ function updateDraftScreen(){
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
   var _dfEl=document.getElementById('d-force');
-  _dfEl.textContent=t('draft.pool_exhausted');
-  _dfEl.style.display=noReroll?'block':'none';
+  if(G.passes<=0){_dfEl.textContent=t('draft.pool_exhausted');_dfEl.style.display='block';}
+  else if(_rerollLocked){_dfEl.textContent=t('draft.reroll_locked');_dfEl.style.display='block';}
+  else{_dfEl.style.display='none';}
   document.getElementById('d-warn').style.display='none';
   document.getElementById('d-cant').style.display='none';
 
@@ -4896,7 +4900,7 @@ function showResult(){
   var rz=document.getElementById('m-result-zone');
   if(rz){rz.style.display='block';}
   var _evb=document.getElementById('m-ev-box');
-  if(_evb)setTimeout(function(){_evb.style.display='none';},1000);
+  if(_evb)_evb.style.display='none';
   var si=document.getElementById('m-speed-icons');
   if(si)si.style.display='none';
   // Reset stats panel
@@ -5042,7 +5046,7 @@ function showGroupElimination(pos,pts){
   }).join('');
   _incGamesTotal();
   renderGameOverPitch();
-  var _goDoc=generateDocumentary();
+  var _goDoc=generateDocumentary(false);
   var _goDocEl=document.getElementById('go-documentary');
   var _goDocLbl=document.getElementById('go-documentary-lbl');
   if(_goDocEl){if(_goDoc){_goDocEl.textContent=_goDoc;_goDocEl.style.display='block';if(_goDocLbl)_goDocLbl.style.display='block';}else{_goDocEl.style.display='none';if(_goDocLbl)_goDocLbl.style.display='none';}}
@@ -5103,7 +5107,7 @@ function showGameOver(){
 
   _incGamesTotal();
   renderGameOverPitch();
-  var _goDoc=generateDocumentary();
+  var _goDoc=generateDocumentary(false);
   var _goDocEl=document.getElementById('go-documentary');
   var _goDocLbl=document.getElementById('go-documentary-lbl');
   if(_goDocEl){if(_goDoc){_goDocEl.textContent=_goDoc;_goDocEl.style.display='block';if(_goDocLbl)_goDocLbl.style.display='block';}else{_goDocEl.style.display='none';if(_goDocLbl)_goDocLbl.style.display='none';}}
@@ -5183,7 +5187,7 @@ function renderTrophyPitch(){
   injectPitchLines(pitchEl);
 }
 
-function generateDocumentary(){
+function generateDocumentary(won){
   var lang=G.lang||'it';
   var all=[].concat(G.groupUserResults||[]).concat(G.knockResults||[]);
   if(!all.length)return '';
@@ -5191,36 +5195,57 @@ function generateDocumentary(){
   var campD=all.filter(function(r){return r.myG===r.oppG;}).length;
   var campL=all.filter(function(r){return r.myG<r.oppG;}).length;
   var topSc=Object.entries(G.campaignScorers||{}).sort(function(a,b){return b[1]-a[1];})[0];
-  var finalM=(G.knockResults||[]).slice(-1)[0];
+  var lastM=all.slice(-1)[0];
   var bw=G.campaignBestWin;
   var tn=G.tournament?G.tournament.name:'';
-  var fmtStr={coppa:{it:'in formato Old Cup',en:'in Old Cup format',es:'en formato Old Cup'},nuovo:{it:'nel nuovo formato',en:'in the new format',es:'en el nuevo formato'},classic:{it:'nel formato Classic',en:'in Classic format',es:'en formato Classic'}}[G.format]||{it:'',en:'',es:''};
+  var compName={wc:{it:'Mondiale',en:'World Cup',es:'Mundial'},copa:{it:'Copa Libertadores',en:'Copa Libertadores',es:'Copa Libertadores'},ucl:{it:'Champions League',en:'Champions League',es:'Champions League'}}[G.gameMode||'ucl']||{it:'Champions League',en:'Champions League',es:'Champions League'};
+  var fmtLabel={coppa:{it:'Old Cup',en:'Old Cup',es:'Old Cup'},classic:{it:'Classic',en:'Classic',es:'Classic'},nuovo:{it:'Nuovo Formato',en:'New Format',es:'Nuevo Formato'}}[G.format||'classic']||{it:'',en:'',es:''};
+  var ctx=compName[lang]+(tn?' · '+tn:'')+(fmtLabel[lang]?' · '+fmtLabel[lang]:'');
+  var rec=campW+'V '+campD+'P '+campL+'S';
+  var recEn=campW+'W '+campD+'D '+campL+'L';
+  var recEs=campW+'V '+campD+'E '+campL+'D';
   var lines=[];
 
-  // Frase 1: intro — formazione, torneo, record
-  lines.push({
-    it:'La rosa in '+G.formation+' ha conquistato '+tn+' '+fmtStr[lang]+', chiudendo la campagna con '+campW+'V '+campD+'P '+campL+'S e '+G.campaignGF+' gol segnati.',
-    en:'The '+G.formation+' squad claimed '+tn+' '+fmtStr[lang]+', finishing the campaign with '+campW+'W '+campD+'D '+campL+'L and '+G.campaignGF+' goals scored.',
-    es:'El equipo en '+G.formation+' conquistó '+tn+' '+fmtStr[lang]+', con un registro de '+campW+'V '+campD+'E '+campL+'D y '+G.campaignGF+' goles marcados.'
-  }[lang]);
+  // Frase 1: contesto + record (testo diverso per vittoria vs eliminazione)
+  if(won){
+    lines.push({
+      it:'La rosa in '+G.formation+' ha conquistato il '+ctx+', chiudendo con '+rec+' e '+G.campaignGF+' gol segnati.',
+      en:'The '+G.formation+' squad lifted the '+ctx+', finishing with '+recEn+' and '+G.campaignGF+' goals scored.',
+      es:'El equipo en '+G.formation+' conquistó el '+ctx+', con '+recEs+' y '+G.campaignGF+' goles marcados.'
+    }[lang]);
+  } else {
+    lines.push({
+      it:'La rosa in '+G.formation+' si è fermata nel '+ctx+': '+rec+', '+G.campaignGF+' gol segnati.',
+      en:'The '+G.formation+' squad bowed out of the '+ctx+': '+recEn+', '+G.campaignGF+' goals.',
+      es:'El equipo en '+G.formation+' cayó en el '+ctx+': '+recEs+', '+G.campaignGF+' goles marcados.'
+    }[lang]);
+  }
 
   // Frase 2: top scorer + best win
   var s2parts=[];
   if(topSc){s2parts.push({it:topSc[0]+' si dimostra il trascinatore offensivo con '+topSc[1]+' reti.',en:topSc[0]+' leads the scoring charts with '+topSc[1]+' goals.',es:topSc[0]+' lidera el marcador con '+topSc[1]+' goles.'}[lang]);}
-  if(bw){s2parts.push({it:'La vittoria di misura maggiore arriva contro '+bw.opp+' per '+bw.myG+'-'+bw.oppG+'.',en:'The biggest win comes against '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.',es:'La victoria mas amplia llega ante '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.'}[lang]);}
+  if(bw){s2parts.push({it:'La vittoria di misura maggiore arriva contro '+bw.opp+' per '+bw.myG+'-'+bw.oppG+'.',en:'The biggest win comes against '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.',es:'La victoria más amplia llega ante '+bw.opp+', '+bw.myG+'-'+bw.oppG+'.'}[lang]);}
   if(s2parts.length)lines.push(s2parts.join(' '));
 
-  // Frase 3: finale + chiusura
-  if(finalM){
+  // Frase 3: ultimo match + chiusura qualitativa
+  if(lastM){
     var totalSt=all.reduce(function(s,r){return s+(r.stars||0);},0);
     var maxSt=all.length*3;
     var g=maxSt>0?(totalSt/maxSt>=.9?'S':totalSt/maxSt>=.7?'A':totalSt/maxSt>=.5?'B':'C'):'C';
     var gAdj={S:{it:'magistrale',en:'masterful',es:'magistral'},A:{it:'solida',en:'solid',es:'solida'},B:{it:'dignitosa',en:'decent',es:'digna'},C:{it:'da rivedere',en:'to improve on',es:'por mejorar'}}[g];
-    lines.push({
-      it:'In finale contro '+finalM.opp+' arriva il risultato che consacra questa avventura. Una campagna '+gAdj[lang]+'.',
-      en:'The final against '+finalM.opp+' delivers the result that seals this campaign. A '+gAdj[lang]+' run, start to finish.',
-      es:'La final ante '+finalM.opp+' llega el resultado que consagra esta aventura. Una campana '+gAdj[lang]+'.'
-    }[lang]);
+    if(won){
+      lines.push({
+        it:'Il match decisivo contro '+lastM.opp+' chiude un\'avventura '+gAdj[lang]+'.',
+        en:'The decisive match against '+lastM.opp+' seals a '+gAdj[lang]+' campaign.',
+        es:'El partido decisivo ante '+lastM.opp+' cierra una aventura '+gAdj[lang]+'.'
+      }[lang]);
+    } else {
+      lines.push({
+        it:'La corsa si ferma contro '+lastM.opp+'. Una campagna '+gAdj[lang]+'.',
+        en:'The run ends against '+lastM.opp+'. A '+gAdj[lang]+' campaign.',
+        es:'La aventura termina ante '+lastM.opp+'. Una campaña '+gAdj[lang]+'.'
+      }[lang]);
+    }
   }
 
   return lines.filter(Boolean).join(' ');
@@ -5287,7 +5312,7 @@ function showTrophy(){
   }
   checkTrophies(G);
   _incGamesTotal();
-  var _doc=generateDocumentary();
+  var _doc=generateDocumentary(true);
   var _docEl=document.getElementById('t-documentary');
   var _docLbl=document.getElementById('t-documentary-lbl');
   if(_docEl){if(_doc){_docEl.textContent=_doc;_docEl.style.display='block';if(_docLbl)_docLbl.style.display='block';}else{_docEl.style.display='none';if(_docLbl)_docLbl.style.display='none';}}
@@ -5482,6 +5507,7 @@ function _renderHofEntries(){
     container.innerHTML='<div style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">'+t('hof.empty')+'</div>';
     return;
   }
+  filtered.sort(function(a,b){var go={S:5,A:4,B:3,C:2,D:1};var ga=go[a.grade]||0,gb=go[b.grade]||0;if(gb!==ga)return gb-ga;function _pn(s){var m=(s||'').match(/(\d+)/);return m?parseInt(m[1]):0;}var aw=_pn(a.record),bw=_pn(b.record);if(bw!==aw)return bw-aw;return _pn(b.goals)-_pn(a.goals);});
   container.innerHTML=filtered.map(function(e,i){
     var gClass='hof-grade-'+(e.grade||'C');
     var lu=e.lineup||{};
