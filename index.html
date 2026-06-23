@@ -4247,17 +4247,20 @@ function _runMatch(){
   // Calculate my team strength from slot-aware squad (with positional penalties)
   const _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
   const grp={GK:[],DEF:[],MID:[],FWD:[]};
+  const _effR={GK:[],DEF:[],MID:[],FWD:[]};
   G.slotPlayers.forEach(function(p,i){
     if(!p)return;
     var slotP=_formPos[i]||p.p;
     var pen=slotPenalty(slotP,p.p);
-    grp[posGroup(p.p)].push({r:p.r*(1-pen),p:p.p,_pen:pen});
+    var pg=posGroup(p.p);
+    grp[pg].push(p);
+    _effR[pg].push(p.r*(1-pen));
   });
   const pl=G.slotPlayers.filter(Boolean);
-  const gkR=avg(grp.GK.map(p=>p.r))||6;
-  const defR=avg(grp.DEF.map(p=>p.r))||6;
-  const midR=avg(grp.MID.map(p=>p.r))||6;
-  const fwdR=avg(grp.FWD.map(p=>p.r))||6;
+  const gkR=avg(_effR.GK)||6;
+  const defR=avg(_effR.DEF)||6;
+  const midR=avg(_effR.MID)||6;
+  const fwdR=avg(_effR.FWD)||6;
   const atk=fwdR*.65+midR*.35, def=defR*.70+gkR*.30;
 
   const tm=TACT_MOD[G.tactic||'balanced']||TACT_MOD.balanced;
