@@ -3822,7 +3822,7 @@ function renderThreeCards(){
       // Out-of-position badge
       var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
       var oopBadge='';
-      if(_pen>=0.15)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ff6b6b;background:rgba(255,80,80,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ FUORI RUOLO</div>';
+      if(_pen>=0.15)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ff6b6b;background:rgba(255,80,80,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ ADATTATO</div>';
       else if(_pen>0)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#f59e0b;background:rgba(245,158,11,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ ADATTATO</div>';
       // r=10 positional bonus badge
       var r10Badge='';
@@ -4402,7 +4402,7 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   allEvs.forEach(ev=>{
     if(ev.t==='my'){
       ms++;
-      const s=pick(scorers)?.n||pick(scorers)||'Unknown';
+      const _sp=pick(scorers);const s=(_sp&&_sp.n)||String(_sp||'Unknown');
       evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+pick(_myGoalPhrases)+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
     } else if(ev.t==='opp'){
       os++;
