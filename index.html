@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.31';
+const GAME_VERSION='5.5.32';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3570,8 +3570,7 @@ function initDraft(){
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
   // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
-  // Key by teamId (not club name) so multiple seasons of the same club each get fair representation
-  // AllTime cap: max 3 versions per club (top avg rating)
+  // AllTime cap: max 3 versions per club, weighted-random (favours stronger seasons, not always same)
   var _DB=_activeTeams();
   let _teamsToUse=G.tournament.teams;
   if(G.tournament.allTime){
@@ -3584,7 +3583,9 @@ function initDraft(){
     });
     _teamsToUse=[];
     Object.values(_byClub).forEach(function(versions){
-      versions.sort(function(a,b){return b.avg-a.avg;});
+      // Weighted-random: jitter ±0.75 on avg — stronger seasons favoured but not guaranteed
+      versions.forEach(function(v){v._ws=v.avg+(Math.random()-.5)*1.5;});
+      versions.sort(function(a,b){return b._ws-a._ws;});
       versions.slice(0,3).forEach(function(v){_teamsToUse.push(v.id);});
     });
   }
@@ -3594,9 +3595,11 @@ function initDraft(){
     const sorted=[...t.players].sort((a,b)=>b.r-a.r);
     const key=id;
     clubBuckets[key]={top:null,rest:[]};
+    // Guaranteed slot: 65% top player, 35% second player — variety without losing quality
+    var _gi=sorted.length>1&&Math.random()<0.35?1:0;
     sorted.forEach((p,i)=>{
       const entry={...p,club:t.name,teamId:id};
-      if(i===0) clubBuckets[key].top=entry;
+      if(i===_gi) clubBuckets[key].top=entry;
       else clubBuckets[key].rest.push(entry);
     });
   });
