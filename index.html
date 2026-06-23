@@ -3802,6 +3802,7 @@ function renderThreeCards(){
   container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0;overflow:hidden">'
     +G.draftCards.map(function(p,i){
       const empSlots=compatibleEmptySlots(p);
+      const _empSorted=empSlots.slice().sort(function(a,b){var pf=function(s){return s.pos===p.p?0:posGroup(s.pos)===posGroup(p.p)?1:2;};return pf(a)-pf(b);});
       var _aDB=_activeTeams();
       const teamEntry=_aDB[p.teamId]||TEAMS[p.teamId]||null;
       const season=teamEntry?(teamEntry.season.length<=4?teamEntry.season:"'"+teamEntry.season.slice(-2)):'';
@@ -3809,7 +3810,7 @@ function renderThreeCards(){
       const countryFlag=teamEntry&&teamEntry.country?teamEntry.country+' ':'';
       const col=(WC_JERSEY_COLORS[p.teamId]||COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
       const tierCss=slotTierCss(p.r);
-      const targetSlot=empSlots[0]?empSlots[0].pos:'';
+      const targetSlot=_empSorted[0]?_empSorted[0].pos:'';
       const isElite=p.r>=9.5;
       const pg=posGroup(p.p);
       const posClass_=pgClass(pg);
