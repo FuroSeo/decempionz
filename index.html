@@ -1225,7 +1225,7 @@ const STRINGS={
     'diff.normal':'🟡 Normale',
     'diff.hard':'🔴 Difficile',
     'draft.pool_exhausted':'⚠️ Pool esaurito — accetta solo i giocatori disponibili',
-    'draft.reroll_locked':'⚠️ Ultimi 3 slot — scegli tra i disponibili',
+    'draft.reroll_locked':'⚠️ Ultimi 3 slot rimasti',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
     'diff.hard_desc':'2 reroll · Avversari più forti',
@@ -1463,7 +1463,7 @@ const STRINGS={
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Hard',
     'draft.pool_exhausted':'⚠️ Pool exhausted — you must accept the available players',
-    'draft.reroll_locked':'⚠️ Last 3 slots — pick from the available cards',
+    'draft.reroll_locked':'⚠️ Last 3 slots remaining',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
     'diff.hard_desc':'2 rerolls · Opponents stronger',
@@ -1701,7 +1701,7 @@ const STRINGS={
     'diff.normal':'🟡 Normal',
     'diff.hard':'🔴 Difícil',
     'draft.pool_exhausted':'⚠️ Pool agotado — acepta solo los jugadores disponibles',
-    'draft.reroll_locked':'⚠️ Últimos 3 huecos — elige entre los disponibles',
+    'draft.reroll_locked':'⚠️ Últimos 3 huecos restantes',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
     'diff.hard_desc':'2 rerolls · Rivales más fuertes',
@@ -1944,21 +1944,21 @@ function applyLang(){
 /* Slot-specific compatibility: which player positions can fill each slot */
 const SLOT_COMPAT = {
   GK:  ['GK'],
-  CB:  ['CB','LB','RB','LWB','RWB'],  // fullbacks can play CB (with penalty)
-  RB:  ['RB','RWB','LB','LWB','CB'],  // left-side and CB can play RB (with penalty)
-  LB:  ['LB','LWB','RB','RWB','CB'],  // right-side and CB can play LB (with penalty)
+  CB:  ['CB','LB','RB','LWB','RWB'],       // fullbacks can play CB (with penalty)
+  RB:  ['RB','RWB','LB','LWB','CB'],        // left-side and CB can play RB (with penalty)
+  LB:  ['LB','LWB','RB','RWB','CB'],        // right-side and CB can play LB (with penalty)
   RWB: ['RWB','RB','LWB'],
   LWB: ['LWB','LB','RWB'],
-  CDM: ['CDM','CM'],
-  CM:  ['CM','CDM','CAM'],        // CM no longer covers wide roles
-  CAM: ['CAM','CM','SS'],
-  RM:  ['RM','LM','RW','LW'],       // wide: mids & wingers interchangeable
+  CDM: ['CDM','CM','CB'],                   // CDM can drop to CB (libero role)
+  CM:  ['CM','CDM'],                        // CM: only CDM — no CAM (wrong direction)
+  CAM: ['CAM','SS','RW','LW'],              // CAM: offensive/wide roles, not CM
+  RM:  ['RM','LM','RW','LW'],
   LM:  ['LM','RM','LW','RW'],
-  RW:  ['RW','LW','RM','LM','CAM'],// wingers + wide mids + creative CAM
-  LW:  ['LW','RW','LM','RM','CAM'],
+  RW:  ['RW','LW','RM','LM','CAM','SS'],    // wingers + wide mids + CAM + SS
+  LW:  ['LW','RW','LM','RM','CAM','SS'],
   ST:  ['ST','CF','SS'],
   CF:  ['CF','ST','SS'],
-  SS:  ['SS','ST','CF','CAM'],
+  SS:  ['SS','ST','CF','CAM','RW','LW'],    // second striker: forward + wide attacking
 };
 
 // Returns positional penalty coefficient for a player out of position
@@ -3823,7 +3823,7 @@ function renderThreeCards(){
       var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
       var oopBadge='';
       if(_pen>=0.15)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ff6b6b;background:rgba(255,80,80,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ FUORI RUOLO</div>';
-      else if(_pen>0)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#f59e0b;background:rgba(245,158,11,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ LATO SBAGLIATO</div>';
+      else if(_pen>0)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#f59e0b;background:rgba(245,158,11,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ ADATTATO</div>';
       // r=10 positional bonus badge
       var r10Badge='';
       if(p.r>=10){var _pg10=posGroup(p.p);r10Badge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ffd700;background:rgba(255,215,0,.12);padding:1px 6px;border-radius:3px;margin-top:1px">'
@@ -6731,10 +6731,4 @@ function _devSetMom(v){
     <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
     <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
     <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
-    <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="closeChallengeModal()">Gioca con le mie impostazioni</button>
-  </div>
-</div>
-
-<div id="share-toast">📋</div>
-
-</body></html>
+    <button class="btn btn-ghost" style="w
