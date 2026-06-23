@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.30';
+const GAME_VERSION='5.5.31';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -5557,7 +5557,7 @@ function _modeLabel(m){
 function _renderHofEntries(){
   var container=document.getElementById('hof-entries');
   var filtered=_hofData.filter(function(e){
-    var em=e.mode||'ucl';
+    var em=e.tournament||e.mode||'ucl';
     return em===_hofActiveMode;
   });
   container.style.display='block';
@@ -5579,7 +5579,7 @@ function _renderHofEntries(){
       +'<div class="hof-card-header">'
       +'<div>'
       +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
-      +'<div class="hof-meta">'+_modeLabel(e.mode||'ucl')+' · '+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
+      +'<div class="hof-meta">'+_modeLabel(e.tournament||e.mode||'ucl')+' · '+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
       +'</div>'
       +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
       +'</div>'
