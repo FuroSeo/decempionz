@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.28';
+const GAME_VERSION='5.5.29';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1944,9 +1944,9 @@ function applyLang(){
 /* Slot-specific compatibility: which player positions can fill each slot */
 const SLOT_COMPAT = {
   GK:  ['GK'],
-  CB:  ['CB'],                    // CB stays CB — no lateral shift
-  RB:  ['RB','CB'],               // RB can cover CB, not LB
-  LB:  ['LB','CB'],               // LB can cover CB, not RB
+  CB:  ['CB','LB','RB','LWB','RWB'],  // fullbacks can play CB (with penalty)
+  RB:  ['RB','RWB','LB','LWB','CB'],  // left-side and CB can play RB (with penalty)
+  LB:  ['LB','LWB','RB','RWB','CB'],  // right-side and CB can play LB (with penalty)
   RWB: ['RWB','RB','LWB'],
   LWB: ['LWB','LB','RWB'],
   CDM: ['CDM','CM'],
@@ -1960,6 +1960,24 @@ const SLOT_COMPAT = {
   CF:  ['CF','ST','SS'],
   SS:  ['SS','ST','CF','CAM'],
 };
+
+// Returns positional penalty coefficient for a player out of position
+function slotPenalty(slotPos, playerPos){
+  if(slotPos===playerPos)return 0;
+  var leftSide=['LB','LWB'],rightSide=['RB','RWB'],centerDef=['CB','SW','DC'];
+  var isLeftSlot=leftSide.indexOf(slotPos)>=0, isRightSlot=rightSide.indexOf(slotPos)>=0;
+  var isCBSlot=centerDef.indexOf(slotPos)>=0;
+  var isLeftP=leftSide.indexOf(playerPos)>=0, isRightP=rightSide.indexOf(playerPos)>=0;
+  var isCBP=centerDef.indexOf(playerPos)>=0;
+  var isFullbackP=isLeftP||isRightP;
+  // Wrong side (LB↔RB family)
+  if((isLeftSlot&&isRightP)||(isRightSlot&&isLeftP))return 0.08;
+  // Fullback in CB slot
+  if(isCBSlot&&isFullbackP)return 0.12;
+  // CB in fullback slot
+  if((isLeftSlot||isRightSlot)&&isCBP)return 0.18;
+  return 0;
+}
 
 /* Each formation defines positions and rows per tactic variant */
 const FORMATIONS = {
@@ -2435,7 +2453,7 @@ const TEAMS = {
     {n:'Sagnol',p:'RB',r:6},
   {n:'Klose',p:'ST',r:8},{n:'Pranjic',p:'LB',r:7}]},
   int_0910:{name:'Inter Milan',season:'2009-10',country:'🇮🇹',club:'inter',players:[
-    {n:'Julio Cesar',p:'GK',r:9},{n:'Maicon',p:'RB',r:9},{n:'Lucio',p:'CB',r:8},{n:'Samuel',p:'CB',r:8},{n:'Zanetti',p:'LB',r:8},
+    {n:'Julio Cesar',p:'GK',r:9},{n:'Maicon',p:'RB',r:9},{n:'Lucio',p:'CB',r:8},{n:'Samuel',p:'CB',r:8},{n:'Zanetti',p:'RB',r:8},
     {n:'Cambiasso',p:'CDM',r:9},{n:'Sneijder',p:'SS',r:9},{n:'Thiago Motta',p:'CM',r:7},{n:'Etoo',p:'RW',r:9},{n:'Milito',p:'ST',r:9},
     {n:'Pandev',p:'LW',r:7},{n:'Stankovic',p:'CM',r:8},{n:'Muntari',p:'CM',r:7},{n:'Chivu',p:'LB',r:7},{n:'Balotelli',p:'ST',r:7},
     {n:'Cordoba',p:'CB',r:7},{n:'Materazzi',p:'CB',r:7},{n:'Crespo',p:'ST',r:7}]},
@@ -3800,6 +3818,15 @@ function renderThreeCards(){
       const maxW=n===1?'260px':n===2?'180px':'140px';
       const nameSz=draftNameSz(p.n,isElite);
       const starBadge=isElite?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
+      // Out-of-position badge
+      var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
+      var oopBadge='';
+      if(_pen>=0.15)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ff6b6b;background:rgba(255,80,80,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ FUORI RUOLO</div>';
+      else if(_pen>0)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#f59e0b;background:rgba(245,158,11,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ LATO SBAGLIATO</div>';
+      // r=10 positional bonus badge
+      var r10Badge='';
+      if(p.r>=10){var _pg10=posGroup(p.p);r10Badge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ffd700;background:rgba(255,215,0,.12);padding:1px 6px;border-radius:3px;margin-top:1px">'
+        +(_pg10==='GK'?'🛡️ +DEF':_pg10==='DEF'?'🛡️ +DEF':_pg10==='MID'?'⚡ +MID':'⚡ +ATT')+'</div>';}
       var _ci=empSlots.map(function(s){return s.i;});
       return'<div onclick="draftTap('+i+')" onmouseenter="previewCard('+i+')" onmouseleave="clearPreview()" class="draft-pick-card"'
         +' style="'+tierCss
@@ -3807,6 +3834,8 @@ function renderThreeCards(){
         +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s">'
         +playerSprite(col)
         +starBadge
+        +r10Badge
+        +oopBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+countryFlag+displayClub+(season?' · '+season:'')+'</div>'
         +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.15;max-width:100%;overflow:hidden;word-break:break-word">'+p.n+'</div>'
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
@@ -4214,10 +4243,16 @@ function _runMatch(){
   }
   oppStr=Math.max(5,oppStr+diffCfg.oppMod+roundBonus);
 
-  // Calculate my team strength from slot-aware squad
-  const pl=G.squad.length?G.squad:G.slotPlayers.filter(Boolean);
+  // Calculate my team strength from slot-aware squad (with positional penalties)
+  const _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
   const grp={GK:[],DEF:[],MID:[],FWD:[]};
-  pl.forEach(p=>grp[posGroup(p.p)].push(p));
+  G.slotPlayers.forEach(function(p,i){
+    if(!p)return;
+    var slotP=_formPos[i]||p.p;
+    var pen=slotPenalty(slotP,p.p);
+    grp[posGroup(p.p)].push({r:p.r*(1-pen),p:p.p,_pen:pen});
+  });
+  const pl=G.slotPlayers.filter(Boolean);
   const gkR=avg(grp.GK.map(p=>p.r))||6;
   const defR=avg(grp.DEF.map(p=>p.r))||6;
   const midR=avg(grp.MID.map(p=>p.r))||6;
@@ -4245,6 +4280,24 @@ function _runMatch(){
 
   // Coach boost
   if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
+
+  // r=10 positional bonus — small per-player xG modifier
+  (function(){
+    var gkBonus=0,defBonus=0,midAtkBonus=0,midDefBonus=0,fwdBonus=0;
+    pl.forEach(function(p){
+      if(p.r<10)return;
+      var pg=posGroup(p.p);
+      if(pg==='GK'){gkBonus+=0.04;}
+      else if(pg==='DEF'){defBonus+=0.03;}
+      else if(pg==='MID'){midAtkBonus+=0.03;midDefBonus+=0.02;}
+      else if(pg==='FWD'){fwdBonus+=0.04;}
+    });
+    if(gkBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(gkBonus,0.08)));
+    if(defBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(defBonus,0.09)));
+    if(midAtkBonus){myXG=Math.min(myXG*(1+Math.min(midAtkBonus,0.06)),2.6);}
+    if(midDefBonus){oppXG=Math.max(.08,oppXG*(1-Math.min(midDefBonus,0.04)));}
+    if(fwdBonus){myXG=Math.min(myXG*(1+Math.min(fwdBonus,0.10)),2.6);}
+  })();
 
   // Draw-pull for evenly matched games
   const xgDiff=Math.abs(myXG-oppXG);
