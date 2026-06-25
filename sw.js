@@ -1,4 +1,4 @@
-const CACHE = 'decempionz-v5.5.32';
+const CACHE = 'decempionz-v5.5.33';
 const ASSETS = ['/', '/index.html', '/og-image.png', '/icon-192.png', '/icon-512.png', '/manifest.json'];
 
 self.addEventListener('install', e => {

@@ -426,7 +426,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* ── MATCH ── */
 .match-wrap{text-align:center}
 .m-teams{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.m-tname{font-weight:800;font-size:1rem;max-width:44%}.m-tname.r{text-align:right}
+.m-tname{font-weight:800;font-size:1rem;max-width:44%;white-space:nowrap;overflow:hidden}.m-tname.r{text-align:right}
 .m-vs{color:var(--mut);font-size:.78rem}
 .m-score{font-size:4.5rem;font-weight:900;letter-spacing:-4px;margin:6px 0 12px;font-variant-numeric:tabular-nums}
 .m-score.flash{color:var(--gold)}
@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.32';
+const GAME_VERSION='5.5.33';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3565,6 +3565,16 @@ function confirmSetup(){
   showScreen('screen-formation');
 }
 
+function _abbrevTeam(name){
+  if(name.length<=15) return name;
+  var sfxM=name.match(/(\s+'\d{2})$/);
+  var sfx=sfxM?sfxM[1]:'';
+  var base=sfx?name.slice(0,-sfx.length):name;
+  var words=base.split(' ');
+  if(words.length===1) return base.normalize('NFD').replace(/[̀-ͯ]/g,'').slice(0,8)+'.'+sfx;
+  var w0=words[0].normalize('NFD').replace(/[̀-ͯ]/g,'');
+  return w0.slice(0,3)+'. '+words.slice(1).join(' ')+sfx;
+}
 function initDraft(){
   if(!G.formation) return;
   const f = FORMATIONS[G.formation];
@@ -4353,7 +4363,7 @@ function _runMatch(){
 
   document.getElementById('m-tag').innerHTML=`<span class="tag tag-${roundTag}">${roundTag.toUpperCase()} — ${roundLabel}</span>`;
   document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">Decempionz FC</span>';
-  document.getElementById('m-away').innerHTML=jerseyIcon(_oppCol,18)+'<span style="margin-left:4px">'+oppName+'</span>';
+  document.getElementById('m-away').innerHTML=jerseyIcon(_oppCol,18)+'<span style="margin-left:4px">'+_abbrevTeam(oppName)+'</span>';
   document.getElementById('m-score').textContent='0 — 0';
   document.getElementById('m-score').className='m-score';
   document.getElementById('m-timer').textContent="1'";
