@@ -910,6 +910,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div>
       <div style="font-weight:800;font-size:1.05rem" id="d-title"></div>
       <div class="tourn-badge" style="display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.6px;padding:2px 8px;border-radius:20px;margin-top:3px"></div>
+      <div id="d-formation" style="font-size:.6rem;color:var(--mut);margin-top:4px;font-weight:700;letter-spacing:.5px"></div>
     </div>
     <div style="padding-right:36px">
       <div class="draft-count" id="d-count"></div>
@@ -1171,7 +1172,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.38';
+const GAME_VERSION='5.5.39';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3709,6 +3710,7 @@ function initDraft(){
   G.passes = (DIFF_CFG[G.difficulty||'normal']||DIFF_CFG.normal).passes;
 
   document.getElementById('d-title').textContent = G.tournament.name;
+  var _dfEl=document.getElementById('d-formation');if(_dfEl)_dfEl.textContent=G.formation||'';
   showScreen('screen-draft');
   drawDraftCards();
   updateDraftScreen();
