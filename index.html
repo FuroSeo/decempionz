@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.34';
+const GAME_VERSION='5.5.35';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2871,27 +2871,76 @@ const COPA_TEAMS = {
     {n:'Leonardo Ponzio',p:'CDM',r:8},{n:'Matías Kranevitter',p:'CM',r:7},{n:'Manuel Lanzini',p:'CAM',r:9},{n:'Sebastián Driussi',p:'RW',r:8},
     {n:'Rodrigo Mora',p:'LW',r:8},{n:'Rogelio Funes Mori',p:'ST',r:9},
     {n:'Lucas Alario',p:'ST',r:8},{n:'Andrés D\'Alessandro',p:'CAM',r:8},{n:'Ignacio Scocco',p:'ST',r:7}]},
+
+  gre_9596:{name:'Grêmio',season:'1995',country:'🇧🇷',club:'gremio',players:[
+    {n:'Danrlei',p:'GK',r:8},{n:'Wilson',p:'RB',r:7},{n:'Roger',p:'CB',r:8},{n:'Amaral',p:'CB',r:7},{n:'Sorin',p:'LB',r:8},
+    {n:'Caio',p:'CM',r:8},{n:'Ednaldo',p:'CDM',r:7},{n:'Paulo Nunes',p:'RW',r:8},
+    {n:'Jardel',p:'ST',r:9},{n:'Adilson',p:'LW',r:8},{n:'Dinho',p:'CAM',r:7},
+    {n:'Moisés',p:'CM',r:7},{n:'Arce',p:'CB',r:7},{n:'Ézio',p:'CF',r:7}]},
+  cru_9697:{name:'Cruzeiro',season:'1997',country:'🇧🇷',club:'cruzeiro',players:[
+    {n:'Dida',p:'GK',r:9},{n:'Célio Silva',p:'RB',r:7},{n:'Paulo André',p:'CB',r:8},{n:'Marquinhos',p:'CB',r:7},{n:'Rodrigo',p:'LB',r:7},
+    {n:'Alex Assis',p:'CDM',r:7},{n:'Giovanni',p:'CAM',r:8},{n:'Ricardinho',p:'CM',r:7},{n:'Edílson',p:'RW',r:8},
+    {n:'Marcelo Ramos',p:'ST',r:8},{n:'Cleison',p:'LW',r:7},
+    {n:'Eudes',p:'CF',r:7},{n:'Palhinha',p:'CM',r:7},{n:'Jailton',p:'RB',r:7}]},
+  vas_9899:{name:'Vasco da Gama',season:'1998',country:'🇧🇷',club:'vasco',players:[
+    {n:'Carlos Germano',p:'GK',r:8},{n:'Mauro Galvão',p:'CB',r:8},{n:'Cezar',p:'CB',r:7},{n:'Ramon',p:'CDM',r:7},{n:'Geovanni',p:'LB',r:7},
+    {n:'Juninho Pern.',p:'CM',r:9},{n:'Donizete',p:'CM',r:7},{n:'Felipe',p:'CAM',r:8},
+    {n:'Romário',p:'ST',r:10},{n:'Edmundo',p:'CF',r:9},{n:'Luizão',p:'ST',r:8},
+    {n:'Mauro Silva',p:'CDM',r:7},{n:'Anderson Luís',p:'RW',r:7},{n:'Valber',p:'LB',r:7}]},
+  est_0910:{name:'Estudiantes',season:'2009',country:'🇦🇷',club:'estudiantes',players:[
+    {n:'Braña',p:'GK',r:7},{n:'Clemente Rodríguez',p:'LB',r:8},{n:'Desábato',p:'CB',r:8},{n:'Cellay',p:'CB',r:7},{n:'Demichelis',p:'RB',r:7},
+    {n:'Enzo Pérez',p:'CM',r:8},{n:'Verón',p:'CAM',r:9},{n:'G.Fernández',p:'CM',r:8},
+    {n:'Boselli',p:'ST',r:8},{n:'Benítez',p:'RW',r:7},{n:'Oberman',p:'LW',r:7},
+    {n:'Marín',p:'CM',r:7},{n:'Erbes',p:'CB',r:7},{n:'Fazio',p:'CB',r:7}]},
+  int_1011:{name:'Internacional',season:'2010',country:'🇧🇷',club:'internacional',players:[
+    {n:'Renan',p:'GK',r:8},{n:'Índio',p:'RB',r:7},{n:'Bolívar',p:'CB',r:8},{n:'Nei',p:'CB',r:7},{n:'Anderson',p:'LB',r:7},
+    {n:'Guiñazú',p:'CDM',r:8},{n:'Giuliano',p:'CM',r:7},{n:'Fernandão',p:'ST',r:8},
+    {n:'Alecsandro',p:'CF',r:8},{n:'Nilmar',p:'LW',r:8},{n:'Oscar',p:'CAM',r:7},
+    {n:'Taison',p:'RW',r:7},{n:'Kleber',p:'ST',r:7},{n:'Sobis',p:'LW',r:7}]},
+  cor_1213:{name:'Corinthians',season:'2012',country:'🇧🇷',club:'corinthians',players:[
+    {n:'Cássio',p:'GK',r:8},{n:'Alessandro',p:'RB',r:7},{n:'Chicão',p:'CB',r:8},{n:'Paulo André',p:'CB',r:7},{n:'Fábio Santos',p:'LB',r:7},
+    {n:'Ralf',p:'CDM',r:7},{n:'Paulinho',p:'CM',r:8},{n:'Danilo',p:'CM',r:7},
+    {n:'Guerrero',p:'ST',r:9},{n:'Romarinho',p:'RW',r:7},{n:'Emerson',p:'LW',r:7},
+    {n:'Douglas',p:'CAM',r:7},{n:'Pato',p:'CF',r:8},{n:'William',p:'RW',r:7}]},
+  slo_1415:{name:'San Lorenzo',season:'2014',country:'🇦🇷',club:'san_lorenzo',players:[
+    {n:'Migliore',p:'GK',r:7},{n:'Buffarini',p:'RB',r:7},{n:'Mercier',p:'CB',r:7},{n:'Erbes',p:'CB',r:7},{n:'Colazo',p:'LB',r:7},
+    {n:'Ortigoza',p:'CDM',r:8},{n:'Barrientos',p:'CAM',r:7},{n:'Piatti',p:'LW',r:8},
+    {n:'Calleri',p:'ST',r:8},{n:'Matos',p:'CF',r:8},{n:'Blanco',p:'RW',r:7},
+    {n:'Mercado',p:'CB',r:7},{n:'Vera',p:'CM',r:7},{n:'Barbosa',p:'RW',r:7}]},
+  gre_1718:{name:'Grêmio',season:'2017',country:'🇧🇷',club:'gremio',players:[
+    {n:'Grohe',p:'GK',r:8},{n:'Fernandinho',p:'RB',r:7},{n:'Geromel',p:'CB',r:9},{n:'Kannemann',p:'CB',r:8},{n:'Cortez',p:'LB',r:7},
+    {n:'Cícero',p:'CDM',r:7},{n:'Arthur',p:'CM',r:8},{n:'Ramiro',p:'CM',r:7},
+    {n:'Luan',p:'CAM',r:9},{n:'Everton',p:'LW',r:8},{n:'Jael',p:'ST',r:7},
+    {n:'Bolaños',p:'RW',r:7},{n:'Bressan',p:'CB',r:7},{n:'Barrios',p:'ST',r:7}]},
+  bot_2425:{name:'Botafogo',season:'2024',country:'🇧🇷',club:'botafogo',players:[
+    {n:'John',p:'GK',r:7},{n:'Vitinho',p:'RB',r:7},{n:'Barboza',p:'CB',r:8},{n:'Bastos',p:'CB',r:7},{n:'Cuiabano',p:'LB',r:7},
+    {n:'Gregore',p:'CDM',r:7},{n:'Marlon Freitas',p:'CM',r:8},{n:'Almada',p:'CAM',r:9},
+    {n:'Savarino',p:'RW',r:8},{n:'Luís Henrique',p:'LW',r:8},{n:'Júnior Santos',p:'ST',r:8},
+    {n:'Igor Jesus',p:'CF',r:7},{n:'Eduardo',p:'RW',r:7},{n:'Alex Telles',p:'LB',r:7}]},
 };
 
 const COPA_TOURNAMENTS = [
   {id:'copa_pioneros', name:'Los Pioneros', years:'1960–75', emoji:'🏅',
    desc:'Peñarol bicampione, Santos di Pelé, Independiente imbattibile. Le radici del calcio sudamericano.',
-   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172']},
+   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172','pen_6566','rac_6768']},
   {id:'copa_dorados', name:'Años Dorados', years:'1976–92', emoji:'⭐',
    desc:'Zico, il Bocha, Higuita visionario. L\'era d\'oro della Copa Libertadores.',
-   teams:['boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091']},
+   teams:['boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091','cru_7677','oli_7980']},
   {id:'copa_clasica', name:'Era Clásica', years:'1992–2007', emoji:'🔵',
    desc:'São Paulo dominante, River di Francescoli, Boca di Riquelme e Tévez. Il decennio d\'oro.',
-   teams:['sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607']},
+   teams:['sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607','vel_9394','gre_9596','cru_9697','vas_9899']},
   {id:'copa_moderna', name:'Era Moderna', years:'2008–2024', emoji:'🚀',
    desc:'Neymar a Santos, il Superclásico 2018, Flamengo di Jorge Jesus. Il Brasile conquista tutto.',
-   teams:['san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324']},
+   teams:['san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324','atm_1314','riv_1516','est_0910','int_1011','cor_1213','slo_1415','gre_1718','bot_2425']},
   {id:'copa_alltime', name:'All Time', years:'1960–2024', emoji:'🌎',
    desc:'Tutte le leggende sudamericane senza limite d\'era. Il draft definitivo della Libertadores.',
    teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172',
           'boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091',
           'sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607',
-          'san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324'],
+          'san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324',
+          'pen_6566','rac_6768','cru_7677','oli_7980',
+          'vel_9394','gre_9596','cru_9697','vas_9899',
+          'atm_1314','riv_1516','est_0910','int_1011','cor_1213','slo_1415','gre_1718','bot_2425'],
    allTime:true}
 ];
 
@@ -2914,7 +2963,12 @@ const COPA_JERSEY_COLORS = {
   sao_9293:'#f0f0f0', riv_9596:'#f0f0f0', pal_9900:'#1e8c1e',
   boc_0001:'#003087', boc_0304:'#003087', int_0607:'#cc0000',
   san_1112:'#f0f0f0', riv_1819:'#f0f0f0', fla_1920:'#cc0000',
-  pal_2021:'#1e8c1e', fla_2223:'#cc0000', flu_2324:'#8b1a1a', oli_7980:'#2d2d2d'
+  pal_2021:'#1e8c1e', fla_2223:'#cc0000', flu_2324:'#8b1a1a', oli_7980:'#2d2d2d',
+  pen_6566:'#f5c800', rac_6768:'#f0f0f0', cru_7677:'#003087',
+  vel_9394:'#f0f0f0', atm_1314:'#000000', riv_1516:'#f0f0f0',
+  gre_9596:'#1c3fa8', cru_9697:'#003087', vas_9899:'#000000',
+  est_0910:'#002d6e', int_1011:'#cc0000', cor_1213:'#f0f0f0',
+  slo_1415:'#cc0000', gre_1718:'#1c3fa8', bot_2425:'#000000'
 };
 
 /* ═══════════════════════════════════════════════════════
