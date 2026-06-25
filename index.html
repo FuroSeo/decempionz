@@ -733,7 +733,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div>
       </div>
       <div class="tourn-stat">
-        <div class="tourn-stat-val">1123</div>
+        <div class="tourn-stat-val">1156</div>
         <div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div>
       </div>
       <div class="tourn-stat">
@@ -760,7 +760,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat"><div class="tourn-stat-val">40</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
-      <div class="tourn-stat"><div class="tourn-stat-val">288</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">511</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
       <div class="tourn-stat"><div class="tourn-stat-val">4</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
     <button class="btn btn-gold" onclick="quickStartCopa()" style="font-size:1rem;padding:15px">
@@ -781,8 +781,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       </div>
     </div>
     <div class="tourn-stats">
-      <div class="tourn-stat"><div class=tourn-stat-val">72</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
-      <div class="tourn-stat"><div class="tourn-stat-val">780</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">73</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
+      <div class="tourn-stat"><div class="tourn-stat-val">828</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
       <div class="tourn-stat"><div class="tourn-stat-val">6</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
     <button class="btn btn-gold" onclick="quickStartWC()" style="font-size:1rem;padding:15px">
@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.42';
+const GAME_VERSION='5.5.43';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2989,7 +2989,7 @@ const COPA_JERSEY_COLORS = {
 
 /* ═══════════════════════════════════════════════════════
    WORLD CUP LEGENDS — DATASET
-   65 rose storiche · 6 ere · 1930–2022
+   73 rose storiche · 6 ere · 1930–2022
 ═══════════════════════════════════════════════════════ */
 const WC_TEAMS={
   uru_1930:{name:"Uruguay",season:"1930",country:"🇺🇾",club:"uruguay",players:[{n:"Enrique Ballesteros",p:"GK",r:8},{n:"José Nasazzi",p:"CB",r:9},{n:"José Andrade",p:"CDM",r:9},{n:"Lorenzo Fernández",p:"CM",r:8},{n:"Álvaro Gestido",p:"CB",r:8},{n:"Juan Piriz",p:"RB",r:7},{n:"Hector Scarone",p:"CAM",r:9},{n:"Pablo Dorado",p:"LW",r:8},{n:"Héctor Castro",p:"ST",r:8},{n:"Pedro Cea",p:"ST",r:8},{n:"Santos Iriarte",p:"RW",r:8},{n:"Pedro Petrone",p:"ST",r:8}]},
@@ -3057,46 +3057,14 @@ const WC_TEAMS={
   fra_2022:{name:"Francia",season:"2022",country:"🇫🇷",club:"france",players:[{n:"Hugo Lloris",p:"GK",r:9},{n:"Kylian Mbappé",p:"ST",r:10},{n:"Antoine Griezmann",p:"CAM",r:9},{n:"Olivier Giroud",p:"ST",r:8},{n:"Raphaël Varane",p:"CB",r:8},{n:"Dayot Upamecano",p:"CB",r:7},{n:"Theo Hernandez",p:"LB",r:8},{n:"Benjamin Pavard",p:"RB",r:7},{n:"Adrien Rabiot",p:"CM",r:7},{n:"Aurélien Tchouaméni",p:"CDM",r:8},{n:"Marcus Thuram",p:"LW",r:8},{n:"Randal Kolo Muani",p:"ST",r:7}]},
   mar_2022:{name:"Marocco",season:"2022",country:"🇲🇦",club:"morocco",players:[{n:"Yassine Bounou",p:"GK",r:9},{n:"Achraf Hakimi",p:"RB",r:9},{n:"Hakim Ziyech",p:"RW",r:9},{n:"Sofiane Boufal",p:"LW",r:8},{n:"Youssef En-Nesyri",p:"ST",r:8},{n:"Azzedine Ounahi",p:"CM",r:8},{n:"Selim Amallah",p:"CM",r:7},{n:"Romain Saïss",p:"CB",r:8},{n:"Nayef Aguerd",p:"CB",r:7},{n:"Noussair Mazraoui",p:"LB",r:8},{n:"Sofyan Amrabat",p:"CDM",r:9},{n:"Jawad El Yamiq",p:"CB",r:7}]},
   cro_2022:{name:"Croazia",season:"2022",country:"🇭🇷",club:"croatia",players:[{n:"Dominik Livaković",p:"GK",r:9},{n:"Luka Modrić",p:"CM",r:10},{n:"Ivan Perišić",p:"LW",r:8},{n:"Bruno Petković",p:"ST",r:7},{n:"Marko Livaja",p:"RW",r:7},{n:"Mateo Kovačić",p:"CM",r:8},{n:"Marcelo Brozović",p:"CDM",r:8},{n:"Josip Gvardiol",p:"CB",r:9},{n:"Dejan Lovren",p:"CB",r:7},{n:"Josip Stanišić",p:"RB",r:7},{n:"Borna Sosa",p:"LB",r:7},{n:"Andrej Kramarić",p:"ST",r:8}]},
-  ger_1958:{name:'Germania Ovest · \'58',club:'GER',players:[
-    {n:'Uwe Seeler',pos:'ST',r:9},{n:'Helmut Rahn',pos:'RW',r:9},
-    {n:'Fritz Walter',pos:'CM',r:8},{n:'Hans Schäfer',pos:'LW',r:7},
-    {n:'Horst Eckel',pos:'CM',r:7},{n:'Sepp Horst Szymaniak',pos:'CDM',r:7}
-  ]},
-  fra_1958:{name:'Francia · \'58',club:'FRA',players:[
-    {n:'Just Fontaine',pos:'ST',r:9},{n:'Raymond Kopa',pos:'CAM',r:9},
-    {n:'Roger Piantoni',pos:'LW',r:8},{n:'Jean Vincent',pos:'RW',r:7},
-    {n:'Maryan Wisniewski',pos:'CM',r:7},{n:'Robert Jonquet',pos:'CB',r:7}
-  ]},
-  ussr_1966:{name:'Unione Sovietica · \'66',club:'URS',players:[
-    {n:'Lev Yashin',pos:'GK',r:10},{n:'Josef Sabo',pos:'CDM',r:8},
-    {n:'Valery Voronin',pos:'CM',r:8},{n:'Igor Chislenko',pos:'RW',r:8},
-    {n:'Eduard Malofeev',pos:'ST',r:7},{n:'Anatoli Banishevsky',pos:'ST',r:7}
-  ]},
-  chi_1962:{name:'Cile · \'62',club:'CHI',players:[
-    {n:'Leonel Sánchez',pos:'LW',r:8},{n:'Jorge Toro',pos:'CM',r:8},
-    {n:'Eladio Rojas',pos:'CM',r:7},{n:'Carlos Toro',pos:'ST',r:7},
-    {n:'Honorino Landa',pos:'ST',r:7},{n:'Misael Escuti',pos:'GK',r:7}
-  ]},
-  rom_1994:{name:'Romania · \'94',club:'ROM',players:[
-    {n:'Gheorghe Hagi',pos:'CAM',r:10},{n:'Gică Popescu',pos:'CB',r:8},
-    {n:'Dan Petrescu',pos:'RB',r:8},{n:'Ilie Dumitrescu',pos:'LW',r:8},
-    {n:'Florin Răducioiu',pos:'ST',r:8},{n:'Bogdan Stelea',pos:'GK',r:7}
-  ]},
-  swe_1994:{name:'Svezia · \'94',club:'SWE',players:[
-    {n:'Thomas Brolin',pos:'CAM',r:9},{n:'Martin Dahlin',pos:'ST',r:8},
-    {n:'Tomas Ravelli',pos:'GK',r:8},{n:'Anders Limpar',pos:'LW',r:8},
-    {n:'Stefan Schwarz',pos:'CM',r:7},{n:'Kennet Andersson',pos:'ST',r:7}
-  ]},
-  uru_2010:{name:'Uruguay · \'10',club:'URU',players:[
-    {n:'Diego Forlán',pos:'CAM',r:10},{n:'Luis Suárez',pos:'ST',r:9},
-    {n:'Edinson Cavani',pos:'ST',r:9},{n:'Diego Lugano',pos:'CB',r:7},
-    {n:'Maximiliano Pereira',pos:'RB',r:7},{n:'Fernando Muslera',pos:'GK',r:7}
-  ]},
-  ned_2014:{name:'Olanda · \'14',club:'NED',players:[
-    {n:'Arjen Robben',pos:'RW',r:10},{n:'Robin van Persie',pos:'ST',r:9},
-    {n:'Wesley Sneijder',pos:'CAM',r:9},{n:'Virgil van Dijk',pos:'CB',r:8},
-    {n:'Dirk Kuyt',pos:'RM',r:7},{n:'Jasper Cillessen',pos:'GK',r:7}
-  ]},
+  ger_1958:{name:"Germania Ovest",season:"1958",country:"🇩🇪",club:"germany",players:[{n:"Uwe Seeler",p:"ST",r:9},{n:"Helmut Rahn",p:"RW",r:9},{n:"Fritz Walter",p:"CM",r:8},{n:"Hans Schäfer",p:"LW",r:7},{n:"Horst Eckel",p:"CM",r:7},{n:"Horst Szymaniak",p:"CDM",r:7}]},
+  fra_1958:{name:"Francia",season:"1958",country:"🇫🇷",club:"france",players:[{n:"Just Fontaine",p:"ST",r:9},{n:"Raymond Kopa",p:"CAM",r:9},{n:"Roger Piantoni",p:"LW",r:8},{n:"Jean Vincent",p:"RW",r:7},{n:"Maryan Wisniewski",p:"CM",r:7},{n:"Robert Jonquet",p:"CB",r:7}]},
+  ussr_1966:{name:"Unione Sovietica",season:"1966",country:"🇷🇺",club:"soviet union",players:[{n:"Lev Yashin",p:"GK",r:10},{n:"Josef Sabo",p:"CDM",r:8},{n:"Valery Voronin",p:"CM",r:8},{n:"Igor Chislenko",p:"RW",r:8},{n:"Eduard Malofeev",p:"ST",r:7},{n:"Anatoli Banishevsky",p:"ST",r:7}]},
+  chi_1962:{name:"Cile",season:"1962",country:"🇨🇱",club:"chile",players:[{n:"Leonel Sánchez",p:"LW",r:8},{n:"Jorge Toro",p:"CM",r:8},{n:"Eladio Rojas",p:"CM",r:7},{n:"Carlos Toro",p:"ST",r:7},{n:"Honorino Landa",p:"ST",r:7},{n:"Misael Escuti",p:"GK",r:7}]},
+  rom_1994:{name:"Romania",season:"1994",country:"🇷🇴",club:"romania",players:[{n:"Gheorghe Hagi",p:"CAM",r:10},{n:"Gică Popescu",p:"CB",r:8},{n:"Dan Petrescu",p:"RB",r:8},{n:"Ilie Dumitrescu",p:"LW",r:8},{n:"Florin Răducioiu",p:"ST",r:8},{n:"Bogdan Stelea",p:"GK",r:7}]},
+  swe_1994:{name:"Svezia",season:"1994",country:"🇸🇪",club:"sweden",players:[{n:"Thomas Brolin",p:"CAM",r:9},{n:"Martin Dahlin",p:"ST",r:8},{n:"Tomas Ravelli",p:"GK",r:8},{n:"Anders Limpar",p:"LW",r:8},{n:"Stefan Schwarz",p:"CM",r:7},{n:"Kennet Andersson",p:"ST",r:7}]},
+  uru_2010:{name:"Uruguay",season:"2010",country:"🇺🇾",club:"uruguay",players:[{n:"Diego Forlán",p:"CAM",r:10},{n:"Luis Suárez",p:"ST",r:9},{n:"Edinson Cavani",p:"ST",r:9},{n:"Diego Lugano",p:"CB",r:7},{n:"Maximiliano Pereira",p:"RB",r:7},{n:"Fernando Muslera",p:"GK",r:7}]},
+  ned_2014:{name:"Olanda",season:"2014",country:"🇳🇱",club:"netherlands",players:[{n:"Arjen Robben",p:"RW",r:10},{n:"Robin van Persie",p:"ST",r:9},{n:"Wesley Sneijder",p:"CAM",r:9},{n:"Virgil van Dijk",p:"CB",r:8},{n:"Dirk Kuyt",p:"RM",r:7},{n:"Jasper Cillessen",p:"GK",r:7}]},
 };
 
 const WC_TOURNAMENTS=[
@@ -3755,7 +3723,8 @@ function initDraft(){
   all.sort(function(a,b){return b.r-a.r;}); // keep highest-rated version if dupes
   all.forEach(function(p){if(!_seenNames.has(p.n)){_seenNames.add(p.n);_deduped.push(p);}});
   // GK cap: keep only the 2 highest-rated GKs, discard the rest
-  var _gks=_deduped.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
+  _deduped=_deduped.map(function(p){if(!p.pos&&p.p)p.pos=p.p;return p;});
+        var _gks=_deduped.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
   var _gkKeep=new Set(_gks.slice(0,2).map(function(p){return p.n;}));
   _deduped=_deduped.filter(function(p){return p.pos!=='GK'||_gkKeep.has(p.n);});
   G.draftPool = _deduped.sort(()=>Math.random()-.5);
