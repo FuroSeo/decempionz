@@ -1170,7 +1170,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.36';
+const GAME_VERSION='5.5.37';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3799,8 +3799,11 @@ function drawDraftCards(){
     return G.draftTiers[t].some(function(p){return compatibleEmptySlots(p).length>0;});
   });
   if(available.length===0)return;
-  // Pick a random available tier
-  var tier=available[Math.floor(Math.random()*available.length)];
+  // Weighted tier selection: r10=3, r9=2, r8=2, r7=1 — favouring elite without flooding
+  var _tw={10:3,9:2,8:2,7:1};
+  var _ws=available.reduce(function(s,t){return s+(_tw[t]||1);},0);
+  var _wr=Math.random()*_ws,_wc=0,tier=available[available.length-1];
+  for(var _i=0;_i<available.length;_i++){_wc+=_tw[available[_i]]||1;if(_wr<_wc){tier=available[_i];break;}}
   G.draftCurrentTier=tier;
   // Draw up to 3 compatible from this tier, remove from pool
   var pool=G.draftTiers[tier];
