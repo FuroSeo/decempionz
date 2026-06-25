@@ -379,6 +379,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc{background:linear-gradient(145deg,#131f35,#0f1a2e);border:2px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
 @keyframes cardIn{from{opacity:0;transform:rotateY(-20deg) scale(.93)}to{opacity:1;transform:rotateY(0) scale(1)}}
+@keyframes tierFlashIn{0%{opacity:0;transform:scale(.8) translateY(6px)}40%{opacity:1;transform:scale(1.08) translateY(0)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
+#d-tier-flash{display:none;position:absolute;inset:0;z-index:10;align-items:center;justify-content:center;pointer-events:none}
+#d-tier-flash.active{display:flex}
+.tier-flash-pill{font-size:1.15rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border-radius:30px;border:2px solid currentColor;animation:tierFlashIn .55s ease forwards}
 .prc-pg{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .pg-gk{background:var(--blue);color:var(--blue-lt)}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
 .prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
@@ -930,7 +934,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="warn-banner" id="d-warn"></div>
   <div class="force-banner" id="d-force"></div>
   <div class="cant-banner" id="d-cant"></div>
-  <div class="reveal-zone" id="d-reveal"></div>
+  <div style="position:relative">
+    <div id="d-tier-flash"><div class="tier-flash-pill"></div></div>
+    <div class="reveal-zone" id="d-reveal"></div>
+  </div>
   <div id="d-pool-wrap" style="text-align:center;margin:14px 0 10px;font-size:.65rem;color:var(--mut);letter-spacing:.2px"><span id="d-pool-lbl" style="margin-right:5px;opacity:.7"></span><span id="d-info"></span></div>
   <div class="draft-btns" style="grid-template-columns:1fr">
     <button class="btn-pass" id="btn-pss" onclick="draftReroll()" style="width:100%;font-size:.85rem">↺ Reroll <span id="d-pc"></span></button>
@@ -1179,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.41';
+const GAME_VERSION='5.5.42';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4075,8 +4082,34 @@ function draftReroll(){
   }
   G.draftCards=[];
   G._drawnFromTier=[];
-  drawDraftCards();
-  updateDraftScreen();
+  // Fade out current cards, draw new ones, show tier flash
+  var _rev=document.getElementById('d-reveal');
+  if(_rev){_rev.style.transition='opacity .13s';_rev.style.opacity='0';}
+  setTimeout(function(){
+    drawDraftCards();
+    // Tier flash
+    var _tf=document.getElementById('d-tier-flash');
+    if(_tf&&G.draftCurrentTier!=null){
+      var _tier=G.draftCurrentTier;
+      var _pill=_tf.querySelector('.tier-flash-pill');
+      var _tierCfg={10:{stars:'★★★★',label:'Elite',color:'#c9a227'},9:{stars:'★★★',label:'Alto',color:'#94a3b8'},8:{stars:'★★',label:'Medio',color:'#a07850'},7:{stars:'★',label:'Base',color:'#6b7e95'}};
+      var _cfg=_tierCfg[_tier]||_tierCfg[7];
+      if(G.lang==='en')_cfg={10:{stars:'★★★★',label:'Elite',color:'#c9a227'},9:{stars:'★★★',label:'High',color:'#94a3b8'},8:{stars:'★★',label:'Mid',color:'#a07850'},7:{stars:'★',label:'Base',color:'#6b7e95'}}[_tier]||{stars:'★',label:'Base',color:'#6b7e95'};
+      if(G.lang==='es')_cfg={10:{stars:'★★★★',label:'Élite',color:'#c9a227'},9:{stars:'★★★',label:'Alto',color:'#94a3b8'},8:{stars:'★★',label:'Medio',color:'#a07850'},7:{stars:'★',label:'Base',color:'#6b7e95'}}[_tier]||{stars:'★',label:'Base',color:'#6b7e95'};
+      _pill.textContent=_cfg.stars+' '+_cfg.label;
+      _pill.style.color=_cfg.color;
+      _pill.style.background=_cfg.color+'18';
+      _pill.style.borderColor=_cfg.color+'88';
+      _pill.style.animation='none';
+      void _pill.offsetWidth; // reflow
+      _pill.style.animation='tierFlashIn .55s ease forwards';
+      _tf.classList.add('active');
+      setTimeout(function(){_tf.classList.remove('active');},600);
+    }
+    if(_rev){_rev.style.opacity='0';}
+    updateDraftScreen();
+    if(_rev){requestAnimationFrame(function(){requestAnimationFrame(function(){_rev.style.transition='opacity .18s';_rev.style.opacity='1';});});}
+  },130);
 }
 
 function finalizeDraft(){
