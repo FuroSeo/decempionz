@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.43';
+const GAME_VERSION='5.5.44';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3869,7 +3869,7 @@ function updateDraftScreen(){
   const filled=filledCount();
   const remaining=G.draftPool.length-G.draftIdx;
   var _emptySlotsNow=G.slotPlayers.filter(function(p){return p===null;}).length;
-  var _rerollLocked=(G.difficulty||'normal')!=='easy'&&_emptySlotsNow<=3;
+  var _rerollLocked=(G.difficulty||'normal')!=='easy'&&_emptySlotsNow<=2;
   const noReroll=G.passes<=0||_rerollLocked;
 
   var _tc=G.draftTiers||{10:[],9:[],8:[],7:[]};
@@ -3983,6 +3983,12 @@ function draftPick(i){
     })[0];
     G.slotPlayers[bestSlot.i]=p;
     G.accepted.push(p);
+    // Return unchosen cards to their tier so pool doesn't shrink by 3 per pick
+    var _notPicked=G.draftCards.filter(function(_,j){return j!==i;});
+    if(_notPicked.length>0&&G.draftCurrentTier!=null){
+      G.draftTiers[G.draftCurrentTier]=G.draftTiers[G.draftCurrentTier].concat(_notPicked);
+      G.draftTiers[G.draftCurrentTier].sort(function(){return Math.random()-.5;});
+    }
     G.draftCards=[];
     if(filledCount()>=11){finalizeDraft();return;}
     drawDraftCards();
@@ -4042,7 +4048,7 @@ document.addEventListener('touchstart',function(e){
 function draftReroll(){
   if(G.passes<=0)return;
   var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
-  if((G.difficulty||'normal')!=='easy'&&_emptySlots<=3)return;
+  if((G.difficulty||'normal')!=='easy'&&_emptySlots<=2)return;
   G.passes--;
   // Return current cards to their tier pool
   if(G._drawnFromTier&&G._drawnFromTier.length>0&&G.draftCurrentTier){
