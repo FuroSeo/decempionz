@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.48';
+const GAME_VERSION='5.5.49';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3762,8 +3762,7 @@ function initDraft(){
   });
   [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
   G.draftCurrentTier=null;
-  G._drawnFromTier=[];
-  G._drawnTierIds=[];
+
   G.draftIdx = 0;
   G.draftCards = [];
   G.draftLock = false;
@@ -3859,15 +3858,19 @@ function renderDraftPitch(currentPlayer){
 
 function drawDraftCards(){
   G.draftCards=[];
-  G._drawnFromTier=[];
   G.draftCurrentTier=null;
   var _tw={10:3,9:2,8:2,7:1};
-
-  // Is GK the only slot still open? If so, lift GK cap
   var _positions=fmtPositions(G.formation,G.tactic);
-  var _onlyGKLeft=G.slotPlayers.every(function(p,i){return p!==null||_positions[i]==='GK';});
 
-  // Pick tier: weighted random among tiers with ≥1 compatible player
+  // 1. Collect unique remaining slot types (e.g. GK, CB, CM, RW...)
+  var _seenTypes=new Set();
+  var _remainingTypes=[];
+  _positions.forEach(function(pos,i){
+    if(G.slotPlayers[i]===null&&!_seenTypes.has(pos)){_seenTypes.add(pos);_remainingTypes.push(pos);}
+  });
+  if(_remainingTypes.length===0)return;
+
+  // 2. Pick tier: weighted random among tiers with ≥1 compatible player
   var available=[10,9,8,7].filter(function(t){
     return G.draftTiers[t].some(function(p){return compatibleEmptySlots(p).length>0;});
   });
@@ -3877,26 +3880,31 @@ function drawDraftCards(){
   for(var _i=0;_i<available.length;_i++){_wc+=_tw[available[_i]]||1;if(_wr<_wc){tier=available[_i];break;}}
   G.draftCurrentTier=tier;
 
-  // Draw from FRONT of tier (anti-repeat: unchosen cards live at BACK)
+  // 3. Shuffle remaining types, pick up to 3 targets (1 per role type)
+  var _shuffled=_remainingTypes.slice().sort(function(){return Math.random()-0.5;});
+  var _targets=_shuffled.slice(0,3);
+
+  // 4. For each target type, find 1 compatible player from the tier pool
   var pool=G.draftTiers[tier];
-  var drawn=[],drawnNames=new Set(),rest=[],gkCount=0;
-  for(var i=0;i<pool.length;i++){
-    if(drawn.length>=3){rest.push(pool[i]);continue;}
-    var p=pool[i];
-    if(compatibleEmptySlots(p).length===0){rest.push(p);continue;}
-    var _isGK=(p.pos||p.p||'')==='GK';
-    // GK cap: max 1 per draw — unless GK is literally the only slot left
-    if(_isGK&&!_onlyGKLeft&&gkCount>=1){rest.push(p);continue;}
-    if(_isGK)gkCount++;
-    drawn.push(p);
-    drawnNames.add(p.n);
-  }
+  var drawn=[];
+  var _usedIdx=new Set();
+  _targets.forEach(function(type){
+    for(var i=0;i<pool.length;i++){
+      if(_usedIdx.has(i))continue;
+      var p=pool[i];
+      var _compat=compatibleEmptySlots(p);
+      if(_compat.some(function(s){return s.pos===type;})){
+        drawn.push(p);_usedIdx.add(i);break;
+      }
+    }
+  });
   if(drawn.length===0)return;
 
-  // Tier now = only the non-drawn cards (in original order — preserves anti-repeat)
-  G.draftTiers[tier]=rest;
+  // 5. Remove drawn players from pool permanently — unchosen are discarded at pick time
+  var _drawnNames=new Set(drawn.map(function(p){return p.n;}));
+  G.draftTiers[tier]=pool.filter(function(p){return!_drawnNames.has(p.n);});
+
   G.draftCards=drawn;
-  G._drawnFromTier=drawn.slice(); // kept for finalizeDraft force-fill
 }
 
 function updateDraftScreen(){
@@ -4026,10 +4034,6 @@ function draftPick(i){
     })[0];
     G.slotPlayers[bestSlot.i]=p;
     G.accepted.push(p);
-    // Return unchosen cards to BACK of their tier — no reshuffle, so they re-enter only after all others
-    G.draftCards.forEach(function(cp,j){
-      if(j!==i&&G.draftCurrentTier!=null)G.draftTiers[G.draftCurrentTier].push(cp);
-    });
     G.draftCards=[];
     if(filledCount()>=11){finalizeDraft();return;}
     drawDraftCards();
@@ -4091,12 +4095,7 @@ function draftReroll(){
   var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
   if((G.difficulty||'normal')!=='easy'&&_emptySlots<=2)return;
   G.passes--;
-  // Return current drawn cards to BACK of their tier — no reshuffle
-  if(G.draftCurrentTier!=null){
-    G.draftCards.forEach(function(p){G.draftTiers[G.draftCurrentTier].push(p);});
-  }
   G.draftCards=[];
-  G._drawnFromTier=[];
   // Fade out current cards, draw new ones, show tier flash
   var _rev=document.getElementById('d-reveal');
   if(_rev){_rev.style.transition='opacity .13s';_rev.style.opacity='0';}
@@ -4140,7 +4139,7 @@ function finalizeDraft(){
     // Force fill remaining from pool — prefer exact position match
     var i=0;
     var _draftedNames=new Set(G.squad.map(function(p){return p.n;}));
-    var _flatPool=[10,9,8,7].reduce(function(a,t){return a.concat(G.draftTiers[t]);},G._drawnFromTier||[]);
+    var _flatPool=[10,9,8,7].reduce(function(a,t){return a.concat(G.draftTiers[t]);},(G.draftCards||[]));
     while(G.squad.length<11 && i<_flatPool.length){
       var fp=_flatPool[i];
       var slots=compatibleEmptySlots(fp);
