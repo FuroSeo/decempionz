@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.51';
+const GAME_VERSION='5.5.54';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3880,9 +3880,19 @@ function drawDraftCards(){
   for(var _i=0;_i<available.length;_i++){_wc+=_tw[available[_i]]||1;if(_wr<_wc){tier=available[_i];break;}}
   G.draftCurrentTier=tier;
 
-  // 3. Shuffle remaining types, pick up to 3 targets (1 per role type)
-  var _shuffled=_remainingTypes.slice().sort(function(){return Math.random()-0.5;});
-  var _targets=_shuffled.slice(0,3);
+  // 3. Filter to types with ≥1 player anywhere in the pool
+  var _feasible=_remainingTypes.filter(function(type){
+    return [10,9,8,7].some(function(t){
+      return G.draftTiers[t].some(function(p){
+        return compatibleEmptySlots(p).some(function(s){return s.pos===type;});
+      });
+    });
+  });
+  // GK reserve: only include GK in targets if <3 non-GK types are available
+  // This prevents GKs from being consumed as discarded alternatives in early picks
+  var _nonGKFeasible=_feasible.filter(function(t){return t!=='GK';});
+  var _targetPool=_nonGKFeasible.length>=3?_nonGKFeasible:_feasible;
+  var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
   var _tierOrder=[tier].concat([10,9,8,7].filter(function(t){return t!==tier&&G.draftTiers[t].length>0;}));
@@ -3891,6 +3901,7 @@ function drawDraftCards(){
   var drawn=[];
   var _drawnNames=new Set();
   _targets.forEach(function(type){
+    var _prevLen=drawn.length;
     for(var ti=0;ti<_tierOrder.length;ti++){
       var _pool=G.draftTiers[_tierOrder[ti]];
       for(var i=0;i<_pool.length;i++){
@@ -3903,7 +3914,7 @@ function drawDraftCards(){
           break;
         }
       }
-      if(_drawnNames.size===drawn.length&&drawn.length>_targets.indexOf(type))break;
+      if(drawn.length>_prevLen)break; // found one for this type, stop trying tiers
     }
   });
   if(drawn.length===0)return;
