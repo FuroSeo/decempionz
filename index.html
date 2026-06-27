@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.54';
+const GAME_VERSION='5.5.55';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3748,10 +3748,10 @@ function initDraft(){
   var _deduped=[];
   all.sort(function(a,b){return b.r-a.r;}); // keep highest-rated version if dupes
   all.forEach(function(p){if(!_seenNames.has(p.n)){_seenNames.add(p.n);_deduped.push(p);}});
-  // GK cap: keep only the 2 highest-rated GKs, discard the rest
+  // GK cap: keep only the 4 highest-rated GKs, discard the rest
   _deduped=_deduped.map(function(p){if(!p.pos&&p.p)p.pos=p.p;return p;});
-        var _gks=_deduped.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
-  var _gkKeep=new Set(_gks.slice(0,2).map(function(p){return p.n;}));
+  var _gks=_deduped.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
+  var _gkKeep=new Set(_gks.slice(0,4).map(function(p){return p.n;}));
   _deduped=_deduped.filter(function(p){return p.pos!=='GK'||_gkKeep.has(p.n);});
   G.draftPool = _deduped.sort(()=>Math.random()-.5);
   // Partition pool into rating tiers
@@ -3919,7 +3919,30 @@ function drawDraftCards(){
   });
   if(drawn.length===0)return;
 
-  // 6. Remove drawn players from their respective tier pools permanently
+  // 6. Pad to 3 cards if fewer options exist: draw extras from any feasible type
+  if(drawn.length<3){
+    var _padTypes=_feasible.slice().sort(function(){return Math.random()-0.5;});
+    for(var _pi=0;_pi<_padTypes.length&&drawn.length<3;_pi++){
+      var _ptype=_padTypes[_pi];
+      var _prevPad=drawn.length;
+      for(var _pti=0;_pti<_tierOrder.length;_pti++){
+        var _ppool=G.draftTiers[_tierOrder[_pti]];
+        for(var _pii=0;_pii<_ppool.length;_pii++){
+          var _pp=_ppool[_pii];
+          if(_drawnNames.has(_pp.n))continue;
+          var _pcompat=compatibleEmptySlots(_pp);
+          if(_pcompat.some(function(s){return s.pos===_ptype;})){
+            drawn.push({p:_pp,tier:_tierOrder[_pti]});
+            _drawnNames.add(_pp.n);
+            break;
+          }
+        }
+        if(drawn.length>_prevPad)break;
+      }
+    }
+  }
+
+  // 7. Remove drawn players from their respective tier pools permanently
   drawn.forEach(function(d){
     G.draftTiers[d.tier]=G.draftTiers[d.tier].filter(function(p){return p.n!==d.p.n;});
   });
