@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.44';
+const GAME_VERSION='5.5.45';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3737,6 +3737,7 @@ function initDraft(){
   [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
   G.draftCurrentTier=null;
   G._drawnFromTier=[];
+  G._drawnTierIds=[];
   G.draftIdx = 0;
   G.draftCards = [];
   G.draftLock = false;
@@ -3833,27 +3834,50 @@ function renderDraftPitch(currentPlayer){
 function drawDraftCards(){
   G.draftCards=[];
   G._drawnFromTier=[];
-  // Find tiers with at least one compatible player
-  var available=[10,9,8,7].filter(function(t){
-    return G.draftTiers[t].some(function(p){return compatibleEmptySlots(p).length>0;});
+  G._drawnTierIds=[];
+  G.draftCurrentTier=null;
+  // Tier weights: higher rating = more likely to appear
+  var _tw={10:4,9:3,8:2,7:1};
+  // Build unified candidate list across ALL tiers
+  var allCandidates=[];
+  [10,9,8,7].forEach(function(t){
+    G.draftTiers[t].forEach(function(p){
+      if(compatibleEmptySlots(p).length>0) allCandidates.push({p:p,t:t});
+    });
   });
-  if(available.length===0)return;
-  // Weighted tier selection: r10=3, r9=2, r8=2, r7=1 — favouring elite without flooding
-  var _tw={10:3,9:2,8:2,7:1};
-  var _ws=available.reduce(function(s,t){return s+(_tw[t]||1);},0);
-  var _wr=Math.random()*_ws,_wc=0,tier=available[available.length-1];
-  for(var _i=0;_i<available.length;_i++){_wc+=_tw[available[_i]]||1;if(_wr<_wc){tier=available[_i];break;}}
-  G.draftCurrentTier=tier;
-  // Draw up to 3 compatible from this tier, remove from pool
-  var pool=G.draftTiers[tier];
-  var drawn=[],rest=[];
-  for(var i=0;i<pool.length;i++){
-    if(drawn.length<3&&compatibleEmptySlots(pool[i]).length>0) drawn.push(pool[i]);
-    else rest.push(pool[i]);
+  if(allCandidates.length===0)return;
+  // Weighted random sort — tier score × random factor → varied but quality-biased
+  allCandidates.sort(function(a,b){
+    return (_tw[b.t]||1)*(0.5+Math.random()) - (_tw[a.t]||1)*(0.5+Math.random());
+  });
+  // Pick up to 3: max 1 GK, prefer position-group variety
+  var drawn=[],drawnNames=new Set(),GK_taken=false,pickedGroups=[];
+  var _pass=0;
+  while(_pass<2){
+    for(var i=0;i<allCandidates.length&&drawn.length<3;i++){
+      var e=allCandidates[i];
+      if(drawnNames.has(e.p.n))continue;
+      var pos=e.p.pos||e.p.p||'';
+      if(pos==='GK'){if(GK_taken)continue;GK_taken=true;}
+      // First pass: avoid same pos group appearing 3 times
+      var pg=posGroup(pos);
+      if(_pass===0&&drawn.length===2&&pickedGroups.filter(function(g){return g===pg;}).length>=2)continue;
+      drawn.push(e);
+      drawnNames.add(e.p.n);
+      pickedGroups.push(pg);
+    }
+    if(drawn.length>=3||_pass===1)break;
+    _pass++; // second pass: relax pos-group constraint
   }
-  G.draftTiers[tier]=rest;
-  G.draftCards=drawn;
-  G._drawnFromTier=drawn;
+  if(drawn.length===0)return;
+  // Remove drawn players from their respective tiers
+  [10,9,8,7].forEach(function(t){
+    G.draftTiers[t]=G.draftTiers[t].filter(function(p){return!drawnNames.has(p.n);});
+  });
+  G.draftCards=drawn.map(function(e){return e.p;});
+  G._drawnFromTier=G.draftCards.slice(); // backward compat for finalizeDraft force-fill
+  G._drawnTierIds=drawn.map(function(e){return e.t;});
+  G.draftCurrentTier=drawn[0].t; // tier of best card shown (for flash animation)
 }
 
 function updateDraftScreen(){
@@ -3983,12 +4007,13 @@ function draftPick(i){
     })[0];
     G.slotPlayers[bestSlot.i]=p;
     G.accepted.push(p);
-    // Return unchosen cards to their tier so pool doesn't shrink by 3 per pick
-    var _notPicked=G.draftCards.filter(function(_,j){return j!==i;});
-    if(_notPicked.length>0&&G.draftCurrentTier!=null){
-      G.draftTiers[G.draftCurrentTier]=G.draftTiers[G.draftCurrentTier].concat(_notPicked);
-      G.draftTiers[G.draftCurrentTier].sort(function(){return Math.random()-.5;});
-    }
+    // Return unchosen cards to their specific tiers at END — no reshuffle → deprioritized next draw
+    G.draftCards.forEach(function(p,j){
+      if(j!==i){
+        var _rt=G._drawnTierIds&&G._drawnTierIds[j]!=null?G._drawnTierIds[j]:G.draftCurrentTier;
+        if(_rt!=null)G.draftTiers[_rt].push(p);
+      }
+    });
     G.draftCards=[];
     if(filledCount()>=11){finalizeDraft();return;}
     drawDraftCards();
@@ -4050,13 +4075,14 @@ function draftReroll(){
   var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
   if((G.difficulty||'normal')!=='easy'&&_emptySlots<=2)return;
   G.passes--;
-  // Return current cards to their tier pool
-  if(G._drawnFromTier&&G._drawnFromTier.length>0&&G.draftCurrentTier){
-    G.draftTiers[G.draftCurrentTier]=G.draftTiers[G.draftCurrentTier].concat(G._drawnFromTier);
-    G.draftTiers[G.draftCurrentTier].sort(function(){return Math.random()-.5;});
-  }
+  // Return current drawn cards to their specific tiers (at end — deprioritized)
+  G.draftCards.forEach(function(p,j){
+    var _rt=G._drawnTierIds&&G._drawnTierIds[j]!=null?G._drawnTierIds[j]:G.draftCurrentTier;
+    if(_rt!=null)G.draftTiers[_rt].push(p);
+  });
   G.draftCards=[];
   G._drawnFromTier=[];
+  G._drawnTierIds=[];
   // Fade out current cards, draw new ones, show tier flash
   var _rev=document.getElementById('d-reveal');
   if(_rev){_rev.style.transition='opacity .13s';_rev.style.opacity='0';}
@@ -6886,4 +6912,4 @@ function _devSetMom(v){
     <div id="challenge-title" style="font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:10px"></div>
     <div id="challenge-body" style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:22px"></div>
     <button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="acceptChallenge()">⚔️ Accetta la sfida</button>
-    <button class="btn btn-ghost" style="w
+    <button class="b
