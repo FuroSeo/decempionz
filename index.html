@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.47';
+const GAME_VERSION='5.5.48';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4401,7 +4401,8 @@ function playRound(){
     const KNAMES=isCoppaR?(_isCoWC?[t('round.r1'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]):[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
     const KTAGS=isCoppaR?(_isCoWC?['r1','qf','sf','final']:['r1','r2','qf','sf','final']):['r16','qf','sf','final'];
     const opp=G.knockOpps[G.knockRound];
-    oppName=opp.name;
+    var _aDB3=_activeTeams();var _koTeam=opp.id?(_aDB3[opp.id]||null):null;
+    oppName=_koTeam?(_koTeam.name+" '"+_koTeam.season.slice(-2)):opp.name;
     oppStr=opp.str;
     roundLabel=KNAMES[G.knockRound];
     roundTag=KTAGS[G.knockRound];
@@ -5232,7 +5233,8 @@ function getNextMatchInfo(){
       }
       if(qualifies&&G.knockOpps&&G.knockOpps[0]){
         var _kn=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
-        return{oppName:G.knockOpps[0].name,oppStr:G.knockOpps[0].str,oppId:G.knockOpps[0].id||null,nextRoundLabel:_kn[0]};
+        var _nk0=G.knockOpps[0];var _aDB4=_activeTeams();var _nk0t=_nk0.id?(_aDB4[_nk0.id]||null):null;
+        return{oppName:_nk0t?(_nk0t.name+" '"+_nk0t.season.slice(-2)):_nk0.name,oppStr:_nk0.str,oppId:_nk0.id||null,nextRoundLabel:_kn[0]};
       }
     }
   } else {
@@ -5241,7 +5243,8 @@ function getNextMatchInfo(){
       var nk=G.knockOpps[G.knockRound+1];
       if(nk){
         var _kno=G.format==='coppa'?[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
-        return{oppName:nk.name,oppStr:nk.str,oppId:nk.id||null,nextRoundLabel:_kno[G.knockRound+1]||''};
+        var _aDB5=_activeTeams();var _nkt=nk.id?(_aDB5[nk.id]||null):null;
+        return{oppName:_nkt?(_nkt.name+" '"+_nkt.season.slice(-2)):nk.name,oppStr:nk.str,oppId:nk.id||null,nextRoundLabel:_kno[G.knockRound+1]||''};
       }
     }
   }
