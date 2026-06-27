@@ -1186,7 +1186,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.5.50';
+const GAME_VERSION='5.5.51';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3884,27 +3884,36 @@ function drawDraftCards(){
   var _shuffled=_remainingTypes.slice().sort(function(){return Math.random()-0.5;});
   var _targets=_shuffled.slice(0,3);
 
-  // 4. For each target type, find 1 compatible player from the tier pool
-  var pool=G.draftTiers[tier];
+  // 4. Tier fallback order: primary tier first, then adjacent by distance
+  var _tierOrder=[tier].concat([10,9,8,7].filter(function(t){return t!==tier&&G.draftTiers[t].length>0;}));
+
+  // 5. For each target type, find 1 player — primary tier preferred, fallback to adjacent
   var drawn=[];
-  var _usedIdx=new Set();
+  var _drawnNames=new Set();
   _targets.forEach(function(type){
-    for(var i=0;i<pool.length;i++){
-      if(_usedIdx.has(i))continue;
-      var p=pool[i];
-      var _compat=compatibleEmptySlots(p);
-      if(_compat.some(function(s){return s.pos===type;})){
-        drawn.push(p);_usedIdx.add(i);break;
+    for(var ti=0;ti<_tierOrder.length;ti++){
+      var _pool=G.draftTiers[_tierOrder[ti]];
+      for(var i=0;i<_pool.length;i++){
+        var p=_pool[i];
+        if(_drawnNames.has(p.n))continue;
+        var _compat=compatibleEmptySlots(p);
+        if(_compat.some(function(s){return s.pos===type;})){
+          drawn.push({p:p,tier:_tierOrder[ti]});
+          _drawnNames.add(p.n);
+          break;
+        }
       }
+      if(_drawnNames.size===drawn.length&&drawn.length>_targets.indexOf(type))break;
     }
   });
   if(drawn.length===0)return;
 
-  // 5. Remove drawn players from pool permanently — unchosen are discarded at pick time
-  var _drawnNames=new Set(drawn.map(function(p){return p.n;}));
-  G.draftTiers[tier]=pool.filter(function(p){return!_drawnNames.has(p.n);});
+  // 6. Remove drawn players from their respective tier pools permanently
+  drawn.forEach(function(d){
+    G.draftTiers[d.tier]=G.draftTiers[d.tier].filter(function(p){return p.n!==d.p.n;});
+  });
 
-  G.draftCards=drawn;
+  G.draftCards=drawn.map(function(d){return d.p;});
 }
 
 function updateDraftScreen(){
