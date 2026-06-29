@@ -3904,7 +3904,7 @@ function initDraft(){
     // Guaranteed fullback slots: add best RB (if not already slot A) + best LB (if not already slot A)
     var _usedNames=new Set([b.top?b.top.n:null]);
     ['RB','LB'].forEach(function(fbPos){
-      var _fb=b.rest.filter(function(p){return p.pos===fbPos;}).sort(function(a,b){return b.r-a.r;})[0];
+      var _fb=b.rest.filter(function(p){return (p.pos||p.p)===fbPos;}).sort(function(a,b){return b.r-a.r;})[0];
       if(_fb&&!_usedNames.has(_fb.n)){all.push(_fb);_usedNames.add(_fb.n);}
     });
     // Up to 3 random from the remaining rest (excluding already pushed players)
@@ -4345,7 +4345,7 @@ function finalizeDraft(){
     // Force fill remaining from pool — prefer exact position match
     var i=0;
     var _draftedNames=new Set(G.squad.map(function(p){return p.n;}));
-    var _flatPool=[10,9,8,7].reduce(function(a,t){return a.concat(G.draftTiers[t]);},(G.draftCards||[]));
+    var _flatPool=(G.draftPool||[]).concat(G.draftCards||[]);
     while(G.squad.length<11 && i<_flatPool.length){
       var fp=_flatPool[i];
       var slots=compatibleEmptySlots(fp);
