@@ -826,6 +826,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <span style="font-size:.6rem;color:var(--mut);opacity:.6;margin-left:4px">· dal 20 giu 2026</span>
   </div>
 
+  <!-- Banner sfida settimanale -->
+  <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:11px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px">
+    <div style="font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#818cf8;margin-bottom:3px">⚡ SFIDA DELLA SETTIMANA</div>
+    <div id="hcb-era" style="font-size:.85rem;font-weight:700;color:#e8edf5;line-height:1.3;margin-bottom:2px"></div>
+    <div id="hcb-meta" style="font-size:.66rem;color:#9ca3af;margin-bottom:8px"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="hcb-play-btn" class="btn" style="font-size:.74rem;padding:7px 16px;margin-top:0;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc">⚡ Partecipa</button>
+      <a href="sfide.html" style="font-size:.65rem;color:#6b7a8d">Classifica e archivio →</a>
+    </div>
+    <div id="hcb-expire" style="font-size:.6rem;color:#6b7a8d;margin-top:5px"></div>
+  </div>
+
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
     <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.28);color:var(--gold)">🏆 Hall of Fame</button>
@@ -844,7 +856,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <a href="about.html" target="_blank">About</a> &nbsp;·&nbsp;
     <a href="ucl.html" target="_blank">UCL</a> &nbsp;·&nbsp;
     <a href="copa.html" target="_blank">Copa</a> &nbsp;·&nbsp;
-    <a href="worldcup.html" target="_blank">World Cup</a>
+    <a href="worldcup.html" target="_blank">World Cup</a> &nbsp;·&nbsp;
+    <a href="sfide.html" target="_blank">⚡ Sfide</a>
   </div>
 </div>
 
@@ -1172,6 +1185,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <input id="hof-nickname" type="text" maxlength="24" placeholder="Il tuo nickname…" data-i18n-placeholder="hof.nick_placeholder" style="padding:8px 10px;font-size:.82rem;color:var(--text);margin-bottom:6px"/>
       <button class="btn btn-gold" style="width:100%;font-size:.8rem;margin-top:0" onclick="submitToHoF()">🏆 Invia alla Hall of Fame</button>
       <p class="hof-notice" style="font-size:.65rem;color:var(--mut);text-align:center;margin-top:6px">⏳ Pubblicato dopo approvazione del moderatore</p>
+    </div>
+    <div id="challenge-submit-area" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px">
+      <div style="font-size:.65rem;font-weight:700;color:#818cf8;margin-bottom:6px;text-align:center">⚡ Sfida della Settimana</div>
+      <input id="challenge-nickname" type="text" maxlength="24" placeholder="Il tuo nickname…" style="padding:8px 10px;font-size:.82rem;color:var(--text);margin-bottom:6px;width:100%;border-radius:8px;background:var(--s2);border:1px solid var(--brd)"/>
+      <button class="btn" id="challenge-submit-btn" onclick="submitChallenge()" style="width:100%;font-size:.8rem;margin-top:0;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc">📊 Invia alla Sfida</button>
+      <div id="challenge-submit-result" style="display:none;font-size:.65rem;margin-top:6px;text-align:center;color:#a5b4fc"></div>
     </div>
   </div>
 </div>
@@ -3409,6 +3428,7 @@ const G = {
   format: 'classic',
   gameMode: 'ucl', // 'ucl' | 'copa'
   formation: null,
+  challengeMode: false, challengeWeekId: null, retroWeek: null,
   // draft
   draftPool: [], draftIdx: 0, draftCards: [],
   slotPlayers: new Array(11).fill(null), // index = slot index in formation.positions
@@ -5869,6 +5889,18 @@ function showTrophy(){
   var _docLbl=document.getElementById('t-documentary-lbl');
   if(_docEl){if(_doc){_docEl.textContent=_doc;_docEl.style.display='block';if(_docLbl)_docLbl.style.display='block';}else{_docEl.style.display='none';if(_docLbl)_docLbl.style.display='none';}}
   _dczStatsCampaignWon();
+  // Badge retro + area sfida
+  var _csa=document.getElementById('challenge-submit-area');
+  if(G.challengeMode&&_csa){
+    _csa.style.display='block';
+    var _cn=document.getElementById('challenge-nickname');
+    if(_cn&&!_cn.value)try{_cn.value=localStorage.getItem('dcz_last_nick')||'';}catch(e){}
+  }
+  if(G.retroWeek){
+    // Salva badge locale (vinto = showTrophy è chiamata solo su vittoria)
+    try{localStorage.setItem('dcz_retro_'+G.retroWeek,JSON.stringify({grade:grade,date:new Date().toISOString().slice(0,10)}));}catch(e){}
+    if(_csa){_csa.style.display='block';}
+  }
   showScreen('screen-trophy');
 }
 
@@ -5930,6 +5962,7 @@ document.addEventListener('DOMContentLoaded',function(){
   applyLang();
   checkChallengeURL();
   _renderGamesCounter();
+  _loadChallengeBanner();
 });
 
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
@@ -6214,6 +6247,87 @@ function copyDraftLink(){
   if(input&&input.value)_copyText(input.value);
 }
 
+/* ══════════════════════════════════════
+   SFIDA SETTIMANALE
+══════════════════════════════════════ */
+function _loadChallengeBanner(){
+  fetch('/challenge-config.php')
+    .then(function(r){return r.json();})
+    .then(function(cfg){
+      if(!cfg||!cfg.current)return;
+      var c=cfg.current;
+      var banner=document.getElementById('home-challenge-banner');
+      if(!banner)return;
+      var tLabel={ucl:'🏆 UCL',copa:'🌿 Copa',wc:'🌍 Mondiali'}[c.tournament]||c.tournament.toUpperCase();
+      var diffLabel={easy:'🟢 Facile',normal:'🟡 Normale',hard:'🔴 Difficile'}[c.difficulty]||c.difficulty;
+      var eraEl=document.getElementById('hcb-era');
+      var metaEl=document.getElementById('hcb-meta');
+      var expEl=document.getElementById('hcb-expire');
+      if(eraEl)eraEl.textContent=tLabel+' · '+c.eraName;
+      var metaTxt=c.formation+' · '+diffLabel;
+      if(cfg.participants)metaTxt+=' · '+cfg.participants+' partecipanti';
+      if(metaEl)metaEl.textContent=metaTxt;
+      // Scadenza
+      if(expEl&&c.dateEnd){
+        var exp=new Date(c.dateEnd+'T23:59:59');
+        var dLeft=Math.ceil((exp-new Date())/(864e5));
+        expEl.textContent=dLeft<=0?'Scade oggi':dLeft===1?'Scade domani':'Scade tra '+dLeft+' giorni';
+      }
+      // URL sfida
+      var url='/?challenge='+encodeURIComponent(cfg.weekId)
+        +'&era='+encodeURIComponent(c.eraId)
+        +'&mode='+encodeURIComponent(c.tournament)
+        +'&formation='+encodeURIComponent(c.formation)
+        +'&diff='+encodeURIComponent(c.difficulty)
+        +'&fmt=classic';
+      var btn=document.getElementById('hcb-play-btn');
+      if(btn)btn.onclick=function(){window.location.href=url;};
+      banner.style.display='block';
+    })
+    .catch(function(){});
+}
+
+function submitChallenge(){
+  var nick=(document.getElementById('challenge-nickname').value||'').trim();
+  if(!nick){document.getElementById('challenge-nickname').focus();return;}
+  try{localStorage.setItem('dcz_last_nick',nick);}catch(e){}
+  var d=_shareData();
+  var weekId=G.challengeWeekId||G.retroWeek||'';
+  if(!weekId)return;
+  var payload={
+    weekId:weekId,
+    nickname:nick,
+    grade:d.grade||'B',
+    winner:!!d.isWinner,
+    record:{w:d.campW,d:d.campD,l:d.campL},
+    goals:{gf:G.campaignGF||0,ga:G.campaignGA||0},
+    formation:G.formation||'4-3-3',
+    isRetro:!!G.retroWeek
+  };
+  var btn=document.getElementById('challenge-submit-btn');
+  var res=document.getElementById('challenge-submit-result');
+  if(btn){btn.disabled=true;btn.textContent='Invio...';}
+  fetch('/challenge-submit.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();}).then(function(data){
+    if(data.success){
+      if(btn)btn.style.display='none';
+      if(res){
+        res.style.display='block';
+        var posStr=data.position?'📊 '+data.position+'° in classifica!':'📊 Risultato registrato!';
+        res.innerHTML=posStr+'&nbsp; <a href="sfide.html" style="color:#818cf8">Vedi classifica →</a>';
+      }
+    } else {
+      if(btn){btn.disabled=false;btn.textContent='📊 Invia alla Sfida';}
+      if(res){res.style.display='block';res.textContent=data.error||'Errore. Riprova.';}
+    }
+  }).catch(function(){
+    if(btn){btn.disabled=false;btn.textContent='📊 Riprova';}
+  });
+}
+
 function _roundRect(ctx,x,y,w,h,r){
   ctx.beginPath();
   ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
@@ -6349,6 +6463,14 @@ function buildChallengeUrl(nick){
 function checkChallengeURL(){
   try{
     const p=new URLSearchParams(window.location.search);
+    // Challenge mode (sfida settimanale)
+    const _chWeek=p.get('challenge')||'';
+    const _rtWeek=p.get('retro')||'';
+    if(_chWeek){G.challengeMode=true;G.challengeWeekId=_chWeek;}
+    if(_rtWeek){G.retroWeek=_rtWeek;}
+    // Formazione imposta
+    const _forcedFmt=p.get('formation')||'';
+    if(_forcedFmt&&typeof FORMATIONS!=='undefined'&&FORMATIONS[_forcedFmt])G.formation=_forcedFmt;
     if(!p.has('era'))return;
     const eraId=p.get('era')||'alltime';
     const mode=p.get('mode')||'ucl';
@@ -6356,18 +6478,26 @@ function checkChallengeURL(){
     const fmt=p.get('fmt')||'classic';
     const nick=p.get('nick')||'';
     const grade=p.get('grade')||'';
-    // Pre-configure game settings
     G.gameMode=mode;
     selectedDiff=diff;
     selectedFormat=fmt;
     var _challengeTournList=mode==='copa'?COPA_TOURNAMENTS:mode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
     var _challengeAllTimeId=mode==='copa'?'copa_alltime':mode==='wc'?'wc_alltime':'alltime';
-    if(eraId===_challengeAllTimeId||eraId==='alltime'){
-      selectedEraT=null;
-    }else{
-      selectedEraT=_challengeTournList.find(function(t){return t.id===eraId;})||null;
+    if(eraId===_challengeAllTimeId||eraId==='alltime'){selectedEraT=null;}
+    else{selectedEraT=_challengeTournList.find(function(t){return t.id===eraId;})||null;}
+    // Modalità challenge/retro: vai direttamente alla selezione formato
+    if(G.challengeMode||G.retroWeek){
+      G.tournament=selectedEraT;
+      G.difficulty=diff;
+      G.format=fmt;
+      setTimeout(function(){
+        var _dc=document.querySelectorAll('.diff-card');
+        _dc.forEach(function(el){el.classList.remove('diff-sel');if(el.dataset&&el.dataset.diff===diff)el.classList.add('diff-sel');});
+        showScreen('screen-format');
+      },80);
+      return;
     }
-    // Build modal content
+    // Modalità sfida normale: mostra modal
     const modal=document.getElementById('challenge-modal');
     if(!modal)return;
     const eraT=selectedEraT;

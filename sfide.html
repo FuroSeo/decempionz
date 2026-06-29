@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sfide Settimanali — Decempionz</title>
+<meta name="description" content="Classifica e archivio delle sfide settimanali di Decempionz. Rivivi le sfide passate, consulta la classifica e scopri la prossima.">
+<meta property="og:title" content="Sfide Settimanali — Decempionz">
+<meta property="og:description" content="Classifica e archivio delle sfide settimanali di Decempionz.">
+<meta property="og:image" content="https://decempionz.com/og-image.jpg">
+<meta property="og:url" content="https://decempionz.com/sfide.html">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://decempionz.com/sfide.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07090f;color:#e8edf5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:48px}
+a{color:inherit;text-decoration:none}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #111827;background:rgba(7,9,15,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+.hdr-logo{font-size:1.05rem;font-weight:700;letter-spacing:.02em}
+.hdr-logo span{color:#d4af37}
+.hdr-sub{font-size:.68rem;color:#6b7a8d}
+.play-btn{background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:.76rem;font-weight:600;cursor:pointer;display:inline-block}
+
+.wrap{max-width:680px;margin:0 auto;padding:0 16px}
+.section-hd{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7a8d;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid #111827}
+
+/* Sfida corrente */
+.active-card{background:linear-gradient(135deg,#0d1829,#0a1120);border:1.5px solid rgba(99,102,241,.5);border-radius:16px;padding:20px;margin-top:16px;position:relative;overflow:hidden}
+.active-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#4f46e5,#818cf8,#4f46e5)}
+.ac-badge{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#818cf8;margin-bottom:8px}
+.ac-era{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.ac-params{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.param-chip{font-size:.65rem;padding:3px 9px;border-radius:10px;background:#111827;border:1px solid #1e2d42;color:#9ca3af}
+.ac-motivation{font-size:.78rem;color:#9ca3af;line-height:1.6;margin-bottom:14px;font-style:italic;border-left:2px solid rgba(99,102,241,.4);padding-left:10px}
+.ac-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-challenge{background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(99,102,241,.15));border:1px solid rgba(99,102,241,.5);color:#a5b4fc;padding:9px 20px;border-radius:10px;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-challenge:hover{opacity:.85}
+.ac-expire{font-size:.62rem;color:#6b7a8d;margin-top:8px}
+.participants{font-size:.65rem;color:#818cf8;margin-top:4px}
+
+/* Next teaser */
+.next-card{background:#0a0f1e;border:1px dashed #1e2d42;border-radius:12px;padding:14px 16px;margin-top:0}
+.next-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4b5563;margin-bottom:5px}
+.next-era{font-size:.88rem;font-weight:600;color:#6b7a8d}
+.next-teaser{font-size:.72rem;color:#4b5563;margin-top:4px}
+
+/* Leaderboard */
+.lb-table{width:100%;border-collapse:collapse;margin-top:0}
+.lb-table th{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:#4b5563;font-weight:700;padding:6px 8px;text-align:left;border-bottom:1px solid #111827}
+.lb-table td{padding:7px 8px;font-size:.76rem;border-bottom:1px solid #0d1829}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table tr:nth-child(1) td{color:#f7c23e}
+.lb-table tr:nth-child(2) td{color:#c0c8d8}
+.lb-table tr:nth-child(3) td{color:#c97c42}
+.rank-col{color:#4b5563;font-size:.7rem;width:28px;text-align:center}
+.grade-s{color:#f7c23e;font-weight:700}
+.grade-a{color:#4a9eff;font-weight:700}
+.grade-b{color:#4ade80;font-weight:700}
+.grade-c{color:#9ca3af}
+.lb-empty{text-align:center;color:#4b5563;font-size:.78rem;padding:20px 0}
+
+/* Archive */
+.archive-grid{display:flex;flex-direction:column;gap:10px}
+.archive-card{background:#0a0f1e;border:1px solid #1e2d42;border-radius:12px;padding:14px 16px}
+.arc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.arc-week{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7a8d}
+.arc-badge-grade{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:8px}
+.arc-era{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.arc-params{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.arc-motivation{font-size:.72rem;color:#6b7a8d;line-height:1.55;margin-bottom:10px}
+.arc-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.btn-retro{font-size:.7rem;padding:6px 14px;border-radius:8px;background:rgba(30,45,66,.6);border:1px solid #1e2d42;color:#9ca3af;cursor:pointer;white-space:nowrap}
+.btn-retro:hover{border-color:#6b7a8d;color:#e8edf5}
+.arc-date{font-size:.6rem;color:#4b5563}
+
+/* Tournament colors */
+.t-ucl{color:#90b4ff}.t-copa{color:#86efac}.t-wc{color:#fcd34d}
+.chip-ucl{background:rgba(26,58,122,.3);border-color:rgba(74,158,255,.2);color:#90b4ff}
+.chip-copa{background:rgba(20,83,45,.3);border-color:rgba(74,222,128,.2);color:#86efac}
+.chip-wc{background:rgba(120,53,15,.3);border-color:rgba(247,194,62,.2);color:#fcd34d}
+.chip-hard{background:rgba(127,29,29,.3);border-color:rgba(248,113,113,.2);color:#fca5a5}
+.chip-easy{background:rgba(20,83,45,.2);border-color:rgba(74,222,128,.2);color:#86efac}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:60px 20px;color:#4b5563;font-size:.85rem;gap:10px}
+.spinner{width:28px;height:28px;border:3px solid #1e2d42;border-top-color:#4f46e5;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Footer link */
+.legal-footer{text-align:center;margin:32px 0 0;font-size:.62rem;color:#4b5563}
+.legal-footer a{color:#6b7a8d;margin:0 6px}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div>
+    <div class="hdr-logo">Decem<span>pionz</span></div>
+    <div class="hdr-sub">Sfide Settimanali</div>
+  </div>
+  <a href="https://decempionz.com" class="play-btn">⚽ Gioca</a>
+</header>
+
+<div class="wrap">
+  <div class="loading" id="loading-state"><div class="spinner"></div> Caricamento...</div>
+  <div id="main-content" style="display:none"></div>
+</div>
+
+<div class="wrap legal-footer">
+  <a href="https://decempionz.com">Home</a>·
+  <a href="ucl.html">UCL</a>·
+  <a href="copa.html">Copa</a>·
+  <a href="worldcup.html">World Cup</a>·
+  <a href="about.html">About</a>
+</div>
+
+<script>
+(function(){
+  var TOURN={ucl:{label:'🏆 UCL',cls:'t-ucl chip-ucl'},copa:{label:'🌿 Copa',cls:'t-copa chip-copa'},wc:{label:'🌍 Mondiali',cls:'t-wc chip-wc'}};
+  var DIFF={easy:{label:'🟢 Facile',cls:'chip-easy'},normal:{label:'🟡 Normale',cls:''},hard:{label:'🔴 Difficile',cls:'chip-hard'}};
+  var GRADE_CLS={S:'grade-s',A:'grade-a',B:'grade-b',C:'grade-c'};
+  var GRADE_BG={S:'background:rgba(247,194,62,.15);color:#f7c23e;border:1px solid rgba(247,194,62,.3)',A:'background:rgba(74,158,255,.1);color:#4a9eff;border:1px solid rgba(74,158,255,.3)',B:'background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.3)',C:'background:#111827;color:#9ca3af;border:1px solid #1e2d42'};
+
+  var lang=navigator.language||'it';
+  lang=lang.startsWith('es')?'es':lang.startsWith('en')?'en':'it';
+  try{lang=localStorage.getItem('dcz_lang')||lang;}catch(e){}
+
+  function mot(c){return c['motivation_'+lang]||c['motivation_it']||'';}
+  function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  function buildChallengeUrl(c,weekId,isRetro){
+    var p=isRetro?'retro':'challenge';
+    return '/?'+p+'='+encodeURIComponent(weekId)
+      +'&era='+encodeURIComponent(c.eraId)
+      +'&mode='+encodeURIComponent(c.tournament)
+      +'&formation='+encodeURIComponent(c.formation)
+      +'&diff='+encodeURIComponent(c.difficulty)
+      +'&fmt=classic';
+  }
+
+  function formatDate(ds,de){
+    var months={it:['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'],en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],es:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']};
+    var m=months[lang]||months.it;
+    function fmt(d){var p=d.split('-');return parseInt(p[2])+' '+m[parseInt(p[1])-1];}
+    return fmt(ds)+' – '+fmt(de);
+  }
+
+  function paramChips(c){
+    var t=TOURN[c.tournament]||{label:c.tournament,cls:''};
+    var d=DIFF[c.difficulty]||{label:c.difficulty,cls:''};
+    return '<span class="param-chip '+t.cls+'">'+t.label+'</span>'
+      +'<span class="param-chip">'+escH(c.formation)+'</span>'
+      +'<span class="param-chip '+d.cls+'">'+d.label+'</span>';
+  }
+
+  function renderLeaderboard(entries){
+    if(!entries||!entries.length){
+      return '<div class="lb-empty">Nessun risultato ancora. Sii il primo!</div>';
+    }
+    var html='<table class="lb-table"><thead><tr>'
+      +'<th class="rank-col">#</th><th>Nickname</th><th>Grade</th><th>Record</th><th>GF-GA</th><th>Tattica</th>'
+      +'</tr></thead><tbody>';
+    entries.slice(0,15).forEach(function(e){
+      var gcls=GRADE_CLS[e.grade]||'';
+      var gdStr=(e.goalDiff>0?'+':'')+e.goalDiff;
+      html+='<tr>'
+        +'<td class="rank-col">'+e.rank+'</td>'
+        +'<td>'+escH(e.nickname)+'</td>'
+        +'<td class="'+gcls+'">'+e.grade+'</td>'
+        +'<td>'+escH(e.recordStr)+'</td>'
+        +'<td>'+escH(e.goalsStr)+' <span style="color:#4b5563;font-size:.65rem">('+gdStr+')</span></td>'
+        +'<td style="color:#6b7a8d;font-size:.7rem">'+escH(e.formation||'—')+'</td>'
+        +'</tr>';
+    });
+    html+='</tbody></table>';
+    return html;
+  }
+
+  function getRetrobadge(weekId){
+    try{
+      var raw=localStorage.getItem('dcz_retro_'+weekId);
+      if(!raw)return null;
+      return JSON.parse(raw);
+    }catch(e){return null;}
+  }
+
+  function renderArchiveCard(c,weekId){
+    var badge=getRetrobadge(weekId);
+    var badgeHtml='';
+    if(badge){
+      var gs=GRADE_BG[badge.grade]||GRADE_BG.C;
+      badgeHtml='<span class="arc-badge-grade" style="'+gs+'">✓ Grade '+badge.grade+'</span>';
+    }
+    var retroUrl=buildChallengeUrl(c,weekId,true);
+    var playLbl=lang==='es'?'🎮 Jugar de nuevo':lang==='en'?'🎮 Play again':'🎮 Rigioca';
+    return '<div class="archive-card">'
+      +'<div class="arc-header">'
+      +'<span class="arc-week">'+escH(c.week||weekId)+' · '+formatDate(c.dateStart,c.dateEnd)+'</span>'
+      +badgeHtml
+      +'</div>'
+      +'<div class="arc-era">'+escH(c.eraName)+'</div>'
+      +'<div class="arc-params">'+paramChips(c)+'</div>'
+      +'<div class="arc-motivation">'+escH(mot(c))+'</div>'
+      +'<div class="arc-footer">'
+      +'<a href="'+retroUrl+'" class="btn-retro">'+playLbl+'</a>'
+      +'<span class="arc-date">Scaduta il '+formatDate(c.dateEnd,c.dateEnd)+'</span>'
+      +'</div>'
+      +'</div>';
+  }
+
+  function render(data){
+    var html='';
+    var currentWeekId=data.weekId;
+
+    // ── Sfida corrente ──
+    if(data.current){
+      var c=data.current;
+      var url=buildChallengeUrl(c,currentWeekId,false);
+      var expDays=0;
+      if(c.dateEnd){
+        var exp=new Date(c.dateEnd+'T23:59:59');
+        expDays=Math.ceil((exp-new Date())/864e5);
+      }
+      var expStr=expDays<=0?'Scade oggi':expDays===1?'Scade domani':'Scade tra '+expDays+' giorni';
+      var partStr=data.participants?data.participants+' partecipanti':'';
+
+      html+='<p class="section-hd">⚡ Sfida attiva</p>'
+        +'<div class="active-card">'
+        +'<div class="ac-badge">Settimana · '+escH(c.week||currentWeekId)+'</div>'
+        +'<div class="ac-era">'+escH(c.eraName)+'</div>'
+        +'<div class="ac-params">'+paramChips(c)+'</div>'
+        +'<div class="ac-motivation">'+escH(mot(c))+'</div>'
+        +'<div class="ac-btns">'
+        +'<a href="'+url+'" class="btn-challenge">⚡ Partecipa</a>'
+        +(partStr?'<span style="font-size:.65rem;color:#818cf8">'+partStr+'</span>':'')
+        +'</div>'
+        +'<div class="ac-expire">'+expStr+'</div>'
+        +'</div>';
+
+      // Leaderboard corrente
+      html+='<p class="section-hd" style="margin-top:20px">🏅 Classifica settimana corrente</p>'
+        +'<div id="lb-current"><div class="lb-empty" style="padding:14px 0">Caricamento classifica...</div></div>';
+    } else {
+      html+='<p class="section-hd">⚡ Sfida attiva</p>'
+        +'<div class="next-card" style="text-align:center;padding:24px">'
+        +'<div style="color:#4b5563;font-size:.85rem">Nessuna sfida attiva questa settimana.</div>'
+        +'</div>';
+    }
+
+    // ── Prossima settimana ──
+    if(data.next){
+      var n=data.next;
+      var nt=TOURN[n.tournament]||{label:n.tournament,cls:''};
+      html+='<p class="section-hd" style="margin-top:20px">🔭 Prossima settimana</p>'
+        +'<div class="next-card">'
+        +'<div class="next-label">Preview · '+escH(n.week||n.weekId)+'</div>'
+        +'<div class="next-era"><span class="'+nt.cls.split(' ')[0]+'">'+nt.label+'</span> · '+escH(n.eraName)+'</div>'
+        +'<div class="next-teaser">'+(n['teaser_'+lang]||n.teaser_it||'')+'</div>'
+        +'</div>';
+    }
+
+    // ── Archivio ──
+    if(data.past&&data.past.length){
+      html+='<p class="section-hd" style="margin-top:20px">📁 Archivio sfide passate</p>'
+        +'<div class="archive-grid">';
+      data.past.forEach(function(c){
+        html+=renderArchiveCard(c,c.weekId||'');
+      });
+      html+='</div>';
+    }
+
+    document.getElementById('main-content').innerHTML=html;
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('main-content').style.display='block';
+
+    // Carica leaderboard corrente
+    if(data.current&&data.weekId){
+      fetch('/challenge-scores.php?week='+encodeURIComponent(data.weekId))
+        .then(function(r){return r.json();})
+        .then(function(lb){
+          var el=document.getElementById('lb-current');
+          if(el)el.innerHTML=renderLeaderboard(lb.entries);
+        })
+        .catch(function(){
+          var el=document.getElementById('lb-current');
+          if(el)el.innerHTML='<div class="lb-empty">Classifica non disponibile.</div>';
+        });
+    }
+  }
+
+  fetch('/challenge-config.php')
+    .then(function(r){return r.json();})
+    .then(function(data){render(data);})
+    .catch(function(){
+      document.getElementById('loading-state').innerHTML='<div style="color:#6b7a8d;text-align:center;padding:40px">Errore di caricamento. <a href="https://decempionz.com" style="color:#818cf8">Torna alla home</a></div>';
+    });
+})();
+</script>
+</body>
+</html>
