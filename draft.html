@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Draft — Decempionz</title>
+<meta name="description" content="Guarda la rosa draftata su Decempionz — il gioco di blind draft delle leggende del calcio.">
+<meta property="og:title" content="Draft — Decempionz">
+<meta property="og:description" content="Guarda la rosa draftata su Decempionz — il gioco di blind draft delle leggende del calcio.">
+<meta property="og:image" content="https://decempionz.com/og-image.jpg">
+<meta property="og:url" content="https://decempionz.com/draft.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://decempionz.com/draft.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07090f;color:#e8edf5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:40px}
+a{color:inherit;text-decoration:none}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #111827;background:rgba(7,9,15,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+.hdr-logo{font-size:1.05rem;font-weight:700;letter-spacing:.02em;color:#e8edf5}
+.hdr-logo span{color:#d4af37}
+.hdr-sub{font-size:.7rem;color:#6b7a8d}
+.play-btn{background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.play-btn:hover{opacity:.9}
+
+/* States */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;color:#6b7a8d;font-size:.9rem}
+.spinner{width:40px;height:40px;border:3px solid #1e2d42;border-top-color:#3b6fd4;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;text-align:center;padding:60px 20px;color:#6b7a8d}
+.error-msg h2{font-size:1.1rem;margin-bottom:8px;color:#e8edf5}
+.error-msg p{font-size:.85rem}
+
+/* Hero card */
+.hero{max-width:640px;margin:24px auto 0;padding:0 16px}
+.hero-card{background:linear-gradient(135deg,#0d1829 0%,#0a1220 100%);border:1px solid #1e2d42;border-radius:16px;padding:24px;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ucl .hero-card::before{background:linear-gradient(90deg,#1a3a7a,#4a9eff,#1a3a7a)}
+.copa .hero-card::before{background:linear-gradient(90deg,#14532d,#4ade80,#14532d)}
+.wc .hero-card::before{background:linear-gradient(90deg,#78350f,#f7c23e,#78350f)}
+
+.tourn-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:600;margin-bottom:12px}
+.ucl .tourn-badge{background:rgba(26,58,122,.4);color:#90b4ff;border:1px solid rgba(74,158,255,.3)}
+.copa .tourn-badge{background:rgba(20,83,45,.4);color:#86efac;border:1px solid rgba(74,222,128,.3)}
+.wc .tourn-badge{background:rgba(120,53,15,.4);color:#fcd34d;border:1px solid rgba(247,194,62,.3)}
+
+.era-name{font-size:1.15rem;font-weight:700;line-height:1.3;margin-bottom:16px}
+
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:0}
+.stat-box{flex:1;min-width:70px;background:rgba(255,255,255,.03);border:1px solid #1e2d42;border-radius:10px;padding:10px;text-align:center}
+.stat-val{font-size:1.2rem;font-weight:700;line-height:1}
+.stat-lbl{font-size:.62rem;color:#6b7a8d;margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+.grade-s{color:#f7c23e}
+.grade-a{color:#4a9eff}
+.grade-b{color:#4ade80}
+.grade-c{color:#9ca3af}
+.winner-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:600;background:rgba(247,194,62,.15);color:#f7c23e;border:1px solid rgba(247,194,62,.3);margin-left:6px;vertical-align:middle}
+
+/* Sections */
+.section{max-width:640px;margin:16px auto 0;padding:0 16px}
+.section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7a8d;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #111827}
+
+/* Players */
+.pos-group{margin-bottom:14px}
+.pos-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b7a8d;margin-bottom:6px}
+.players-row{display:flex;flex-wrap:wrap;gap:6px}
+.player-pill{display:flex;align-items:center;gap:6px;background:#0d1829;border:1px solid #1e2d42;border-radius:8px;padding:5px 10px;font-size:.78rem}
+.player-pill .pos-tag{font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:4px;background:#1e2d42;color:#9ca3af;flex-shrink:0}
+.player-pill .p-name{font-weight:500}
+.player-pill .p-rating{font-size:.65rem;color:#f7c23e;font-weight:700;margin-left:2px}
+
+/* Journey */
+.journey-list{display:flex;flex-direction:column;gap:6px}
+.journey-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0d1829;border:1px solid #1e2d42;border-radius:8px;font-size:.8rem}
+.j-tag{font-size:.62rem;font-weight:700;color:#6b7a8d;min-width:38px;text-transform:uppercase}
+.j-opp{flex:1;font-size:.78rem;color:#c9d4e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.j-score{font-size:.85rem;font-weight:700;white-space:nowrap}
+.j-score.win{color:#4ade80}
+.j-score.draw{color:#f7c23e}
+.j-score.loss{color:#f87171}
+
+/* Footer CTA */
+.cta-section{max-width:640px;margin:28px auto 0;padding:0 16px;text-align:center}
+.cta-card{background:linear-gradient(135deg,#0d1829,#111827);border:1px solid #1e2d42;border-radius:16px;padding:28px 20px}
+.cta-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.cta-card p{font-size:.82rem;color:#6b7a8d;margin-bottom:18px;line-height:1.5}
+.cta-big{display:inline-block;background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;padding:13px 32px;border-radius:12px;font-weight:700;font-size:.95rem;text-decoration:none}
+.cta-big:hover{opacity:.9}
+.cta-free{font-size:.7rem;color:#6b7a8d;margin-top:10px}
+
+/* Topscorer */
+.ts-line{font-size:.8rem;color:#9ca3af;margin-top:8px}
+.ts-line span{color:#f7c23e;font-weight:600}
+
+/* Formation label */
+.meta-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #1e2d42}
+.meta-chip{font-size:.65rem;padding:2px 8px;border-radius:10px;background:#111827;border:1px solid #1e2d42;color:#9ca3af}
+
+/* Responsive */
+@media(max-width:420px){.era-name{font-size:1rem}.stat-val{font-size:1.05rem}.players-row{gap:4px}.player-pill{padding:4px 8px;font-size:.74rem}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div>
+    <div class="hdr-logo">Decem<span>pionz</span></div>
+    <div class="hdr-sub">Draft condivisibile</div>
+  </div>
+  <a href="https://decempionz.com" class="play-btn">⚽ Gioca</a>
+</header>
+
+<div class="loading" id="loading-state">
+  <div class="spinner"></div>
+  <div>Caricamento rosa...</div>
+</div>
+
+<div class="error-msg" id="error-state">
+  <h2>Draft non trovato</h2>
+  <p>Il link potrebbe essere scaduto o non valido.</p>
+  <br>
+  <a href="https://decempionz.com" class="play-btn" style="display:inline-block;margin-top:8px">⚽ Vai a Decempionz</a>
+</div>
+
+<div id="draft-content" style="display:none">
+  <div class="hero" id="hero-wrap">
+    <div class="hero-card" id="hero-card">
+      <div class="tourn-badge" id="tourn-badge"></div>
+      <div class="era-name" id="era-name"></div>
+      <div class="stats-row" id="stats-row"></div>
+      <div class="ts-line" id="ts-line"></div>
+      <div class="meta-row" id="meta-row"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="lbl-squad">Rosa</div>
+    <div id="players-container"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="lbl-journey">Percorso</div>
+    <div class="journey-list" id="journey-container"></div>
+  </div>
+
+  <div class="cta-section">
+    <div class="cta-card">
+      <h3 id="cta-title">Crea la tua rosa</h3>
+      <p id="cta-body">Blind draft delle leggende del calcio. Costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali.</p>
+      <a href="https://decempionz.com" class="cta-big">⚽ Gioca gratis</a>
+      <div class="cta-free">100% gratuito · nessun account richiesto</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var TOURN_LABELS={ucl:{it:'🏆 Champions League',en:'🏆 Champions League',es:'🏆 Champions League'},copa:{it:'🌿 Copa Libertadores',en:'🌿 Copa Libertadores',es:'🌿 Copa Libertadores'},wc:{it:'🌍 Mondiali',en:'🌍 World Cup',es:'🌍 Mundial'}};
+  var GRADE_LABEL={S:'S',A:'A',B:'B',C:'C'};
+  var DIFF_LABEL={easy:{it:'Facile',en:'Easy',es:'Fácil'},normal:{it:'Normale',en:'Normal',es:'Normal'},hard:{it:'Difficile',en:'Hard',es:'Difícil'}};
+  var POS_ORDER=['GK','DEF','MID','FWD'];
+  var POS_LABELS={GK:{it:'Portiere',en:'Goalkeeper',es:'Portero'},DEF:{it:'Difensori',en:'Defenders',es:'Defensas'},MID:{it:'Centrocampisti',en:'Midfielders',es:'Mediocampistas'},FWD:{it:'Attaccanti',en:'Forwards',es:'Delanteros'}};
+
+  function posGroup(p){
+    if(!p)return'FWD';
+    if(p==='GK')return'GK';
+    if(/^(CB|LB|RB|LWB|RWB|SW|DF)$/.test(p))return'DEF';
+    if(/^(CM|CAM|CDM|LM|RM|DM|MF)$/.test(p))return'MID';
+    return'FWD';
+  }
+
+  var id=new URLSearchParams(location.search).get('id');
+  if(!id){showError();return;}
+
+  fetch('/draft-save.php?id='+encodeURIComponent(id))
+    .then(function(r){
+      if(!r.ok)throw new Error('not found');
+      return r.json();
+    })
+    .then(function(data){renderDraft(data);})
+    .catch(function(){showError();});
+
+  function showError(){
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('error-state').style.display='block';
+  }
+
+  function renderDraft(d){
+    var lang=d.lang||'it';
+
+    // Update <html lang>
+    document.documentElement.lang=lang;
+
+    // Dynamic <title> and OG
+    var t=d.era+(d.winner?' 🏆':'')+' · Grade '+d.grade+' — Decempionz';
+    document.title=t;
+    document.querySelector('meta[property="og:title"]').setAttribute('content',t);
+    var desc='Record: '+d.record.w+'V '+d.record.d+'P '+d.record.l+'S · '+d.goals.gf+':'+d.goals.ga+' gol';
+    document.querySelector('meta[property="og:description"]').setAttribute('content',desc);
+
+    // Tournament class on body
+    document.body.classList.add(d.tournament||'ucl');
+
+    // Badge
+    var tLabel=(TOURN_LABELS[d.tournament]||{})[lang]||d.tournament.toUpperCase();
+    document.getElementById('tourn-badge').textContent=tLabel;
+
+    // Era
+    document.getElementById('era-name').innerHTML=d.era+(d.winner?'<span class="winner-chip">🏆 Vinta</span>':'');
+
+    // Stats
+    var grade=d.grade||'B';
+    var gradeClass='grade-'+grade.toLowerCase();
+    var statsHtml='<div class="stat-box"><div class="stat-val '+gradeClass+'">'+grade+'</div><div class="stat-lbl">Grade</div></div>'
+      +'<div class="stat-box"><div class="stat-val">'+d.record.w+'V-'+d.record.d+'P-'+d.record.l+'S</div><div class="stat-lbl">{rec}</div></div>'
+      +'<div class="stat-box"><div class="stat-val">'+d.goals.gf+':'+d.goals.ga+'</div><div class="stat-lbl">Gol</div></div>';
+    var recLabels={it:'Record',en:'Record',es:'Récord'};
+    document.getElementById('stats-row').innerHTML=statsHtml.replace('{rec}',recLabels[lang]||'Record');
+
+    // Top scorer
+    if(d.topScorer&&d.topScorer!=='—'){
+      var tsLabels={it:'Capocannoniere',en:'Top scorer',es:'Máximo goleador'};
+      document.getElementById('ts-line').innerHTML=(tsLabels[lang]||'Top scorer')+': <span>'+escH(d.topScorer)+'</span>';
+    }
+
+    // Meta chips
+    var metaHtml='';
+    if(d.formation)metaHtml+='<span class="meta-chip">'+escH(d.formation)+'</span>';
+    if(d.difficulty)(function(){
+      var dl=(DIFF_LABEL[d.difficulty]||{})[lang]||d.difficulty;
+      metaHtml+='<span class="meta-chip">'+escH(dl)+'</span>';
+    })();
+    if(d.format)(function(){
+      var fmtLabels={classic:{it:'Classico',en:'Classic',es:'Clásico'},coppa:{it:'Coppa',en:'Cup',es:'Copa'},nuovo:{it:'Nuovo',en:'New',es:'Nuevo'}};
+      var fl=(fmtLabels[d.format]||{})[lang]||d.format;
+      metaHtml+='<span class="meta-chip">'+escH(fl)+'</span>';
+    })();
+    document.getElementById('meta-row').innerHTML=metaHtml;
+
+    // Players grouped by position
+    var groups={GK:[],DEF:[],MID:[],FWD:[]};
+    (d.players||[]).forEach(function(p){groups[posGroup(p.p)].push(p);});
+    var playersHtml='';
+    POS_ORDER.forEach(function(grp){
+      if(!groups[grp].length)return;
+      var posLabel=(POS_LABELS[grp]||{})[lang]||grp;
+      playersHtml+='<div class="pos-group"><div class="pos-label">'+posLabel+'</div><div class="players-row">';
+      groups[grp].forEach(function(p){
+        playersHtml+='<div class="player-pill"><span class="pos-tag">'+escH(p.p||grp)+'</span><span class="p-name">'+escH(p.n)+'</span><span class="p-rating">'+p.r+'</span></div>';
+      });
+      playersHtml+='</div></div>';
+    });
+    document.getElementById('players-container').innerHTML=playersHtml;
+
+    // Labels
+    var squadLabels={it:'Rosa ('+d.formation+')',en:'Squad ('+d.formation+')',es:'Plantilla ('+d.formation+')'};
+    var journeyLabels={it:'Percorso',en:'Journey',es:'Recorrido'};
+    document.getElementById('lbl-squad').textContent=squadLabels[lang]||squadLabels.it;
+    document.getElementById('lbl-journey').textContent=journeyLabels[lang]||journeyLabels.it;
+
+    // Journey
+    var journeyHtml='';
+    (d.journey||[]).forEach(function(j){
+      var myG=j.myG||0,oppG=j.oppG||0;
+      var cls=myG>oppG?'win':myG===oppG?'draw':'loss';
+      journeyHtml+='<div class="journey-row"><span class="j-tag">'+escH(j.tag)+'</span><span class="j-opp">'+escH(j.opp||'—')+'</span><span class="j-score '+cls+'">'+myG+'–'+oppG+'</span></div>';
+    });
+    document.getElementById('journey-container').innerHTML=journeyHtml||'<div style="color:#6b7a8d;font-size:.8rem">Nessun dato percorso</div>';
+
+    // CTA
+    var ctaTitles={it:'Crea la tua rosa',en:'Build your squad',es:'Crea tu plantilla'};
+    var ctaBodies={
+      it:'Blind draft delle leggende del calcio. Costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali.',
+      en:'Blind draft of football legends. Build your XI and conquer the UCL, Copa Libertadores or World Cup.',
+      es:'Draft ciego de leyendas del fútbol. Construye tu XI y conquista la UCL, Copa Libertadores o el Mundial.'
+    };
+    document.getElementById('cta-title').textContent=ctaTitles[lang]||ctaTitles.it;
+    document.getElementById('cta-body').textContent=ctaBodies[lang]||ctaBodies.it;
+
+    // Show
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('draft-content').style.display='block';
+  }
+
+  function escH(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+})();
+</script>
+</body>
+</html>

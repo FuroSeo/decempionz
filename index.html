@@ -6138,11 +6138,61 @@ function _shareData(){
 
 function shareResult(){
   buildShareCanvas();
+  var _la=document.getElementById('draft-link-area');if(_la)_la.style.display='none';
+  var _lb=document.getElementById('draft-link-btn');if(_lb){_lb.style.display='';_lb.disabled=false;_lb.textContent='🔗 Salva link condivisibile';}
+  var _li=document.getElementById('draft-link-input');if(_li)_li.value='';
   document.getElementById('share-modal').classList.add('open');
 }
 
 function closeShareModal(){
   document.getElementById('share-modal').classList.remove('open');
+}
+
+function saveDraftLink(){
+  var lb=document.getElementById('draft-link-btn');
+  var la=document.getElementById('draft-link-area');
+  if(lb){lb.disabled=true;lb.textContent='⏳ Salvataggio...';}
+  var d=_shareData();
+  var isCopa=G.gameMode==='copa',isWC=G.gameMode==='wc';
+  var KNAMES=G.format==='coppa'?(isCopa||isWC?['R1','QF','SF','Finale']:['R1','R2','QF','SF','Finale']):['R16','QF','SF','Finale'];
+  var gLabel=G.format==='nuovo'?'LG':'GP';
+  var journey=(G.groupUserResults||[]).map(function(r,i){return{tag:gLabel+(i+1),opp:r.opp,myG:r.myG,oppG:r.oppG};})
+    .concat((G.knockResults||[]).map(function(r,i){return{tag:KNAMES[Math.min(i,KNAMES.length-1)],opp:r.opp,myG:r.myG,oppG:r.oppG};}));
+  var payload={
+    tournament:G.gameMode||'ucl',
+    era:G.tournament?(G.tournament.emoji||'')+' '+(G.tournament.name||''):'All Time',
+    eraId:G.tournament?G.tournament.id:'alltime',
+    format:G.format||'classic',
+    formation:G.formation||G.draftTactic||G.tactic||'4-3-3',
+    difficulty:G.difficulty||'normal',
+    grade:d.grade||'B',
+    winner:!!d.isWinner,
+    record:{w:d.campW,d:d.campD,l:d.campL},
+    goals:{gf:G.campaignGF||0,ga:G.campaignGA||0},
+    topScorer:d.topScorerStr||'—',
+    players:G.slotPlayers.filter(Boolean).map(function(p){return{n:p.n,p:p.p,r:p.r};}),
+    journey:journey,
+    lang:G.lang||'it'
+  };
+  fetch('/draft-save.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(res.url){
+        if(la){la.style.display='block';document.getElementById('draft-link-input').value=res.url;}
+        if(lb){lb.style.display='none';}
+        try{navigator.clipboard.writeText(res.url);}catch(e){}
+      } else {
+        if(lb){lb.disabled=false;lb.textContent='🔗 Riprova';}
+      }
+    })
+    .catch(function(){
+      if(lb){lb.disabled=false;lb.textContent='🔗 Riprova';}
+    });
+}
+
+function copyDraftLink(){
+  var input=document.getElementById('draft-link-input');
+  if(input&&input.value)_copyText(input.value);
 }
 
 function _roundRect(ctx,x,y,w,h,r){
@@ -7143,6 +7193,14 @@ function _devSetMom(v){
       <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
       <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
       <button class="btn" onclick="copyShareText()">📋 Copia</button>
+    </div>
+    <button class="btn" id="draft-link-btn" onclick="saveDraftLink()" style="width:100%;margin-top:8px;font-size:.78rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.4);color:#818cf8">🔗 Salva link condivisibile</button>
+    <div id="draft-link-area" style="display:none;margin-top:8px">
+      <div style="display:flex;gap:6px;align-items:center">
+        <input id="draft-link-input" type="text" readonly style="flex:1;padding:8px 10px;font-size:.7rem;background:#0a0f1e;border:1px solid #1e2d42;border-radius:8px;color:#e8edf5;cursor:pointer;min-width:0" onclick="this.select()" />
+        <button class="btn btn-gold" onclick="copyDraftLink()" style="font-size:.72rem;padding:8px 12px;white-space:nowrap;flex-shrink:0">📋</button>
+      </div>
+      <div style="font-size:.62rem;color:#6b7a8d;margin-top:5px;text-align:center">Condividi questa rosa con chiunque</div>
     </div>
   </div>
 </div>
