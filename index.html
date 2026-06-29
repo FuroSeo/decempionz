@@ -1050,7 +1050,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <button class="btn btn-gold" id="btn-mact" onclick="matchNext()" style="margin-top:4px;display:none"></button>
   <div id="pen-zone" style="display:none;margin-top:8px;padding:12px;background:var(--s1);border-radius:10px;border:1px solid var(--brd)">
-    <div style="text-align:center;font-size:.68rem;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px">⚽ PENALTY SHOOTOUT</div>
+    <div style="text-align:center;font-size:.68rem;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px" data-i18n="pen.shootout_title">⚽ PENALTY SHOOTOUT</div>
     <div id="pen-score" style="text-align:center;font-size:1.6rem;font-weight:800;letter-spacing:2px;margin-bottom:10px">0 – 0</div>
     <div id="pen-rows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
     <div id="pen-msg" style="text-align:center;font-size:.68rem;color:var(--mut);min-height:16px"></div>
@@ -1493,7 +1493,7 @@ const STRINGS={
     'coach.pick_subtitle':'Nessun reroll — scegli con saggezza.',
     'coach.pref_form':'Modulo preferito:',
     'next.opponent':'Prossimo Avversario',
-    'pen.win':'Vinci ai rigori! 🎉',
+    'pen.shootout_title':'⚽ Rigori','pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
   },
   en:{
@@ -1745,7 +1745,7 @@ const STRINGS={
     'coach.pick_subtitle':'No rerolls — choose wisely.',
     'coach.pref_form':'Preferred formation:',
     'next.opponent':'Next Opponent',
-    'pen.win':'You win on penalties! 🎉',
+    'pen.shootout_title':'⚽ Penalty Shootout','pen.win':'You win on penalties! 🎉',
     'pen.loss':'Eliminated on penalties. 💔',
   },
   es:{
@@ -1997,7 +1997,7 @@ const STRINGS={
     'coach.pick_subtitle':'Sin rerolls — elige con sabiduría.',
     'coach.pref_form':'Formación preferida:',
     'next.opponent':'Próximo Rival',
-    'pen.win':'¡Ganáis en penaltis! 🎉',
+    'pen.shootout_title':'⚽ Tanda de Penaltis','pen.win':'¡Ganáis en penaltis! 🎉',
     'pen.loss':'Eliminados en penaltis. 💔',
   }
 };
@@ -4003,7 +4003,7 @@ function renderCampaignBracket(){
   var isCoppa=G.format==='coppa';
   var isCoWC=G.gameMode==='copa'||G.gameMode==='wc';
   var hasGroup=!isCoppa;
-  var groupMax=G.format==='nuovo'?6:6;
+  var groupMax=G.format==='nuovo'?6:3;
   var gDone=hasGroup&&G.groupUserResults&&G.groupUserResults.length>=groupMax;
 
   // Round definitions
@@ -4015,19 +4015,23 @@ function renderCampaignBracket(){
     rNames=[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];rAbbr=['R16','QF','SF','F'];
   }
 
-  // Build steps array: [group?] + knockout rounds
+  // Build steps array
   var steps=[];
   if(hasGroup){
     var gr=G.groupUserResults||[];
     var pts=gr.reduce(function(s,r){return s+(r.myG>r.oppG?3:r.myG===r.oppG?1:0);},0);
     var gw=gr.filter(function(r){return r.myG>r.oppG;}).length;
-    var gd=gr.filter(function(r){return r.myG===r.oppG;}).length;
+    var gd2=gr.filter(function(r){return r.myG===r.oppG;}).length;
     var gl=gr.filter(function(r){return r.myG<r.oppG;}).length;
-    var gf=gr.reduce(function(s,r){return s+r.myG;},0);
-    var ga=gr.reduce(function(s,r){return s+r.oppG;},0);
     var gStatus=G.phase==='group'&&!gDone?'current':(gDone?'done':'future');
+    // Current group opponent name
+    var curGroupOpp='';
+    if(gStatus==='current'&&G.groupTeams&&G.groupTeams[G.groupRound]){
+      var gt=G.groupTeams[G.groupRound].team;
+      curGroupOpp=gt&&gt.name?gt.name.split(' ')[0]:'?';
+    }
     steps.push({type:'group',label:t('camp.group_stage'),abbr:'GRP',status:gStatus,
-      sub:gDone?(pts+'pt · '+gw+'V'+gd+'P'+gl+'S'):gr.length+'/6',pts:pts});
+      played:gr.length,max:groupMax,pts:pts,rec:gw+'V '+gd2+'P '+gl+'S',curOpp:curGroupOpp});
   }
   for(var i=0;i<rNames.length;i++){
     var isDone=G.knockResults&&G.knockResults.length>i;
@@ -4044,43 +4048,39 @@ function renderCampaignBracket(){
   html+='<div style="display:flex;align-items:stretch;gap:0">';
 
   for(var j=0;j<steps.length;j++){
-    var st2=steps[j];
-    var isDone2=st2.status==='done';
-    var isCur=st2.status==='current';
+    var s=steps[j];
+    var isDone2=s.status==='done';
+    var isCur=s.status==='current';
     var bc=isDone2?'rgba(34,197,94,.4)':isCur?'rgba(234,179,8,.5)':'rgba(255,255,255,.1)';
     var bg=isDone2?'rgba(34,197,94,.07)':isCur?'rgba(234,179,8,.1)':'transparent';
     var tc=isDone2?'#22c55e':isCur?'#eab308':'var(--mut)';
-
-    html+='<div style="flex:1;border:1px solid '+bc+';border-radius:7px;padding:6px 4px;background:'+bg+';text-align:center;min-width:0;position:relative">';
-
-    // Abbr + status icon
     var icon=isDone2?'✓':isCur?'▶':'·';
+
+    html+='<div style="flex:1;border:1px solid '+bc+';border-radius:7px;padding:6px 4px;background:'+bg+';text-align:center;min-width:0;overflow:hidden">';
     html+='<div style="display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:3px">';
-    html+='<span style="font-size:.55rem;font-weight:800;color:'+tc+'">'+st2.abbr+'</span>';
+    html+='<span style="font-size:.55rem;font-weight:800;color:'+tc+'">'+s.abbr+'</span>';
     html+='<span style="font-size:.5rem;color:'+tc+'">'+icon+'</span>';
     html+='</div>';
 
-    // Content line
-    if(isDone2&&st2.res){
-      var won=st2.res.myG>st2.res.oppG;
-      html+='<div style="font-size:.75rem;font-weight:900;color:'+(won?'#22c55e':'#ef4444')+';line-height:1">'+st2.res.myG+'-'+st2.res.oppG+'</div>';
-      if(st2.res.opp){var sn=st2.res.opp.split(' ').slice(0,2).join(' ');if(sn.length>9)sn=sn.slice(0,8)+'…';html+='<div style="font-size:.38rem;color:var(--mut);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+sn+'</div>';}
-    }else if(isDone2&&st2.type==='group'){
-      html+='<div style="font-size:.6rem;font-weight:800;color:#22c55e;line-height:1">'+st2.pts+'pt</div>';
-      html+='<div style="font-size:.38rem;color:var(--mut);margin-top:1px">'+st2.sub.split('·')[1].trim()+'</div>';
-    }else if(isCur&&st2.type==='group'){
-      var played=G.groupUserResults?G.groupUserResults.length:0;
-      html+='<div style="font-size:.55rem;color:#eab308;line-height:1">'+played+'/6</div>';
-    }else if(isCur&&st2.opp){
-      var on2=st2.opp.name?st2.opp.name.split(' ')[0]:'?';
-      html+='<div style="font-size:.42rem;color:var(--txt);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">vs '+on2+'</div>';
+    // Content
+    if(isDone2&&s.type==='group'){
+      html+='<div style="font-size:.6rem;font-weight:800;color:#22c55e;line-height:1">'+s.pts+'pt</div>';
+      html+='<div style="font-size:.38rem;color:var(--mut);margin-top:1px">'+s.rec+'</div>';
+    }else if(isCur&&s.type==='group'){
+      html+='<div style="font-size:.55rem;color:#eab308;line-height:1">'+s.played+'/'+s.max+'</div>';
+      if(s.curOpp)html+='<div style="font-size:.38rem;color:var(--txt);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">vs '+s.curOpp+'</div>';
+    }else if(isDone2&&s.res){
+      var won=s.res.myG>s.res.oppG;
+      html+='<div style="font-size:.75rem;font-weight:900;color:'+(won?'#22c55e':'#ef4444')+';line-height:1">'+s.res.myG+'-'+s.res.oppG+'</div>';
+      if(s.res.opp){var sn=s.res.opp.split(' ').slice(0,2).join(' ');if(sn.length>9)sn=sn.slice(0,8)+'…';html+='<div style="font-size:.38rem;color:var(--mut);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+sn+'</div>';}
+    }else if(isCur&&s.opp){
+      var on2=s.opp.name?s.opp.name.split(' ')[0]:'?';
+      html+='<div style="font-size:.42rem;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">vs '+on2+'</div>';
     }else{
       html+='<div style="font-size:.55rem;color:rgba(255,255,255,.15);line-height:1.4">·</div>';
     }
 
     html+='</div>';
-
-    // Connector arrow between steps
     if(j<steps.length-1){
       var arrowCol=(isDone2||steps[j+1].status==='current')?'rgba(255,255,255,.3)':'rgba(255,255,255,.1)';
       html+='<div style="display:flex;align-items:center;padding:0 2px;flex-shrink:0"><span style="font-size:.55rem;color:'+arrowCol+'">›</span></div>';
