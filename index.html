@@ -3861,6 +3861,7 @@ function _abbrevTeam(name){
 }
 function initDraft(){
   if(!G.formation) return;
+  _ga('game_start',{tournament:G.gameMode||'ucl',era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
   // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
@@ -5225,6 +5226,7 @@ function showResult(){
   const elim=stars===0&&isKnockout;
   if(G.phase==='group') G.groupUserResults.push({myG,oppG,stars,opp:oppName});
   else G.knockResults.push({myG,oppG,stars,opp:oppName});
+  _ga('match_played',{tournament:G.gameMode||'ucl',phase:G.phase,outcome:myG>oppG?'win':myG<oppG?'loss':'draw',goal_diff:myG-oppG});
   // Update momentum — scala con differenza reti
   var _gd=myG-oppG;
   if(_gd>=3)G.momentum=Math.min((G.momentum||0)+2,3);
@@ -5705,6 +5707,7 @@ function showGroupElimination(pos,pts){
 
 function _diffLabel(){const _dl=G.lang||'it';return _dl==='it'?{'easy':'Facile','normal':'Normale','hard':'Difficile'}[G.difficulty||'normal']||'Normale':_dl==='es'?{'easy':'Fácil','normal':'Normal','hard':'Difícil'}[G.difficulty||'normal']||'Normal':{'easy':'Easy','normal':'Normal','hard':'Hard'}[G.difficulty||'normal']||'Normal';}
 function showGameOver(){
+  _ga('campaign_end',{tournament:G.gameMode||'ucl',era:G.tournament?G.tournament.id:'alltime',difficulty:G.difficulty||'normal',formation:G.formation||'',grade:'X',outcome:'eliminated'});
   var _isCoWC2=G.gameMode==='copa'||G.gameMode==='wc';
   const KNAMES=G.format==='coppa'?(_isCoWC2?[t('round.r1'),t('round.qf'),t('round.sf'),t('round.final')]:[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')]):[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
   const KNAMES2=G.format==='coppa'?(_isCoWC2?['R1','QF','SF','Final']:['R1','R2','QF','SF','Final']):['R16','QF','SF','Final'];
@@ -5911,6 +5914,7 @@ function showTrophy(){
   const total=all.reduce((s,r)=>s+(r.stars||0),0),max=all.length*3;
   const pct=max>0?total/max:0;
   const grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
+  _ga('campaign_end',{tournament:G.gameMode||'ucl',era:G.tournament?G.tournament.id:'alltime',difficulty:G.difficulty||'normal',formation:G.formation||'',grade:grade,wins:all.filter(function(r){return r.myG>r.oppG;}).length,outcome:'win'});
   const gradeMsg={'S':t('grade.s'),'A':_isWC?t('grade.a.wc'):_isCopa?t('grade.a.copa'):t('grade.a'),'B':t('grade.b'),'C':t('grade.c')}[grade];
   const campW=all.filter(r=>r.myG>r.oppG).length;
   const campD=all.filter(r=>r.myG===r.oppG).length;
@@ -6538,6 +6542,8 @@ function buildChallengeUrl(nick){
   }catch(e){return 'https://decempionz.com';}
 }
 
+function _ga(ev,params){try{if(typeof gtag==='function')gtag('event',ev,params||{});}catch(e){}}
+
 function checkChallengeURL(){
   try{
     const p=new URLSearchParams(window.location.search);
@@ -6568,6 +6574,8 @@ function checkChallengeURL(){
       G.tournament=selectedEraT;
       G.difficulty=diff;
       G.format=fmt;
+      if(G.challengeMode)_ga('challenge_join',{week_id:G.challengeWeekId,tournament:mode,difficulty:diff,is_retro:false});
+      if(G.retroWeek)_ga('challenge_join',{week_id:G.retroWeek,tournament:mode,difficulty:diff,is_retro:true});
       setTimeout(function(){
         applyTournamentTheme(mode);
         initDraft();
@@ -6711,6 +6719,7 @@ function submitToHoF(){
     body:JSON.stringify(payload)
   }).then(function(r){return r.json();}).then(function(res){
     if(res.success){
+      _ga('hof_submit',{tournament:G.gameMode||'ucl',grade:d.grade});
       btns.forEach(function(b){b.textContent='✅ Inviato!';});
       document.querySelectorAll('#hof-nickname').forEach(function(el){el.value='';});
       showShareToast('🏆 Risultato inviato!');
