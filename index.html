@@ -4679,6 +4679,15 @@ function _runMatch(){
   myXG=Math.max(.10,Math.min(myXG+momMod,2.6));
   oppXG=Math.max(.08,Math.min(oppXG-momMod*.35,2.6));
 
+  // Formation type vs opponent tactic (±4% max)
+  var _FMT_OFF={'4-2-3-1':1,'3-4-3':1};
+  var _FMT_DEF={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
+  var _fmtT=_FMT_OFF[G.formation]?'off':_FMT_DEF[G.formation]?'def':'mid';
+  if(_fmtT==='off'&&oppTactic==='defend'){myXG=Math.min(myXG*1.04,2.6);oppXG=Math.max(oppXG*0.97,0.08);}
+  else if(_fmtT==='off'&&oppTactic==='attack'){myXG=Math.min(myXG*1.02,2.6);oppXG=Math.min(oppXG*1.02,2.6);}
+  else if(_fmtT==='def'&&oppTactic==='attack'){oppXG=Math.max(oppXG*0.96,0.08);myXG=Math.min(myXG*1.02,2.6);}
+  else if(_fmtT==='def'&&oppTactic==='defend'){myXG=Math.max(myXG*0.97,0.10);}
+
   // Coach boost
   if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
 
@@ -4784,23 +4793,89 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   for(let i=0;i<myG;i++)myMins.push(Math.floor(Math.random()*87)+3);
   for(let i=0;i<oppG;i++)oppMins.push(Math.floor(Math.random()*87)+3);
   myMins.sort((a,b)=>a-b);oppMins.sort((a,b)=>a-b);
-  const _evKeys=['ev.yellow','ev.save','ev.post','ev.corner','ev.var','ev.longshot','ev.clearance','ev.offside','ev.freekick','ev.protests'];
-  const nTpls=_evKeys.map(function(k){return function(m){return m+"' "+t(k);};});
-  const nMins=[];
-  for(let i=0;i<3;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
-  let ms=0,os=0;
-  const allEvs=[...myMins.map(m=>({m,t:'my'})),...oppMins.map(m=>({m,t:'opp'})),...nMins.map(m=>({m,t:'n',tpl:pick(nTpls)}))].sort((a,b)=>a.m-b.m);
   const _lang=G.lang||'it';
   const _isIt=_lang==='it';
   const _isEs=_lang==='es';
-  const _myGoalPhrases=_isIt?['in rete!','GOL!','che conclusione!','non perdona!']:_isEs?['¡al fondo de la red!','¡GOL!','¡qué remate!','¡imparable!']:['fires home!','scores!','brilliant finish!','makes it count!'];
-  const _oppGoalPhrasesGeneral=_isIt?['risponde!','segna!','non perdona!']:_isEs?['¡responde!','¡marca!','¡imparable!']:['responds!','scores!','makes it count!'];
+  const _plr=function(){return scorers&&scorers.length?pick(scorers).n:'';};
+  const _opl=function(){return oppPlayers&&oppPlayers.length?pick(oppPlayers).n:'';};
+  // Neutral event templates — trilingua, player-aware, 16 varianti
+  const nTpls=(_isIt?[
+    function(m){var p=_plr();return m+"' 🟡 Cartellino giallo"+(p?" — "+p:"");},
+    function(m){var p=_opl();return m+"' 💫 Parata strepitosa"+(p?" su tiro di "+p:"");},
+    function(m){return m+"' 🎯 Palo! La traversa trema";},
+    function(m){var p=_plr();return m+"' 📐 Corner insidioso"+(p?" — cross di "+p:"");},
+    function(m){return m+"' ⚠️ VAR controlla — gioco regolare";},
+    function(m){var p=_plr();return m+"' 🚀 Tiro da fuori"+(p?" di "+p+" — alto sulla traversa":"");},
+    function(m){var p=_opl();return m+"' 🛡️ Chiusura difensiva"+(p?" su "+p:" provvidenziale");},
+    function(m){return m+"' ⛓️ Fuorigioco — bandierina alzata";},
+    function(m){var p=_opl();return m+"' 🤕 Calcio di punizione"+(p?" su fallo di "+p:"");},
+    function(m){return m+"' 📣 Proteste in campo — l'arbitro richiama i giocatori";},
+    function(m){var p=_plr();return m+"' 🔁 "+(p?p+" ancora pericoloso":"Azione prolungata — nessuna conclusione");},
+    function(m){return m+"' 🧱 Muro difensivo — nulla da fare";},
+    function(m){var p=_plr();return m+"' 🎭 Dribbling stretto"+(p?" di "+p:"")+" — recupera l'avversario";},
+    function(m){return m+"' 🌀 Pressing asfissiante — palla recuperata";},
+    function(m){var p=_opl();return m+"' 🔀 Schema su palla inattiva"+(p?" di "+p:"")+" — nulla di fatto";},
+    function(m){return m+"' 💨 Contropiede rapido — chiuso in angolo";},
+  ]:_isEs?[
+    function(m){var p=_plr();return m+"' 🟡 Tarjeta amarilla"+(p?" — "+p:"");},
+    function(m){var p=_opl();return m+"' 💫 Parada espectacular"+(p?" a tiro de "+p:"");},
+    function(m){return m+"' 🎯 ¡Al palo! El larguero vibra";},
+    function(m){var p=_plr();return m+"' 📐 Córner peligroso"+(p?" — centro de "+p:"");},
+    function(m){return m+"' ⚠️ VAR revisa — juego continúa";},
+    function(m){var p=_plr();return m+"' 🚀 Disparo lejano"+(p?" de "+p+" — por encima":"");},
+    function(m){var p=_opl();return m+"' 🛡️ Despeje salvador"+(p?" sobre "+p:" providencial");},
+    function(m){return m+"' ⛓️ Fuera de juego — bandera en alto";},
+    function(m){var p=_opl();return m+"' 🤕 Falta concedida"+(p?" por "+p:"");},
+    function(m){return m+"' 📣 Jugadores rodean al árbitro";},
+    function(m){var p=_plr();return m+"' 🔁 "+(p?p+" sigue insistiendo":"Acción continuada — sin remate");},
+    function(m){return m+"' 🧱 Bloque defensivo — sin opciones";},
+    function(m){var p=_plr();return m+"' 🎭 Regate ajustado"+(p?" de "+p:"")+" — recupera el rival";},
+    function(m){return m+"' 🌀 Presión intensa — balón recuperado";},
+    function(m){var p=_opl();return m+"' 🔀 Jugada de estrategia"+(p?" de "+p:"")+" — sin peligro";},
+    function(m){return m+"' 💨 Contraataque rápido — cortado";},
+  ]:[
+    function(m){var p=_plr();return m+"' 🟡 Yellow card"+(p?" — "+p:"");},
+    function(m){var p=_opl();return m+"' 💫 Stunning save"+(p?" from "+p:"");},
+    function(m){return m+"' 🎯 Off the post! The woodwork rattles";},
+    function(m){var p=_plr();return m+"' 📐 Dangerous corner"+(p?" — delivery from "+p:"");},
+    function(m){return m+"' ⚠️ VAR check — play on";},
+    function(m){var p=_plr();return m+"' 🚀 Long-range effort"+(p?" from "+p+" — over the bar":"");},
+    function(m){var p=_opl();return m+"' 🛡️ Last-ditch clearance"+(p?" on "+p:" — vital");},
+    function(m){return m+"' ⛓️ Offside — flag is up";},
+    function(m){var p=_opl();return m+"' 🤕 Free kick conceded"+(p?" by "+p:"");},
+    function(m){return m+"' 📣 Players surround the referee";},
+    function(m){var p=_plr();return m+"' 🔁 "+(p?p+" still threatening":"Sustained pressure — no shot");},
+    function(m){return m+"' 🧱 Defensive wall holds";},
+    function(m){var p=_plr();return m+"' 🎭 Tight dribble"+(p?" by "+p:"")+" — tackled well";},
+    function(m){return m+"' 🌀 High press wins the ball";},
+    function(m){var p=_opl();return m+"' 🔀 Set piece routine"+(p?" from "+p:"")+" — cleared";},
+    function(m){return m+"' 💨 Fast break — cut out";},
+  ]);
+  const nMins=[];
+  for(let i=0;i<5;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
+  let ms=0,os=0;
+  const allEvs=[...myMins.map(m=>({m,t:'my'})),...oppMins.map(m=>({m,t:'opp'})),...nMins.map(m=>({m,t:'n',tpl:pick(nTpls)}))].sort((a,b)=>a.m-b.m);
+  // Goal phrases — espanse + contestuali per stato del punteggio
+  const _myGoalPhrases=_isIt?['in rete!','GOL!','che conclusione!','non perdona!','devastante!','firma il gol!','freddo davanti al portiere!','che diagonale!']:
+    _isEs?['¡al fondo de la red!','¡GOL!','¡qué remate!','¡imparable!','¡demoledor!','¡marca!','¡helado ante el portero!','¡qué diagonal!']:
+    ['fires home!','scores!','brilliant finish!','makes it count!','unstoppable!','puts it away!','ice-cold finish!','curls it in!'];
+  const _myGoalCtx=function(ms2,os2){
+    if(ms2===1&&os2===0)return _isIt?'apre le marcature!':_isEs?'¡abre el marcador!':'opens the scoring!';
+    if(ms2===os2&&ms2>0)return _isIt?'pareggia i conti!':_isEs?'¡empata las cuentas!':'levels it up!';
+    if(ms2>os2&&ms2===os2+1&&ms2>1)return _isIt?'riprende il vantaggio!':_isEs?'¡recupera la ventaja!':'takes the lead!';
+    if(ms2>os2+1)return _isIt?'allunga!':_isEs?'¡sentencia!':'extends the lead!';
+    return pick(_myGoalPhrases);
+  };
+  const _oppGoalPhrasesGeneral=_isIt?['risponde!','segna!','non perdona!','accorcia le distanze!','punisce!','glaciale!']:
+    _isEs?['¡responde!','¡marca!','¡imparable!','¡acorta distancias!','¡castiga!','¡glacial!']:
+    ['responds!','scores!','not to be denied!','pulls one back!','punishes them!','ice-cold!'];
   const _oppGoalPhraseEqual=_isIt?'pareggia!':_isEs?'¡empata!':'levels it!';
   allEvs.forEach(ev=>{
     if(ev.t==='my'){
       ms++;
       const _sp=pick(scorers);const s=(_sp&&_sp.n)||String(_sp||'Unknown');
-      evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+pick(_myGoalPhrases)+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
+      const _ctx=Math.random()<0.45?_myGoalCtx(ms,os):pick(_myGoalPhrases);
+      evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+_ctx+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
     } else if(ev.t==='opp'){
       os++;
       const oppSc=oppPlayers&&oppPlayers.length?pick(oppPlayers):null;
@@ -5150,9 +5225,12 @@ function showResult(){
   const elim=stars===0&&isKnockout;
   if(G.phase==='group') G.groupUserResults.push({myG,oppG,stars,opp:oppName});
   else G.knockResults.push({myG,oppG,stars,opp:oppName});
-  // Update momentum
-  if(myG>oppG) G.momentum=Math.min((G.momentum||0)+1,3);
-  else if(myG<oppG) G.momentum=Math.max((G.momentum||0)-1,-3);
+  // Update momentum — scala con differenza reti
+  var _gd=myG-oppG;
+  if(_gd>=3)G.momentum=Math.min((G.momentum||0)+2,3);
+  else if(_gd>0)G.momentum=Math.min((G.momentum||0)+1,3);
+  else if(_gd<=-3)G.momentum=Math.max((G.momentum||0)-2,-3);
+  else if(_gd<0)G.momentum=Math.max((G.momentum||0)-1,-3);
   // draw: no change
 
   G.campaignGF+=myG; G.campaignGA+=oppG;
