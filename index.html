@@ -6576,6 +6576,8 @@ function checkChallengeURL(){
       G.format=fmt;
       if(G.challengeMode)_ga('challenge_join',{week_id:G.challengeWeekId,tournament:mode,difficulty:diff,is_retro:false});
       if(G.retroWeek)_ga('challenge_join',{week_id:G.retroWeek,tournament:mode,difficulty:diff,is_retro:true});
+      // Pulisce i parametri dall'URL così il reload non riparte il draft
+      history.replaceState(null,'',window.location.pathname);
       setTimeout(function(){
         applyTournamentTheme(mode);
         initDraft();
