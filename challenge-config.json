@@ -3,7 +3,7 @@
     "2026-W27": {
       "week": "W1",
       "tournament": "ucl",
-      "eraId": "aja_7172",
+      "eraId": "pioneers",
       "eraName": "Ajax 1971-72",
       "formation": "4-3-3",
       "difficulty": "normal",
@@ -17,7 +17,7 @@
     "2026-W28": {
       "week": "W2",
       "tournament": "wc",
-      "eraId": "bra_1970",
+      "eraId": "wc_pele",
       "eraName": "Brasil 1970",
       "formation": "4-4-2",
       "difficulty": "easy",
@@ -31,7 +31,7 @@
     "2026-W29": {
       "week": "W3",
       "tournament": "copa",
-      "eraId": "boc_0001",
+      "eraId": "copa_clasica",
       "eraName": "Boca Juniors 2000-01",
       "formation": "4-2-3-1",
       "difficulty": "normal",
@@ -45,7 +45,7 @@
     "2026-W30": {
       "week": "W4",
       "tournament": "wc",
-      "eraId": "ger_1974",
+      "eraId": "wc_totale",
       "eraName": "Germania Ovest 1974",
       "formation": "4-1-4-1",
       "difficulty": "normal",
@@ -59,7 +59,7 @@
     "2026-W31": {
       "week": "W5",
       "tournament": "ucl",
-      "eraId": "rm_5960",
+      "eraId": "pioneers",
       "eraName": "Real Madrid 1959-60",
       "formation": "3-5-2",
       "difficulty": "easy",
@@ -73,7 +73,7 @@
     "2026-W32": {
       "week": "W6",
       "tournament": "copa",
-      "eraId": "fla_1920",
+      "eraId": "copa_moderna",
       "eraName": "Flamengo 2019",
       "formation": "3-4-3",
       "difficulty": "normal",
@@ -87,7 +87,7 @@
     "2026-W33": {
       "week": "W7",
       "tournament": "ucl",
-      "eraId": "mil_8889",
+      "eraId": "golden80s",
       "eraName": "AC Milan 1988-89",
       "formation": "5-3-2",
       "difficulty": "hard",
@@ -101,7 +101,7 @@
     "2026-W34": {
       "week": "W8",
       "tournament": "wc",
-      "eraId": "fra_1998",
+      "eraId": "wc_tattica",
       "eraName": "Francia 1998",
       "formation": "4-5-1",
       "difficulty": "normal",
@@ -115,7 +115,7 @@
     "2026-W35": {
       "week": "W9",
       "tournament": "ucl",
-      "eraId": "ste_8586",
+      "eraId": "golden80s",
       "eraName": "Steaua Bucharest 1985-86",
       "formation": "5-4-1",
       "difficulty": "hard",
@@ -129,7 +129,7 @@
     "2026-W36": {
       "week": "W10",
       "tournament": "copa",
-      "eraId": "ind_7275",
+      "eraId": "copa_pioneros",
       "eraName": "Independiente 1972-75",
       "formation": "3-6-1",
       "difficulty": "hard",
