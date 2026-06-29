@@ -1088,6 +1088,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       </div>
     </div>
 
+    <div id="m-bracket-panel" style="display:none;margin-bottom:10px"></div>
+
     <!-- Stats toggle -->
     <button id="m-stats-toggle" class="btn btn-ghost" style="width:100%;font-size:.75rem;margin-bottom:0" onclick="toggleMatchStats()"><span id="m-stats-toggle-lbl" data-i18n="btn.stats_open">📊 Statistiche ▼</span></button>
 
@@ -3994,6 +3996,63 @@ function slotGroup(pos){
   return'fwd';
 }
 
+function renderCampaignBracket(){
+  var el=document.getElementById('m-bracket-panel');
+  if(!el)return;
+  if(!G.gameMode||!G.phase){el.style.display='none';return;}
+  var isCoppa=G.format==='coppa';
+  var isCoWC=G.gameMode==='copa'||G.gameMode==='wc';
+  var rNames,rAbbr;
+  if(isCoppa){
+    if(isCoWC){
+      rNames=[t('round.r1'),t('round.qf'),t('round.sf'),t('round.final')];
+      rAbbr=['T1','QF','SF','F'];
+    }else{
+      rNames=[t('round.r1'),t('round.r2'),t('round.qf'),t('round.sf'),t('round.final')];
+      rAbbr=['T1','T2','QF','SF','F'];
+    }
+  }else{
+    rNames=[t('round.r16'),t('round.qf'),t('round.sf'),t('round.final')];
+    rAbbr=['R16','QF','SF','F'];
+  }
+  var html='<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 13px">';
+  html+='<div style="font-size:.55rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:8px">'+t('end.journey')+'</div>';
+  if(!isCoppa&&G.groupUserResults&&G.groupUserResults.length>0){
+    var pts=G.groupUserResults.reduce(function(s,r){return s+(r.myG>r.oppG?3:r.myG===r.oppG?1:0);},0);
+    var gf=G.groupUserResults.reduce(function(s,r){return s+r.myG;},0);
+    var ga=G.groupUserResults.reduce(function(s,r){return s+r.oppG;},0);
+    html+='<div style="margin-bottom:8px;padding:5px 8px;background:rgba(255,255,255,.05);border-radius:6px;display:flex;justify-content:space-between;align-items:center">';
+    html+='<div style="font-size:.5rem;color:var(--mut)">'+t('camp.group_stage')+'</div>';
+    html+='<div style="font-size:.65rem;font-weight:800;color:var(--gold)">'+pts+'<span style="font-size:.45rem;font-weight:400;color:var(--mut)"> pt&nbsp;</span>'+gf+':'+ga+'</div>';
+    html+='</div>';
+  }
+  var maxR=rNames.length;
+  html+='<div style="display:flex;gap:5px">';
+  for(var i=0;i<maxR;i++){
+    var isDone=G.knockResults&&G.knockResults.length>i;
+    var isCurrent=G.phase==='knockout'&&i===G.knockRound;
+    var bc=isDone?'var(--brd)':isCurrent?'rgba(234,179,8,.6)':'var(--brd)';
+    var bg=isDone?'rgba(255,255,255,.05)':isCurrent?'rgba(234,179,8,.1)':'transparent';
+    html+='<div style="flex:1;border:1px solid '+bc+';border-radius:6px;padding:5px 3px;background:'+bg+';text-align:center;min-width:0;overflow:hidden">';
+    html+='<div style="font-size:.42rem;text-transform:uppercase;letter-spacing:.4px;color:'+(isCurrent?'#eab308':'var(--mut)')+'">'+rAbbr[i]+'</div>';
+    if(isDone){
+      var r=G.knockResults[i];
+      var won=r.myG>r.oppG;
+      html+='<div style="font-size:.7rem;font-weight:900;color:'+(won?'#22c55e':'#ef4444')+'">'+r.myG+'-'+r.oppG+'</div>';
+      if(r.opp){var s=r.opp.split(' ')[0];html+='<div style="font-size:.4rem;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s+'</div>';}
+    }else if(isCurrent&&G.knockOpps&&G.knockOpps[i]){
+      var op=G.knockOpps[i];var on=op.name?op.name.split(' ')[0]:'?';
+      html+='<div style="font-size:.55rem;color:#eab308;line-height:1.3">▶</div>';
+      html+='<div style="font-size:.4rem;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+on+'</div>';
+    }else{
+      html+='<div style="font-size:.55rem;color:var(--mut)">—</div>';
+    }
+    html+='</div>';
+  }
+  html+='</div></div>';
+  el.innerHTML=html;el.style.display='block';
+}
+
 function renderDraftPitch(currentPlayer){
   const positions=fmtPositions(G.formation,G.tactic);
   const rows=fmtRows(G.formation,G.tactic);
@@ -5432,6 +5491,7 @@ function showResult(){
     if(_rNextPanel)_rNextPanel.style.display='none';
     if(!elim)_pendingMatch=null;  // no next match — clean up
   }
+  renderCampaignBracket();
 
   let lbl;
   if(elim)lbl=t('btn.view_stats');
