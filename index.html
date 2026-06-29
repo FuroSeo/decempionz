@@ -536,7 +536,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .end-stat-l{font-size:.44rem;color:var(--mut);letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
 .end-journey{margin-bottom:6px;background:var(--s2);border-radius:10px;padding:8px 11px;border:1px solid var(--brd)}
 .end-j-lbl{font-size:.44rem;color:var(--mut);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px}
-.end-j-row{display:flex;align-items:center;gap:6px;padding:3.5px 0;border-bottom:1px solid var(--brd)}
+.end-j-row{display:flex;align-items:center;gap:6px;padding:3.5px 0;border-bottom:1px solid var(--brd);opacity:0;transform:translateX(-12px);transition:opacity .28s ease,transform .28s ease}.end-j-row.ej-vis{opacity:1;transform:translateX(0)}.end-j-sep{height:1px;background:var(--brd);margin:4px 0}
 .end-j-row:last-child{border-bottom:none}
 .end-j-tag{font-size:.44rem;padding:2px 5px;border-radius:4px;font-weight:700;letter-spacing:.3px;min-width:28px;text-align:center;flex-shrink:0}
 .end-j-tag.w{background:#14532d;color:#86efac}
@@ -2241,6 +2241,12 @@ function draftNameSz(name,isElite){
   if(l>18)base=Math.max(base-.20,.58);
   else if(l>13)base=Math.max(base-.12,.64);
   return base+'rem';
+}
+function _animateJourney(elId){
+  var el=document.getElementById(elId);
+  if(!el)return;
+  var rows=el.querySelectorAll('.end-j-row');
+  rows.forEach(function(r,i){setTimeout(function(){r.classList.add('ej-vis');},i*280);});
 }
 function natFlag(code){
   if(!code)return'';
@@ -5805,6 +5811,7 @@ function showGroupElimination(pos,pts){
       +'<span class="end-j-score">'+r.myG+'–'+r.oppG+'</span>'
       +'<span class="end-j-res" style="'+rc+'">'+rv+'</span></div>';
   }).join('');
+  _animateJourney('go-journey');
   _incGamesTotal();
   renderGameOverPitch();
   var _goDoc=generateDocumentary(false);
@@ -5865,7 +5872,8 @@ function showGameOver(){
   }
   const gRows=G.groupUserResults.map(function(r,i){return _jRow(gLabel+(i+1),r.opp,r.myG,r.oppG);}).join('');
   const kRows=G.knockResults.map(function(r,i){return _jRow(KNAMES2[Math.min(i,KNAMES2.length-1)],r.opp,r.myG,r.oppG);}).join('');
-  document.getElementById('go-journey').innerHTML=gRows+kRows;
+  document.getElementById('go-journey').innerHTML=gRows+(gRows&&kRows?'<div class="end-j-sep"></div>':'')+kRows;
+  _animateJourney('go-journey');
 
   _incGamesTotal();
   renderGameOverPitch();
@@ -6057,9 +6065,10 @@ function showTrophy(){
       +'<span class="end-j-score">'+myG+'–'+oppG+'</span>'
       +'<span class="end-j-res" style="'+rc+'">'+rv+'</span></div>';
   }
-  document.getElementById('t-journey').innerHTML=
-    G.groupUserResults.map(function(r,i){return _jRow(gLabel+(i+1),r.opp,r.myG,r.oppG);}).join('')
-    +G.knockResults.map(function(r,i){return _jRow(KNAMES[Math.min(i,KNAMES.length-1)],r.opp,r.myG,r.oppG);}).join('');
+  var _tGRows=G.groupUserResults.map(function(r,i){return _jRow(gLabel+(i+1),r.opp,r.myG,r.oppG);}).join('');
+  var _tKRows=G.knockResults.map(function(r,i){return _jRow(KNAMES[Math.min(i,KNAMES.length-1)],r.opp,r.myG,r.oppG);}).join('');
+  document.getElementById('t-journey').innerHTML=_tGRows+(_tGRows&&_tKRows?'<div class="end-j-sep"></div>':'')+_tKRows;
+  _animateJourney('t-journey');
   renderTrophyPitch();
   // Confetti
   const wrap=document.getElementById('t-confetti');
