@@ -6491,9 +6491,8 @@ function checkChallengeURL(){
       G.difficulty=diff;
       G.format=fmt;
       setTimeout(function(){
-        var _dc=document.querySelectorAll('.diff-card');
-        _dc.forEach(function(el){el.classList.remove('diff-sel');if(el.dataset&&el.dataset.diff===diff)el.classList.add('diff-sel');});
-        showScreen('screen-format');
+        applyTournamentTheme(mode);
+        initDraft();
       },80);
       return;
     }
