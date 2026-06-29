@@ -832,8 +832,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="hcb-era" style="font-size:.85rem;font-weight:700;color:#e8edf5;line-height:1.3;margin-bottom:2px"></div>
     <div id="hcb-meta" style="font-size:.66rem;color:#9ca3af;margin-bottom:8px"></div>
     <div style="display:flex;align-items:center;gap:8px">
-      <button id="hcb-play-btn" class="btn" style="font-size:.74rem;padding:7px 16px;margin-top:0;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc">⚡ Partecipa</button>
-      <a href="sfide.html" style="font-size:.65rem;color:#6b7a8d">Classifica e archivio →</a>
+      <button id="hcb-play-btn" class="btn" style="font-size:.74rem;padding:7px 16px;margin-top:0;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc" data-i18n="challenge.join">⚡ Partecipa</button>
+      <a href="sfide.html" style="font-size:.65rem;color:#6b7a8d" data-i18n="challenge.archive">Classifica e archivio →</a>
     </div>
     <div id="hcb-expire" style="font-size:.6rem;color:#6b7a8d;margin-top:5px"></div>
   </div>
@@ -1263,7 +1263,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
-    'home.lobby_sub':'Scegli il torneo',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'📖 Scopri la storia della Champions League →','home.link_copa':'📖 Scopri la storia della Copa Libertadores →','home.link_wc':'📖 Scopri la storia del Mondiale →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1501,7 +1501,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'📖 Discover the history of the Champions League →','home.link_copa':'📖 Discover the history of the Copa Libertadores →','home.link_wc':'📖 Discover the history of the World Cup →',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'📖 Discover the history of the Champions League →','home.link_copa':'📖 Discover the history of the Copa Libertadores →','home.link_wc':'📖 Discover the history of the World Cup →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1753,7 +1753,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'📖 Descubre la historia de la Champions League →','home.link_copa':'📖 Descubre la historia de la Copa Libertadores →','home.link_wc':'📖 Descubre la historia del Mundial →',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'📖 Descubre la historia de la Champions League →','home.link_copa':'📖 Descubre la historia de la Copa Libertadores →','home.link_wc':'📖 Descubre la historia del Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -6347,13 +6347,13 @@ function _loadChallengeBanner(){
       var expEl=document.getElementById('hcb-expire');
       if(eraEl)eraEl.textContent=tLabel+' · '+c.eraName;
       var metaTxt=c.formation+' · '+diffLabel;
-      if(cfg.participants)metaTxt+=' · '+cfg.participants+' partecipanti';
+      if(cfg.participants)metaTxt+=' · '+cfg.participants+t('challenge.participants');
       if(metaEl)metaEl.textContent=metaTxt;
       // Scadenza
       if(expEl&&c.dateEnd){
         var exp=new Date(c.dateEnd+'T23:59:59');
         var dLeft=Math.ceil((exp-new Date())/(864e5));
-        expEl.textContent=dLeft<=0?'Scade oggi':dLeft===1?'Scade domani':'Scade tra '+dLeft+' giorni';
+        expEl.textContent=dLeft<=0?t('challenge.expires_today'):dLeft===1?t('challenge.expires_tomorrow'):t('challenge.expires_days').replace('{N}',dLeft);
       }
       // URL sfida
       var url='/?challenge='+encodeURIComponent(cfg.weekId)
