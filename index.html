@@ -6024,6 +6024,25 @@ document.addEventListener('DOMContentLoaded',function(){
   }catch(e){
     document.getElementById('banner-disclaimer').style.display='flex';
   }
+  // Notifica approvazione HoF
+  try{
+    var _hp=localStorage.getItem('dcz_hof_pending');
+    if(_hp){
+      setTimeout(function(){
+        fetch('/hof-status.php?id='+encodeURIComponent(_hp))
+          .then(function(r){return r.json();})
+          .then(function(res){
+            if(res.found){
+              try{localStorage.removeItem('dcz_hof_pending');}catch(e){}
+              var _l=localStorage.getItem('dcz_lang')||'it';
+              var _hofMsg=_l==='es'?'🏆 ¡Tu resultado está en el Hall of Fame!':_l==='en'?'🏆 Your result is in the Hall of Fame!':'🏆 Il tuo risultato è in Hall of Fame!';
+              _showHoFToast(_hofMsg);
+            }
+          })
+          .catch(function(){});
+      },1800);
+    }
+  }catch(e){}
 });
 
 
@@ -6488,6 +6507,7 @@ function submitToHoF(){
       btns.forEach(function(b){b.textContent='✅ Inviato!';});
       document.querySelectorAll('#hof-nickname').forEach(function(el){el.value='';});
       showShareToast('🏆 Risultato inviato!');
+      if(res.id){try{localStorage.setItem('dcz_hof_pending',res.id);}catch(e){}}
     } else {
       btns.forEach(function(b){b.disabled=false;b.textContent='🏆 Invia in Hall of Fame';});
       alert(res.error||'Errore durante l\'invio.');
@@ -6620,6 +6640,14 @@ function _showTrophyToast(ids){
   el.innerHTML=label+(names.length?'<br>'+names.join('<br>'):'');
   el.classList.add('show');
   setTimeout(function(){el.classList.remove('show');},3500);
+}
+
+function _showHoFToast(msg){
+  var el=document.getElementById('trophy-toast');
+  if(!el)return;
+  el.innerHTML=msg;
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},4500);
 }
 
 function openTrophiesScreen(){

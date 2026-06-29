@@ -106,4 +106,4 @@ flock($fh, LOCK_UN);
 fclose($fh);
 
 $_SESSION['hof_last'] = time();
-echo json_encode(['success' => true, 'message' => 'Risultato inviato! Sarà pubblicato dopo approvazione del moderatore.']);
+echo json_encode(['success' => true, 'id' => $entry['id'], 'message' => 'Risultato inviato! Sarà pubblicato dopo approvazione del moderatore.']);
