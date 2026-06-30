@@ -19,23 +19,46 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Copa Libertadores Legends — Storia e Squadre | Decempionz",
-    "description": "Scopri la storia della Copa Libertadores: formato, curiosità, vincitori storici e le 46 rose leggendarie disponibili in Decempionz.",
-    "url": "https://decempionz.com/copa.html",
-    "inLanguage": ["it", "en", "es"],
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "Decempionz",
-      "url": "https://decempionz.com/"
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
-        {"@type": "ListItem", "position": 2, "name": "Copa Libertadores", "item": "https://decempionz.com/copa.html"}
-      ]
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "name": "Copa Libertadores Legends — Storia e Squadre | Decempionz",
+        "description": "Scopri la storia della Copa Libertadores: formato, curiosità, vincitori storici e le 46 rose leggendarie disponibili in Decempionz.",
+        "url": "https://decempionz.com/copa.html",
+        "inLanguage": ["it", "en", "es"],
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-06-29",
+        "author": {
+          "@type": "Organization",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "about": {
+          "@type": "SportsEvent",
+          "name": "Copa Libertadores",
+          "sport": "Soccer"
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
+            {"@type": "ListItem", "position": 2, "name": "Copa Libertadores", "item": "https://decempionz.com/copa.html"}
+          ]
+        }
+      },
+      {
+        "@type": "ItemList",
+        "name": "Rose storiche Copa Libertadores — Decempionz",
+        "description": "46 rose leggendarie della Copa Libertadores (1960–2024) disponibili in Decempionz.",
+        "url": "https://decempionz.com/copa.html",
+        "numberOfItems": 46
+      }
+    ]
   }
   </script>
   <style>

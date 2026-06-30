@@ -19,23 +19,46 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "UCL Legends — Storia della Champions League | Decempionz",
-    "description": "Scopri la storia della UEFA Champions League: formato, curiosità, vincitori storici e le 74 rose leggendarie disponibili in Decempionz.",
-    "url": "https://decempionz.com/ucl.html",
-    "inLanguage": ["it", "en", "es"],
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "Decempionz",
-      "url": "https://decempionz.com/"
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
-        {"@type": "ListItem", "position": 2, "name": "UCL Legends", "item": "https://decempionz.com/ucl.html"}
-      ]
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "name": "UCL Legends — Storia della Champions League | Decempionz",
+        "description": "Scopri la storia della UEFA Champions League: formato, curiosità, vincitori storici e le 74 rose leggendarie disponibili in Decempionz.",
+        "url": "https://decempionz.com/ucl.html",
+        "inLanguage": ["it", "en", "es"],
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-06-29",
+        "author": {
+          "@type": "Organization",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "about": {
+          "@type": "SportsEvent",
+          "name": "UEFA Champions League",
+          "sport": "Soccer"
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
+            {"@type": "ListItem", "position": 2, "name": "UCL Legends", "item": "https://decempionz.com/ucl.html"}
+          ]
+        }
+      },
+      {
+        "@type": "ItemList",
+        "name": "Rose storiche UCL — Decempionz",
+        "description": "74 rose leggendarie della UEFA Champions League (1956–2024) disponibili in Decempionz.",
+        "url": "https://decempionz.com/ucl.html",
+        "numberOfItems": 74
+      }
+    ]
   }
   </script>
   <style>

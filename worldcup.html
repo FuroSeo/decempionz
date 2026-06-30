@@ -19,23 +19,46 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "World Cup Legends — Storia dei Mondiali di Calcio | Decempionz",
-    "description": "Scopri la storia dei Mondiali di calcio: formato, curiosità, i grandi tornei e le 79 rose leggendarie disponibili in Decempionz.",
-    "url": "https://decempionz.com/worldcup.html",
-    "inLanguage": ["it", "en", "es"],
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "Decempionz",
-      "url": "https://decempionz.com/"
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
-        {"@type": "ListItem", "position": 2, "name": "World Cup Legends", "item": "https://decempionz.com/worldcup.html"}
-      ]
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "name": "World Cup Legends — Storia dei Mondiali di Calcio | Decempionz",
+        "description": "Scopri la storia dei Mondiali di calcio: formato, curiosità, i grandi tornei e le 79 rose leggendarie disponibili in Decempionz.",
+        "url": "https://decempionz.com/worldcup.html",
+        "inLanguage": ["it", "en", "es"],
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-06-29",
+        "author": {
+          "@type": "Organization",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "about": {
+          "@type": "SportsEvent",
+          "name": "FIFA World Cup",
+          "sport": "Soccer"
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Decempionz",
+          "url": "https://decempionz.com/"
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Decempionz", "item": "https://decempionz.com/"},
+            {"@type": "ListItem", "position": 2, "name": "World Cup Legends", "item": "https://decempionz.com/worldcup.html"}
+          ]
+        }
+      },
+      {
+        "@type": "ItemList",
+        "name": "Nazionali storiche World Cup — Decempionz",
+        "description": "79 nazionali storiche dei Mondiali di calcio (1930–2022) disponibili in Decempionz.",
+        "url": "https://decempionz.com/worldcup.html",
+        "numberOfItems": 79
+      }
+    ]
   }
   </script>
   <style>
