@@ -107,8 +107,8 @@
 [data-theme="light"][data-mode="copa"]{--blue:#1a5224;--blue2:#1e7a35;--blue-lt:#2d9e50;}
 [data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#fca5a5;}
 [data-theme="light"][data-mode="wc"]{--blue:#7c1a1a;--blue2:#b91c1c;--blue-lt:#dc6060;}
-.tourn-card.tourn-wc{border-color:#6a1a1a;background:linear-gradient(160deg,#1a0909 0%,#170d0d 100%)}
-.tourn-card.tourn-wc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c1a1a,#fca5a5 50%,#7c1a1a)}
+.tourn-card.tourn-wc{border-color:#1e2d42;background:#160a0a}
+.tourn-card.tourn-wc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#ef4444}
 .tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
 .tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
 .tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}
@@ -137,17 +137,17 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tourn-icon{font-size:2rem;line-height:1;flex-shrink:0}
 .tourn-name{font-size:1.15rem;font-weight:700;letter-spacing:.3px;color:var(--text);font-family:'Oswald',sans-serif}
 .tourn-sub{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-top:3px}
-.tourn-stats{display:flex;gap:0;margin-bottom:14px;background:var(--s2);border-radius:10px;overflow:hidden}
-.tourn-stat{flex:1;text-align:center;padding:10px 6px}
-.tourn-stat+.tourn-stat{border-left:1px solid var(--brd)}
-.tourn-stat-val{font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'Oswald',sans-serif;line-height:1}
+.tourn-stats{display:flex;gap:6px;margin-bottom:14px}
+.tourn-stat{flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:8px}
+.tourn-stat+.tourn-stat{border-left:none}
+.tourn-stat-val{font-size:1.8rem;font-weight:900;color:var(--gold);font-family:'Oswald',sans-serif;line-height:1}
 .tourn-stat-lbl{font-size:.54rem;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
 .tourn-badge-soon{position:absolute;top:14px;right:14px;background:var(--s2);color:var(--mut);font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--brd)}
 .tourn-card.tourn-locked{opacity:.5;pointer-events:none}
-.tourn-card.tourn-ucl{border-color:#2a4a8a;background:linear-gradient(160deg,#0d1728 0%,#111928 100%)}
-.tourn-card.tourn-ucl::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a3a7a,#c9a227 50%,#1a3a7a)}
-.tourn-card.tourn-copa{border-color:#1e5a1e;background:linear-gradient(160deg,#0a1e0a 0%,#0d1a0d 100%)}
-.tourn-card.tourn-copa::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1a5a1a,#86efac 50%,#1a5a1a)}
+.tourn-card.tourn-ucl{border-color:#1e2d42;background:#0e1828}
+.tourn-card.tourn-ucl::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#3b6fd4}
+.tourn-card.tourn-copa{border-color:#1e2d42;background:#0a1a0a}
+.tourn-card.tourn-copa::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#22c55e}
 .tourn-bottom-btns{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .tourn-bottom-btns .btn{margin-top:0}
 #btn-start-draft{position:sticky;bottom:16px;z-index:10;box-shadow:0 -4px 16px var(--bg);}
@@ -275,18 +275,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   background:linear-gradient(90deg,var(--tier-c,var(--gold)),var(--tier-c2,var(--gold2)))}
 /* Tier colors */
 .prc.tier-elite{--tier-c:#fbbf24;--tier-c2:#f59e0b;
-  border:2px solid #fbbf2466;box-shadow:0 0 20px rgba(251,191,36,.12);}
+  border:1.5px solid rgba(251,191,36,.5);}
 .prc.tier-high {--tier-c:#94a3b8;--tier-c2:#64748b;
-  border:2px solid #94a3b840;}
-.prc.tier-low  {--tier-c:#78350f;--tier-c2:#92400e;
-  border:2px solid #78350f60;opacity:.9;}
+  border:1px solid rgba(148,163,184,.35);}
+.prc.tier-low  {--tier-c:#c9a227;--tier-c2:#e8c04a;
+  border:1px solid rgba(120,53,15,.5);opacity:.9;}
 
 /* Tier badge */
 .prc-tier{position:absolute;top:10px;right:10px;
   font-size:.58rem;font-weight:900;letter-spacing:1.2px;padding:2px 7px;border-radius:4px;
   text-transform:uppercase;}
-.prc-tier.elite{background:rgba(251,191,36,.18);color:#fbbf24}
-.prc-tier.high {background:rgba(148,163,184,.15);color:#94a3b8}
+.prc-tier.elite{background:rgba(251,191,36,.08);color:#fbbf24;border:0.5px solid rgba(251,191,36,.4)}
+.prc-tier.high {background:rgba(148,163,184,.08);color:#94a3b8;border:0.5px solid rgba(148,163,184,.3)}
 .prc-tier.low  {background:rgba(120,53,15,.25);color:#d97706}
 
 /* Team + season header */
@@ -342,7 +342,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     radial-gradient(ellipse 62% 22% at 50% 0%,   rgba(255,255,255,.055) 0%, transparent 100%),
     linear-gradient(180deg, transparent calc(50% - .5px), rgba(255,255,255,.09) calc(50% - .5px), rgba(255,255,255,.09) calc(50% + .5px), transparent calc(50% + .5px)),
     linear-gradient(180deg,#0b350b,#114d11 50%,#0b350b);
-  border:1px solid #1d541d;border-radius:12px;padding:10px 8px;margin-bottom:14px;
+  border:1.5px solid #2a7030;border-radius:12px;padding:10px 8px;margin-bottom:14px;
   display:flex;flex-direction:column;gap:8px;min-height:190px;}
 .dp-row{position:relative;z-index:1;display:flex;justify-content:center;gap:8px;align-items:center;}
 /* Base */
@@ -383,8 +383,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .pbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:4px;transition:width .3s}
 #d-slot-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
 .slot-chip{font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:6px;border:1px solid;transition:background .15s,border-color .15s,color .15s,transform .15s;letter-spacing:.3px}
-.slot-chip.sc-empty{background:rgba(107,126,149,.08);border-color:rgba(107,126,149,.22);color:var(--mut)}
-.slot-chip.sc-filled{background:rgba(201,162,39,.14);border-color:rgba(201,162,39,.38);color:var(--gold2)}
+.slot-chip.sc-empty{background:rgba(107,126,149,.04);border-color:rgba(107,126,149,.28);border-style:dashed;color:var(--mut)}
+.slot-chip.sc-filled{background:rgba(201,162,39,.22);border-color:var(--gold);color:var(--gold)}
 .slot-chip.sc-compat{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.45);color:#4ade80;transform:scale(1.1)}
 
 /* Slot tracker */
@@ -402,8 +402,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* Reveal card */
 .reveal-zone{perspective:800px;min-height:210px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
 .draft-pick-card:active{transform:scale(.96);opacity:.88}
-.prc{background:linear-gradient(145deg,#131f35,#0f1a2e);border:2px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
-.prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.prc{background:#0e1828;border:1px solid #1e2d42;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tier-c,var(--gold))}
 @keyframes cardIn{from{opacity:0;transform:rotateY(-20deg) scale(.93)}to{opacity:1;transform:rotateY(0) scale(1)}}
 @keyframes tierFlashIn{0%{opacity:0;transform:scale(.8) translateY(6px)}40%{opacity:1;transform:scale(1.08) translateY(0)}80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.95)}}
 #d-tier-flash{display:none;position:absolute;inset:0;z-index:10;align-items:center;justify-content:center;pointer-events:none}
@@ -412,7 +412,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc-pg{display:inline-block;padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
 .pg-gk{background:var(--blue);color:var(--blue-lt)}.pg-def{background:#1a3a1a;color:#4ade80}.pg-mid{background:#3a2e00;color:#fbbf24}.pg-fwd{background:#3a0a0a;color:#f87171}
 .prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
-.prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px}
+.prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px;color:var(--tier-c,var(--gold))}
 .prc-name{font-size:1.4rem;font-weight:700;letter-spacing:.2px;margin-bottom:3px;font-family:'Oswald',sans-serif}
 .prc-pos{font-size:.76rem;color:var(--mut)}
 
@@ -420,8 +420,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .btn-accept{padding:15px;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;border:2px solid var(--grn2);background:rgba(22,163,74,.12);color:var(--grn2);transition:all .13s}
 .btn-accept:hover:not(:disabled){background:rgba(22,163,74,.28)}
 .btn-accept:disabled{opacity:.25;cursor:not-allowed}
-.btn-pass{padding:15px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;border:1.5px solid rgba(201,162,39,.3);background:rgba(201,162,39,.05);color:var(--gold);transition:all .13s}
-.btn-pass:hover:not(:disabled){border-color:var(--gold);background:rgba(201,162,39,.14);color:var(--gold2)}
+.btn-pass{padding:15px;border-radius:10px;font-weight:800;font-size:.88rem;cursor:pointer;border:1.5px solid var(--gold);background:rgba(201,162,39,.1);color:var(--gold);transition:all .13s}
+.btn-pass:hover:not(:disabled){border-color:var(--gold2);background:rgba(201,162,39,.22);color:var(--gold2)}
 .btn-pass:disabled{opacity:.2;cursor:not-allowed;border-color:var(--brd);background:transparent;color:var(--mut)}
 
 .squad-built{background:var(--s1);border:1px solid var(--brd);border-radius:10px;padding:11px 13px}
@@ -735,6 +735,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Il Draft di Calcio Definitivo</div>
     <h1 class="logo">Decempionz</h1>
     <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:10px;font-size:.85rem;line-height:1.5;font-style:italic">I grandi Campioni tutti insieme, per una volta sola.</p>
+    <div id="home-games-counter" style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:var(--s1);border-radius:20px;padding:4px 12px;border:1px solid var(--brd)">
+      <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
+      <span style="font-size:.65rem;color:var(--mut);font-weight:600"><span id="home-games-num">0</span> <span id="home-games-lbl">partite giocate</span></span>
+    </div>
   </div>
 
   <!-- Tournament tab switcher -->
@@ -772,7 +776,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
-    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--mut);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--mut)'" data-i18n="home.link_ucl">📖 Scopri la storia della Champions League →</a></div>
+    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 74 rose UCL →</a></div>
   </div>
 
   <!-- Copa Libertadores -->
@@ -794,7 +798,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button data-i18n="copa.btn_custom" class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px">⚙️ Personalizza</button>
-    <div style="text-align:center;margin-top:10px"><a href="copa.html" style="font-size:.72rem;color:var(--mut);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--mut)'" data-i18n="home.link_copa">📖 Scopri la storia della Copa Libertadores →</a></div>
+    <div style="text-align:center;margin-top:10px"><a href="copa.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_copa">Sfoglia tutte le 46 rose Copa →</a></div>
   </div>
 
   <!-- World Cup Legends -->
@@ -816,15 +820,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button data-i18n="wc.btn_custom" class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px">⚙️ Personalizza</button>
-    <div style="text-align:center;margin-top:10px"><a href="worldcup.html" style="font-size:.72rem;color:var(--mut);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--mut)'" data-i18n="home.link_wc">📖 Scopri la storia dei Mondiali →</a></div>
+    <div style="text-align:center;margin-top:10px"><a href="worldcup.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_wc">Sfoglia tutte le 79 rose World Cup →</a></div>
   </div>
 
-  <!-- Contatore partite globale -->
-  <div id="home-games-counter" style="text-align:center;margin:14px 0 4px">
-    <span style="font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">⚽ <span id="home-games-num">0</span></span>
-    <span style="font-size:.65rem;color:var(--mut);margin-left:4px" id="home-games-lbl">partite giocate su Decempionz</span>
-    <span style="font-size:.6rem;color:var(--mut);opacity:.6;margin-left:4px">· dal 20 giu 2026</span>
-  </div>
+
 
   <!-- Banner sfida settimanale -->
   <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:11px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px">
@@ -840,17 +839,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
-    <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.28);color:var(--gold)">🏆 Hall of Fame</button>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <button data-i18n="home.howtoplay_btn" class="btn btn-ghost" onclick="showScreen('screen-howto')" style="font-size:.78rem;margin-top:0">❓ Come si gioca</button>
-      <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.78rem;margin-top:0" data-i18n="trophies.btn">🏅 Trofei</button>
-      <button class="btn btn-ghost" onclick="openStatsScreen()" style="font-size:.78rem;margin-top:0" data-i18n="stats.btn">📊 Stats</button>
+    <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:transparent;border:1.5px solid var(--gold);color:var(--gold)">🏆 Hall of Fame</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.78rem;margin-top:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px" data-i18n="trophies.btn"><span style="font-size:1.2rem">🏅</span>Trofei</button>
+      <button class="btn btn-ghost" onclick="openStatsScreen()" style="font-size:.78rem;margin-top:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px" data-i18n="stats.btn"><span style="font-size:1.2rem">📊</span>Stats</button>
     </div>
   </div>
 
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
-    <a onclick="openFanProject()">Fan Project</a> &nbsp;·&nbsp;
+    <a onclick="showScreen('screen-howto')" data-i18n="home.howtoplay_btn">Come si gioca</a> &nbsp;·&nbsp; <a onclick="openFanProject()">Fan Project</a> &nbsp;·&nbsp;
     <a onclick="openPrivacy()">Privacy</a> &nbsp;·&nbsp;
     <a onclick="openContatti()">Contatti</a> &nbsp;·&nbsp;
     <a href="about.html" target="_blank">About</a> &nbsp;·&nbsp;
@@ -1025,19 +1023,19 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Score bar -->
-  <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(160deg,var(--s1),var(--s2));border:1px solid var(--blue);border-radius:10px;padding:10px 12px;margin-bottom:10px;gap:6px;position:relative;overflow:hidden">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--gold) 50%,var(--blue))"></div>
-    <div class="m-tname" id="m-home" style="font-size:.78rem"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:10px 12px;margin-bottom:10px;gap:6px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)"></div>
+    <div class="m-tname" id="m-home" style="font-size:.78rem;color:var(--gold)"></div>
     <div class="m-score" id="m-score" style="font-size:2rem;margin:0;letter-spacing:-2px">0 — 0</div>
     <div class="m-tname r" id="m-away" style="font-size:.78rem"></div>
   </div>
 
   <!-- Two-column lineups -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-    <div style="background:var(--s1);border:1px solid var(--brd);border-radius:8px;padding:7px 8px">
+    <div style="background:var(--s1);border:1px solid var(--brd);border-radius:8px;padding:7px 8px;border-left:2px solid rgba(201,162,39,.35)">
       <div id="m-lineup-home"></div>
     </div>
-    <div style="background:var(--s1);border:1px solid var(--brd);border-radius:8px;padding:7px 8px">
+    <div style="background:var(--s1);border:1px solid var(--brd);border-radius:8px;padding:7px 8px;border-left:2px solid rgba(248,113,113,.22)">
       <div id="m-lineup-away"></div>
     </div>
   </div>
@@ -1265,7 +1263,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
-    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'📖 Scopri la storia della Champions League →','home.link_copa':'📖 Scopri la storia della Copa Libertadores →','home.link_wc':'📖 Scopri la storia del Mondiale →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 74 rose UCL →','home.link_copa':'Sfoglia tutte le 46 rose Copa →','home.link_wc':'Sfoglia tutte le 79 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1503,7 +1501,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'📖 Discover the history of the Champions League →','home.link_copa':'📖 Discover the history of the Copa Libertadores →','home.link_wc':'📖 Discover the history of the World Cup →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 74 UCL squads →','home.link_copa':'Browse all 46 Copa squads →','home.link_wc':'Browse all 79 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1755,7 +1753,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'📖 Descubre la historia de la Champions League →','home.link_copa':'📖 Descubre la historia de la Copa Libertadores →','home.link_wc':'📖 Descubre la historia del Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 74 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -4306,7 +4304,7 @@ function renderThreeCards(){
       const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
       const nameSz=draftNameSz(p.n,isElite);
-      const starBadge=(!blind&&isElite)?'<div style="font-size:.52rem;font-weight:900;letter-spacing:1.5px;color:#d4a800;background:rgba(212,168,0,.13);padding:1px 7px;border-radius:3px;margin-top:2px">★ LEGEND</div>':'';
+      const starBadge=(!blind&&isElite)?'<div style="font-size:.55rem;font-weight:900;letter-spacing:1.8px;color:#fbbf24;background:rgba(251,191,36,.12);border:0.5px solid rgba(251,191,36,.45);padding:2px 10px;border-radius:10px;margin-top:4px">★ LEGEND</div>':'';
       // Out-of-position badge
       var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
       var oopBadge='';
@@ -6898,7 +6896,7 @@ function _renderGamesCounter(){
       var n=d.total||0;
       var _cgl=(G&&G.lang)?G.lang:'it';
       document.getElementById('home-games-num').textContent=_fmtCount(n);
-      document.getElementById('home-games-lbl').textContent=_cgl==='it'?'partite giocate su Decempionz':_cgl==='es'?'partidas jugadas en Decempionz':'games played on Decempionz';
+      document.getElementById('home-games-lbl').textContent=_cgl==='it'?'partite giocate':_cgl==='es'?'partidas jugadas':'games played';
     })
     .catch(function(){});
 }
