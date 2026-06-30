@@ -4139,7 +4139,7 @@ function renderDraftPitch(currentPlayer){
 function drawDraftCards(){
   G.draftCards=[];
   G.draftCurrentTier=null;
-  var _tw={10:3,9:2,8:2,7:1};
+  var _tw={10:2,9:3,8:2,7:1};
   var _positions=fmtPositions(G.formation,G.tactic);
 
   // 1. Collect unique remaining slot types (e.g. GK, CB, CM, RW...)
@@ -4175,7 +4175,11 @@ function drawDraftCards(){
   var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
-  var _tierOrder=[tier].concat([10,9,8,7].filter(function(t){return t!==tier&&G.draftTiers[t].length>0;}));
+  // Fallback order: primary tier, then descend, then ascend (never go up before exhausting lower tiers)
+  var _allTiers=[10,9,8,7];
+  var _below=_allTiers.filter(function(t){return t<tier&&G.draftTiers[t].length>0;});
+  var _above=_allTiers.filter(function(t){return t>tier&&G.draftTiers[t].length>0;});
+  var _tierOrder=[tier].concat(_below).concat(_above);
 
   // 5. For each target type, find 1 player — primary tier preferred, fallback to adjacent
   var drawn=[];
