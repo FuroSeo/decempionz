@@ -2496,38 +2496,15 @@
       </section>
     </div>
     <div class="cta-wrap">
-      <a href="/" class="btn-play">🏆 Jugar con las Legends UCL →</a>
+          <a href="/" class="btn-play">🏆 Juega con las leyendas UCL →</a>
     </div>
   </div>
 
   <footer>
-    <a href="/">← Torna al gioco</a> · © 2026 Decempionz · <a href="/about.html">About</a> · <a href="/copa.html">Copa Libertadores</a> · <a href="/worldcup.html">World Cup</a>
+    <a href="/">← Volver al juego / Back to the game</a>
+    &nbsp;·&nbsp; © 2026 Decempionz &nbsp;·&nbsp;
+    <a href="/about.html">About</a>
   </footer>
 
-  <script>
-
-  function setLang(lang) {
-    document.querySelectorAll('[data-lang]').forEach(el => {
-      el.classList.toggle('visible', el.dataset.lang === lang);
-    });
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.id === 'btn-' + lang);
-    });
-    localStorage.setItem('lang', lang);
-  }
-  function toggleSquad(idx) {
-    var roster = document.getElementById('roster-' + idx);
-    var arrow = document.getElementById('arrow-' + idx);
-    if (roster) {
-      roster.classList.toggle('open');
-      if (arrow) arrow.classList.toggle('open');
-    }
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var saved = localStorage.getItem('lang') || 'it';
-    setLang(saved);
-  });
-
-  </script>
 </body>
 </html>
