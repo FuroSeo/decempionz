@@ -826,15 +826,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 
   <!-- Banner sfida settimanale -->
-  <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:11px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px">
-    <div style="font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#818cf8;margin-bottom:3px">⚡ SFIDA DELLA SETTIMANA</div>
-    <div id="hcb-era" style="font-size:.85rem;font-weight:700;color:#e8edf5;line-height:1.3;margin-bottom:2px"></div>
-    <div id="hcb-meta" style="font-size:.66rem;color:#9ca3af;margin-bottom:8px"></div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button id="hcb-play-btn" class="btn" style="font-size:.74rem;padding:7px 16px;margin-top:0;background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5);color:#a5b4fc" data-i18n="challenge.join">⚡ Partecipa</button>
-      <a href="sfide.html" style="font-size:.65rem;color:#6b7a8d" data-i18n="challenge.archive">Classifica e archivio →</a>
+  <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.45);border-radius:12px;border-left:3px solid #818cf8;text-align:center">
+    <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;margin-bottom:5px">⚡ SFIDA DELLA SETTIMANA</div>
+    <div id="hcb-era" style="font-size:.9rem;font-weight:700;color:#e8edf5;line-height:1.3;margin-bottom:3px"></div>
+    <div id="hcb-meta" style="font-size:.64rem;color:#9ca3af;margin-bottom:10px"></div>
+    <button id="hcb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.6);color:#c7d2fe" data-i18n="challenge.join">⚡ Partecipa</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px">
+      <div id="hcb-expire" style="font-size:.58rem;color:#6b7a8d"></div>
+      <a href="sfide.html" style="font-size:.6rem;color:#6b7a8d;text-decoration:none" data-i18n="challenge.archive">Classifica e archivio →</a>
     </div>
-    <div id="hcb-expire" style="font-size:.6rem;color:#6b7a8d;margin-top:5px"></div>
   </div>
 
   <!-- Bottom actions -->
@@ -4139,7 +4139,7 @@ function renderDraftPitch(currentPlayer){
 function drawDraftCards(){
   G.draftCards=[];
   G.draftCurrentTier=null;
-  var _tw={10:2,9:3,8:2,7:1};
+  var _tw={10:3,9:2,8:2,7:1};
   var _positions=fmtPositions(G.formation,G.tactic);
 
   // 1. Collect unique remaining slot types (e.g. GK, CB, CM, RW...)
@@ -4175,11 +4175,7 @@ function drawDraftCards(){
   var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
-  // Fallback order: primary tier, then descend, then ascend (never go up before exhausting lower tiers)
-  var _allTiers=[10,9,8,7];
-  var _below=_allTiers.filter(function(t){return t<tier&&G.draftTiers[t].length>0;});
-  var _above=_allTiers.filter(function(t){return t>tier&&G.draftTiers[t].length>0;});
-  var _tierOrder=[tier].concat(_below).concat(_above);
+  var _tierOrder=[tier].concat([10,9,8,7].filter(function(t){return t!==tier&&G.draftTiers[t].length>0;}));
 
   // 5. For each target type, find 1 player — primary tier preferred, fallback to adjacent
   var drawn=[];
