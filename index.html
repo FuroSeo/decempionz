@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- deploy: 2026-07-02a -->
+<!-- deploy: 2026-07-02b -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -6550,7 +6550,8 @@ document.addEventListener('DOMContentLoaded',function(){
       document.getElementById('banner-disclaimer').style.display='flex';
     }
   }catch(e){
-    document.getElementById('banner-disclaimer').style.display='flex';
+    var _bd=document.getElementById('banner-disclaimer');
+    if(_bd)_bd.style.display='flex';
   }
   // Notifica approvazione HoF
   try{
@@ -7999,7 +8000,4 @@ if('serviceWorker' in navigator){
     <div class="modal-section">
       <h3>Cookie</h3>
       <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
-    </div>
-    <div class="modal-section">
-      <h3>I tuoi diritti (GDPR – Reg. UE 2016/679)</h3>
-      <p>Ai sensi degli artt. 15-20 del GDPR hai diri
+    </div

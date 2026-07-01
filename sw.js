@@ -1,8 +1,8 @@
-const CACHE = 'decempionz-v5.6.17';
+const CACHE = 'decempionz-v5.6.18';
 const ASSETS = ['/', '/index.html', '/og-image.png', '/icon-192.png', '/icon-512.png', '/manifest.json'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{}));
   self.skipWaiting();
 });
 
