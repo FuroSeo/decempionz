@@ -1278,7 +1278,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.6.8';
+const GAME_VERSION='5.6.9';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4077,9 +4077,7 @@ function initDraft(){
       return Object.assign({},apps[Math.floor(Math.random()*apps.length)]);
     });
     _dPool=_dPool.map(function(p){if(!p.pos&&p.p)p.pos=p.p;return p;});
-    var _gksD=_dPool.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
-    var _gkKeepD=new Set(_gksD.slice(0,4).map(function(p){return p.n;}));
-    _dPool=_dPool.filter(function(p){return p.pos!=='GK'||_gkKeepD.has(p.n);});
+    // Dynasty: keep ALL unique GKs — each squad has its own goalkeeper, user should see variety
     G.draftPool=_dPool.sort(function(){return Math.random()-.5;});
     G.draftTiers={10:[],9:[],8:[],7:[]};
     G.draftPool.forEach(function(p){var t=p.r>=10?10:p.r>=9?9:p.r>=8?8:7;G.draftTiers[t].push(p);});
@@ -4387,10 +4385,12 @@ function drawDraftCards(){
       });
     });
   });
-  // GK reserve: only include GK in targets if <3 non-GK types are available
-  // This prevents GKs from being consumed as discarded alternatives in early picks
+  // GK reserve: exclude GK from targets/padding as long as ANY non-GK slot is still empty.
+  // Use slot-based check (not pool-based) — prevents GKs being consumed when outfield pool
+  // for a specific slot type is exhausted before its slot is filled.
+  var _anyNonGKSlotLeft=_positions.some(function(pos,i){return G.slotPlayers[i]===null&&pos!=='GK';});
   var _nonGKFeasible=_feasible.filter(function(t){return t!=='GK';});
-  var _targetPool=_nonGKFeasible.length>0?_nonGKFeasible:_feasible;
+  var _targetPool=_anyNonGKSlotLeft?_nonGKFeasible:_feasible;
   var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
@@ -4420,7 +4420,7 @@ function drawDraftCards(){
 
   // 6. Pad to 3 cards if fewer options exist: draw extras from any feasible type
   if(drawn.length<3){
-    var _padTypes=(_nonGKFeasible.length>0?_feasible.filter(function(pt){return pt!=='GK';}):_feasible).slice().sort(function(){return Math.random()-0.5;});
+    var _padTypes=(_anyNonGKSlotLeft?_feasible.filter(function(pt){return pt!=='GK';}):_feasible).slice().sort(function(){return Math.random()-0.5;});
     for(var _pi=0;_pi<_padTypes.length&&drawn.length<3;_pi++){
       var _ptype=_padTypes[_pi];
       var _prevPad=drawn.length;
