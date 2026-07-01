@@ -752,10 +752,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="tourn-card tourn-ucl" id="tourn-ucl">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🏆</div>
-      <div>
+      <div style="flex:1">
         <div class="tourn-name" data-i18n="tourn.ucl.name">UCL Legends</div>
         <div class="tourn-sub" data-i18n="tourn.ucl.sub">Champions League · 1956 – 2024</div>
       </div>
+      <a href="ucl.html" style="font-size:.95rem;color:var(--blue-lt);text-decoration:none;align-self:center;padding:4px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" title="Sfoglia rose UCL">↗</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat">
@@ -776,17 +777,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGame()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="home.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="home.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 74 rose UCL →</a></div>
+        <button class="btn btn-ghost" onclick="startDynasty('ucl')" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span style="font-size:.82rem" data-i18n="dynasty.btn">🏟️ La mia squadra</span><span style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px" data-i18n="dynasty.btn_sub">Scegli il tuo club storico</span></button>
   </div>
 
   <!-- Copa Libertadores -->
   <div class="tourn-card tourn-copa" id="tourn-copa" style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌎</div>
-      <div>
+      <div style="flex:1">
         <div class="tourn-name" data-i18n="tourn.copa.name">Copa Libertadores</div>
         <div class="tourn-sub" data-i18n="tourn.copa.sub">Sud America · 1960 – 2024</div>
       </div>
+      <a href="copa.html" style="font-size:.95rem;color:var(--blue-lt);text-decoration:none;align-self:center;padding:4px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" title="Sfoglia rose Copa">↗</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat"><div class="tourn-stat-val">46</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
@@ -798,17 +800,18 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="copa.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="copa.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="copa.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_copa">Sfoglia tutte le 46 rose Copa →</a></div>
+        <button class="btn btn-ghost" onclick="startDynasty('copa')" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span style="font-size:.82rem" data-i18n="dynasty.btn">🏟️ La mia squadra</span><span style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px" data-i18n="dynasty.btn_sub">Scegli il tuo club storico</span></button>
   </div>
 
   <!-- World Cup Legends -->
   <div class="tourn-card tourn-wc" id="tourn-wc" style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌍</div>
-      <div>
+      <div style="flex:1">
         <div class="tourn-name" data-i18n="tourn.wc.name">World Cup Legends</div>
         <div class="tourn-sub" data-i18n="tourn.wc.sub">Mondiali · 1930 – 2022</div>
       </div>
+      <a href="worldcup.html" style="font-size:.95rem;color:var(--blue-lt);text-decoration:none;align-self:center;padding:4px" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" title="Sfoglia rose World Cup">↗</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat"><div class="tourn-stat-val">79</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
@@ -820,7 +823,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="wc.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="wc.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="worldcup.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_wc">Sfoglia tutte le 79 rose World Cup →</a></div>
+        <button class="btn btn-ghost" onclick="startDynasty('wc')" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span style="font-size:.82rem" data-i18n="dynasty.btn">🏟️ La mia squadra</span><span style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px" data-i18n="dynasty.btn_sub">Scegli il tuo club storico</span></button>
   </div>
 
 
@@ -856,6 +859,29 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <a href="copa.html" target="_blank">Copa</a> &nbsp;·&nbsp;
     <a href="worldcup.html" target="_blank">World Cup</a> &nbsp;·&nbsp;
     <a href="sfide.html" target="_blank">⚡ Sfide</a>
+  </div>
+</div>
+
+<!-- DYNASTY SCREEN -->
+<div class="screen" id="screen-dynasty">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <h2 data-i18n="dynasty.title" style="margin-bottom:4px">Dynasty Mode</h2>
+  <p data-i18n="dynasty.sub" style="font-size:.82rem;opacity:.65;margin:0 0 10px">Costruisci il tuo club leggendario</p>
+  <div id="dy-club-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;max-height:46vh;overflow-y:auto"></div>
+  <div id="dy-options" style="display:none">
+    <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:6px">
+      <button class="btn btn-ghost dy-fmt" data-fmt="coppa" onclick="setDynastyFmt('coppa')" style="flex:1;min-width:80px;padding:7px 5px;font-size:.78rem">⚡ Coppa</button>
+      <button class="btn btn-ghost dy-fmt fc-sel" data-fmt="classic" onclick="setDynastyFmt('classic')" style="flex:1;min-width:80px;padding:7px 5px;font-size:.78rem">📋 Classic</button>
+      <button id="dy-fmt-nuovo" class="btn btn-ghost dy-fmt" data-fmt="nuovo" onclick="setDynastyFmt('nuovo')" style="flex:1;min-width:80px;padding:7px 5px;font-size:.78rem">🆕 New Wave</button>
+    </div>
+    <div style="display:flex;gap:5px;justify-content:center;margin-bottom:10px">
+      <button class="btn btn-ghost dy-diff" data-diff="easy" onclick="setDynastyDiff('easy')" style="flex:1;padding:7px 5px;font-size:.78rem">😊 Facile</button>
+      <button class="btn btn-ghost dy-diff fc-sel" data-diff="normal" onclick="setDynastyDiff('normal')" style="flex:1;padding:7px 5px;font-size:.78rem">⚽ Normale</button>
+      <button class="btn btn-ghost dy-diff" data-diff="hard" onclick="setDynastyDiff('hard')" style="flex:1;padding:7px 5px;font-size:.78rem">🔥 Difficile</button>
+    </div>
+    <button class="btn btn-gold" onclick="launchDynasty()" style="font-size:.95rem;padding:13px">
+      <span data-i18n="dynasty.start">🚀 Inizia la Dynasty</span>
+    </button>
   </div>
 </div>
 
@@ -1251,7 +1277,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.6.2';
+const GAME_VERSION='5.6.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1493,6 +1519,11 @@ const STRINGS={
     'next.opponent':'Prossimo Avversario',
     'pen.shootout_title':'⚽ Rigori','pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
+    'dynasty.title':'Dynasty Mode',
+    'dynasty.sub':'Costruisci il tuo club leggendario',
+    'dynasty.btn':'🏟️ La mia squadra',
+    'dynasty.btn_sub':'Scegli il tuo club storico',
+    'dynasty.start':'🚀 Inizia la Dynasty',
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
@@ -1745,6 +1776,11 @@ const STRINGS={
     'next.opponent':'Next Opponent',
     'pen.shootout_title':'⚽ Penalty Shootout','pen.win':'You win on penalties! 🎉',
     'pen.loss':'Eliminated on penalties. 💔',
+    'dynasty.title':'Dynasty Mode',
+    'dynasty.sub':'Build your legendary club',
+    'dynasty.btn':'🏟️ My Team',
+    'dynasty.btn_sub':'Choose your historic club',
+    'dynasty.start':'🚀 Start Dynasty',
   },
   es:{
     'home.tagline':'El Draft de Fútbol Definitivo',
@@ -1997,6 +2033,11 @@ const STRINGS={
     'next.opponent':'Próximo Rival',
     'pen.shootout_title':'⚽ Tanda de Penaltis','pen.win':'¡Ganáis en penaltis! 🎉',
     'pen.loss':'Eliminados en penaltis. 💔',
+    'dynasty.title':'Dynasty Mode',
+    'dynasty.sub':'Construye tu club legendario',
+    'dynasty.btn':'🏟️ Mi equipo',
+    'dynasty.btn_sub':'Elige tu club histórico',
+    'dynasty.start':'🚀 Iniciar Dynasty',
   }
 };
 
@@ -2784,6 +2825,23 @@ const TEAMS = {
     {n:'Hakan S',p:'ST',r:9,nat:'TR'},{n:'Jardel',p:'ST',r:9,nat:'BR'},
     {n:'Okan',p:'CM',r:7,nat:'TR'}
   ]},
+
+  int_0203:{name:'Inter Milan',season:'2002-03',country:'🇮🇹',club:'inter',players:[
+    {n:'Toldo',p:'GK',r:8,nat:'IT'},{n:'Zanetti',p:'RB',r:9,nat:'AR'},{n:'Cannavaro',p:'CB',r:9,nat:'IT'},
+    {n:'Cordoba',p:'CB',r:8,nat:'CO'},{n:'Materazzi',p:'CB',r:8,nat:'IT'},{n:'Greško',p:'LB',r:7,nat:'SK'},
+    {n:'Emre Belözoğlu',p:'CM',r:8,nat:'TR'},{n:'Almeyda',p:'CDM',r:7,nat:'AR'},{n:'Kily González',p:'RW',r:7,nat:'AR'},
+    {n:'Recoba',p:'AM',r:9,nat:'UY'},{n:'Crespo',p:'ST',r:9,nat:'AR'},{n:'Vieri',p:'ST',r:9,nat:'IT'},{n:'Martins',p:'ST',r:7,nat:'NG'}
+  ]},
+
+  mci_1617:{name:'Man City',season:'2016-17',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_city',players:[
+    {n:'Bravo',p:'GK',r:7,nat:'CL'},{n:'Caballero',p:'GK',r:7,nat:'AR'},
+    {n:'Zabaleta',p:'RB',r:7,nat:'AR'},{n:'Kompany',p:'CB',r:9,nat:'BE'},{n:'Otamendi',p:'CB',r:8,nat:'AR'},
+    {n:'Kolarov',p:'LB',r:7,nat:'RS'},{n:'Clichy',p:'LB',r:7,nat:'FR'},
+    {n:'Fernandinho',p:'CDM',r:8,nat:'BR'},{n:'Yaya Toure',p:'CM',r:8,nat:'CI'},
+    {n:'De Bruyne',p:'CM',r:9,nat:'BE'},{n:'Gundogan',p:'CM',r:8,nat:'DE'},
+    {n:'D.Silva',p:'CAM',r:9,nat:'ES'},{n:'Sterling',p:'RW',r:8,nat:'EN'},{n:'Sane',p:'LW',r:8,nat:'DE'},
+    {n:'Nolito',p:'LW',r:7,nat:'ES'},{n:'Aguero',p:'ST',r:9,nat:'AR'}
+  ]},
 };
 
 
@@ -2802,7 +2860,7 @@ const TOURNAMENTS = [
    teams:['mu_9899','rm_9900','val_0001','bay_0001','bay_9899','gal_9900']},
   {id:'galacticos', name:'Los Galácticos', years:'2001–07', emoji:'⭐',
    desc:'Superstar signings, Hollywood glamour and true artistry. The era of untouchable names.',
-   teams:['rm_0102','mil_0203','juve_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','che_0506','mil_0607']},
+   teams:['rm_0102','mil_0203','juve_0203','int_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','che_0506','mil_0607']},
   {id:'cr7pep', name:'CR7 & Pep', years:'2007–12', emoji:'🔴',
    desc:"Ronaldo's rise meets Guardiola's revolution. Two titans redefine football.",
    teams:['mu_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','bvb_1112']},
@@ -2811,13 +2869,13 @@ const TOURNAMENTS = [
    teams:['bay_1213','che_1112','rm_1314','atm_1314','bar_1415','juv_1415']},
   {id:'modern', name:'Modern Masters', years:'2015–20', emoji:'👑',
    desc:'Pressing intensity, Mbappe at 18 and a Champions League comeback for the ages.',
-   teams:['mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','aja_1819','bay_1920']},
+   teams:['mci_1617','mci_1617','mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','aja_1819','bay_1920']},
   {id:'newera', name:'New Era', years:'2020–23', emoji:'🚀',
    desc:'Pressing, data and Haaland. The modern superclub at its ruthless peak.',
    teams:['psg_2021','che_2021','rm_2122','mci_2223','liv_2122']},
   {id:'alltime', name:'All Time', years:'1961–2023', emoji:'🌍',
    desc:'Every legendary squad. No era limits. The ultimate Decempionz draft pool.',
-   teams:['ben_6162','int_6465','rm_6566','cel_6667','mu_6768','mil_6869','fey_6970','aja_7172','bay_7475','liv_7677','liv_7778','not_7980','ham_8283','ast_8182','liv_8384','juv_8485','ste_8586','por_8687','psv_8788','mil_8889','red_9091','bar_9192','mars_9293','aja_9495','mil_9394','juv_9596','bvb_9697','mu_9899','rm_9900','val_0001','bay_0001','rm_0102','mil_0203','juve_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','che_0506','mil_0607','mu_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','bvb_1112','bay_1213','che_1112','rm_1314','atm_1314','bar_1415','mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','bay_1920','psg_2021','che_2021','rm_2122','mci_2223','liv_2122','rm_9798','juv_9798','bay_9899','gal_9900','rm_5960','glad_7677','sam_9192','juv_1415','aja_1819'],
+   teams:['ben_6162','int_6465','rm_6566','cel_6667','mu_6768','mil_6869','fey_6970','aja_7172','bay_7475','liv_7677','liv_7778','not_7980','ham_8283','ast_8182','liv_8384','juv_8485','ste_8586','por_8687','psv_8788','mil_8889','red_9091','bar_9192','mars_9293','aja_9495','mil_9394','juv_9596','bvb_9697','mu_9899','rm_9900','val_0001','bay_0001','rm_0102','mil_0203','juve_0203','int_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','che_0506','mil_0607','mu_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','bvb_1112','bay_1213','che_1112','rm_1314','atm_1314','bar_1415','mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','bay_1920','psg_2021','che_2021','rm_2122','mci_2223','liv_2122','rm_9798','juv_9798','bay_9899','gal_9900','rm_5960','glad_7677','sam_9192','juv_1415','aja_1819'],
    allTime:true}];
 
 /* ═══════════════════════════════════════
@@ -3470,6 +3528,8 @@ const G = {
   campaignBestWin: null,
   // coach
   coach: null, _coachPool: [],
+  // dynasty
+  dynasty: false, dynastyClub: null,
   // i18n
   lang: 'it',
 };
@@ -3477,7 +3537,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-format'&&G&&G.dynasty){id='screen-dynasty';_buildDynastyClubGrid();}if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -3629,6 +3689,7 @@ function _startGameByMode(){
   else startGame();
 }
 function startGame(){
+  G.dynasty=false;G.dynastyClub=null;
   G.gameMode='ucl';
   selectedFormat='classic';
   selectedEraT=null;
@@ -3700,6 +3761,7 @@ function quickStartCopa(){
   showScreen('screen-formation');
 }
 function startGameCopa(){
+  G.dynasty=false;G.dynastyClub=null;
   G.gameMode='copa';
   selectedFormat='classic';
   selectedEraT=null;
@@ -3732,6 +3794,7 @@ function quickStartWC(){
   showScreen('screen-formation');
 }
 function startGameWC(){
+  G.dynasty=false;G.dynastyClub=null;
   G.gameMode='wc';
   selectedFormat='classic';
   selectedEraT=null;
@@ -3884,11 +3947,119 @@ function _abbrevTeam(name){
   if(result.length>MAX) result=result.slice(0,MAX-1)+'…';
   return result;
 }
+/* ── DYNASTY MODE ──────────────────────────────────────────── */
+var _dynastyFmt='classic',_dynastyDiff='normal',_dynastyClub=null,_dynastyMode='ucl';
+function startDynasty(mode){
+  _dynastyMode=mode||'ucl';
+  G.gameMode=_dynastyMode;
+  G.dynasty=true;
+  _dynastyClub=null;
+  _dynastyFmt='classic';
+  _dynastyDiff='normal';
+  _buildDynastyClubGrid();
+  document.getElementById('dy-options').style.display='none';
+  document.querySelectorAll('.dy-fmt').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.fmt==='classic');});
+  document.querySelectorAll('.dy-diff').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.diff==='normal');});
+  var nw=document.getElementById('dy-fmt-nuovo');
+  if(nw) nw.style.display=_dynastyMode==='ucl'?'':'none';
+  showScreen('screen-dynasty');
+}
+function _buildDynastyClubGrid(){
+  var DB=_activeTeams();
+  var clubCount={},clubName={},clubIds={};
+  Object.keys(DB).forEach(function(id){
+    var sq=DB[id],c=sq.club||id;
+    clubCount[c]=(clubCount[c]||0)+1;
+    clubName[c]=sq.name;
+    if(!clubIds[c])clubIds[c]=[];
+    clubIds[c].push(id);
+  });
+  var eligible=Object.keys(clubCount).filter(function(c){return clubCount[c]>=3;});
+  eligible.sort(function(a,b){return clubCount[b]-clubCount[a];});
+  var grid=document.getElementById('dy-club-grid');
+  grid.innerHTML='';
+  eligible.forEach(function(c){
+    var btn=document.createElement('button');
+    btn.className='btn btn-ghost';
+    btn.dataset.club=c;
+    btn.style.cssText='padding:9px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2';
+    btn.innerHTML='<span style="font-size:.88rem;font-weight:700">'+clubName[c]+'</span><span style="font-size:.6rem;opacity:.6">'+clubCount[c]+' rose</span>';
+    btn.onclick=(function(club){return function(){selectDynastyClub(club);};})(c);
+    grid.appendChild(btn);
+  });
+}
+function selectDynastyClub(club){
+  _dynastyClub=club;
+  document.querySelectorAll('#dy-club-grid .btn').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.club===club);});
+  document.getElementById('dy-options').style.display='';
+}
+function setDynastyFmt(fmt){
+  _dynastyFmt=fmt;
+  document.querySelectorAll('.dy-fmt').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.fmt===fmt);});
+}
+function setDynastyDiff(diff){
+  _dynastyDiff=diff;
+  document.querySelectorAll('.dy-diff').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.diff===diff);});
+}
+function launchDynasty(){
+  if(!_dynastyClub)return;
+  var DB=_activeTeams();
+  var clubTeams=Object.keys(DB).filter(function(id){return (DB[id].club||id)===_dynastyClub;});
+  var clubNameStr=DB[clubTeams[0]]?DB[clubTeams[0]].name:_dynastyClub;
+  G.dynasty=true;
+  G.dynastyClub=_dynastyClub;
+  G.format=_dynastyFmt;
+  G.difficulty=_dynastyDiff;
+  selectedFormat=_dynastyFmt;
+  selectedDiff=_dynastyDiff;
+  var dT={id:'dynasty_'+_dynastyClub,name:clubNameStr+' Dynasty',years:'',emoji:'🏟️',
+    desc:'',teams:clubTeams,allTime:false,_dynasty:true};
+  applyTournament(dT);
+  showScreen('screen-formation');
+}
+
 function initDraft(){
   if(!G.formation) return;
   _ga('game_start',{tournament:G.gameMode||'ucl',era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
+  // ── Dynasty branch: build pool from all club squads ──
+  if(G.tournament&&G.tournament._dynasty){
+    var _DDB=_activeTeams();
+    var _seen={};
+    G.tournament.teams.forEach(function(id){
+      var sq=_DDB[id];if(!sq)return;
+      sq.players.forEach(function(p){
+        if(!_seen[p.n])_seen[p.n]=[];
+        _seen[p.n].push(Object.assign({},p,{club:sq.name,teamId:id}));
+      });
+    });
+    var _dPool=Object.keys(_seen).map(function(name){
+      var apps=_seen[name];
+      return Object.assign({},apps[Math.floor(Math.random()*apps.length)]);
+    });
+    _dPool=_dPool.map(function(p){if(!p.pos&&p.p)p.pos=p.p;return p;});
+    var _gksD=_dPool.filter(function(p){return p.pos==='GK';}).sort(function(a,b){return b.r-a.r;});
+    var _gkKeepD=new Set(_gksD.slice(0,4).map(function(p){return p.n;}));
+    _dPool=_dPool.filter(function(p){return p.pos!=='GK'||_gkKeepD.has(p.n);});
+    G.draftPool=_dPool.sort(function(){return Math.random()-.5;});
+    G.draftTiers={10:[],9:[],8:[],7:[]};
+    G.draftPool.forEach(function(p){var t=p.r>=10?10:p.r>=9?9:p.r>=8?8:7;G.draftTiers[t].push(p);});
+    [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
+    G.draftCurrentTier=null;
+    G.draftIdx=0;G.draftCards=[];
+    _dczStatsCampaignStart();
+    G.draftLock=false;G.draftFinalized=false;
+    G.slotPlayers=new Array(11).fill(null);
+    G.accepted=[];
+    G.passes=(DIFF_CFG[G.difficulty||'normal']||DIFF_CFG.normal).passes;
+    document.getElementById('d-title').textContent=G.tournament.name;
+    var _dfElD=document.getElementById('d-formation');if(_dfElD)_dfElD.textContent=G.formation||'';
+    showScreen('screen-draft');
+    drawDraftCards();
+    updateDraftScreen();
+    return;
+  }
   // Build pool: per team season → 1 guaranteed top + up to 4 random from the rest
   // AllTime cap: max 3 versions per club, weighted-random (favours stronger seasons, not always same)
   var _DB=_activeTeams();
