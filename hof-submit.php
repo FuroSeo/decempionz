@@ -37,7 +37,7 @@ if (!$nick || strlen($nick) > 24) {
 
 $allowedGrades = ['S', 'A', 'B', 'C'];
 $allowedDiff   = ['easy', 'normal', 'hard'];
-$allowedTourn  = ['ucl', 'copa', 'wc'];
+$allowedTourn  = ['ucl', 'copa', 'wc', 'dynasty'];
 
 function sanitize($val, $maxLen = 50) {
     return htmlspecialchars(substr(trim((string)$val), 0, $maxLen), ENT_QUOTES, 'UTF-8');
@@ -62,8 +62,9 @@ $entry = [
     'nickname'   => sanitize($nick, 24),
     'grade'      => $grade,
     'winner'     => (bool)($data['winner'] ?? false),
-    'tournament' => $tournament,
-    'era'        => sanitize($data['era'] ?? '', 60),
+    'tournament'   => $tournament,
+    'dynastyClub'  => $tournament === 'dynasty' ? sanitize($data['dynastyClub'] ?? '', 30) : '',
+    'era'          => sanitize($data['era'] ?? '', 60),
     'format'     => sanitize($data['format'] ?? '', 30),
     'formation'  => sanitize($data['formation'] ?? '', 10),
     'difficulty' => $difficulty,

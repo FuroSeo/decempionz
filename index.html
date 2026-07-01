@@ -111,7 +111,7 @@
 .tourn-card.tourn-wc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#ef4444}
 .tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
 .tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
-.tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}
+.tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}.tourn-tab.tab-active-dynasty{background:#2a1a00;color:#fbbf24}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -1232,6 +1232,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button id="hof-tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchHofTab('ucl')">🏆 UCL</button>
     <button id="hof-tab-copa" class="tourn-tab" onclick="switchHofTab('copa')">🌎 Copa</button>
     <button id="hof-tab-wc" class="tourn-tab" onclick="switchHofTab('wc')">🌍 World Cup</button>
+    <button id="hof-tab-dynasty" class="tourn-tab" onclick="switchHofTab('dynasty')">🏟️ Dynasty</button>
   </div>
   <div id="hof-loading" data-i18n="hof.loading" style="text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0">Caricamento...</div>
   <div id="hof-entries" style="display:none"></div>
@@ -1279,7 +1280,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.6.11';
+const GAME_VERSION='5.6.12';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -6514,10 +6515,10 @@ var _hofActiveMode='ucl';
 
 function switchHofTab(mode){
   _hofActiveMode=mode;
-  ['ucl','copa','wc'].forEach(function(m){
+  ['ucl','copa','wc','dynasty'].forEach(function(m){
     var tb=document.getElementById('hof-tab-'+m);
     if(tb){
-      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc','tab-active-dynasty');
       if(m===mode) tb.classList.add('tab-active-'+mode);
     }
   });
@@ -6525,7 +6526,7 @@ function switchHofTab(mode){
 }
 
 function _modeLabel(m){
-  return m==='copa'?'🌎 Copa':m==='wc'?'🌍 World Cup':'🏆 UCL';
+  return m==='copa'?'🌎 Copa':m==='wc'?'🌍 World Cup':m==='dynasty'?'🏟️ Dynasty':'🏆 UCL';
 }
 
 function _renderHofEntries(){
@@ -6553,7 +6554,7 @@ function _renderHofEntries(){
       +'<div class="hof-card-header">'
       +'<div>'
       +'<div class="hof-nickname">'+(i+1)+'. '+e.nickname+'</div>'
-      +'<div class="hof-meta">'+_modeLabel(e.tournament||e.mode||'ucl')+' · '+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
+      +'<div class="hof-meta">'+_modeLabel(e.tournament||e.mode||'ucl')+(e.dynastyClub?' · '+e.dynastyClub:'')+' · '+e.era+' · '+e.formation+' · '+e.difficulty+'</div>'
       +'</div>'
       +'<div class="hof-grade '+gClass+'">'+e.grade+'</div>'
       +'</div>'
@@ -6565,11 +6566,11 @@ function _renderHofEntries(){
 
 function openHallOfFame(){
   // Sync active tab to current game mode if in-game, else keep last
-  if(G.gameMode) _hofActiveMode=G.gameMode;
-  ['ucl','copa','wc'].forEach(function(m){
+  if(G.gameMode) _hofActiveMode=G.dynasty?'dynasty':G.gameMode;
+  ['ucl','copa','wc','dynasty'].forEach(function(m){
     var tb=document.getElementById('hof-tab-'+m);
     if(tb){
-      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc','tab-active-dynasty');
       if(m===_hofActiveMode) tb.classList.add('tab-active-'+_hofActiveMode);
     }
   });
@@ -7048,7 +7049,8 @@ function submitToHoF(){
     nickname: nick,
     grade: d.grade,
     winner: !!d.isWinner,
-    tournament: G.gameMode||'ucl',
+    tournament: G.dynasty?'dynasty':(G.gameMode||'ucl'),
+    dynastyClub: G.dynasty?(G.dynastyClub||''):undefined,
     era: G.tournament?(G.tournament.emoji||'')+' '+(G.tournament.name||''):'All Time',
     format: d.formatLabel||'',
     formation: G.formation||'',
