@@ -15,11 +15,6 @@
 <meta name="twitter:title" content="Decempionz — Draft le Leggende: UCL, Copa Libertadores, Mondiali">
 <meta name="twitter:description" content="Draft le leggende del calcio. Costruisci il tuo XI. Conquista UCL, Copa o Mondiali.">
 <meta name="twitter:image" content="https://decempionz.com/og-image.png">
-<link rel="canonical" href="https://decempionz.com/">
-<link rel="alternate" hreflang="x-default" href="https://decempionz.com/">
-<link rel="alternate" hreflang="it" href="https://decempionz.com/">
-<link rel="alternate" hreflang="en" href="https://decempionz.com/">
-<link rel="alternate" hreflang="es" href="https://decempionz.com/">
 <meta name="theme-color" content="#07090f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 <title>Decempionz — Draft le Leggende: Champions League, Copa Libertadores, Mondiali</title>
@@ -45,21 +40,6 @@
   "author": {
     "@type": "Person",
     "name": "Decempionz"
-  }
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Decempionz",
-  "url": "https://decempionz.com/",
-  "description": "Gioco di blind draft delle leggende del calcio storico: UCL, Copa Libertadores e Mondiali. 199 rose storiche, 3 tornei, 3 formati, gratis.",
-  "inLanguage": ["it", "en", "es"],
-  "publisher": {
-    "@type": "Organization",
-    "name": "Decempionz",
-    "url": "https://decempionz.com/"
   }
 }
 </script>
@@ -795,7 +775,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
-    <button data-i18n="home.btn_custom" class="btn btn-ghost" onclick="startGame()" style="margin-top:8px">⚙️ Personalizza</button>
+    <button class="btn btn-ghost" onclick="startGame()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="home.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="home.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
     <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 74 rose UCL →</a></div>
   </div>
 
@@ -817,7 +797,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="copa.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
-    <button data-i18n="copa.btn_custom" class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px">⚙️ Personalizza</button>
+    <button class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="copa.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="copa.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
     <div style="text-align:center;margin-top:10px"><a href="copa.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_copa">Sfoglia tutte le 46 rose Copa →</a></div>
   </div>
 
@@ -839,7 +819,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="wc.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
-    <button data-i18n="wc.btn_custom" class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px">⚙️ Personalizza</button>
+    <button class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="wc.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="wc.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
     <div style="text-align:center;margin-top:10px"><a href="worldcup.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_wc">Sfoglia tutte le 79 rose World Cup →</a></div>
   </div>
 
@@ -1293,15 +1273,15 @@ const STRINGS={
     'tourn.soon':'Prossimamente',
     'copa.btn_quick':'⚽ Gioca subito',
     'copa.btn_quick_sub':'Classic · All Time · Normale',
-    'copa.btn_custom':'⚙️ Personalizza',
+    'copa.btn_custom':'⚙️ Personalizza','copa.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'wc.btn_quick':'⚽ Gioca subito',
     'wc.btn_quick_sub':'Classic · All Time · Normale',
-    'wc.btn_custom':'⚙️ Personalizza',
+    'wc.btn_custom':'⚙️ Personalizza','wc.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'trophy.wc_classic':'Campione del Mondo!',
     'trophy.wc_old_cup':'Coppa Vecchio Stampo',
     'home.btn_quick':'⚽ Gioca subito',
     'home.btn_quick_sub':'Classic · All Time · Normale',
-    'home.btn_custom':'⚙️ Personalizza',
+    'home.btn_custom':'⚙️ Personalizza','home.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'home.howtoplay_btn':'❓ Come si gioca',
     'trophies.title':'🏅 I tuoi Trofei',
     'trophies.btn':'🏅 Trofei',
@@ -1531,15 +1511,15 @@ const STRINGS={
     'tourn.soon':'Coming Soon',
     'copa.btn_quick':'⚽ Play Now',
     'copa.btn_quick_sub':'Classic · All Time · Normal',
-    'copa.btn_custom':'⚙️ Customize',
+    'copa.btn_custom':'⚙️ Customize','copa.btn_custom_sub':'Choose era, difficulty, blind draft',
     'wc.btn_quick':'⚽ Play Now',
     'wc.btn_quick_sub':'Classic · All Time · Normal',
-    'wc.btn_custom':'⚙️ Customize',
+    'wc.btn_custom':'⚙️ Customize','wc.btn_custom_sub':'Choose era, difficulty, blind draft',
     'trophy.wc_classic':'World Champion!',
     'trophy.wc_old_cup':'Old Cup Style',
     'home.btn_quick':'⚽ Play Now',
     'home.btn_quick_sub':'Classic · All Time · Normal',
-    'home.btn_custom':'⚙️ Customize',
+    'home.btn_custom':'⚙️ Customize','home.btn_custom_sub':'Choose era, difficulty, blind draft',
     'home.howtoplay_btn':'❓ How to play',
     'trophies.title':'🏅 Your Trophies',
     'trophies.btn':'🏅 Trophies',
@@ -1783,15 +1763,15 @@ const STRINGS={
     'tourn.soon':'Próximamente',
     'copa.btn_quick':'⚽ Jugar ahora',
     'copa.btn_quick_sub':'Classic · All Time · Normal',
-    'copa.btn_custom':'⚙️ Personalizar',
+    'copa.btn_custom':'⚙️ Personalizar','copa.btn_custom_sub':'Elige era, dificultad, blind draft',
     'wc.btn_quick':'⚽ Jugar ahora',
     'wc.btn_quick_sub':'Classic · All Time · Normal',
-    'wc.btn_custom':'⚙️ Personalizar',
+    'wc.btn_custom':'⚙️ Personalizar','wc.btn_custom_sub':'Elige era, dificultad, blind draft',
     'trophy.wc_classic':'¡Campeón del Mundo!',
     'trophy.wc_old_cup':'Old Cup Estilo',
     'home.btn_quick':'⚽ Jugar ahora',
     'home.btn_quick_sub':'Classic · All Time · Normal',
-    'home.btn_custom':'⚙️ Personalizar',
+    'home.btn_custom':'⚙️ Personalizar','home.btn_custom_sub':'Elige era, dificultad, blind draft',
     'home.howtoplay_btn':'❓ Cómo jugar',
     'trophies.title':'🏅 Tus Trofeos',
     'trophies.btn':'🏅 Trofeos',
@@ -2365,8 +2345,8 @@ const TEAMS = {
     {n:'Mateos',p:'CM',r:7,nat:'ES'}]},
     ben_6162:{name:'Benfica',season:'1961-62',country:'🇵🇹',club:'benfica',players:[
     {n:'Pereira',p:'GK',r:8,nat:'PT'},{n:'R.Coelho',p:'RB',r:7,nat:'PT'},{n:'Germano',p:'CB',r:8,nat:'PT'},{n:'Mario Joao',p:'CB',r:7,nat:'PT'},{n:'Humberto',p:'LB',r:7,nat:'PT'},
-    {n:'Neto',p:'CDM',r:7,nat:'PT'},{n:'Coluna',p:'CM',r:9,nat:'PT'},{n:'Cruz',p:'CM',r:7,nat:'PT'},{n:'Jose Augusto',p:'RW',r:8,nat:'PT'},
-    {n:'Simoes',p:'LW',r:8,nat:'PT'},{n:'Eusébio',p:'ST',r:10,nat:'PT'},{n:'Aguas',p:'ST',r:8,nat:'PT'},{n:'J.Torres',p:'CAM',r:7,nat:'PT'},
+    {n:'Neto',p:'CDM',r:7,nat:'PT'},{n:'Coluna',p:'CM',r:9,nat:'MZ'},{n:'Cruz',p:'CM',r:7,nat:'PT'},{n:'Jose Augusto',p:'RW',r:8,nat:'PT'},
+    {n:'Simoes',p:'LW',r:8,nat:'PT'},{n:'Eusebio',p:'ST',r:10,nat:'MZ'},{n:'Aguas',p:'ST',r:8,nat:'PT'},{n:'J.Torres',p:'CAM',r:7,nat:'PT'},
     {n:'Cavem',p:'RW',r:7,nat:'PT'},
   {n:'Graca',p:'LM',r:7,nat:'PT'},{n:'Costa',p:'RB',r:7,nat:'PT'}]},
   int_6465:{name:'Inter Milan',season:'1964-65',country:'🇮🇹',club:'inter',players:[
