@@ -1207,7 +1207,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <button class="btn btn-ghost" style="width:100%;font-size:.78rem" data-i18n="btn.change_rules" onclick="_startGameByMode()">⚙️ Cambia regole</button>
     <button class="btn btn-ghost" style="width:100%;font-size:.78rem" onclick="showScreen('screen-home')">🏠 Home — Cambia torneo</button>
-    <div class="hof-submit-area">
+    <div class="hof-submit-area" style="margin-top:12px;padding:12px 14px;background:var(--s1);border:1px solid var(--brd);border-radius:12px">
       <div style="font-size:.7rem;color:var(--mut);margin-bottom:6px;text-align:center" data-i18n="hof.submit_label">Entra nella Hall of Fame</div>
       <input id="hof-nickname" type="text" maxlength="24" placeholder="Il tuo nickname…" data-i18n-placeholder="hof.nick_placeholder" style="padding:8px 10px;font-size:.82rem;color:var(--text);margin-bottom:6px"/>
       <button class="btn btn-gold" style="width:100%;font-size:.8rem;margin-top:0" onclick="submitToHoF()">🏆 Invia alla Hall of Fame</button>
@@ -4390,7 +4390,7 @@ function drawDraftCards(){
   // GK reserve: only include GK in targets if <3 non-GK types are available
   // This prevents GKs from being consumed as discarded alternatives in early picks
   var _nonGKFeasible=_feasible.filter(function(t){return t!=='GK';});
-  var _targetPool=_nonGKFeasible.length>=3?_nonGKFeasible:_feasible;
+  var _targetPool=_nonGKFeasible.length>0?_nonGKFeasible:_feasible;
   var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
@@ -4420,7 +4420,7 @@ function drawDraftCards(){
 
   // 6. Pad to 3 cards if fewer options exist: draw extras from any feasible type
   if(drawn.length<3){
-    var _padTypes=_feasible.slice().sort(function(){return Math.random()-0.5;});
+    var _padTypes=(_nonGKFeasible.length>0?_feasible.filter(function(pt){return pt!=='GK';}):_feasible).slice().sort(function(){return Math.random()-0.5;});
     for(var _pi=0;_pi<_padTypes.length&&drawn.length<3;_pi++){
       var _ptype=_padTypes[_pi];
       var _prevPad=drawn.length;
@@ -4790,7 +4790,8 @@ function setupCampaign(){
   }
 
   if(G.format==='nuovo'){
-    const allKeys=Object.keys(_DB);
+    const _nuovoExcl=G.tournament&&G.tournament._dynasty?new Set(G.tournament.teams):null;
+    const allKeys=_nuovoExcl?Object.keys(_DB).filter(function(id){return !_nuovoExcl.has(id);}):Object.keys(_DB);
     const shuffledN=[...allKeys].sort(()=>Math.random()-.5);
     const seenN=new Set();const pickedN=[];
     for(const id of shuffledN){const club=_DB[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
@@ -4803,7 +4804,10 @@ function setupCampaign(){
   }
 
   // Classic: 3 group opponents from different clubs
-  {const seen=new Set();const pool=[...t.teams].sort(()=>Math.random()-.5);const picked=[];
+  {const seen=new Set();
+  const _dyExcl=G.tournament&&G.tournament._dynasty?new Set(G.tournament.teams):null;
+  const _classicSrc=_dyExcl?Object.keys(_DB).filter(function(id){return !_dyExcl.has(id);}):t.teams;
+  const pool=[..._classicSrc].sort(()=>Math.random()-.5);const picked=[];
   for(const id of pool){const club=_DB[id].name;if(!seen.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}
   G.groupTeams=picked.map(id=>({id,team:_DB[id]}));}
   const [t1,t2,t3] = G.groupTeams;
@@ -6308,12 +6312,12 @@ function showTrophy(){
   _dczStatsCampaignWon();
   // Badge retro + area sfida
   var _csa=document.getElementById('challenge-submit-area');
-  if(G.challengeMode&&_csa){
+  if(G.challengeMode&&_csa&&!G.dynasty){
     _csa.style.display='block';
     var _cn=document.getElementById('challenge-nickname');
     if(_cn&&!_cn.value)try{_cn.value=localStorage.getItem('dcz_last_nick')||'';}catch(e){}
   }
-  if(G.retroWeek){
+  if(G.retroWeek&&!G.dynasty){
     // Salva badge locale (vinto = showTrophy è chiamata solo su vittoria)
     try{localStorage.setItem('dcz_retro_'+G.retroWeek,JSON.stringify({grade:grade,date:new Date().toISOString().slice(0,10)}));}catch(e){}
     if(_csa){_csa.style.display='block';}
