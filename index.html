@@ -698,11 +698,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 [data-theme="light"] .trophy-card{background:#f9f5eb}
 [data-theme="light"] .trophy-card.unlocked{background:#fffbea;border-color:#c9a227}
 
-[data-theme="light"] #home-challenge-banner{background:rgba(99,102,241,.07);border-color:rgba(99,102,241,.4);border-left-color:#6366f1}
+/* Challenge banner — dark */
+#hcb-era{color:#e8edf5}
+#hcb-meta{color:#9ca3af}
+#hcb-expire{color:#6b7a8d}
+/* Challenge banner — light */
+[data-theme="light"] #home-challenge-banner{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.45);border-left-color:#6366f1}
 [data-theme="light"] #hcb-era{color:#1e1b4b}
-[data-theme="light"] #hcb-meta{color:#4b5563}
+[data-theme="light"] #hcb-meta{color:#374151}
 [data-theme="light"] #hcb-expire{color:#4b5563}
-[data-theme="light"] #hcb-play-btn{background:rgba(99,102,241,.15)!important;border-color:rgba(99,102,241,.55)!important;color:#3730a3!important}
+[data-theme="light"] #hcb-play-btn{background:rgba(99,102,241,.18)!important;border-color:rgba(99,102,241,.6)!important;color:#3730a3!important}
 [data-theme="light"] #home-challenge-banner a{color:#4338ca!important}
 
 /* Challenge modal */
@@ -853,11 +858,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Banner sfida settimanale -->
   <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.45);border-radius:12px;border-left:3px solid #818cf8;text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;margin-bottom:5px">⚡ SFIDA DELLA SETTIMANA</div>
-    <div id="hcb-era" style="font-size:.9rem;font-weight:700;color:#e8edf5;line-height:1.3;margin-bottom:3px"></div>
-    <div id="hcb-meta" style="font-size:.64rem;color:#9ca3af;margin-bottom:10px"></div>
+    <div id="hcb-era" style="font-size:.9rem;font-weight:700;line-height:1.3;margin-bottom:3px"></div>
+    <div id="hcb-meta" style="font-size:.64rem;margin-bottom:10px"></div>
     <button id="hcb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.6);color:#c7d2fe" data-i18n="challenge.join">⚡ Partecipa</button>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px">
-      <div id="hcb-expire" style="font-size:.58rem;color:#6b7a8d"></div>
+      <div id="hcb-expire" style="font-size:.58rem"></div>
       <a href="sfide.html" style="font-size:.6rem;color:#6b7a8d;text-decoration:none" data-i18n="challenge.archive">Classifica e archivio →</a>
     </div>
   </div>
