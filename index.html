@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- deploy: 2026-07-01b -->
+<!-- deploy: 2026-07-01c -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -2431,6 +2431,10 @@ const TEAMS = {
     {n:'Jair',p:'RW',r:8,nat:'BR'},{n:'Corso',p:'LW',r:9,nat:'IT'},{n:'Domenghini',p:'RW',r:8,nat:'IT'},{n:'Milani',p:'ST',r:7,nat:'IT'},
     {n:'Mori',p:'CB',r:6,nat:'IT'},
   {n:'Peiro',p:'ST',r:7,nat:'ES'},{n:'Cappellini',p:'CM',r:7,nat:'IT'}]},
+  int_0203:{name:'Inter Milan',season:'2002-03',country:'🇮🇹',club:'inter',players:[
+    {n:'Toldo',p:'GK',r:7,nat:'IT'},{n:'Zanetti',p:'RB',r:8,nat:'AR'},{n:'Cannavaro',p:'CB',r:9,nat:'IT'},{n:'Córdoba',p:'CB',r:7,nat:'CO'},{n:'Materazzi',p:'CB',r:7,nat:'IT'},
+    {n:'Coco',p:'LB',r:6,nat:'IT'},{n:'Emre',p:'CDM',r:7,nat:'TR'},{n:'Almeyda',p:'CDM',r:7,nat:'AR'},{n:'K.González',p:'LM',r:7,nat:'AR'},{n:'Recoba',p:'SS',r:8,nat:'UY'},
+    {n:'Vieri',p:'ST',r:9,nat:'IT'},{n:'Adriano',p:'ST',r:8,nat:'BR'},{n:'Kallon',p:'CF',r:6,nat:'SL'},{n:'Ventola',p:'CF',r:6,nat:'IT'}]},
   cel_6667:{name:'Celtic',season:'1966-67',country:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',club:'celtic',players:[
     {n:'Simpson',p:'GK',r:8,nat:'SC'},{n:'Craig',p:'RB',r:7,nat:'SC'},{n:'McNeill',p:'CB',r:9,nat:'SC'},{n:'Clark',p:'CB',r:8,nat:'SC'},{n:'Gemmell',p:'LB',r:8,nat:'SC'},
     {n:'Murdoch',p:'CM',r:8,nat:'SC'},{n:'Auld',p:'CM',r:8,nat:'SC'},{n:'Gallagher',p:'CDM',r:7,nat:'SC'},{n:'Johnstone',p:'RM',r:9,nat:'SC'},
@@ -2755,6 +2759,10 @@ const TEAMS = {
     {n:'Henderson',p:'CM',r:8,nat:'EN'},{n:'Fabinho',p:'CDM',r:8,nat:'BR'},{n:'Wijnaldum',p:'CM',r:8,nat:'NL'},{n:'Salah',p:'RW',r:9,nat:'EG'},{n:'Firmino',p:'ST',r:9,nat:'BR'},
     {n:'Mane',p:'LW',r:9,nat:'SN'},{n:'Milner',p:'CM',r:7,nat:'EN'},{n:'Shaqiri',p:'RW',r:7,nat:'CH'},{n:'Lallana',p:'CM',r:7,nat:'EN'},{n:'Origi',p:'ST',r:7,nat:'BE'},
     {n:'Lovren',p:'CB',r:7,nat:'HR'},{n:'Gomez',p:'CB',r:7,nat:'EN'},{n:'Keita',p:'CM',r:7,nat:'GN'},{n:'Moreno',p:'LB',r:6,nat:'EN'},{n:'Mignolet',p:'GK',r:7,nat:'EN'}]},
+  mci_1112:{name:'Man City',season:'2011-12',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_city',players:[
+    {n:'Hart',p:'GK',r:8,nat:'EN'},{n:'Zabaleta',p:'RB',r:8,nat:'AR'},{n:'Kompany',p:'CB',r:9,nat:'BE'},{n:'Lescott',p:'CB',r:7,nat:'EN'},{n:'Clichy',p:'LB',r:7,nat:'FR'},
+    {n:'Barry',p:'CDM',r:7,nat:'EN'},{n:'Y.Touré',p:'CM',r:9,nat:'CI'},{n:'Nasri',p:'CM',r:8,nat:'FR'},{n:'D.Silva',p:'CAM',r:9,nat:'ES'},{n:'Agüero',p:'ST',r:9,nat:'AR'},
+    {n:'Džeko',p:'ST',r:8,nat:'BA'},{n:'Balotelli',p:'CF',r:8,nat:'IT'},{n:'Tévez',p:'CF',r:8,nat:'AR'},{n:'Richards',p:'RB',r:7,nat:'EN'},{n:'Milner',p:'RM',r:7,nat:'EN'}]},
   mci_1819:{name:'Man City',season:'2018-19',country:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',club:'man_city',players:[
     {n:'Ederson',p:'GK',r:9,nat:'BR'},{n:'Walker',p:'RB',r:8,nat:'EN'},{n:'Stones',p:'CB',r:8,nat:'EN'},{n:'Laporte',p:'CB',r:9,nat:'FR'},{n:'B.Mendy',p:'LB',r:8,nat:'FR'},
     {n:'Fernandinho',p:'CDM',r:8,nat:'BR'},{n:'De Bruyne',p:'CM',r:9,nat:'BE'},{n:'D.Silva',p:'CAM',r:9,nat:'ES'},{n:'B.Silva',p:'RW',r:8,nat:'PT'},{n:'Aguero',p:'ST',r:9,nat:'AR'},
@@ -3721,7 +3729,7 @@ function _getDynClubs(mode){
       clubMap[club].squads.push(e[0]);
     });
   });
-  var clubs=Object.entries(clubMap).filter(function(e){return e[1].squads.length>=2;});
+  var clubs=Object.entries(clubMap).filter(function(e){return e[1].squads.length>=3;});
   clubs.sort(function(a,b){return b[1].squads.length-a[1].squads.length||a[1].name.localeCompare(b[1].name);});
   window[cacheKey]=clubs;
   return clubs;
