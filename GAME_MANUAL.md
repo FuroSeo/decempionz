@@ -12,7 +12,7 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 5.6.15 | 2026-07-01 | UCL 76→78 rose (int_0203, mci_1112); Dynasty threshold ≥3; Copa/WC in Dynasty + devpanel; howto/i18n aggiornati; GA4 dynasty_tab_click + dynasty_sub_tab |
+| 5.6.15 | 2026-07-01 | UCL 74→76 rose (int_0203, mci_1112) + fix TOURNAMENTS array; Dynasty threshold ≥3; Copa/WC in Dynasty + devpanel; howto/i18n aggiornati; GA4 dynasty_tab_click + dynasty_sub_tab |
 | 5.6.14 | 2026-07-01 | Aggiunta int_0203 (Inter 2002-03) e mci_1112 (Man City 2011-12); Dynasty threshold >=3 squads |
 | 5.6.13 | 2026-07-01 | Fix nationality int_0910/atm_1314/Keane; fix contatori 74→76; Dynasty Mode completo (screen, pool, GA4, HoF, devpanel, howto) |
 | 5.6.2 | 2026-06-29 | Animated journey replay su tutte le end screen; separatore gironi/KO nel percorso; `_animateJourney()` helper; GAME_VERSION ora aggiornato direttamente in index.html (non solo in sw.js) |
@@ -63,7 +63,7 @@ Single HTML file. No build step, no dependencies, no backend. All game logic is 
 
 | Value | Tournament | Dataset | Squads | Opps |
 |-------|-----------|---------|--------|------|
-| `'ucl'` | UCL Legends | `TEAMS` (78 rose, 31 club) | 78 | `KNOCKOUT_OPPS` / `COPPA_OPPS` |
+| `'ucl'` | UCL Legends | `TEAMS` (76 rose, 31 club) | 76 | `KNOCKOUT_OPPS` / `COPPA_OPPS` |
 | `'copa'` | Copa Libertadores | `COPA_TEAMS` (46 rose) | 46 | `COPA_KNOCKOUT_OPPS` / `COPA_COPPA_OPPS` |
 | `'wc'` | World Cup Legends | `WC_TEAMS` (79 nazionali) | 79 | `WC_KNOCKOUT_OPPS` / `WC_COPPA_OPPS` |
 
@@ -421,7 +421,7 @@ function t(key) { return STRINGS[G.lang || 'it'][key] || STRINGS.it[key] || key 
 
 | File | Tournament | Rose |
 |------|-----------|------|
-| `ucl.html` | UCL Legends | 78 rose, 31 club |
+| `ucl.html` | UCL Legends | 76 rose, 31 club |
 | `copa.html` | Copa Libertadores | 46 rose |
 | `worldcup.html` | World Cup Legends | 79 nazionali |
 
@@ -472,7 +472,7 @@ Solo i club con **≥3 rose** nel dataset di quel torneo appaiono in Dynasty. La
 
 ### Club disponibili per torneo (v5.6.15)
 
-**UCL** (31 club, 78 rose — solo quelli con ≥3): Real Madrid, Barcelona, AC Milan, Bayern, Juventus, Ajax, Man Utd, Liverpool, Chelsea, Inter Milan, Arsenal, Atlético, Man City, Porto, Benfica, Dortmund, PSG, Monaco e altri.
+**UCL** (31 club, 76 rose — solo quelli con ≥3): Real Madrid, Barcelona, AC Milan, Bayern, Juventus, Ajax, Man Utd, Liverpool, Chelsea, Inter Milan, Arsenal, Atlético, Man City, Porto, Benfica, Dortmund, PSG, Monaco e altri.
 
 **Copa Libertadores**: Estudiantes, Independiente, Boca Juniors, River Plate, Flamengo, Nacional, Olimpia, São Paulo, Santos, Cruzeiro, Fluminense, Grêmio, Internacional e altri.
 
@@ -550,7 +550,7 @@ open('/tmp/check.js','w').write(main)
 decempionz/
 ├── index.html              ← intero gioco (~6200 lines)
 ├── about.html              ← pagina SEO statica (trilingue IT/EN/ES)
-├── ucl.html                ← torneo UCL Legends — 78 rose (IT/EN/ES)
+├── ucl.html                ← torneo UCL Legends — 76 rose (IT/EN/ES)
 ├── copa.html               ← torneo Copa Libertadores — 46 rose (IT/EN/ES)
 ├── worldcup.html           ← torneo World Cup Legends — 79 nazionali (IT/EN/ES)
 ├── sw.js                   ← service worker PWA (version string: decempionz-vX.Y.Z)
