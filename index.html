@@ -869,13 +869,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <p data-i18n="dynasty.sub" style="font-size:.82rem;opacity:.65;margin:0 0 10px">Costruisci il tuo club leggendario</p>
   <div id="dy-club-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px"></div>
   <div id="dy-options" style="display:none">
-    <div style="font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:5px">Formazione</div>
-    <div id="dy-formation-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px"></div>
-    <div style="display:flex;gap:4px;justify-content:center;margin-bottom:8px">
-      <button class="btn btn-ghost dy-tact" data-tact="attack" onclick="setDynastyTactic('attack',this)" style="flex:1;padding:5px 3px;font-size:.72rem">⚔️ Attacco</button>
-      <button class="btn btn-ghost dy-tact fc-sel" data-tact="balanced" onclick="setDynastyTactic('balanced',this)" style="flex:1;padding:5px 3px;font-size:.72rem">⚖️ Bilanciato</button>
-      <button class="btn btn-ghost dy-tact" data-tact="defend" onclick="setDynastyTactic('defend',this)" style="flex:1;padding:5px 3px;font-size:.72rem">🛡️ Difesa</button>
-    </div>
     <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:6px">
       <button class="btn btn-ghost dy-fmt" data-fmt="coppa" onclick="setDynastyFmt('coppa')" style="flex:1;min-width:80px;padding:7px 5px;font-size:.78rem">⚡ Coppa</button>
       <button class="btn btn-ghost dy-fmt fc-sel" data-fmt="classic" onclick="setDynastyFmt('classic')" style="flex:1;min-width:80px;padding:7px 5px;font-size:.78rem">📋 Classic</button>
@@ -3956,7 +3949,6 @@ function _abbrevTeam(name){
 }
 /* ── DYNASTY MODE ──────────────────────────────────────────── */
 var _dynastyFmt='classic',_dynastyDiff='normal',_dynastyClub=null,_dynastyMode='ucl';
-var _dynastyFormation='4-3-3',_dynastyTactic='balanced';
 function startDynasty(mode){
   _dynastyMode=mode||'ucl';
   G.gameMode=_dynastyMode;
@@ -3964,8 +3956,6 @@ function startDynasty(mode){
   _dynastyClub=null;
   _dynastyFmt='classic';
   _dynastyDiff='normal';
-  _dynastyFormation='4-3-3';
-  _dynastyTactic='balanced';
   _buildDynastyClubGrid();
   document.getElementById('dy-options').style.display='none';
   document.querySelectorAll('.dy-fmt').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.fmt==='classic');});
@@ -4031,33 +4021,6 @@ function _buildDynastyClubGrid(){
     grid.appendChild(btn);
   });
 }
-function _buildDynastyFormationGrid(){
-  var grid=document.getElementById('dy-formation-grid');
-  if(!grid)return;
-  var _picks=['4-3-3','4-4-2','4-2-3-1','3-5-2','5-3-2','4-1-4-1'];
-  grid.innerHTML='';
-  _picks.forEach(function(key){
-    if(!FORMATIONS[key])return;
-    var btn=document.createElement('button');
-    btn.className='btn btn-ghost dy-form';
-    btn.dataset.form=key;
-    btn.style.cssText='padding:6px 4px;font-size:.75rem;font-weight:800;width:100%';
-    if(key===_dynastyFormation)btn.classList.add('fc-sel');
-    btn.textContent=key;
-    btn.onclick=function(){setDynastyFormation(key,btn);};
-    grid.appendChild(btn);
-  });
-}
-function setDynastyFormation(key,el){
-  _dynastyFormation=key;
-  document.querySelectorAll('.dy-form').forEach(function(b){b.classList.remove('fc-sel');});
-  if(el)el.classList.add('fc-sel');
-}
-function setDynastyTactic(tact,el){
-  _dynastyTactic=tact;
-  document.querySelectorAll('.dy-tact').forEach(function(b){b.classList.remove('fc-sel');});
-  if(el)el.classList.add('fc-sel');
-}
 function selectDynastyClub(club){
   _dynastyClub=club;
   document.querySelectorAll('.dy-club-btn').forEach(function(b){
@@ -4065,7 +4028,6 @@ function selectDynastyClub(club){
     b.style.borderColor=sel?'var(--gold)':'transparent';
     b.style.boxShadow=sel?'0 0 0 2px var(--gold)':'none';
   });
-  _buildDynastyFormationGrid();
   document.getElementById('dy-options').style.display='';
 }
 function setDynastyFmt(fmt){
@@ -4090,10 +4052,7 @@ function launchDynasty(){
   var dT={id:'dynasty_'+_dynastyClub,name:clubNameStr+' Dynasty',years:'',emoji:'🏟️',
     desc:'',teams:clubTeams,allTime:false,_dynasty:true};
   applyTournament(dT);
-  G.formation=_dynastyFormation||'4-3-3';
-  G.tactic=_dynastyTactic||'balanced';
-  var _dBtn=document.getElementById('btn-start-draft');if(_dBtn)_dBtn.classList.remove('btn-inactive');
-  initDraft();
+  showScreen('screen-formation');
 }
 
 function initDraft(){
