@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- deploy: 2026-07-01c -->
+<!-- deploy: 2026-07-01d -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Decempionz — Blind draft delle leggende del calcio: costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali. 90+ rose storiche, 3 tornei, 3 formati.">
+<meta name="description" content="Decempionz — Blind draft delle leggende del calcio: costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali. 200+ rose storiche, 3 tornei, 3 formati.">
 <meta name="author" content="Decempionz">
 <meta property="og:title" content="Decempionz — Draft le Leggende: UCL, Copa Libertadores, Mondiali">
 <meta property="og:description" content="Scegli le leggende del calcio storico, costruisci il tuo XI e conquista UCL, Copa o Mondiali. 90+ rose storiche, blind draft, 3 tornei.">
@@ -24,7 +24,7 @@
   "@context": "https://schema.org",
   "@type": "VideoGame",
   "name": "Decempionz",
-  "description": "Blind draft delle leggende del calcio: costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali. 90+ rose storiche, 3 tornei, 3 formati.",
+  "description": "Blind draft delle leggende del calcio: costruisci il tuo XI e conquista UCL, Copa Libertadores o Mondiali. 200+ rose storiche, 3 tornei, 3 formati.",
   "url": "https://decempionz.com/",
   "gamePlatform": ["Web Browser", "Mobile Browser"],
   "applicationCategory": "Game",
@@ -768,11 +768,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat">
-        <div class="tourn-stat-val">76</div>
+        <div class="tourn-stat-val">78</div>
         <div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div>
       </div>
       <div class="tourn-stat">
-        <div class="tourn-stat-val">1218</div>
+        <div class="tourn-stat-val">1247</div>
         <div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div>
       </div>
       <div class="tourn-stat">
@@ -785,7 +785,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGame()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="home.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="home.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 76 rose UCL →</a></div>
+    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 78 rose UCL →</a></div>
   </div>
 
   <!-- Copa Libertadores -->
@@ -838,10 +838,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="tourn-icon">🏰</div>
       <div>
         <div class="tourn-name" data-i18n="dynasty.name">Dynasty Mode</div>
-        <div class="tourn-sub" data-i18n="dynasty.sub">UCL · Scegli un club e domina le ere</div>
+        <div class="tourn-sub" data-i18n="dynasty.sub">UCL / Copa / WC · Scegli un club e domina le ere</div>
       </div>
     </div>
-    <p data-i18n="dynasty.home_desc" style="color:var(--mut);font-size:.78rem;margin-bottom:14px;line-height:1.5">Seleziona un club UCL storico e drafta i migliori giocatori di tutte le sue stagioni in una campagna senza precedenti.</p>
+    <p data-i18n="dynasty.home_desc" style="color:var(--mut);font-size:.78rem;margin-bottom:14px;line-height:1.5">Seleziona un club UCL, Copa o World Cup e drafta i migliori giocatori di tutte le sue stagioni in una campagna senza precedenti.</p>
     <button class="btn btn-gold" onclick="startGameDynasty()" style="font-size:1rem;padding:15px">
       <span data-i18n="dynasty.btn_start">🏰 Scegli il tuo club</span>
       <span style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px" data-i18n="dynasty.btn_sub">Draft da tutte le ere storiche</span>
@@ -1333,7 +1333,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
-    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 76 rose UCL →','home.link_copa':'Sfoglia tutte le 46 rose Copa →','home.link_wc':'Sfoglia tutte le 79 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 78 rose UCL →','home.link_copa':'Sfoglia tutte le 46 rose Copa →','home.link_wc':'Sfoglia tutte le 79 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1508,8 +1508,8 @@ const STRINGS={
     'howto.p8':'<strong style="color:var(--text)">Allenatore.</strong> Completato l\'XI scegli il tuo allenatore tra 3 candidati. Ogni allenatore ha un modulo preferito: corrispondenza perfetta +8% xG, due linee su tre +5%, una +2%, nessuna +0%. Scelta definitiva, nessun reroll.',
     'howto.p9':'<strong style="color:var(--text)">Stelle.</strong> Vinci di 2+ gol = ⭐⭐⭐ &nbsp;·&nbsp; Vinci di 1 = ⭐⭐ &nbsp;·&nbsp; Pareggio o rigori = ⭐ &nbsp;·&nbsp; Sconfitta = 0. Le stelle si accumulano nella Hall of Fame insieme al tuo record completo.',
     'howto.p_coach':'<strong style="color:var(--text)">Tattica e scout report.</strong> Prima di ogni partita lo scout rivela lo stile probabile dell\'avversario: <em>Pressione Alta</em>, <em>Possesso</em> o <em>Blocco Basso</em>. Contrastare correttamente dà un vantaggio in xG. Il momentum premia le serie positive: ogni vittoria vale +0.05 xG, ogni sconfitta −0.05 (range ±3).',
-    'howto.p_dynasty':'<strong style="color:var(--text)">Dynasty Mode.</strong> Scegli un club UCL storico e drafta i migliori giocatori di <em>tutte</em> le sue stagioni in un\'unica campagna leggendaria. Nessun limite di era: Puskas, Ronaldo e Benzema possono giocare insieme nello stesso Real Madrid.',
-    'dynasty.name':'Dynasty Mode','dynasty.sub':'UCL · Scegli un club e domina le ere','dynasty.home_desc':'Seleziona un club UCL storico e drafta i migliori di tutte le sue stagioni in una campagna senza precedenti.','dynasty.btn_start':'🏰 Scegli il tuo club','dynasty.btn_sub':'Draft da tutte le ere storiche','dynasty.title':'🏰 Dynasty Mode','dynasty.subtitle':'Scegli il tuo club e componi una squadra da sogno','dynasty.choose_club':'Scegli il tuo club','dynasty.selected':'Club selezionato','dynasty.btn_launch':'🏰 Inizia Dynasty →',
+    'howto.p_dynasty':'<strong style="color:var(--text)">Dynasty Mode.</strong> Scegli un club UCL, Copa o World Cup e drafta i migliori giocatori di <em>tutte</em> le sue stagioni in un\'unica campagna leggendaria. Nessun limite di era: combina eroi di epoche diverse dello stesso club.',
+    'dynasty.name':'Dynasty Mode','dynasty.sub':'UCL / Copa / WC · Scegli un club e domina le ere','dynasty.home_desc':'Seleziona un club UCL, Copa o World Cup e drafta i migliori di tutte le sue stagioni in una campagna senza precedenti.','dynasty.btn_start':'🏰 Scegli il tuo club','dynasty.btn_sub':'Draft da tutte le ere storiche','dynasty.title':'🏰 Dynasty Mode','dynasty.subtitle':'Scegli il tuo club e componi una squadra da sogno','dynasty.choose_club':'Scegli il tuo club','dynasty.selected':'Club selezionato','dynasty.btn_launch':'🏰 Inizia Dynasty →',
     'fmt.title':'Scegli il Formato',
     'fmt.subtitle':'Ogni formato ha struttura, pool e numero di partite diversi.',
     'fmt.coppa.meta':'5 partite<br>solo knockout',
@@ -1573,7 +1573,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 76 UCL squads →','home.link_copa':'Browse all 46 Copa squads →','home.link_wc':'Browse all 79 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 78 UCL squads →','home.link_copa':'Browse all 46 Copa squads →','home.link_wc':'Browse all 79 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1762,8 +1762,8 @@ const STRINGS={
     'blind.label':'🕵️ Blind Draft',
     'blind.desc':'No ratings shown — pick by name and role only.',
     'howto.p_coach':'<strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent\'s likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives an xG advantage. Momentum rewards winning runs: each consecutive win adds +0.05 xG, each loss −0.05 (range ±3).',
-    'howto.p_dynasty':'<strong style="color:var(--text)">Dynasty Mode.</strong> Pick a historic UCL club and draft the best players from <em>all</em> of its seasons into one legendary campaign. No era limits: Puskas, Ronaldo and Benzema can all wear the same Real Madrid shirt.',
-    'dynasty.name':'Dynasty Mode','dynasty.sub':'UCL · Pick a club and rule the eras','dynasty.home_desc':'Select a historic UCL club and draft the best from all its seasons into one unprecedented campaign.','dynasty.btn_start':'🏰 Choose your club','dynasty.btn_sub':'Draft from all historic eras','dynasty.title':'🏰 Dynasty Mode','dynasty.subtitle':'Pick your club and build a dream squad','dynasty.choose_club':'Choose your club','dynasty.selected':'Selected club','dynasty.btn_launch':'🏰 Start Dynasty →',
+    'howto.p_dynasty':'<strong style="color:var(--text)">Dynasty Mode.</strong> Pick a historic UCL, Copa or World Cup club and draft the best players from <em>all</em> of its seasons into one legendary campaign. No era limits — combine legends from different eras of the same club.',
+    'dynasty.name':'Dynasty Mode','dynasty.sub':'UCL / Copa / WC · Pick a club and rule the eras','dynasty.home_desc':'Select a historic UCL, Copa or World Cup club and draft the best from all its seasons into one unprecedented campaign.','dynasty.btn_start':'🏰 Choose your club','dynasty.btn_sub':'Draft from all historic eras','dynasty.title':'🏰 Dynasty Mode','dynasty.subtitle':'Pick your club and build a dream squad','dynasty.choose_club':'Choose your club','dynasty.selected':'Selected club','dynasty.btn_launch':'🏰 Start Dynasty →',
     'fmt.title':'Choose Tournament Format',
     'fmt.subtitle':'Each format has a different structure, era pool and number of matches.',
     'fmt.coppa.meta':'5 matches<br>pure knockout',
@@ -1827,7 +1827,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 76 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 78 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -2016,8 +2016,8 @@ const STRINGS={
     'blind.label':'🕵️ Blind Draft',
     'blind.desc':'Sin valoraciones visibles — elige solo por nombre y rol.',
     'howto.p_coach':'<strong style="color:var(--text)">Táctica e informe de scout.</strong> Antes de cada partido el scout revela el estilo probable del rival — <em>Presión Alta</em>, <em>Posesión</em> o <em>Bloque Bajo</em>. Contrarrestar correctamente da una ventaja en xG. El momentum recompensa las rachas ganadoras: cada victoria consecutiva añade +0.05 xG, cada derrota −0.05 (rango ±3).',
-    'howto.p_dynasty':'<strong style="color:var(--text)">Modo Dynasty.</strong> Elige un club UCL histórico y recluta a los mejores jugadores de <em>todas</em> sus temporadas en una sola campaña legendaria. Sin límites de era: Puskas, Ronaldo y Benzema pueden jugar juntos en el mismo Real Madrid.',
-    'dynasty.name':'Modo Dynasty','dynasty.sub':'UCL · Elige un club y domina las eras','dynasty.home_desc':'Selecciona un club UCL histórico y recluta a los mejores de todas sus temporadas en una campaña sin precedentes.','dynasty.btn_start':'🏰 Elige tu club','dynasty.btn_sub':'Draft de todas las eras históricas','dynasty.title':'🏰 Modo Dynasty','dynasty.subtitle':'Elige tu club y construye un equipo de ensueño','dynasty.choose_club':'Elige tu club','dynasty.selected':'Club seleccionado','dynasty.btn_launch':'🏰 Iniciar Dynasty →',
+    'howto.p_dynasty':'<strong style="color:var(--text)">Modo Dynasty.</strong> Elige un club UCL, Copa o World Cup histórico y recluta a los mejores jugadores de <em>todas</em> sus temporadas en una sola campaña legendaria. Sin límites de era: combina leyendas de diferentes épocas del mismo club.',
+    'dynasty.name':'Modo Dynasty','dynasty.sub':'UCL / Copa / WC · Elige un club y domina las eras','dynasty.home_desc':'Selecciona un club UCL, Copa o World Cup histórico y recluta a los mejores de todas sus temporadas en una campaña sin precedentes.','dynasty.btn_start':'🏰 Elige tu club','dynasty.btn_sub':'Draft de todas las eras históricas','dynasty.title':'🏰 Modo Dynasty','dynasty.subtitle':'Elige tu club y construye un equipo de ensueño','dynasty.choose_club':'Elige tu club','dynasty.selected':'Club seleccionado','dynasty.btn_launch':'🏰 Iniciar Dynasty →',
     'fmt.title':'Elige el Formato',
     'fmt.subtitle':'Cada formato tiene una estructura, pool de eras y número de partidos diferente.',
     'fmt.coppa.meta':'5 partidos<br>solo eliminación',
@@ -3755,6 +3755,7 @@ function _dynClubDisplayName(key){
 }
 
 function switchDynTab(mode){
+  _ga('dynasty_sub_tab',{mode:mode});
   _dynastyMode=mode;
   _dynastyClub=null;
   _dynastyClubDisplayName='';
@@ -3986,6 +3987,7 @@ function startGameWC(){
   applyTournamentTheme('wc');
 }
 function switchTournTab(mode){
+  if(mode==='dynasty') _ga('dynasty_tab_click',{});
   if(mode!=='dynasty') G.gameMode=mode; // sync gameMode al tab visivo
   ['ucl','copa','wc','dynasty'].forEach(function(m){
     var card=document.getElementById('tourn-'+m);
@@ -7390,28 +7392,39 @@ function closeDevPanel(){
 
 /* ── Dynasty Quick Launch ── */
 function _devInitDynClubSelect(){
+  _devRefreshDynClubs();
+}
+function _devRefreshDynClubs(){
+  var modeSel=document.getElementById('dv-dyn-mode');
+  var mode=modeSel?modeSel.value:'ucl';
   var sel=document.getElementById('dv-dyn-club');
-  if(!sel||sel.options.length>1)return;
-  var clubs=_getDynClubs();
+  if(!sel)return;
+  sel.innerHTML='<option value="">— scegli club —</option>';
+  var clubs=_getDynClubs(mode);
   clubs.forEach(function(e){
+    var clubKey=e[0].split('|')[0];
     var opt=document.createElement('option');
-    opt.value=e[0];
-    opt.textContent=_dynClubDisplayName(e[0])+' (×'+e[1].squads.length+')';
+    opt.value=clubKey;
+    opt.textContent=_dynClubDisplayName(clubKey)+' (×'+e[1].squads.length+')';
     sel.appendChild(opt);
   });
 }
 function _devQuickDynasty(){
+  var modeSel=document.getElementById('dv-dyn-mode');
+  var mode=modeSel?modeSel.value:'ucl';
   var club=document.getElementById('dv-dyn-club').value;
   var form=document.getElementById('dv-dyn-form').value||'4-3-3';
   var diff=document.getElementById('dv-dyn-diff').value||'normal';
   if(!club){alert('Seleziona un club!');return;}
   G.dynasty=true;G.dynastyClub=club;
-  _dynastyClub=club;_dynastyMode='ucl';_dynastyClubDisplayName=_dynClubDisplayName(club);
-  G.gameMode='ucl';G.format='classic';G.formation=form;
+  _dynastyClub=club;_dynastyMode=mode;_dynastyClubDisplayName=_dynClubDisplayName(club);
+  G.gameMode=mode;G.format='classic';G.formation=form;
   G.difficulty=diff;selectedDiff=diff;G.tactic='balanced';G.blindDraft=false;
-  var era=TOURNAMENTS.find(function(t){return t.id==='alltime';});
+  var _dynTList=mode==='copa'?COPA_TOURNAMENTS:mode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
+  var era=_dynTList.find(function(t){return t.allTime;});
+  if(!era)era=_dynTList[0];
   applyTournament(era);
-  applyTournamentTheme('ucl');
+  applyTournamentTheme(mode);
   closeDevPanel();
   initDraft();
 }
@@ -7752,6 +7765,11 @@ function _devSetMom(v){
     <div style="background:#111;border:1px solid #554400;border-radius:10px;padding:12px;margin-bottom:10px">
       <div style="color:#fbbf24;font-size:.72rem;font-weight:700;margin-bottom:8px">🏰 DYNASTY QUICK LAUNCH</div>
       <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <select id="dv-dyn-mode" onchange="_devRefreshDynClubs()" style="background:#1a1a1a;color:#fbbf24;border:1px solid #554400;border-radius:4px;padding:3px 6px;font-size:.7rem;font-weight:700">
+          <option value="ucl">🏆 UCL</option>
+          <option value="copa">🌎 Copa</option>
+          <option value="wc">🌍 WC</option>
+        </select>
         <select id="dv-dyn-club" style="background:#1a1a1a;color:#fbbf24;border:1px solid #554400;border-radius:4px;padding:3px 6px;font-size:.7rem;font-weight:700;flex:1">
           <option value="">— scegli club —</option>
         </select>

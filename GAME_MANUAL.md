@@ -1,7 +1,7 @@
 # Decempionz — Developer Manual
 
-**Version:** 5.6.2
-**Last updated:** 2026-06-29
+**Version:** 5.6.15
+**Last updated:** 2026-07-01
 **File:** `index.html` (single-file game, ~6200 lines)
 **Live:** [decempionz.com](https://decempionz.com) (GitHub Pages, custom domain)
 **Repo:** [github.com/FuroSeo/decempionz](https://github.com/FuroSeo/decempionz)
@@ -12,6 +12,9 @@
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 5.6.15 | 2026-07-01 | UCL 76→78 rose (int_0203, mci_1112); Dynasty threshold ≥3; Copa/WC in Dynasty + devpanel; howto/i18n aggiornati; GA4 dynasty_tab_click + dynasty_sub_tab |
+| 5.6.14 | 2026-07-01 | Aggiunta int_0203 (Inter 2002-03) e mci_1112 (Man City 2011-12); Dynasty threshold >=3 squads |
+| 5.6.13 | 2026-07-01 | Fix nationality int_0910/atm_1314/Keane; fix contatori 74→76; Dynasty Mode completo (screen, pool, GA4, HoF, devpanel, howto) |
 | 5.6.2 | 2026-06-29 | Animated journey replay su tutte le end screen; separatore gironi/KO nel percorso; `_animateJourney()` helper; GAME_VERSION ora aggiornato direttamente in index.html (non solo in sw.js) |
 | 5.6.1 | 2026-06-29 | Fix bandiere WC: `nat` iniettato nell'entry dal `t.country` del team; `natFlag()` ora supporta emoji pass-through (codici >2 chars); fix `pen.shootout_title` i18n (IT: Rigori, EN: Penalty Shootout, ES: Tanda de Penaltis); fix groupMax classic=3 nel bracket; avversario corrente mostrato nel chip GRP |
 | 5.6.0 | 2026-06-29 | `natFlag()` helper (bandiere emoji in draft card e pitch slot); bracket visuale campagna `renderCampaignBracket()` tra "Prossima Partita" e "Statistiche"; fix rose (LB/RB mancanti in val_0001, riv_9596, vas_9899, pen_6061, pal_9900, boc_0304; +2 giocatori a oli_9091, cal_0304, sao_0506, arj_8485, ldu_0708, atl_1617); aggiornamento conteggi rose in copa.html (46), ucl.html (74), worldcup.html (79) |
@@ -60,7 +63,7 @@ Single HTML file. No build step, no dependencies, no backend. All game logic is 
 
 | Value | Tournament | Dataset | Squads | Opps |
 |-------|-----------|---------|--------|------|
-| `'ucl'` | UCL Legends | `TEAMS` (74 rose, 29 club) | 74 | `KNOCKOUT_OPPS` / `COPPA_OPPS` |
+| `'ucl'` | UCL Legends | `TEAMS` (78 rose, 31 club) | 78 | `KNOCKOUT_OPPS` / `COPPA_OPPS` |
 | `'copa'` | Copa Libertadores | `COPA_TEAMS` (46 rose) | 46 | `COPA_KNOCKOUT_OPPS` / `COPA_COPPA_OPPS` |
 | `'wc'` | World Cup Legends | `WC_TEAMS` (79 nazionali) | 79 | `WC_KNOCKOUT_OPPS` / `WC_COPPA_OPPS` |
 
@@ -418,11 +421,71 @@ function t(key) { return STRINGS[G.lang || 'it'][key] || STRINGS.it[key] || key 
 
 | File | Tournament | Rose |
 |------|-----------|------|
-| `ucl.html` | UCL Legends | 74 rose, 29 club |
+| `ucl.html` | UCL Legends | 78 rose, 31 club |
 | `copa.html` | Copa Libertadores | 46 rose |
 | `worldcup.html` | World Cup Legends | 79 nazionali |
 
 Ogni pagina è trilingue (IT/EN/ES), linked dalla home e dal footer.
+
+---
+
+## Dynasty Mode
+
+Modalità speciale in cui il giocatore sceglie un club storico e compone una squadra con i migliori giocatori di **tutte** le sue stagioni, ignorando i limiti d'era.
+
+### Attivazione
+
+1. Dalla home, clicca il tab **🏰 Dynasty**
+2. Seleziona il torneo (UCL / Copa / WC) con i sotto-tab
+3. Scegli il tuo club dal grid (solo club con ≥3 rose nel dataset)
+4. Clicca **🏰 Inizia Dynasty →**
+
+### Stato globale
+
+| Variabile | Tipo | Valore Dynasty |
+|-----------|------|---------------|
+| `G.dynasty` | bool | `true` |
+| `G.dynastyClub` | string | chiave club (es. `'real_madrid'`) |
+| `_dynastyMode` | string | `'ucl'` / `'copa'` / `'wc'` |
+| `_dynastyClub` | string | chiave club (mirror di `G.dynastyClub`) |
+| `_dynastyClubDisplayName` | string | nome display |
+
+### Funzioni chiave
+
+| Funzione | Scopo |
+|----------|-------|
+| `_getDynClubs(mode)` | Restituisce club con ≥3 rose nel dataset specificato; chiave composita `club\|mode`; cached in `window._DYN_CLUBS_<mode>` |
+| `_dynClubDisplayName(key)` | Nome visualizzabile da chiave club |
+| `_dynPopulateGrid(mode)` | Popola la griglia di selezione club |
+| `selectDynastyClub(clubKey, mode)` | Seleziona un club, abilita il bottone launch |
+| `startGameDynasty()` | Apre la schermata Dynasty con scelta club |
+| `launchDynasty()` | Avvia il draft Dynasty |
+| `switchDynTab(mode)` | Cambia sotto-tab UCL/Copa/WC + GA4 `dynasty_sub_tab` |
+
+### Pool di draft Dynasty
+
+In `initDraft()`, se `G.dynasty && G.dynastyClub`, il draft pool viene costruito filtrando il dataset (`TEAMS` / `COPA_TEAMS` / `WC_TEAMS`) per `e[1].club === G.dynastyClub`. Tutti i giocatori di tutte le stagioni del club vengono messi insieme in pool unico (deduplicati per nome).
+
+### Soglia club
+
+Solo i club con **≥3 rose** nel dataset di quel torneo appaiono in Dynasty. La logica è in `_getDynClubs(mode)` alla riga `clubs.filter(e => e[1].squads.length >= 3)`.
+
+### Club disponibili per torneo (v5.6.15)
+
+**UCL** (31 club, 78 rose — solo quelli con ≥3): Real Madrid, Barcelona, AC Milan, Bayern, Juventus, Ajax, Man Utd, Liverpool, Chelsea, Inter Milan, Arsenal, Atlético, Man City, Porto, Benfica, Dortmund, PSG, Monaco e altri.
+
+**Copa Libertadores**: Estudiantes, Independiente, Boca Juniors, River Plate, Flamengo, Nacional, Olimpia, São Paulo, Santos, Cruzeiro, Fluminense, Grêmio, Internacional e altri.
+
+**World Cup**: Brasil, Argentina, Germania, Italia, Francia, Spagna, Olanda, Inghilterra e altri.
+
+### GA4 Events
+
+| Evento | Quando | Parametri |
+|--------|--------|-----------|
+| `dynasty_tab_click` | Click sul tab Dynasty nella home | — |
+| `dynasty_sub_tab` | Cambio sotto-tab UCL/Copa/WC | `{mode}` |
+| `dynasty_club_select` | Selezione club dal grid | `{club, tournament}` |
+| `dynasty_start` | Launch del draft Dynasty | `{club, tournament, format, difficulty}` |
 
 ---
 
@@ -433,6 +496,7 @@ Triggered by **5 rapid clicks** sul numero di versione (bottom home).
 | Feature | Function |
 |---------|----------|
 | Quick Draft — Top XI | `_devQuickDraft('top')` |
+| Dynasty Quick Launch (UCL/Copa/WC) | `_devQuickDynasty()` — seleziona modo + club + formazione |
 | Quick Draft — Random XI | `_devQuickDraft('random')` |
 | Jump to Round | `_devRenderJumpPanel()` — dinamico per gameMode+format |
 | Force Score | `_DEV_FORCE_SCORE = [my, opp]` |
@@ -446,10 +510,10 @@ Triggered by **5 rapid clicks** sul numero di versione (bottom home).
 ## Versioning
 
 ```js
-const GAME_VERSION = '5.6.2';  // aggiornato sia in index.html che in sw.js
+const GAME_VERSION = '5.6.15';  // aggiornato sia in index.html che in sw.js
 ```
 
-`sw.js`: `const CACHE = 'decempionz-v5.6.2'`
+`sw.js`: `const CACHE = 'decempionz-v5.6.15'`
 
 **Regola versione:** aggiornare **sempre entrambi** i file (index.html + sw.js) ad ogni push. `_push.bat` sincronizza GAME_VERSION da sw.js al repo durante il push, ma index.html locale deve già avere la versione corretta per verifiche pre-push.
 
@@ -486,7 +550,7 @@ open('/tmp/check.js','w').write(main)
 decempionz/
 ├── index.html              ← intero gioco (~6200 lines)
 ├── about.html              ← pagina SEO statica (trilingue IT/EN/ES)
-├── ucl.html                ← torneo UCL Legends — 74 rose (IT/EN/ES)
+├── ucl.html                ← torneo UCL Legends — 78 rose (IT/EN/ES)
 ├── copa.html               ← torneo Copa Libertadores — 46 rose (IT/EN/ES)
 ├── worldcup.html           ← torneo World Cup Legends — 79 nazionali (IT/EN/ES)
 ├── sw.js                   ← service worker PWA (version string: decempionz-vX.Y.Z)
