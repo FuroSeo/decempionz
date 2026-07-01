@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- deploy: 2026-07-01e -->
+<!-- deploy: 2026-07-02a -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -7712,6 +7712,11 @@ function _devSetMom(v){
   if(l)l.textContent=G.momentum>0?'+'+G.momentum:String(G.momentum);
 }
 
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).catch(function(){});
+}
 </script>
 
 
