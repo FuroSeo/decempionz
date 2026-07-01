@@ -3964,33 +3964,70 @@ function startDynasty(mode){
   if(nw) nw.style.display=_dynastyMode==='ucl'?'':'none';
   showScreen('screen-dynasty');
 }
+var _DYNASTY_COLORS={
+  /* UCL */
+  real_madrid: {bg:'#F5ECC8',txt:'#1a1a1a',acc:'#C5A028'},
+  bayern:      {bg:'#DC052D',txt:'#fff',acc:'#1e3b6e'},
+  liverpool:   {bg:'#C8102E',txt:'#fff',acc:'#F6EB61'},
+  man_utd:     {bg:'#DA291C',txt:'#fff',acc:'#FBE122'},
+  ac_milan:    {bg:'#C10016',txt:'#fff',acc:'#1a1a1a'},
+  juventus:    {bg:'#1a1a1a',txt:'#fff',acc:'#f0f0f0'},
+  barcelona:   {bg:'#A50044',txt:'#fff',acc:'#004D98'},
+  chelsea:     {bg:'#034694',txt:'#fff',acc:'#C8A032'},
+  inter:       {bg:'#0B1560',txt:'#fff',acc:'#6DAFE8'},
+  ajax:        {bg:'#D2001A',txt:'#fff',acc:'#f0f0f0'},
+  man_city:    {bg:'#6CABDD',txt:'#1a1a2e',acc:'#1a1a2e'},
+  /* Copa */
+  river_plate: {bg:'#F0F0F0',txt:'#E30613',acc:'#E30613'},
+  boca_juniors:{bg:'#003087',txt:'#FBDE00',acc:'#FBDE00'},
+  flamengo:    {bg:'#CC0000',txt:'#fff',acc:'#1a1a1a'},
+  gremio:      {bg:'#1e3a6e',txt:'#fff',acc:'#7DB9E8'},
+  /* WC */
+  brazil:      {bg:'#009C3B',txt:'#FEDF00',acc:'#002776'},
+  germany:     {bg:'#1a1a1a',txt:'#fff',acc:'#DD0000'},
+  italy:       {bg:'#0066CC',txt:'#fff',acc:'#f0f0f0'},
+  france:      {bg:'#002395',txt:'#fff',acc:'#ED2939'},
+  argentina:   {bg:'#75AADB',txt:'#fff',acc:'#f0f0f0'},
+  netherlands: {bg:'#FF6200',txt:'#fff',acc:'#1a1a1a'},
+  uruguay:     {bg:'#5BBCDB',txt:'#1a1a2e',acc:'#1a1a2e'},
+  croatia:     {bg:'#E20817',txt:'#fff',acc:'#f0f0f0'},
+};
+var _DYNASTY_DFLT={bg:'#2a2a3a',txt:'#fff',acc:'#888'};
 function _buildDynastyClubGrid(){
   var DB=_activeTeams();
-  var clubCount={},clubName={},clubIds={};
+  var clubCount={},clubName={};
   Object.keys(DB).forEach(function(id){
     var sq=DB[id],c=sq.club||id;
     clubCount[c]=(clubCount[c]||0)+1;
     clubName[c]=sq.name;
-    if(!clubIds[c])clubIds[c]=[];
-    clubIds[c].push(id);
   });
   var eligible=Object.keys(clubCount).filter(function(c){return clubCount[c]>=3;});
   eligible.sort(function(a,b){return clubCount[b]-clubCount[a];});
   var grid=document.getElementById('dy-club-grid');
   grid.innerHTML='';
   eligible.forEach(function(c){
+    var col=_DYNASTY_COLORS[c]||_DYNASTY_DFLT;
     var btn=document.createElement('button');
-    btn.className='btn btn-ghost';
+    btn.className='dy-club-btn';
     btn.dataset.club=c;
-    btn.style.cssText='padding:9px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2';
-    btn.innerHTML='<span style="font-size:.88rem;font-weight:700">'+clubName[c]+'</span><span style="font-size:.6rem;opacity:.6">'+clubCount[c]+' rose</span>';
+    btn.style.cssText='overflow:hidden;border-radius:10px;border:2.5px solid transparent;display:flex;flex-direction:column;align-items:stretch;text-align:center;cursor:pointer;transition:border-color .15s,box-shadow .15s;padding:0;background:none;width:100%';
+    btn.innerHTML=
+      '<div style="padding:13px 8px 8px;background:'+col.bg+';flex:1">'
+        +'<div style="font-size:.88rem;font-weight:800;letter-spacing:.2px;color:'+col.txt+'">'+clubName[c]+'</div>'
+        +'<div style="font-size:.58rem;color:'+col.txt+';opacity:.65;margin-top:2px">'+clubCount[c]+' rose storiche</div>'
+      +'</div>'
+      +'<div style="height:5px;background:'+col.acc+'"></div>';
     btn.onclick=(function(club){return function(){selectDynastyClub(club);};})(c);
     grid.appendChild(btn);
   });
 }
 function selectDynastyClub(club){
   _dynastyClub=club;
-  document.querySelectorAll('#dy-club-grid .btn').forEach(function(b){b.classList.toggle('fc-sel',b.dataset.club===club);});
+  document.querySelectorAll('.dy-club-btn').forEach(function(b){
+    var sel=b.dataset.club===club;
+    b.style.borderColor=sel?'var(--gold)':'transparent';
+    b.style.boxShadow=sel?'0 0 0 2px var(--gold)':'none';
+  });
   document.getElementById('dy-options').style.display='';
 }
 function setDynastyFmt(fmt){
