@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- deploy: 2026-07-01 -->
+<!-- deploy: 2026-07-01b -->
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -891,7 +891,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <p data-i18n="dynasty.subtitle" style="color:var(--mut);font-size:.78rem;margin-bottom:14px">Draft i migliori di tutte le ere del tuo club preferito</p>
 
   <div style="margin-bottom:12px">
-    <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:8px" data-i18n="dynasty.choose_club">Scegli il tuo club</div>
+    <div class="tourn-tab-bar" style="margin-bottom:8px">
+      <button id="dyn-tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchDynTab('ucl')">🏆 UCL</button>
+      <button id="dyn-tab-copa" class="tourn-tab" onclick="switchDynTab('copa')">🌎 Copa</button>
+      <button id="dyn-tab-wc" class="tourn-tab" onclick="switchDynTab('wc')">🌍 World Cup</button>
+    </div>
     <div id="dynasty-club-grid" style="display:flex;flex-wrap:wrap;gap:7px;max-height:220px;overflow-y:auto;padding:2px 2px 4px"></div>
   </div>
 
@@ -3696,25 +3700,30 @@ function _startGameByMode(){
 // ═══════════════════════════════════════
 var _dynastyClub=null;
 var _dynastyDiff='normal';
+var _dynastyMode='ucl';
 var _DYN_CLUBS_CACHE=null;
 var _dynastyClubDisplayName='';
 
-function _getDynClubs(){
-  if(_DYN_CLUBS_CACHE)return _DYN_CLUBS_CACHE;
-  var db=TEAMS;
+function _getDynClubs(mode){
+  var cacheKey='_DYN_CLUBS_'+( mode||'all');
+  if(window[cacheKey])return window[cacheKey];
+  var dbs=mode?{ucl:TEAMS,copa:COPA_TEAMS,wc:WC_TEAMS}[mode]?[{db:({ucl:TEAMS,copa:COPA_TEAMS,wc:WC_TEAMS}[mode]),mode:mode}]:[]
+    :[{db:TEAMS,mode:'ucl'},{db:COPA_TEAMS,mode:'copa'},{db:WC_TEAMS,mode:'wc'}];
   var clubMap={};
-  Object.entries(db).forEach(function(e){
-    var sq=e[1];
-    var club=sq.club||e[0];
-    if(!clubMap[club]){
-      var nm=sq.name.replace(/\s+\d{4}[-–]\d{2,4}$/, '').trim();
-      clubMap[club]={name:nm,squads:[]};
-    }
-    clubMap[club].squads.push(e[0]);
+  dbs.forEach(function(item){
+    Object.entries(item.db).forEach(function(e){
+      var sq=e[1];
+      var club=(sq.club||e[0])+'|'+item.mode;
+      if(!clubMap[club]){
+        var nm=sq.name.replace(/[\s,]+\d{4}[-–]\d{2,4}$/, '').trim();
+        clubMap[club]={name:nm,squads:[],mode:item.mode};
+      }
+      clubMap[club].squads.push(e[0]);
+    });
   });
   var clubs=Object.entries(clubMap).filter(function(e){return e[1].squads.length>=2;});
   clubs.sort(function(a,b){return b[1].squads.length-a[1].squads.length||a[1].name.localeCompare(b[1].name);});
-  _DYN_CLUBS_CACHE=clubs;
+  window[cacheKey]=clubs;
   return clubs;
 }
 
@@ -3737,9 +3746,41 @@ function _dynClubDisplayName(key){
   return found?found[1].name:key.replace(/_/g,' ');
 }
 
+function switchDynTab(mode){
+  _dynastyMode=mode;
+  _dynastyClub=null;
+  _dynastyClubDisplayName='';
+  ['ucl','copa','wc'].forEach(function(m){
+    var tb=document.getElementById('dyn-tab-'+m);
+    if(tb){
+      tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');
+      if(m===mode)tb.classList.add('tab-active-'+mode);
+    }
+  });
+  var selDiv=document.getElementById('dynasty-club-selected');
+  if(selDiv)selDiv.style.display='none';
+  var btn=document.getElementById('btn-dynasty-launch');
+  if(btn)btn.classList.add('btn-inactive');
+  _dynPopulateGrid(mode);
+}
+
+function _dynPopulateGrid(mode){
+  var grid=document.getElementById('dynasty-club-grid');
+  if(!grid)return;
+  var clubs=_getDynClubs(mode);
+  if(!clubs.length){grid.innerHTML='<div style="color:var(--mut);font-size:.78rem;padding:10px">Nessun club disponibile.</div>';return;}
+  grid.innerHTML=clubs.map(function(e){
+    var key=e[0],info=e[1];
+    var nm=info.name;
+    var sid='dyn-club-'+key.replace(/[^a-z0-9]/g,'_');
+    return '<button onclick="selectDynastyClub(\''+key.split('|')[0]+'\',\''+info.mode+'\')" id="'+sid+'" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:8px;padding:7px 10px;font-size:.72rem;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s">'+nm+'<span style="font-size:.58rem;color:var(--mut);margin-left:4px">×'+info.squads.length+'</span></button>';
+  }).join('');
+}
+
 function startGameDynasty(){
   _dynastyClub=null;
   _dynastyDiff='normal';
+  _dynastyMode='ucl';
   G.dynasty=false;
   ['easy','normal','hard'].forEach(function(d){
     var el=document.getElementById('dyn-dc-'+d);
@@ -3749,39 +3790,37 @@ function startGameDynasty(){
   if(btn)btn.classList.add('btn-inactive');
   var selDiv=document.getElementById('dynasty-club-selected');
   if(selDiv)selDiv.style.display='none';
-  var grid=document.getElementById('dynasty-club-grid');
-  if(grid){
-    var clubs=_getDynClubs();
-    grid.innerHTML=clubs.map(function(e){
-      var key=e[0],info=e[1];
-      var nm=_dynClubDisplayName(key);
-      var sid='dyn-club-'+key.replace(/[^a-z0-9]/g,'_');
-      return '<button onclick="selectDynastyClub(\''+key+'\')" id="'+sid+'" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:8px;padding:7px 10px;font-size:.72rem;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s">'+nm+'<span style="font-size:.58rem;color:var(--mut);margin-left:4px">×'+info.squads.length+'</span></button>';
-    }).join('');
-  }
+  // init UCL tab active
+  ['ucl','copa','wc'].forEach(function(m){
+    var tb=document.getElementById('dyn-tab-'+m);
+    if(tb){tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');if(m==='ucl')tb.classList.add('tab-active-ucl');}
+  });
+  _dynPopulateGrid('ucl');
   showScreen('screen-dynasty');
   if(typeof applyTranslations==='function')applyTranslations();
 }
 
-function selectDynastyClub(clubKey){
+function selectDynastyClub(clubKey,mode){
   _dynastyClub=clubKey;
-  _dynastyClubDisplayName=_dynClubDisplayName(clubKey);
-  _ga('dynasty_club_select',{club:clubKey,tournament:'ucl'});
+  if(mode)_dynastyMode=mode;
+  var clubs=_getDynClubs(_dynastyMode);
+  var ci=clubs.find(function(e){return e[0]===clubKey+'|'+_dynastyMode;});
+  _dynastyClubDisplayName=ci?ci[1].name:clubKey.replace(/_/g,' ');
+  _ga('dynasty_club_select',{club:clubKey,tournament:_dynastyMode});
   document.querySelectorAll('#dynasty-club-grid button').forEach(function(b){
     b.style.borderColor='var(--brd)';b.style.background='var(--s2)';b.style.color='var(--text)';
   });
-  var sid='dyn-club-'+clubKey.replace(/[^a-z0-9]/g,'_');
+  var sid='dyn-club-'+(clubKey+'|'+_dynastyMode).replace(/[^a-z0-9]/g,'_');
   var selBtn=document.getElementById(sid);
   if(selBtn){selBtn.style.borderColor='var(--gold)';selBtn.style.background='rgba(251,191,36,.12)';selBtn.style.color='var(--gold)';}
-  var clubs=_getDynClubs();
-  var ci=clubs.find(function(e){return e[0]===clubKey;});
   if(ci){
     var selDiv=document.getElementById('dynasty-club-selected');
     var nameEl=document.getElementById('dynasty-club-name');
     var infoEl=document.getElementById('dynasty-club-info');
+    var modeLabel={ucl:'stagioni UCL',copa:'stagioni Copa',wc:'Mondiali'}[_dynastyMode]||'stagioni';
     if(selDiv)selDiv.style.display='block';
     if(nameEl)nameEl.textContent=_dynastyClubDisplayName;
-    if(infoEl)infoEl.textContent=ci[1].squads.length+' stagioni UCL nel pool · '+(ci[1].squads.length*18)+' giocatori ca.';
+    if(infoEl)infoEl.textContent=ci[1].squads.length+' '+modeLabel+' nel pool';
   }
   var btn=document.getElementById('btn-dynasty-launch');
   if(btn)btn.classList.remove('btn-inactive');
@@ -3797,20 +3836,21 @@ function launchDynasty(){
   if(!_dynastyClub)return;
   G.dynasty=true;
   G.dynastyClub=_dynastyClub;
-  G.gameMode='ucl';
+  G.gameMode=_dynastyMode||'ucl';
   G.format='classic';
   G.difficulty=_dynastyDiff||'normal';
   selectedDiff=G.difficulty;
-  var era=TOURNAMENTS.find(function(t){return t.id==='alltime';});
+  var tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
+  var era=tourList.find(function(t){return t.allTime;})||tourList[0];
   applyTournament(era);
   G.tactic='balanced';
-  _ga('dynasty_start',{club:_dynastyClub,tournament:'ucl',format:'classic',difficulty:G.difficulty});
+  _ga('dynasty_start',{club:_dynastyClub,tournament:G.gameMode,format:'classic',difficulty:G.difficulty});
   renderFormationGrid();
   setTimeout(function(){
     document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
     var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
   },0);
-  applyTournamentTheme('ucl');
+  applyTournamentTheme(G.gameMode);
   showScreen('screen-formation');
 }
 
@@ -4078,13 +4118,13 @@ function _abbrevTeam(name){
 }
 function initDraft(){
   if(!G.formation) return;
-  _ga('game_start',{tournament:G.dynasty?'dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
+  _ga('game_start',{tournament:G.dynasty?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
 
   // ─── Dynasty mode: pool from all squads of selected club ─────────────────
   if(G.dynasty&&G.dynastyClub){
-    var _dynDB=TEAMS;
+    var _dynDB=G.gameMode==='copa'?COPA_TEAMS:G.gameMode==='wc'?WC_TEAMS:TEAMS;
     var _dynSquads=Object.entries(_dynDB).filter(function(e){return e[1].club===G.dynastyClub;});
     var _dynPool=[];
     var _dynSeen=new Set();
@@ -7358,7 +7398,7 @@ function _devQuickDynasty(){
   var diff=document.getElementById('dv-dyn-diff').value||'normal';
   if(!club){alert('Seleziona un club!');return;}
   G.dynasty=true;G.dynastyClub=club;
-  _dynastyClub=club;_dynastyClubDisplayName=_dynClubDisplayName(club);
+  _dynastyClub=club;_dynastyMode='ucl';_dynastyClubDisplayName=_dynClubDisplayName(club);
   G.gameMode='ucl';G.format='classic';G.formation=form;
   G.difficulty=diff;selectedDiff=diff;G.tactic='balanced';G.blindDraft=false;
   var era=TOURNAMENTS.find(function(t){return t.id==='alltime';});
