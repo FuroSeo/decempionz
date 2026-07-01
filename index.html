@@ -1280,7 +1280,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.6.12';
+const GAME_VERSION='5.6.13';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -5793,15 +5793,27 @@ function showResult(){
 /* ═══════════════════════════════════════
    PERSONAL STATS (dcz_stats)
 ═══════════════════════════════════════ */
+/* ── Global Stats sender ── */
+function _gsSend(event,data){
+  try{
+    fetch('/global-stats.php',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({event:event},data))
+    }).catch(function(){});
+  }catch(e){}
+}
 function _dczLoad(){try{return JSON.parse(localStorage.getItem('dcz_stats')||'{}');}catch(e){return{};}}
 function _dczSave(s){try{localStorage.setItem('dcz_stats',JSON.stringify(s));}catch(e){}}
 function _dczStatsCampaignStart(){
   var s=_dczLoad();
   s.campaignsStarted=(s.campaignsStarted||0)+1;
-  var mode=G.gameMode||'ucl';
-  s.byTournament=s.byTournament||{ucl:{played:0,won:0},copa:{played:0,won:0},wc:{played:0,won:0}};
+  var mode=G.dynasty?'dynasty':(G.gameMode||'ucl');
+  s.byTournament=s.byTournament||{ucl:{played:0,won:0},copa:{played:0,won:0},wc:{played:0,won:0},dynasty:{played:0,won:0}};
   s.byTournament[mode]=s.byTournament[mode]||{played:0,won:0};
   s.byTournament[mode].played=(s.byTournament[mode].played||0)+1;
+  if(G.dynasty&&G.dynastyClub){
+    s.dynastyClubCount=s.dynastyClubCount||{};
+    s.dynastyClubCount[G.dynastyClub]=(s.dynastyClubCount[G.dynastyClub]||0)+1;
+  }
   var diff=G.difficulty||'normal';
   s.byDifficulty=s.byDifficulty||{easy:{played:0,won:0},normal:{played:0,won:0},hard:{played:0,won:0}};
   s.byDifficulty[diff]=s.byDifficulty[diff]||{played:0,won:0};
@@ -5810,6 +5822,7 @@ function _dczStatsCampaignStart(){
   s.formationCount=s.formationCount||{};
   s.formationCount[form]=(s.formationCount[form]||0)+1;
   _dczSave(s);
+  _gsSend('campaign_start',{tournament:mode,dynastyClub:G.dynasty?(G.dynastyClub||''):'',format:G.format||'classic',difficulty:diff,formation:form});
 }
 function _dczStatsMatchEnd(){
   var s=_dczLoad();
@@ -5830,11 +5843,15 @@ function _dczStatsMatchEnd(){
 function _dczStatsCampaignWon(){
   var s=_dczLoad();
   s.campaignsWon=(s.campaignsWon||0)+1;
-  var mode=G.gameMode||'ucl';
+  var mode=G.dynasty?'dynasty':(G.gameMode||'ucl');
   if(s.byTournament&&s.byTournament[mode])s.byTournament[mode].won=(s.byTournament[mode].won||0)+1;
   var diff=G.difficulty||'normal';
   if(s.byDifficulty&&s.byDifficulty[diff])s.byDifficulty[diff].won=(s.byDifficulty[diff].won||0)+1;
+  var pct=0;
+  try{var all=[...G.groupUserResults,...G.knockResults];var tot=all.reduce(function(s,r){return s+Math.round(r.stars||0);},0);var mx=all.length*3;pct=mx?tot/mx:0;}catch(e){}
+  var grade=pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
   _dczSave(s);
+  _gsSend('campaign_won',{tournament:mode,dynastyClub:G.dynasty?(G.dynastyClub||''):'',grade:grade,difficulty:diff});
 }
 function _dczStatsPlayerDrafted(playerName){
   var s=_dczLoad();
@@ -5851,8 +5868,8 @@ function openStatsScreen(){
   var topForm=Object.entries(s.formationCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var topPl=Object.entries(s.playerDraftCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var bt=s.byTournament||{};
-  var tn={ucl:'UCL Legends',copa:'Copa Libertadores',wc:'World Cup'};
-  var ti={ucl:'🏆',copa:'🌿',wc:'🌍'};
+  var tn={ucl:'UCL Legends',copa:'Copa Libertadores',wc:'World Cup',dynasty:'Dynasty'};
+  var ti={ucl:'🏆',copa:'🌿',wc:'🌍',dynasty:'🏟️'};
   var body;
   if(!played){
     body='<div style="color:var(--mut);text-align:center;padding:30px 0;font-size:.88rem">'+t('stats.empty')+'</div>';
@@ -5884,14 +5901,28 @@ function openStatsScreen(){
         +'</div>':'')
       +'<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px">'
       +'<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:8px">'+t('stats.by_tourn')+'</div>'
-      +['ucl','copa','wc'].filter(function(k){return bt[k]&&bt[k].played;}).map(function(k){
+      +['ucl','copa','wc','dynasty'].filter(function(k){return bt[k]&&bt[k].played;}).map(function(k){
         var d=bt[k];
+        var tnK={'ucl':'UCL Legends','copa':'Copa Libertadores','wc':'World Cup','dynasty':'Dynasty'}[k]||k;
+        var tiK={'ucl':'🏆','copa':'🌿','wc':'🌍','dynasty':'🏟️'}[k]||'';
         return'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--brd)">'
-          +'<div style="font-size:.78rem;font-weight:600">'+ti[k]+' '+tn[k]+'</div>'
+          +'<div style="font-size:.78rem;font-weight:600">'+tiK+' '+tnK+'</div>'
           +'<div style="font-size:.72rem;color:var(--mut)">'+d.played+' · <span style="color:var(--grn2);font-weight:700">'+d.won+' W</span></div>'
           +'</div>';
       }).join('')
       +'</div>'
+      +(Object.keys(s.dynastyClubCount||{}).length?
+        '<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px">'
+        +'<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:8px">🏟️ Dynasty — Club più scelti</div>'
+        +Object.entries(s.dynastyClubCount||{}).sort(function(a,b){return b[1]-a[1];}).slice(0,6).map(function(e){
+          var label=e[0].replace(/_/g,' ').replace(/\b\w/g,function(l){return l.toUpperCase();});
+          return'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--brd)">'
+            +'<div style="font-size:.78rem;font-weight:600">'+label+'</div>'
+            +'<div style="font-size:.72rem;color:var(--gold);font-weight:700">×'+e[1]+'</div>'
+            +'</div>';
+        }).join('')
+        +'</div>'
+      :'')
       +'<button class="btn btn-ghost" onclick="_dczReset()" style="font-size:.72rem;color:var(--red2);border-color:var(--red2)">'+t('stats.reset')+'</button>'
       +'</div>';
   }
