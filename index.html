@@ -1304,7 +1304,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.7.1';
+const GAME_VERSION='5.7.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3089,6 +3089,7 @@ var _dynastyDiff='normal';
 var _dynastyMode='ucl';
 var _DYN_CLUBS_CACHE=null;
 var _dynastyClubDisplayName='';
+var CLUB_COLORS={real_madrid:'#9B9BB4',barcelona:'#A50044',ac_milan:'#C60000',inter:'#0050A0',liverpool:'#C8102E',man_utd:'#DA291C',juventus:'#888888',bayern:'#DC052D',ajax:'#D2122E',chelsea:'#034694',arsenal:'#EF0107',man_city:'#6CABDD',psg:'#004170',dortmund:'#FDE100',porto:'#003A99',benfica:'#C70000',celtic:'#1B8A28',feyenoord:'#C8102E',atletico:'#C8102E',marseille:'#2B9BF3',boca_juniors:'#003DA5',river_plate:'#EE3124',flamengo:'#C21729',santos:'#777777',nacional:'#005A8E',estudiantes:'#D4B900',steaua:'#C8102E',nottm_forest:'#C8102E',aston_villa:'#6B0F2B',hamburg:'#D9000D',brazil:'#009C3B',argentina:'#74ACDF',italy:'#003DA5',germany:'#DD0000',france:'#002395',spain:'#C60B1E',netherlands:'#FF6600',england:'#CCCCCC',uruguay:'#75AADB',portugal:'#006600',croatia:'#C8102E',czech:'#D7141A',denmark:'#C8102E',belgium:'#EDEDED'};
 
 function _getDynClubs(mode){
   var cacheKey='_DYN_CLUBS_'+( mode||'all');
@@ -3160,7 +3161,7 @@ function _dynPopulateGrid(mode){
     var key=e[0],info=e[1];
     var nm=info.name;
     var sid='dyn-club-'+key.replace(/[^a-z0-9]/g,'_');
-    return '<button onclick="selectDynastyClub(\''+key.split('|')[0]+'\',\''+info.mode+'\')" id="'+sid+'" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s;line-height:1.2">'+nm+'<span style="display:inline-block;background:var(--brd);border-radius:10px;font-size:.62rem;font-weight:700;color:var(--mut);margin-left:6px;padding:1px 5px">×'+info.squads.length+'</span></button>';
+    var _ck=key.split('|')[0];var _cc=CLUB_COLORS[_ck]||'#888888';return '<button onclick="selectDynastyClub(\''+_ck+'\',\''+info.mode+'\')" id="'+sid+'" style="background:var(--s2);border:2px solid '+_cc+';border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s;line-height:1.2">'+nm+'<span style="font-size:.62rem;font-weight:700;color:'+_cc+';margin-left:6px;opacity:.85">×'+info.squads.length+'</span></button>';
   }).join('');
 }
 
@@ -3207,7 +3208,7 @@ function selectDynastyClub(clubKey,mode){
     var modeLabel={ucl:'stagioni UCL',copa:'stagioni Copa',wc:'Mondiali'}[_dynastyMode]||'stagioni';
     if(selDiv)selDiv.style.display='block';
     if(nameEl)nameEl.textContent=_dynastyClubDisplayName;
-    if(infoEl)infoEl.textContent=ci[1].squads.length+' '+modeLabel+' nel pool';
+    var _dynDb={ucl:TEAMS,copa:COPA_TEAMS,wc:WC_TEAMS}[_dynastyMode]||TEAMS;var _seasons=ci[1].squads.map(function(k){return _dynDb[k]?_dynDb[k].season:k;}).sort(function(a,b){return a.localeCompare(b);});if(nameEl)nameEl.textContent=_dynastyClubDisplayName;if(infoEl)infoEl.innerHTML='<div style="font-size:.63rem;color:var(--mut);margin-bottom:6px">'+ci[1].squads.length+' '+modeLabel+' nel pool</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+_seasons.map(function(s){return'<span style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);border-radius:6px;padding:2px 7px;font-size:.62rem;font-weight:700;color:var(--gold)">'+s+'</span>';}).join('')+'</div>';
   }
   var btn=document.getElementById('btn-dynasty-launch');
   if(btn)btn.classList.remove('btn-inactive');
