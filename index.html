@@ -862,38 +862,46 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- DYNASTY SCREEN -->
 <div class="screen" id="screen-dynasty">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
-  <h2 data-i18n="dynasty.title" style="margin-bottom:4px">🏰 Dynasty Mode</h2>
-  <p data-i18n="dynasty.subtitle" style="color:var(--mut);font-size:.78rem;margin-bottom:14px">Draft i migliori di tutte le ere del tuo club preferito</p>
 
+  <!-- Hero dynasty -->
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,.12) 0%,rgba(251,191,36,.06) 100%);border:1px solid rgba(99,102,241,.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-10px;right:8px;font-size:3.2rem;opacity:.12;line-height:1">🏰</div>
+    <div style="font-size:1.2rem;font-weight:900;letter-spacing:-.01em;color:var(--text)" data-i18n="dynasty.title">🏰 Dynasty Mode</div>
+    <div style="font-size:.72rem;color:var(--mut);margin-top:3px" data-i18n="dynasty.subtitle">Scegli il tuo club e componi una squadra da sogno</div>
+  </div>
+
+  <!-- Torneo + Club grid -->
   <div style="margin-bottom:12px">
-    <div class="tourn-tab-bar" style="margin-bottom:8px">
+    <div class="tourn-tab-bar" style="margin-bottom:10px">
       <button id="dyn-tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchDynTab('ucl')">🏆 UCL</button>
       <button id="dyn-tab-copa" class="tourn-tab" onclick="switchDynTab('copa')">🌎 Copa</button>
       <button id="dyn-tab-wc" class="tourn-tab" onclick="switchDynTab('wc')">🌍 World Cup</button>
     </div>
-    <div id="dynasty-club-grid" style="display:flex;flex-wrap:wrap;gap:7px;max-height:220px;overflow-y:auto;padding:2px 2px 4px"></div>
+    <div id="dynasty-club-grid" style="display:flex;flex-wrap:wrap;gap:8px;max-height:210px;overflow-y:auto;padding:2px 2px 4px"></div>
   </div>
 
-  <div id="dynasty-club-selected" style="display:none;background:var(--s2);border:1px solid var(--gold);border-radius:10px;padding:10px 12px;margin-bottom:12px">
-    <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--gold);margin-bottom:3px" data-i18n="dynasty.selected">Club selezionato</div>
-    <div id="dynasty-club-name" style="font-size:1rem;font-weight:800;color:var(--text)"></div>
-    <div id="dynasty-club-info" style="font-size:.7rem;color:var(--mut);margin-top:2px"></div>
+  <!-- Club selezionato -->
+  <div id="dynasty-club-selected" style="display:none;background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(251,191,36,.04));border:1.5px solid rgba(251,191,36,.45);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+    <div style="font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);margin-bottom:5px" data-i18n="dynasty.selected">✦ Club selezionato</div>
+    <div id="dynasty-club-name" style="font-size:1.05rem;font-weight:800;color:var(--text)"></div>
+    <div id="dynasty-club-info" style="font-size:.7rem;color:var(--mut);margin-top:3px"></div>
   </div>
 
+  <!-- Difficoltà -->
   <div style="margin-bottom:14px">
-    <div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:7px" data-i18n="fmt.difficulty">Difficulty</div>
+    <div style="font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin-bottom:8px" data-i18n="fmt.difficulty">Difficoltà</div>
     <div class="diff-grid">
       <div class="diff-card diff-easy" id="dyn-dc-easy" onclick="selectDynDiff('easy',this)">
-        <div data-i18n="diff.easy" class="diff-title">🟢 Easy</div>
-        <div data-i18n="diff.easy_desc" class="diff-desc">5 rerolls · Opponents weaker</div>
+        <div data-i18n="diff.easy" class="diff-title">🟢 Facile</div>
+        <div data-i18n="diff.easy_desc" class="diff-desc">5 reroll · Avversari più deboli</div>
       </div>
       <div class="diff-card diff-normal diff-sel" id="dyn-dc-normal" onclick="selectDynDiff('normal',this)">
-        <div data-i18n="diff.normal" class="diff-title">🟡 Normal</div>
-        <div data-i18n="diff.normal_desc" class="diff-desc">3 rerolls · Standard strength</div>
+        <div data-i18n="diff.normal" class="diff-title">🟡 Normale</div>
+        <div data-i18n="diff.normal_desc" class="diff-desc">3 reroll · Forza standard</div>
       </div>
       <div class="diff-card diff-hard" id="dyn-dc-hard" onclick="selectDynDiff('hard',this)">
-        <div data-i18n="diff.hard" class="diff-title">🔴 Hard</div>
-        <div data-i18n="diff.hard_desc" class="diff-desc">2 rerolls · Opponents stronger</div>
+        <div data-i18n="diff.hard" class="diff-title">🔴 Difficile</div>
+        <div data-i18n="diff.hard_desc" class="diff-desc">2 reroll · Avversari più forti</div>
       </div>
     </div>
   </div>
@@ -1296,7 +1304,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.7.0';
+const GAME_VERSION='5.7.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3152,7 +3160,7 @@ function _dynPopulateGrid(mode){
     var key=e[0],info=e[1];
     var nm=info.name;
     var sid='dyn-club-'+key.replace(/[^a-z0-9]/g,'_');
-    return '<button onclick="selectDynastyClub(\''+key.split('|')[0]+'\',\''+info.mode+'\')" id="'+sid+'" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:8px;padding:7px 10px;font-size:.72rem;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s">'+nm+'<span style="font-size:.58rem;color:var(--mut);margin-left:4px">×'+info.squads.length+'</span></button>';
+    return '<button onclick="selectDynastyClub(\''+key.split('|')[0]+'\',\''+info.mode+'\')" id="'+sid+'" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s;line-height:1.2">'+nm+'<span style="display:inline-block;background:var(--brd);border-radius:10px;font-size:.62rem;font-weight:700;color:var(--mut);margin-left:6px;padding:1px 5px">×'+info.squads.length+'</span></button>';
   }).join('');
 }
 
@@ -7428,4 +7436,4 @@ if('serviceWorker' in navigator){
     <div class="modal-section">
       <h3>Cookie</h3>
       <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
-    </div
+    </div                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
