@@ -4513,11 +4513,30 @@ function updateDraftScreen(){
   if(filledCount()>=11){finalizeDraft();return;}
   if(!G.draftCards||G.draftCards.length===0){
     var _allEmpty=[10,9,8,7].every(function(t){return G.draftTiers[t].length===0;});
-    if(_allEmpty){finalizeDraft();return;}
+    if(_allEmpty){
+      // Tenta riciclo scartati prima di finalizzare
+      if(G.draftDiscarded&&G.draftDiscarded.length>0){
+        G.draftDiscarded.forEach(function(p){var t=p.r>=10?10:p.r>=9?9:p.r>=8?8:7;if(!G.draftTiers[t].some(function(e){return e.n===p.n;}))G.draftTiers[t].push(p);});
+        G.draftDiscarded=[];
+        [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
+        _allEmpty=[10,9,8,7].every(function(t){return G.draftTiers[t].length===0;});
+      }
+      if(_allEmpty){finalizeDraft();return;}
+    }
     drawDraftCards();
   }
   const hasCompat=G.draftCards.some(p=>compatibleEmptySlots(p).length>0);
-  if(!hasCompat){finalizeDraft();return;}
+  if(!hasCompat){
+    // Tenta riciclo scartati prima di finalizzare
+    if(G.draftDiscarded&&G.draftDiscarded.length>0){
+      G.draftDiscarded.forEach(function(p){var t=p.r>=10?10:p.r>=9?9:p.r>=8?8:7;if(!G.draftTiers[t].some(function(e){return e.n===p.n;}))G.draftTiers[t].push(p);});
+      G.draftDiscarded=[];
+      [10,9,8,7].forEach(function(t){G.draftTiers[t].sort(function(){return Math.random()-.5;});});
+      G.draftCards=[];
+      drawDraftCards();
+      if(!G.draftCards.some(p=>compatibleEmptySlots(p).length>0)){finalizeDraft();return;}
+    } else {finalizeDraft();return;}
+  }
 
   const filled=filledCount();
   var _emptySlotsNow=G.slotPlayers.filter(function(p){return p===null;}).length;
