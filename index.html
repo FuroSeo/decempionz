@@ -4501,6 +4501,25 @@ function drawDraftCards(){
     }
   }
 
+  // 6b. Se ancora <3 carte, pesca qualsiasi giocatore compatibile (es. 3 GK quando rimane solo slot GK)
+  while(drawn.length<3){
+    var _b6Found=false;
+    var _b6Done=false;
+    for(var _b6ti=0;_b6ti<_tierOrder.length&&!_b6Done;_b6ti++){
+      var _b6pool=G.draftTiers[_tierOrder[_b6ti]];
+      for(var _b6ii=0;_b6ii<_b6pool.length&&!_b6Done;_b6ii++){
+        var _b6p=_b6pool[_b6ii];
+        if(_drawnNames.has(_b6p.n))continue;
+        if(compatibleEmptySlots(_b6p).length>0){
+          drawn.push({p:_b6p,tier:_tierOrder[_b6ti]});
+          _drawnNames.add(_b6p.n);
+          _b6Found=true;_b6Done=true;
+        }
+      }
+    }
+    if(!_b6Found)break;
+  }
+
   // 7. Remove drawn players from their respective tier pools permanently
   drawn.forEach(function(d){
     G.draftTiers[d.tier]=G.draftTiers[d.tier].filter(function(p){return p.n!==d.p.n;});
