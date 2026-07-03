@@ -16,6 +16,11 @@
   Require all denied
 </FilesMatch>
 
+# game-data.js: cache lunga, il busting avviene via query ?v= in index.html
+<Files "game-data.js">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</Files>
+
 # Compressione testo (HTML/CSS/JS/JSON/SVG/XML)
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
