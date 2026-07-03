@@ -1321,7 +1321,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.8.0';
+const GAME_VERSION='5.8.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2975,7 +2975,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -6273,14 +6273,18 @@ function _loadDailyBanner(){
   if(entry){
     playBtn.style.display='none';
     doneBox.style.display='block';
+    document.getElementById('hdb-streak').textContent='';
     document.getElementById('hdb-result').textContent=_dailyGrid(entry.res)+'  ·  Grade '+entry.g;
     document.getElementById('hdb-share-btn').onclick=function(){_dailyShare(entry,pz);};
     const rp=document.getElementById('hdb-replay');
     if(rp)rp.onclick=function(e){e.preventDefault();window.location.href='/?daily=replay';};
   }else{
+    playBtn.style.display='';
+    doneBox.style.display='none';
     playBtn.onclick=function(){window.location.href='/?daily=1';};
   }
   const sEl=document.getElementById('hdb-streak');
+  if(sEl)sEl.textContent='';
   if(sEl&&st.streak)sEl.textContent='🔥 '+st.streak+' '+t('daily.streak');
   banner.style.display='block';
 }
@@ -6329,7 +6333,7 @@ function _dailyInjectShare(entry,screenId){
   box.innerHTML='<div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px">🗓️ '+t('daily.title')+' #'+(entry.n||G.dailyNum||'')+'</div>'
     +'<div style="font-size:1.05rem;letter-spacing:2px;margin-bottom:4px">'+_dailyGrid(entry.res)+'</div>'
     +'<div style="font-size:.75rem;margin-bottom:10px">Grade '+entry.g+(st.streak?' · 🔥 '+st.streak:'')+'</div>'
-    +'<button class="btn" style="font-size:.78rem;padding:9px 20px;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)">📋 '+t('daily.share')+'</button>';
+    +'<button class="btn" style="font-size:.78rem;padding:9px 20px;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)">'+t('daily.share')+'</button>';
   box.querySelector('button').onclick=function(){_dailyShare(entry,getDailyPuzzle());};
   scr.appendChild(box);
 }
