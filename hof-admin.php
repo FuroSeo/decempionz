@@ -1,7 +1,18 @@
 <?php
 session_start();
 
-define('ADMIN_PASSWORD', 'Dcmpz2026!');
+// La password vive in hof-config.php, file NON versionato nel repo:
+// va caricato una sola volta sul server via FTP/pannello hosting.
+$configFile = __DIR__ . '/hof-config.php';
+if (!file_exists($configFile)) {
+    http_response_code(503);
+    die('Configurazione mancante. Caricare hof-config.php sul server.');
+}
+require $configFile;
+if (!defined('ADMIN_PASSWORD')) {
+    http_response_code(503);
+    die('hof-config.php non definisce ADMIN_PASSWORD.');
+}
 
 $pendingFile  = __DIR__ . '/hall-of-fame-pending.json';
 $approvedFile = __DIR__ . '/hall-of-fame.json';

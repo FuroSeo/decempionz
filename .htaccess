@@ -10,3 +10,16 @@
 <FilesMatch "\.(png|jpg|jpeg|gif|ico|webp|svg|woff2?|ttf)$">
   Header set Cache-Control "public, max-age=31536000, immutable"
 </FilesMatch>
+
+# File riservati: mai serviti via HTTP (PHP continua a leggerli da disco)
+<FilesMatch "^(hof-config\.php|challenge-config\.json|GAME_MANUAL\.md|hall-of-fame-pending\.json)$">
+  Require all denied
+</FilesMatch>
+
+# Compressione testo (HTML/CSS/JS/JSON/SVG/XML)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript text/javascript
+  AddOutputFilterByType DEFLATE application/json application/manifest+json
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>

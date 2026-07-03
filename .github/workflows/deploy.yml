@@ -27,3 +27,5 @@ jobs:
             game-counter.json
             hall-of-fame-pending.json
             hall-of-fame.json
+            challenge-config.json
+            hof-config.php
