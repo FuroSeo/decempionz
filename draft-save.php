@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo json_encode([
         'id'  => $id,
-        'url' => 'https://decempionz.com/draft.html?id=' . $id,
+        'url' => 'https://decempionz.com/draft.php?id=' . $id,
     ]);
     exit;
 }

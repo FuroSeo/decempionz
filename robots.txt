@@ -5,6 +5,9 @@ Disallow: /hof-config.php
 Disallow: /hof-submit.php
 Disallow: /hof-status.php
 Disallow: /draft-save.php
+Disallow: /draft-img.php
+Disallow: /daily-submit.php
+Disallow: /daily-scores.php
 Disallow: /game-counter.php
 Disallow: /global-stats.php
 Disallow: /challenge-config.php
