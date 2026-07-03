@@ -119,6 +119,15 @@
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
 .screen{display:none;padding-top:24px;animation:up .22s ease}
+.d-col-l,.d-col-r{display:contents}
+@media (min-width:1100px){
+  .app:has(#screen-draft.active){max-width:1040px}
+  #screen-draft.active{display:flex;flex-wrap:wrap;align-items:flex-start;column-gap:30px}
+  #screen-draft>.screen-logo,#screen-draft>.draft-hdr{flex:0 0 100%}
+  #screen-draft .d-col-l{display:block;flex:0 0 470px;position:sticky;top:14px;align-self:flex-start}
+  #screen-draft .d-col-r{display:block;flex:1 1 340px;min-width:340px}
+  #screen-draft .draft-pitch{min-height:430px}
+}
 .screen.active{display:block}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
@@ -1054,9 +1063,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="draft-passes" id="d-passes"></div>
     </div>
   </div>
+  <div class="d-col-l">
   <div class="pbar-wrap"><div class="pbar-fill" id="d-bar" style="width:100%"></div></div>
   <div id="d-slot-chips"></div>
   <div class="draft-pitch" id="draft-pitch"></div>
+  </div>
+  <div class="d-col-r">
   <div class="warn-banner" id="d-warn"></div>
   <div class="force-banner" id="d-force"></div>
   <div class="cant-banner" id="d-cant"></div>
@@ -1070,6 +1082,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="_startGameByMode()">↺ New Game</button>
+  </div>
 </div>
 
 <!-- CAMPAIGN -->
@@ -1322,7 +1335,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <script>
-const GAME_VERSION='5.8.2';
+const GAME_VERSION='5.9.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1334,7 +1347,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
-    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 83 rose UCL →','home.link_copa':'Sfoglia tutte le 51 rose Copa →','home.link_wc':'Sfoglia tutte le 87 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 83 rose UCL →','home.link_copa':'Sfoglia tutte le 51 rose Copa →','home.link_wc':'Sfoglia tutte le 87 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1574,7 +1587,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 83 UCL squads →','home.link_copa':'Browse all 51 Copa squads →','home.link_wc':'Browse all 87 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 83 UCL squads →','home.link_copa':'Browse all 51 Copa squads →','home.link_wc':'Browse all 87 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1828,7 +1841,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 76 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 76 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -2976,7 +2989,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -6231,6 +6244,48 @@ function saveDraftLink(){
 function copyDraftLink(){
   var input=document.getElementById('draft-link-input');
   if(input&&input.value)_copyText(input.value);
+}
+
+/* ══════════════════════════════════════
+   ONBOARDING PRIMA PARTITA — 3 coach mark nel draft
+══════════════════════════════════════ */
+function _tutMaybe(){
+  try{if(localStorage.getItem('dcz_tut'))return;}catch(e){return;}
+  if(document.getElementById('tut-ov'))return;
+  var steps=[
+    {sel:'#d-reveal',key:'tut.cards'},
+    {sel:'#draft-pitch',key:'tut.pitch'},
+    {sel:'#btn-pss',key:'tut.reroll'}
+  ];
+  var idx=0;
+  var ov=document.createElement('div');
+  ov.id='tut-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:900;cursor:pointer';
+  ov.innerHTML='<div id="tut-hl" style="position:fixed;pointer-events:none;border:2px solid var(--gold2);border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.62);transition:all .25s"></div>'
+    +'<div id="tut-box" style="position:fixed;left:50%;transform:translateX(-50%);max-width:340px;width:calc(100% - 40px);background:var(--s1);border:1.5px solid var(--gold);border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.5)">'
+    +'<div id="tut-txt" style="font-size:.86rem;line-height:1.5"></div>'
+    +'<div id="tut-cta" style="font-size:.7rem;font-weight:800;color:var(--gold2);margin-top:10px;text-align:right"></div></div>';
+  document.body.appendChild(ov);
+  function show(){
+    if(idx>=steps.length){end();return;}
+    var el=document.querySelector(steps[idx].sel);
+    if(!el){end();return;}
+    el.scrollIntoView({block:'center'});
+    var r=el.getBoundingClientRect();
+    var hl=document.getElementById('tut-hl');
+    hl.style.left=(r.left-6)+'px';hl.style.top=(r.top-6)+'px';
+    hl.style.width=(r.width+12)+'px';hl.style.height=(r.height+12)+'px';
+    document.getElementById('tut-txt').textContent=t(steps[idx].key);
+    document.getElementById('tut-cta').textContent=(idx<steps.length-1?t('tut.next'):t('tut.done'))+'  ·  '+(idx+1)+'/'+steps.length;
+    var box=document.getElementById('tut-box');
+    var top=r.bottom+14;
+    if(top>window.innerHeight-150)top=Math.max(10,r.top-130);
+    box.style.top=top+'px';
+  }
+  function end(){try{localStorage.setItem('dcz_tut','1');}catch(e){}ov.remove();}
+  ov.onclick=function(){idx++;show();};
+  show();
+  _ga('tutorial_start',{});
 }
 
 /* ══════════════════════════════════════
