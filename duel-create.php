@@ -93,6 +93,9 @@ if ($written === false) {
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
 }
 
+/* housekeeping: non lasciare crescere duels/ senza limite (vedi duel-lib.php) */
+dcz_cleanup_old_duels($duelsDir);
+
 echo json_encode([
     'id'  => $id,
     'url' => 'https://decempionz.com/duel.php?id=' . $id,

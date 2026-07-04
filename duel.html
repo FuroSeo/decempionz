@@ -218,7 +218,14 @@ a{color:inherit;text-decoration:none}
       try{
         var st=JSON.parse(localStorage.getItem('dcz_duels')||'[]');
         var ch=false;
-        st.forEach(function(x){if(x.id===d.id&&!x.seen){x.seen=true;x.status='done';ch=true;}});
+        st.forEach(function(x){
+          if(x.id!==d.id)return;
+          if(!x.seen){x.seen=true;x.status='done';ch=true;}
+          if(!x.opp){
+            var oppNick=x.role==='a'?((d.b&&d.b.nick)||''):((d.a&&d.a.nick)||'');
+            if(oppNick){x.opp=oppNick;ch=true;}
+          }
+        });
         if(ch)localStorage.setItem('dcz_duels',JSON.stringify(st));
       }catch(e){}
       var r=d.result||{matches:[],winsA:0,winsB:0,winner:'a'};

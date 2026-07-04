@@ -1794,6 +1794,7 @@ const STRINGS={
     'next.opponent':'Prossimo Avversario',
     'pen.shootout_title':'⚽ Rigori','pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
+    'stats.duels':'⚔️ Duelli 1v1',
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
@@ -2036,6 +2037,7 @@ const STRINGS={
     'stats.by_tourn':'By tournament',
     'stats.reset':'🗑 Reset stats',
     'stats.empty':'No matches yet. Start playing!',
+    'stats.duels':'⚔️ 1v1 Duels',
     'blind.label':'🕵️ Blind Draft',
     'blind.desc':'No ratings shown — pick by name and role only.',
     'howto.p_coach':'<strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent\'s likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives an xG advantage. Momentum rewards winning runs: each consecutive win adds +0.05 xG, each loss −0.05 (range ±3).',
@@ -2338,6 +2340,7 @@ const STRINGS={
     'stats.by_tourn':'Por torneo',
     'stats.reset':'🗑 Resetear stats',
     'stats.empty':'Sin partidos aún. ¡Empieza a jugar!',
+    'stats.duels':'⚔️ Duelos 1v1',
     'blind.label':'🕵️ Blind Draft',
     'blind.desc':'Sin valoraciones visibles — elige solo por nombre y rol.',
     'howto.p_coach':'<strong style="color:var(--text)">Táctica e informe de scout.</strong> Antes de cada partido el scout revela el estilo probable del rival — <em>Presión Alta</em>, <em>Posesión</em> o <em>Bloque Bajo</em>. Contrarrestar correctamente da una ventaja en xG. El momentum recompensa las rachas ganadoras: cada victoria consecutiva añade +0.05 xG, cada derrota −0.05 (rango ±3).',
@@ -3452,7 +3455,13 @@ function duelContinueSeries(){
   /* ripristina gli elementi nascosti dal risultato duello (il match screen campagna li riusa) */
   var st=document.getElementById('m-stats-toggle');if(st)st.style.display='';
   if(next<S.matches.length){duelPlayMatch(next);return;}
-  duelStoreUpdate(DUEL.id,{status:'done',seen:true});
+  var meIsB=(DUEL.viewRole!=='a');
+  var dd=DUEL.duelData||{};
+  var oppNick=meIsB?((dd.a&&dd.a.nick)||''):((dd.b&&dd.b.nick)||'');
+  var patch={status:'done',seen:true};
+  if(oppNick)patch.opp=oppNick;
+  duelStoreUpdate(DUEL.id,patch);
+  _dczStatsDuelPlayed(meIsB?(S.winner==='b'):(S.winner==='a'));
   window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);
 }
 /* ── Rivincita: /?rematch=ID → setup duello precompilato con gli stessi vincoli ── */
@@ -3545,7 +3554,7 @@ function _duelStatusRender(){
 function duelRenderHomeStatus(){
   _duelStatusRender();
   duelStore().slice(-3).forEach(function(e){
-    if(e.status==='done')return;
+    if(e.status==='done'&&e.opp)return;
     fetch('duel-join.php?id='+encodeURIComponent(e.id))
       .then(function(r){
         if(r.status===404){duelStoreSave(duelStore().filter(function(x){return x.id!==e.id;}));_duelStatusRender();throw new Error('handled');}
@@ -6087,19 +6096,26 @@ function _dczStatsPlayerDrafted(playerName){
   s.playerDraftCount[playerName]=(s.playerDraftCount[playerName]||0)+1;
   _dczSave(s);
 }
+function _dczStatsDuelPlayed(won){
+  var s=_dczLoad();
+  s.duelsPlayed=(s.duelsPlayed||0)+1;
+  if(won)s.duelsWon=(s.duelsWon||0)+1;
+  _dczSave(s);
+}
 function openStatsScreen(){
   var s=_dczLoad();
   var played=s.gamesPlayed||0,wins=s.wins||0,draws=s.draws||0,losses=s.losses||0;
   var winRate=played?Math.round(wins/played*100):0;
   var campS=s.campaignsStarted||0,campW=s.campaignsWon||0;
   var gf=s.totalGF||0,ga=s.totalGA||0,bestWin=s.bestWinMargin||0;
+  var duelsPlayed=s.duelsPlayed||0,duelsWon=s.duelsWon||0;
   var topForm=Object.entries(s.formationCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var topPl=Object.entries(s.playerDraftCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var bt=s.byTournament||{};
   var tn={ucl:'UCL Legends',copa:'Copa Libertadores',wc:'World Cup',dynasty:'Dynasty'};
   var ti={ucl:'🏆',copa:'🌿',wc:'🌍',dynasty:'🏰'};
   var body;
-  if(!played){
+  if(!played&&!duelsPlayed){
     body='<div style="color:var(--mut);text-align:center;padding:30px 0;font-size:.88rem">'+t('stats.empty')+'</div>';
   } else {
     body='<div style="display:flex;flex-direction:column;gap:10px">'
@@ -6137,7 +6153,9 @@ function openStatsScreen(){
           +'</div>';
       }).join('')
       +'</div>'
-      +(Object.keys(s.dynastyClubs||{}).length?'<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px"><div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:6px">🏰 Dynasty — Club preferito</div>'+Object.entries(s.dynastyClubs||{}).sort(function(a,b){return b[1]-a[1];})[0][0].replace(/_/g," ")+' ×'+Object.entries(s.dynastyClubs||{}).sort(function(a,b){return b[1]-a[1];})[0][1]+'</div>':'')      +'<button class="btn btn-ghost" onclick="_dczReset()" style="font-size:.72rem;color:var(--red2);border-color:var(--red2)">'+t('stats.reset')+'</button>'
+      +(Object.keys(s.dynastyClubs||{}).length?'<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px"><div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:6px">🏰 Dynasty — Club preferito</div>'+Object.entries(s.dynastyClubs||{}).sort(function(a,b){return b[1]-a[1];})[0][0].replace(/_/g," ")+' ×'+Object.entries(s.dynastyClubs||{}).sort(function(a,b){return b[1]-a[1];})[0][1]+'</div>':'')
+      +(duelsPlayed?'<div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:12px 14px"><div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);margin-bottom:6px">'+t('stats.duels')+'</div><div style="font-size:1.3rem;font-weight:900;color:var(--gold)">'+duelsWon+' / '+duelsPlayed+'</div></div>':'')
+      +'<button class="btn btn-ghost" onclick="_dczReset()" style="font-size:.72rem;color:var(--red2);border-color:var(--red2)">'+t('stats.reset')+'</button>'
       +'</div>';
   }
   document.getElementById('stats-body').innerHTML=body;

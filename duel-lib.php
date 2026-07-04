@@ -95,3 +95,16 @@ function dcz_sanitize_result($r) {
         'winner'  => $winner,
     ];
 }
+
+/* Mantiene al massimo $max file duello sul server: elimina i piu' vecchi (per data di creazione/modifica)
+   oltre il limite. Va richiamata solo alla creazione di un nuovo duello (operazione poco frequente su un
+   sito hobby: costo trascurabile anche con qualche migliaio di file). */
+function dcz_cleanup_old_duels($duelsDir, $max = 500) {
+    $files = glob($duelsDir . '*.json');
+    if ($files === false || count($files) <= $max) return;
+    usort($files, function ($a, $b) { return filemtime($a) <=> filemtime($b); });
+    $excess = count($files) - $max;
+    for ($i = 0; $i < $excess; $i++) {
+        @unlink($files[$i]);
+    }
+}
