@@ -1172,7 +1172,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <div id="duel-share-err" style="display:none;text-align:center">
     <div style="font-size:2.2rem;margin:24px 0 6px">⚠️</div>
-    <p data-i18n="duel.err_create" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Errore di rete: il duello non è stato creato.</p>
+    <p id="duel-share-err-msg" data-i18n="duel.err_create" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Errore di rete: il duello non è stato creato.</p>
     <button class="btn btn-gold" onclick="duelRetry()" data-i18n="duel.retry">↺ Riprova</button>
   </div>
 
@@ -1650,7 +1650,7 @@ const STRINGS={
 'duel.copy':'📋 Copia link',
 'duel.copied':'✅ Copiato!',
 'duel.share_hint':'Puoi rivedere lo stato dei tuoi duelli dalla home.',
-'duel.err_create':'Errore di rete: il duello non è stato creato.',
+'duel.err_create':'Errore di rete: il duello non è stato creato.','duel.err_rate':'Hai appena creato un duello: attendi qualche secondo e riprova.',
 'duel.retry':'↺ Riprova',
 'duel.back_home':'🏠 Torna alla home',
 'duel.wa_msg':'⚔️ Ti sfido a duello su Decempionz! Drafta la tua squadra e battimi se ci riesci: {url}',
@@ -1938,7 +1938,7 @@ const STRINGS={
 'duel.copy':'📋 Copy link',
 'duel.copied':'✅ Copied!',
 'duel.share_hint':'You can check the status of your duels from the home screen.',
-'duel.err_create':'Network error: the duel was not created.',
+'duel.err_create':'Network error: the duel was not created.','duel.err_rate':'You just created a duel: wait a few seconds and try again.',
 'duel.retry':'↺ Retry',
 'duel.back_home':'🏠 Back to home',
 'duel.wa_msg':'⚔️ I challenge you to a duel on Decempionz! Draft your squad and beat me if you can: {url}',
@@ -2240,7 +2240,7 @@ const STRINGS={
 'duel.copy':'📋 Copiar enlace',
 'duel.copied':'✅ ¡Copiado!',
 'duel.share_hint':'Puedes ver el estado de tus duelos desde la pantalla principal.',
-'duel.err_create':'Error de red: el duelo no se ha creado.',
+'duel.err_create':'Error de red: el duelo no se ha creado.','duel.err_rate':'Acabas de crear un duelo: espera unos segundos y vuelve a intentarlo.',
 'duel.retry':'↺ Reintentar',
 'duel.back_home':'🏠 Volver al inicio',
 'duel.wa_msg':'⚔️ ¡Te reto a un duelo en Decempionz! Draftea tu equipo y gáname si puedes: {url}',
@@ -3013,7 +3013,7 @@ function topPlayers(teamId,n){const t=(_activeTeams()[teamId]||TEAMS[teamId]);re
 /* ═══════════════════════════════════════
    DUELLO 1v1 — flusso client (lato A: crea)
 ═══════════════════════════════════════ */
-var DUEL={mode:null,id:null,nick:'',tourn:'ucl',eraT:null,eraLabel:'',eraId:'',rematchOf:null,kind:'classic',club:null,clubName:null};
+var DUEL={mode:null,id:null,nick:'',tourn:'ucl',eraT:null,eraLabel:'',eraId:'',rematchOf:null,kind:'classic',club:null,clubName:null,viewRole:null};
 var _eraFromDuel=false;
 
 function _duelTourList(k){return k==='copa'?COPA_TOURNAMENTS:k==='wc'?WC_TOURNAMENTS:TOURNAMENTS;}
@@ -3159,20 +3159,31 @@ function duelAfterDraft(){
   document.getElementById('duel-share-ok').style.display='none';
   document.getElementById('duel-share-err').style.display='none';
   document.getElementById('duel-share-wait').style.display='block';
+  _duelCreateAttempt(payload,0);
+}
+function _duelCreateAttempt(payload,attempt){
   fetch('duel-create.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .then(function(r){return r.json();})
+    .then(function(r){return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};});})
     .then(function(res){
-      if(!res||!res.id)throw new Error('bad response');
-      DUEL.id=res.id;
-      duelStoreAdd({id:res.id,role:'a',status:'waiting',nick:DUEL.nick,opp:'',tourn:payload.tournament,era:payload.era,ts:Date.now()});
+      if(!res.ok||!res.body||!res.body.id){var e=new Error('bad response');e.status=res.status;throw e;}
+      DUEL.id=res.body.id;
+      duelStoreAdd({id:res.body.id,role:'a',status:'waiting',nick:DUEL.nick,opp:'',tourn:payload.tournament,era:payload.era,ts:Date.now()});
       _ga('duel_create',{tournament:payload.tournament,era:payload.eraId||'alltime'});
       document.getElementById('duel-share-wait').style.display='none';
       document.getElementById('duel-share-ok').style.display='block';
       var li=document.getElementById('duel-link');
-      if(li)li.value='https://decempionz.com/duel.php?id='+res.id;
+      if(li)li.value='https://decempionz.com/duel.php?id='+res.body.id;
     })
-    .catch(function(){
+    .catch(function(err){
+      var status=err&&err.status;
+      if(attempt<1&&status!==429){
+        /* fallimento non da rate-limit: un retry automatico silenzioso prima di mostrare l'errore */
+        setTimeout(function(){_duelCreateAttempt(payload,attempt+1);},1200);
+        return;
+      }
       document.getElementById('duel-share-wait').style.display='none';
+      var msgEl=document.getElementById('duel-share-err-msg');
+      if(msgEl)msgEl.textContent=(status===429)?t('duel.err_rate'):t('duel.err_create');
       document.getElementById('duel-share-err').style.display='block';
     });
 }
@@ -3224,7 +3235,14 @@ function duelOpenJoin(id){
   fetch('duel-join.php?id='+encodeURIComponent(id))
     .then(function(r){if(!r.ok)throw new Error('nf');return r.json();})
     .then(function(d){
-      if(d.status==='done'){window.location.href='duel.php?id='+encodeURIComponent(id);return;}
+      if(d.status==='done'){
+        var _seen=duelStore().find(function(x){return x.id===d.id;});
+        if(_seen&&_seen.seen){window.location.href='duel.php?id='+encodeURIComponent(id);return;}
+        DUEL.id=d.id;DUEL.duelData=d;DUEL.series=d.result;
+        DUEL.viewRole=(_seen&&_seen.role==='b')?'b':'a';
+        duelPlayMatch(0);
+        return;
+      }
       DUEL.id=d.id;DUEL.duelData=d;
       if(d.status==='simulating'){
         /* rosa di B già committata: riprendi sim e invio */
@@ -3345,6 +3363,7 @@ function duelSimAndSend(){
       DUEL.series=res;
       duelStoreAdd({id:DUEL.id,role:'b',status:'done',nick:(d.b&&d.b.nick)||DUEL.nick,opp:(d.a&&d.a.nick)||'',tourn:d.tournament||DUEL.tourn,era:d.era||DUEL.eraLabel,ts:Date.now()});
       _ga('duel_complete',{tournament:d.tournament||DUEL.tourn,winner:res.winner,matches:res.matches.length});
+      DUEL.viewRole='b';
       duelPlayMatch(0);
     })
     .catch(function(e){if(e&&e.message==='handled')return;_duelFail();});
@@ -3354,18 +3373,20 @@ function duelSimAndSend(){
 function duelPlayMatch(idx){
   var d=DUEL.duelData,S=DUEL.series;
   var m=S.matches[idx];
-  var myName=(d.b&&(d.b.clubName||d.b.nick))||'?',oppName=(d.a&&(d.a.clubName||d.a.nick))||'?';
-  var myG=m.gb,oppG=m.ga;
-  var scorers=(d.b.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
-  var oppPool=(d.a.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
+  var meIsB=(DUEL.viewRole!=='a');
+  var me=meIsB?d.b:d.a,opp=meIsB?d.a:d.b;
+  var myName=(me&&(me.clubName||me.nick))||'?',oppName=(opp&&(opp.clubName||opp.nick))||'?';
+  var myG=meIsB?m.gb:m.ga,oppG=meIsB?m.ga:m.gb;
+  var scorers=(me.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
+  var oppPool=(opp.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
   var log=buildMatchLog(myG,oppG,myName,oppName,scorers,oppPool);
   var roundLabel=t('duel.match_lbl')+' '+(idx+1)+'/'+S.matches.length;
   M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
-     penResult:(m.pa!==null&&m.pa!==undefined)?{homeWon:m.pb>m.pa,pw:Math.max(m.pa,m.pb),pl:Math.min(m.pa,m.pb)}:null};
-  var posB=fmtPositions(d.b.formation,d.b.tactic||'balanced');
-  M.homeXI=(d.b.players||[]).map(function(p,i){return{n:p.n,p:posB[i]||p.p};});
-  var posA=fmtPositions(d.a.formation,d.a.tactic||'balanced');
-  M.awayXI=(d.a.players||[]).map(function(p,i){return{n:p.n,p:posA[i]||p.p};});
+     penResult:(m.pa!==null&&m.pa!==undefined)?{homeWon:meIsB?(m.pb>m.pa):(m.pa>m.pb),pw:Math.max(m.pa,m.pb),pl:Math.min(m.pa,m.pb)}:null};
+  var posMe=fmtPositions(me.formation,me.tactic||'balanced');
+  M.homeXI=(me.players||[]).map(function(p,i){return{n:p.n,p:posMe[i]||p.p};});
+  var posOpp=fmtPositions(opp.formation,opp.tactic||'balanced');
+  M.awayXI=(opp.players||[]).map(function(p,i){return{n:p.n,p:posOpp[i]||p.p};});
   M.homeGoals={};M.awayGoals={};
   document.getElementById('m-tag').innerHTML='<span class="tag tag-ko">⚔️ '+_duelEsc(roundLabel).toUpperCase()+'</span>';
   document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">'+_duelEsc(myName)+'</span>';
@@ -3394,11 +3415,13 @@ function duelPlayMatch(idx){
 }
 function duelShowMatchResult(){
   var S=DUEL.series,i=M.duelIdx,m=S.matches[i];
-  var myWon=m.gb>m.ga||(m.ga===m.gb&&m.pb>m.pa);
+  var meIsB=(DUEL.viewRole!=='a');
+  var myWon=meIsB?(m.gb>m.ga||(m.ga===m.gb&&m.pb>m.pa)):(m.ga>m.gb||(m.ga===m.gb&&m.pa>m.pb));
   var myW=0,opW=0;
   for(var k=0;k<=i;k++){
     var mk=S.matches[k];
-    if(mk.gb>mk.ga||(mk.ga===mk.gb&&mk.pb>mk.pa))myW++;else opW++;
+    var mkMyWon=meIsB?(mk.gb>mk.ga||(mk.ga===mk.gb&&mk.pb>mk.pa)):(mk.ga>mk.gb||(mk.ga===mk.gb&&mk.pa>mk.pb));
+    if(mkMyWon)myW++;else opW++;
   }
   var oe=document.getElementById('r-out');
   oe.textContent=myWon?t('result.win'):t('result.loss');
@@ -3406,7 +3429,7 @@ function duelShowMatchResult(){
   var row=oe.parentElement;
   if(row)row.style.setProperty('--res-color',myWon?'var(--grn2)':'var(--red2)');
   var msg=t('duel.series_lbl')+' '+myW+'–'+opW;
-  if(m.pa!==null&&m.pa!==undefined)msg+=' · '+t('duel.pens_note').replace('{a}',m.pb).replace('{b}',m.pa);
+  if(m.pa!==null&&m.pa!==undefined)msg+=' · '+t('duel.pens_note').replace('{a}',meIsB?m.pb:m.pa).replace('{b}',meIsB?m.pa:m.pb);
   document.getElementById('r-msg').textContent=msg;
   document.getElementById('r-stars').innerHTML='';
   var mc=document.getElementById('m-match-comment');if(mc)mc.style.display='none';
@@ -3429,7 +3452,7 @@ function duelContinueSeries(){
   /* ripristina gli elementi nascosti dal risultato duello (il match screen campagna li riusa) */
   var st=document.getElementById('m-stats-toggle');if(st)st.style.display='';
   if(next<S.matches.length){duelPlayMatch(next);return;}
-  duelStoreUpdate(DUEL.id,{status:'done'});
+  duelStoreUpdate(DUEL.id,{status:'done',seen:true});
   window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);
 }
 /* ── Rivincita: /?rematch=ID → setup duello precompilato con gli stessi vincoli ── */

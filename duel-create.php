@@ -19,37 +19,48 @@ if (!is_dir($duelsDir)) { @mkdir($duelsDir, 0755, true); }
 $ht = $duelsDir . '.htaccess';
 if (!file_exists($ht)) { @file_put_contents($ht, "Require all denied\n"); }
 
+/* Log minimale degli errori (protetto dallo stesso .htaccess di duels/), utile per diagnosi in produzione */
+function dcz_log_err($reason) {
+    global $duelsDir;
+    @file_put_contents($duelsDir . '_errors.log', date('c') . ' create ' . $reason . "\n", FILE_APPEND | LOCK_EX);
+}
+
 /* Rate limit: 1 creazione ogni 20 secondi per IP */
 $ip      = md5($_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateDir = sys_get_temp_dir() . '/dcz_duels/';
 @mkdir($rateDir, 0755, true);
 $rf = $rateDir . $ip . '.tmp';
 if (file_exists($rf) && (time() - filemtime($rf)) < 20) {
+    dcz_log_err('rate_limit ip=' . $ip);
     http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
 }
 touch($rf);
 
 $raw = file_get_contents('php://input');
 if (strlen($raw) > 15000) {
+    dcz_log_err('payload_too_large len=' . strlen($raw));
     http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
 }
 $data = json_decode($raw, true);
-if (!$data) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
+if (!$data) { dcz_log_err('invalid_json raw_len=' . strlen($raw)); http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
 
 require __DIR__ . '/duel-lib.php';
 
 $validTournaments = ['ucl', 'copa', 'wc'];
 if (!in_array($data['tournament'] ?? '', $validTournaments)) {
+    dcz_log_err('invalid_tournament val=' . ($data['tournament'] ?? '?'));
     http_response_code(400); echo json_encode(['error' => 'invalid tournament']); exit;
 }
 
 $team = dcz_sanitize_team($data['team'] ?? null);
 if ($team === null) {
+    dcz_log_err('invalid_team');
     http_response_code(400); echo json_encode(['error' => 'invalid team']); exit;
 }
 
 $mode = ($data['mode'] ?? 'classic') === 'dynasty' ? 'dynasty' : 'classic';
 if ($mode === 'dynasty' && empty($team['club'])) {
+    dcz_log_err('dynasty_no_club');
     http_response_code(400); echo json_encode(['error' => 'dynasty duel requires a club']); exit;
 }
 
@@ -76,7 +87,11 @@ $payload = [
     'doneAt'     => null,
 ];
 
-file_put_contents($file, json_encode($payload, JSON_UNESCAPED_UNICODE), LOCK_EX);
+$written = file_put_contents($file, json_encode($payload, JSON_UNESCAPED_UNICODE), LOCK_EX);
+if ($written === false) {
+    dcz_log_err('write_failed file=' . $id);
+    http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+}
 
 echo json_encode([
     'id'  => $id,

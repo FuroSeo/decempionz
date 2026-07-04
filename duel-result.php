@@ -32,6 +32,24 @@ if (!$data) { http_response_code(400); echo json_encode(['error' => 'invalid jso
 
 require __DIR__ . '/duel-lib.php';
 
+/* Incrementa game-counter.json come fa game-counter.php (stessa logica, stesso file) */
+function dcz_bump_games_counter() {
+    $file = __DIR__ . '/game-counter.json';
+    $MIN_TOTAL = 318;
+    $fp = @fopen($file, 'c+');
+    if (!$fp) return;
+    if (!flock($fp, LOCK_EX)) { fclose($fp); return; }
+    $raw = stream_get_contents($fp);
+    $d = $raw ? json_decode($raw, true) : null;
+    $total = (isset($d['total']) && (int)$d['total'] >= $MIN_TOTAL) ? (int)$d['total'] + 1 : $MIN_TOTAL + 1;
+    rewind($fp);
+    ftruncate($fp, 0);
+    fwrite($fp, json_encode(['total' => $total]));
+    fflush($fp);
+    flock($fp, LOCK_UN);
+    fclose($fp);
+}
+
 $id = preg_replace('/[^a-zA-Z0-9]/', '', (string)($data['id'] ?? ''));
 if (strlen($id) < 6 || strlen($id) > 12) {
     http_response_code(400); echo json_encode(['error' => 'invalid id']); exit;
@@ -102,6 +120,9 @@ $d['status'] = 'done';
 $d['result'] = $result;
 $d['doneAt'] = date('c');
 dcz_write_and_close($fp, $d);
+
+/* il duello chiuso conta come una partita giocata nel contatore globale (una volta sola, qui) */
+dcz_bump_games_counter();
 
 echo json_encode([
     'ok'  => true,
