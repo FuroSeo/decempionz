@@ -3563,8 +3563,11 @@ function _duelStatusRender(){
     var done=e.status==='done';
     var st=done?t('duel.st_done'):t('duel.st_waiting');
     var col=done?'var(--gold2)':'var(--mut)';
+    /* mostra anche il proprio nickname (gia' salvato in e.nick), non solo l'avversario:
+       altrimenti "Dynasty vs Gunners" non dice chi ero io ne' distingue due duelli Dynasty diversi */
+    var vs=e.nick?(_duelEsc(e.nick)+(e.opp?' vs '+_duelEsc(e.opp):'')):(e.opp?'vs '+_duelEsc(e.opp):'');
     return '<a href="duel.php?id='+encodeURIComponent(e.id)+'" style="display:block;color:'+col+';text-decoration:none;padding:4px 0;border-top:1px solid var(--brd)">⚔️ '
-      +_duelEsc(e.era||'')+(e.opp?' · vs '+_duelEsc(e.opp):'')+' — '+st+'</a>';
+      +_duelEsc(e.era||'')+(vs?' · '+vs:'')+' — '+st+'</a>';
   }).join('');
 }
 function duelRenderHomeStatus(){
