@@ -127,7 +127,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   #screen-draft .d-col-l{display:block;flex:0 0 470px;position:sticky;top:14px;align-self:flex-start}
   #screen-draft .d-col-r{display:block;flex:1 1 340px;min-width:340px}
   #screen-draft .draft-pitch{min-height:430px;justify-content:space-evenly}
+  .coach-row{flex-direction:column;gap:12px!important;max-width:440px}
+  .coach-card{max-width:none!important;width:100%;flex-direction:row!important;text-align:left!important;justify-content:flex-start!important;gap:14px!important;padding:14px 18px!important}
+  .coach-card .cc-av{width:54px!important;height:54px!important;font-size:1.1rem!important}
+  .coach-card>div:nth-child(2){font-size:.95rem!important;max-width:none!important}
+  .coach-card>div:last-child{margin-left:auto}
 }
+h1,h2,#d-title{font-family:'Oswald','Segoe UI',system-ui,sans-serif;letter-spacing:.5px}
+.logo,.screen-logo{font-family:'Oswald','Segoe UI',system-ui,sans-serif}
 .screen.active{display:block}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
@@ -3991,17 +3998,19 @@ function renderCoachCards(pool){
   var container=document.getElementById('d-reveal');
   if(!container)return;
   var light=document.body.getAttribute('data-theme')==='light';
-  container.innerHTML='<div style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
+  container.innerHTML='<div class="coach-row" style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
     +pool.map(function(coach,i){
+      var _ini=coach.n.split(' ').map(function(w){return w.charAt(0);}).join('').slice(0,2).toUpperCase();
+      var _hue=0;for(var k=0;k<coach.n.length;k++)_hue=(_hue*31+coach.n.charCodeAt(k))%360;
       var compat=coachCompat(coach.pref,G.formation);
       var boostPct=[0,2,5,8][compat];
       var compatColor=compat===3?'var(--grn2)':compat===2?'#f59e0b':compat===1?'var(--mut)':'var(--red2)';
       var compatEmoji=compat===3?'🟢':compat===2?'🟡':compat===1?'🟠':'🔴';
-      return '<div onclick="pickCoach('+i+')" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;'
+      return '<div class="coach-card" onclick="pickCoach('+i+')" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;'
         +'padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;'
         +'min-width:90px;flex:1;max-width:160px;text-align:center;-webkit-tap-highlight-color:transparent;transition:border-color .15s"'
         +' onmouseover="this.style.borderColor=\''+compatColor+'\'" onmouseout="this.style.borderColor=\'var(--brd)\'">'
-        +'<div style="font-size:1.8rem;line-height:1;margin-bottom:2px">👔</div>'
+        +'<div class="cc-av" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.92rem;letter-spacing:.5px;color:#fff;flex-shrink:0;background:linear-gradient(135deg,hsl('+_hue+',45%,30%),hsl('+_hue+',55%,44%));border:2px solid rgba(255,255,255,.16)">'+_ini+'</div>'
         +'<div style="font-size:.8rem;font-weight:800;color:var(--text);line-height:1.25;max-width:130px">'+coach.n+'</div>'
         +'<div style="font-size:.62rem;color:var(--mut);margin-top:1px">'+t('coach.pref_form')+' <strong style="color:var(--text)">'+coach.pref+'</strong></div>'
         +'<div style="font-size:.68rem;font-weight:700;color:'+compatColor+';margin-top:5px;padding:3px 9px;border-radius:20px;border:1.5px solid '+compatColor+'">'
