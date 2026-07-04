@@ -14,5 +14,9 @@ Disallow: /challenge-config.php
 Disallow: /challenge-submit.php
 Disallow: /challenge-scores.php
 Disallow: /challenge-config.json
+Disallow: /duel-create.php
+Disallow: /duel-join.php
+Disallow: /duel-result.php
+Disallow: /duel-lib.php
 Disallow: /GAME_MANUAL.md
 Sitemap: https://decempionz.com/sitemap.xml

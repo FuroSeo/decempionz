@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Duello — Decempionz</title>
+<meta name="description" content="Duello 1v1 su Decempionz — drafta la tua rosa di leggende e sfida un amico.">
+<meta property="og:title" content="Duello — Decempionz">
+<meta property="og:description" content="Duello 1v1 su Decempionz — drafta la tua rosa di leggende e sfida un amico.">
+<meta property="og:image" content="https://decempionz.com/og-image.png">
+<meta property="og:url" content="https://decempionz.com/duel.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://decempionz.com/duel.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07090f;color:#e8edf5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:40px}
+a{color:inherit;text-decoration:none}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #111827;background:rgba(7,9,15,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+.hdr-logo{font-size:1.05rem;font-weight:700;letter-spacing:.02em;color:#e8edf5}
+.hdr-logo span{color:#d4af37}
+.hdr-sub{font-size:.7rem;color:#6b7a8d}
+.play-btn{background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.play-btn:hover{opacity:.9}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px;color:#6b7a8d;font-size:.9rem}
+.spinner{width:40px;height:40px;border:3px solid #1e2d42;border-top-color:#3b6fd4;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;text-align:center;padding:60px 20px;color:#6b7a8d}
+.error-msg h2{font-size:1.1rem;margin-bottom:8px;color:#e8edf5}
+.error-msg p{font-size:.85rem}
+.hero{max-width:640px;margin:24px auto 0;padding:0 16px}
+.hero-card{background:linear-gradient(135deg,#0d1829 0%,#0a1220 100%);border:1px solid #1e2d42;border-radius:16px;padding:24px;position:relative;overflow:hidden;text-align:center}
+.hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7a1a1a,#d4af37,#7a1a1a)}
+.ucl .hero-card::before{background:linear-gradient(90deg,#1a3a7a,#4a9eff,#1a3a7a)}
+.copa .hero-card::before{background:linear-gradient(90deg,#14532d,#4ade80,#14532d)}
+.wc .hero-card::before{background:linear-gradient(90deg,#78350f,#f7c23e,#78350f)}
+.tourn-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:600;margin-bottom:12px;background:rgba(255,255,255,.05);border:1px solid #1e2d42;color:#9ca3af}
+.ucl .tourn-badge{background:rgba(26,58,122,.4);color:#90b4ff;border:1px solid rgba(74,158,255,.3)}
+.copa .tourn-badge{background:rgba(20,83,45,.4);color:#86efac;border:1px solid rgba(74,222,128,.3)}
+.wc .tourn-badge{background:rgba(120,53,15,.4);color:#fcd34d;border:1px solid rgba(247,194,62,.3)}
+.duel-title{font-size:1.25rem;font-weight:700;line-height:1.3;margin-bottom:6px}
+.duel-era{font-size:.85rem;color:#9ca3af;margin-bottom:14px}
+.vs-row{display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0}
+.vs-nick{font-size:1rem;font-weight:700;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs-nick.winner{color:#f7c23e}
+.vs-badge{font-size:.7rem;font-weight:800;color:#d4af37;border:1px solid rgba(212,175,55,.4);border-radius:8px;padding:4px 8px;background:rgba(212,175,55,.08)}
+.series-score{font-size:2.2rem;font-weight:800;letter-spacing:.05em;margin:4px 0}
+.series-score .sep{color:#6b7a8d}
+.crown{font-size:.75rem;color:#f7c23e;font-weight:600;margin-bottom:4px}
+.match-list{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.match-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;background:#0d1829;border:1px solid #1e2d42;border-radius:8px;font-size:.82rem}
+.match-lbl{font-size:.62rem;font-weight:700;color:#6b7a8d;text-transform:uppercase;min-width:60px;text-align:left}
+.match-score{font-weight:700;font-size:.95rem}
+.match-pen{font-size:.68rem;color:#9ca3af}
+.match-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-a{background:#4ade80}.dot-b{background:#f87171}
+.section{max-width:640px;margin:16px auto 0;padding:0 16px}
+.section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#6b7a8d;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #111827}
+.squads{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.squads{grid-template-columns:1fr}}
+.squad-card{background:#0d1829;border:1px solid #1e2d42;border-radius:12px;padding:14px}
+.squad-card.winner{border-color:rgba(247,194,62,.45)}
+.squad-nick{font-size:.9rem;font-weight:700;margin-bottom:2px}
+.squad-meta{font-size:.68rem;color:#6b7a8d;margin-bottom:10px}
+.squad-list{display:flex;flex-direction:column;gap:4px}
+.sq-p{display:flex;align-items:center;gap:6px;font-size:.76rem;padding:3px 0}
+.sq-p .pos-tag{font-size:.56rem;font-weight:700;padding:1px 5px;border-radius:4px;background:#1e2d42;color:#9ca3af;flex-shrink:0;min-width:30px;text-align:center}
+.sq-p .p-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sq-p .p-rating{font-size:.64rem;color:#f7c23e;font-weight:700}
+.invite-box{text-align:center;padding:8px 0 4px}
+.invite-text{font-size:.9rem;color:#c9d4e0;margin-bottom:16px;line-height:1.5}
+.accept-btn{background:linear-gradient(135deg,#7a1a1a,#aa2d2d);color:#fff;border:none;padding:13px 26px;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.accept-btn:hover{opacity:.92}
+.wait-note{font-size:.78rem;color:#6b7a8d;margin-top:14px}
+.copy-btn{background:#0d1829;border:1px solid #1e2d42;color:#c9d4e0;padding:9px 16px;border-radius:8px;font-size:.78rem;cursor:pointer;margin-top:10px}
+.rematch-btn{background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;margin-top:16px}
+.cta-section{max-width:640px;margin:28px auto 0;padding:0 16px}
+.cta-card{background:linear-gradient(135deg,#101d33 0%,#0a1424 100%);border:1px solid #23375a;border-radius:16px;padding:26px;text-align:center}
+.cta-card h3{font-size:1.05rem;margin-bottom:8px}
+.cta-card p{font-size:.8rem;color:#9ca3af;margin-bottom:16px;line-height:1.5}
+.cta-big{background:linear-gradient(135deg,#1a3a7a,#2d5caa);color:#fff;padding:12px 28px;border-radius:10px;font-size:.9rem;font-weight:700;text-decoration:none;display:inline-block}
+.cta-free{font-size:.68rem;color:#6b7a8d;margin-top:10px}
+@media(max-width:420px){.duel-title{font-size:1.05rem}.series-score{font-size:1.8rem}}
+</style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-F2ME1WYQHG',{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false});
+</script>
+</head>
+<body>
+
+<header class="hdr">
+  <div>
+    <div class="hdr-logo">Decem<span>pionz</span></div>
+    <div class="hdr-sub" id="hdr-sub">Duello 1v1</div>
+  </div>
+  <a href="https://decempionz.com" class="play-btn">⚽ Gioca</a>
+</header>
+
+<div class="loading" id="loading-state">
+  <div class="spinner"></div>
+  <div id="loading-txt">Caricamento duello...</div>
+</div>
+
+<div class="error-msg" id="error-state">
+  <h2 id="err-title">Duello non trovato</h2>
+  <p id="err-body">Il link potrebbe essere scaduto o non valido.</p>
+  <br>
+  <a href="https://decempionz.com" class="play-btn" style="display:inline-block;margin-top:8px">⚽ Vai a Decempionz</a>
+</div>
+
+<div id="duel-content" style="display:none">
+  <div class="hero">
+    <div class="hero-card">
+      <div class="tourn-badge" id="tourn-badge"></div>
+      <div class="duel-title" id="duel-title"></div>
+      <div class="duel-era" id="duel-era"></div>
+      <div id="state-zone"></div>
+    </div>
+  </div>
+  <div class="section" id="squads-section" style="display:none">
+    <div class="section-title" id="lbl-squads">Le formazioni</div>
+    <div class="squads" id="squads-container"></div>
+  </div>
+  <div class="cta-section">
+    <div class="cta-card">
+      <h3 id="cta-title">Sfida anche tu i tuoi amici</h3>
+      <p id="cta-body">Blind draft delle leggende del calcio: drafta il tuo XI, sfida un amico e scopri chi ha costruito la squadra migliore.</p>
+      <a href="https://decempionz.com" class="cta-big">⚽ Gioca gratis</a>
+      <div class="cta-free">100% gratuito · nessun account richiesto</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var L={
+    it:{sub:'Duello 1v1',load:'Caricamento duello...',err:'Duello non trovato',errBody:'Il link potrebbe essere scaduto o non valido.',challenge:'ti sfida a duello!',challengeClub:'Il {club} di {nick} ti sfida a duello!',dyn:'🏰 Dynasty',inviteBody:'Drafta la tua rosa con gli stessi vincoli e scopri chi ha costruito la squadra migliore. Serie al meglio delle 3 partite.',accept:'⚔️ Accetta il duello',waitTitle:'In attesa dello sfidante',simTitle:'Serie in corso',simBody:'Entrambe le rose sono pronte: la serie si sta giocando. Ricontrolla tra poco per il verdetto!',resume:'⚽ Riprendi la serie',waitBody:'Il tuo avversario non ha ancora giocato. Ricontrolla più tardi o rimanda il link!',copy:'📋 Copia link invito',copied:'✅ Copiato!',winner:'vince il duello',match:'Match',pens:'dcr',squads:'Le formazioni',rematch:'🔄 Rivincita',ctaTitle:'Sfida anche tu i tuoi amici',ctaBody:'Blind draft delle leggende del calcio: drafta il tuo XI, sfida un amico e scopri chi ha costruito la squadra migliore.'},
+    en:{sub:'1v1 Duel',load:'Loading duel...',err:'Duel not found',errBody:'The link may be expired or invalid.',challenge:'challenges you to a duel!',challengeClub:'{nick}’s {club} challenges you to a duel!',dyn:'🏰 Dynasty',inviteBody:'Draft your squad with the same constraints and find out who built the better team. Best-of-3 series.',accept:'⚔️ Accept the duel',waitTitle:'Waiting for the challenger',simTitle:'Series in progress',simBody:'Both squads are in: the series is being played. Check back soon for the verdict!',resume:'⚽ Resume the series',waitBody:'Your opponent has not played yet. Check back later or resend the link!',copy:'📋 Copy invite link',copied:'✅ Copied!',winner:'wins the duel',match:'Match',pens:'pens',squads:'The line-ups',rematch:'🔄 Rematch',ctaTitle:'Challenge your friends too',ctaBody:'Blind draft of football legends: draft your XI, challenge a friend and find out who built the better squad.'},
+    es:{sub:'Duelo 1v1',load:'Cargando duelo...',err:'Duelo no encontrado',errBody:'El enlace puede haber caducado o no ser válido.',challenge:'¡te reta a un duelo!',challengeClub:'¡El {club} de {nick} te reta a duelo!',dyn:'🏰 Dynasty',inviteBody:'Draftea tu plantilla con las mismas condiciones y descubre quién armó el mejor equipo. Serie al mejor de 3.',accept:'⚔️ Aceptar el duelo',waitTitle:'Esperando al retador',simTitle:'Serie en curso',simBody:'Ambas plantillas están listas: la serie se está jugando. ¡Vuelve pronto para el veredicto!',resume:'⚽ Reanudar la serie',waitBody:'Tu rival aún no ha jugado. ¡Vuelve más tarde o reenvía el enlace!',copy:'📋 Copiar enlace',copied:'✅ ¡Copiado!',winner:'gana el duelo',match:'Partido',pens:'pen',squads:'Las alineaciones',rematch:'🔄 Revancha',ctaTitle:'Reta también a tus amigos',ctaBody:'Draft ciego de leyendas del fútbol: arma tu XI, reta a un amigo y descubre quién construyó la mejor plantilla.'}
+  };
+  var TOURN_LABELS={ucl:'🏆 Champions League',copa:'🌿 Copa Libertadores',wc:'🌍 World Cup'};
+  var id=new URLSearchParams(location.search).get('id');
+  if(!id){showError();return;}
+
+  fetch('/duel-join.php?id='+encodeURIComponent(id))
+    .then(function(r){if(!r.ok)throw new Error('nf');return r.json();})
+    .then(function(d){render(d);})
+    .catch(function(){showError();});
+
+  function showError(){
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('error-state').style.display='block';
+  }
+  function escH(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function myDuelRole(duelId){
+    try{
+      var st=JSON.parse(localStorage.getItem('dcz_duels')||'[]');
+      var e=st.find(function(x){return x.id===duelId;});
+      return e?e.role:null;
+    }catch(e){return null;}
+  }
+
+  function render(d){
+    var lang=(d.lang&&L[d.lang])?d.lang:'it';
+    var t=L[lang];
+    var isDyn=d.mode==='dynasty';
+    function sideName(team){return team?(isDyn&&team.clubName?team.clubName:(team.nick||'?')):'?';}
+    document.documentElement.lang=lang;
+    document.getElementById('hdr-sub').textContent=t.sub;
+    document.body.classList.add(d.tournament||'ucl');
+    document.getElementById('tourn-badge').textContent=TOURN_LABELS[d.tournament]||'Decempionz';
+    document.getElementById('duel-era').textContent=isDyn?t.dyn:(d.era||'');
+    document.getElementById('lbl-squads').textContent=t.squads;
+    document.getElementById('cta-title').textContent=t.ctaTitle;
+    document.getElementById('cta-body').textContent=t.ctaBody;
+
+    var zone=document.getElementById('state-zone');
+    if(d.status==='simulating'){
+      /* B ha draftato ma il risultato non è ancora arrivato */
+      var roleS=myDuelRole(d.id);
+      document.getElementById('duel-title').textContent='⚔️ '+sideName(d.a)+' vs '+sideName(d.b);
+      var inner='<div class="invite-box"><div class="invite-text"><strong>'+escH(t.simTitle)+'</strong><br>'+escH(t.simBody)+'</div>';
+      if(roleS==='b'){
+        inner+='<a class="accept-btn" href="https://decempionz.com/?duel='+encodeURIComponent(d.id)+'">'+escH(t.resume)+'</a>';
+      }
+      inner+='</div>';
+      zone.innerHTML=inner;
+    } else if(d.status==='waiting'){
+      var role=myDuelRole(d.id);
+      var nickA=(d.a&&d.a.nick)||'?';
+      document.getElementById('duel-title').textContent='⚔️ '+(isDyn&&d.a&&d.a.clubName
+        ?t.challengeClub.replace('{club}',d.a.clubName).replace('{nick}',nickA)
+        :nickA+' '+t.challenge);
+      if(role==='a'){
+        /* Sono lo sfidante: mostra attesa + copia link */
+        zone.innerHTML='<div class="invite-box"><div class="invite-text"><strong>'+escH(t.waitTitle)+'</strong><br>'+escH(t.waitBody)+'</div>'
+          +'<button class="copy-btn" id="copy-btn">'+escH(t.copy)+'</button></div>';
+        document.getElementById('copy-btn').onclick=function(){
+          var u='https://decempionz.com/duel.php?id='+d.id;
+          (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+            document.getElementById('copy-btn').textContent=t.copied;
+          }).catch(function(){prompt('',u);});
+        };
+      } else {
+        /* Sono lo sfidato (o un visitatore): CTA accetta */
+        zone.innerHTML='<div class="invite-box"><div class="invite-text">'+escH(t.inviteBody)+'</div>'
+          +'<a class="accept-btn" href="https://decempionz.com/?duel='+encodeURIComponent(d.id)+'">'+escH(t.accept)+'</a></div>';
+      }
+    } else {
+      /* done: verdetto */
+      var r=d.result||{matches:[],winsA:0,winsB:0,winner:'a'};
+      var aWin=r.winner==='a';
+      var winSide=aWin?d.a:d.b;
+      var winLbl=sideName(winSide)+(isDyn&&winSide&&winSide.clubName?' ('+((winSide.nick)||'?')+')':'');
+      document.getElementById('duel-title').textContent='⚔️ '+sideName(d.a)+' vs '+sideName(d.b);
+      var html='<div class="crown">👑 '+escH(winLbl)+' '+escH(t.winner)+'</div>'
+        +'<div class="vs-row">'
+        +'<span class="vs-nick'+(aWin?' winner':'')+'">'+escH(sideName(d.a))+'</span>'
+        +'<span class="series-score">'+r.winsA+'<span class="sep"> – </span>'+r.winsB+'</span>'
+        +'<span class="vs-nick'+(!aWin?' winner':'')+'">'+escH(sideName(d.b))+'</span>'
+        +'</div><div class="match-list">';
+      (r.matches||[]).forEach(function(m,i){
+        var aWon=m.ga>m.gb||(m.ga===m.gb&&m.pa!==null&&m.pa>m.pb);
+        var pen=(m.pa!==null&&m.pa!==undefined)?' <span class="match-pen">('+m.pa+'–'+m.pb+' '+escH(t.pens)+')</span>':'';
+        html+='<div class="match-row"><span class="match-lbl">'+escH(t.match)+' '+(i+1)+'</span>'
+          +'<span class="match-score">'+m.ga+' – '+m.gb+pen+'</span>'
+          +'<span class="match-dot '+(aWon?'dot-a':'dot-b')+'"></span></div>';
+      });
+      html+='</div><a class="rematch-btn" href="https://decempionz.com/?rematch='+encodeURIComponent(d.id)+'">'+escH(t.rematch)+'</a>';
+      zone.innerHTML=html;
+
+      /* Formazioni */
+      var sq=document.getElementById('squads-container');
+      var cards='';
+      [['a',d.a,aWin],['b',d.b,!aWin]].forEach(function(x){
+        var team=x[1]||{};
+        cards+='<div class="squad-card'+(x[2]?' winner':'')+'">'
+          +'<div class="squad-nick">'+(x[2]?'👑 ':'')+escH(team.nick||'?')+'</div>'
+          +'<div class="squad-meta">'+(team.clubName?escH(team.clubName)+' · ':'')+escH(team.formation||'')+' · '+escH(team.tactic||'')+'</div>'
+          +'<div class="squad-list">';
+        (team.players||[]).forEach(function(p){
+          cards+='<div class="sq-p"><span class="pos-tag">'+escH(p.p||'?')+'</span><span class="p-name">'+escH(p.n)+'</span><span class="p-rating">'+p.r+'</span></div>';
+        });
+        cards+='</div></div>';
+      });
+      sq.innerHTML=cards;
+      document.getElementById('squads-section').style.display='block';
+    }
+
+    document.getElementById('loading-state').style.display='none';
+    document.getElementById('duel-content').style.display='block';
+  }
+})();
+</script>
+</body>
+</html>

@@ -866,6 +866,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="hdb-streak" style="font-size:.58rem;margin-top:7px;color:#6b7a8d"></div>
   </div>
 
+  <!-- Banner duello 1v1 -->
+  <div id="home-duel-banner" style="margin:10px 0 0;padding:13px 14px;background:rgba(170,45,45,.09);border:1.5px solid rgba(224,90,90,.45);border-radius:12px;border-left:3px solid #e05a5a;text-align:center">
+    <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#e08a8a;margin-bottom:5px">⚔️ <span data-i18n="duel.banner_title">DUELLO 1v1</span></div>
+    <div data-i18n="duel.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:10px">Drafta la tua rosa, manda il link a un amico e scopri chi costruisce la squadra migliore. Serie al meglio delle 3.</div>
+    <button class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(224,90,90,.16);border-color:rgba(224,90,90,.55);color:#f0a0a0" onclick="duelStart()" data-i18n="duel.banner_btn">⚔️ Sfida un amico</button>
+    <div id="home-duel-status" style="display:none;font-size:.62rem;margin-top:8px;text-align:left"></div>
+  </div>
+
   <!-- Bottom actions -->
   <div class="tourn-bottom-btns">
     <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:transparent;border:1.5px solid var(--gold);color:var(--gold)">🏆 Hall of Fame</button>
@@ -1025,6 +1033,109 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <!-- ERA PICKER -->
+<!-- DUEL ACCEPT (lato B, arrivo da ?duel=ID) -->
+<div class="screen" id="screen-duel-accept">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
+  <div id="duel-acc-load" style="text-align:center;padding:50px 0">
+    <div style="font-size:2rem;margin-bottom:10px">⚔️</div>
+    <div style="color:var(--mut);font-size:.85rem" data-i18n="duel.loading">Caricamento duello…</div>
+  </div>
+
+  <div id="duel-acc-main" style="display:none">
+    <div style="text-align:center;font-size:2.6rem;margin:14px 0 4px">⚔️</div>
+    <h2 id="duel-acc-title" style="text-align:center;margin-bottom:4px"></h2>
+    <div id="duel-acc-meta" style="text-align:center;color:var(--gold2);font-size:.8rem;font-weight:700;margin-bottom:10px"></div>
+    <p data-i18n="duel.acc_sub" style="color:var(--mut);font-size:.8rem;line-height:1.5;text-align:center;margin-bottom:16px">Drafta la tua rosa con gli stessi vincoli (formazione libera): la serie al meglio delle 3 si gioca appena confermi la squadra.</p>
+    <div id="duel-acc-club-row" style="display:none;margin-bottom:14px">
+      <div data-i18n="duel.pick_club" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Il tuo club</div>
+      <div class="tourn-tab-bar" style="margin-bottom:10px">
+        <button id="duel-acc-tab-ucl" class="tourn-tab tab-active-ucl" onclick="duelAccTab('ucl')">🏆 UCL</button>
+        <button id="duel-acc-tab-copa" class="tourn-tab" onclick="duelAccTab('copa')">🌎 Copa</button>
+        <button id="duel-acc-tab-wc" class="tourn-tab" onclick="duelAccTab('wc')">🌍 WC</button>
+      </div>
+      <div id="duel-acc-club-grid" style="display:flex;flex-wrap:wrap;gap:8px;max-height:210px;overflow-y:auto;padding:2px 2px 4px"></div>
+      <div id="duel-acc-club-selected" style="display:none;font-size:.78rem;color:var(--gold2);font-weight:700;margin-top:8px"></div>
+    </div>
+    <div data-i18n="duel.nick_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Il tuo nickname</div>
+    <input id="duel-acc-nick" type="text" maxlength="20" placeholder="Il tuo nickname…" data-i18n-placeholder="duel.nick_ph" style="width:100%;padding:11px 12px;font-size:.9rem;background:var(--s1);border:1.5px solid var(--brd);border-radius:10px;color:var(--text);margin-bottom:14px">
+    <button class="btn btn-gold" onclick="duelAcceptGo()" data-i18n="duel.acc_btn">⚔️ Accetta e drafta</button>
+    <button class="btn btn-ghost" onclick="showScreen('screen-home')">← Home</button>
+  </div>
+
+  <div id="duel-acc-err" style="display:none;text-align:center;padding:40px 0">
+    <div style="font-size:2.2rem;margin-bottom:8px">⚠️</div>
+    <p data-i18n="duel.acc_err" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Duello non trovato o non più valido.</p>
+    <button class="btn btn-gold" onclick="showScreen('screen-home')" data-i18n="duel.back_home">🏠 Torna alla home</button>
+  </div>
+</div>
+
+<!-- DUEL SETUP -->
+<div class="screen" id="screen-duel-setup">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
+  <h2 data-i18n="duel.setup_title" style="margin-bottom:6px">⚔️ Duello 1v1</h2>
+  <p data-i18n="duel.setup_sub" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Scegli torneo ed era: il tuo avversario drafterà con gli stessi vincoli. Formazione e tattica libere.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    <button class="form-tact-btn tact-sel" id="duel-k-classic" onclick="duelPickKind('classic',this)"><span data-i18n="duel.kind_classic">🏆 Torneo + Era</span></button>
+    <button class="form-tact-btn" id="duel-k-dynasty" onclick="duelPickKind('dynasty',this)"><span data-i18n="duel.kind_dynasty">🏰 Dynasty (club)</span></button>
+  </div>
+
+  <div data-i18n="duel.nick_label" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Il tuo nickname</div>
+  <input id="duel-nick" type="text" maxlength="20" placeholder="Il tuo nickname…" data-i18n-placeholder="duel.nick_ph" style="width:100%;padding:11px 12px;font-size:.9rem;background:var(--s1);border:1.5px solid var(--brd);border-radius:10px;color:var(--text);margin-bottom:14px">
+
+  <div data-i18n="duel.pick_tourn" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Torneo</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+    <button class="form-tact-btn tact-sel" id="duel-t-ucl" onclick="duelPickTourn('ucl',this)">🏆 UCL</button>
+    <button class="form-tact-btn" id="duel-t-copa" onclick="duelPickTourn('copa',this)">🌎 Copa</button>
+    <button class="form-tact-btn" id="duel-t-wc" onclick="duelPickTourn('wc',this)">🌍 WC</button>
+  </div>
+
+  <div id="duel-era-row">
+    <div data-i18n="duel.pick_era" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Era</div>
+    <button class="btn" id="duel-era-btn" onclick="duelBrowseEra()" style="width:100%;text-align:left;background:var(--s1);border:1.5px solid var(--brd);color:var(--text);font-size:.85rem;padding:12px">🌍 All Time  ▾</button>
+  </div>
+  <div id="duel-club-row" style="display:none">
+    <div data-i18n="duel.pick_club" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Il tuo club</div>
+    <div id="duel-club-grid" style="display:flex;flex-wrap:wrap;gap:8px;max-height:210px;overflow-y:auto;padding:2px 2px 4px"></div>
+    <div id="duel-club-selected" style="display:none;font-size:.78rem;color:var(--gold2);font-weight:700;margin-top:8px"></div>
+  </div>
+
+  <button class="btn btn-gold" onclick="duelGoDraft()" data-i18n="duel.go_draft" style="margin-top:16px">⚔️ Vai al draft →</button>
+  <button class="btn btn-ghost" onclick="showScreen('screen-home')">← Back</button>
+</div>
+
+<!-- DUEL SHARE (post-draft lato A) -->
+<div class="screen" id="screen-duel-share">
+  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+
+  <div id="duel-share-wait" style="display:none;text-align:center;padding:50px 0">
+    <div style="font-size:2rem;margin-bottom:10px">⚔️</div>
+    <div data-i18n="duel.creating" id="duel-wait-txt" style="color:var(--mut);font-size:.85rem">Creazione duello…</div>
+  </div>
+
+  <div id="duel-share-ok" style="display:none;text-align:center">
+    <div style="font-size:2.6rem;margin:18px 0 6px">⚔️</div>
+    <h2 data-i18n="duel.share_title" style="margin-bottom:6px">Duello creato!</h2>
+    <p data-i18n="duel.share_sub" style="color:var(--mut);font-size:.82rem;line-height:1.5;margin-bottom:14px">La tua rosa è pronta. Manda questo link al tuo avversario: quando avrà draftato, la serie si giocherà e riceverete entrambi il verdetto.</p>
+    <input id="duel-link" type="text" readonly onclick="this.select()" style="width:100%;padding:11px 12px;font-size:.78rem;background:var(--s1);border:1.5px solid var(--brd);border-radius:10px;color:var(--gold2)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+      <button class="btn" id="duel-copy-btn" onclick="duelCopyLink()" data-i18n="duel.copy" style="margin-top:0">📋 Copia link</button>
+      <button class="btn" onclick="duelShareWA()" style="margin-top:0;background:rgba(37,211,102,.14);border-color:rgba(37,211,102,.5);color:#4ade80">🟢 WhatsApp</button>
+    </div>
+    <p data-i18n="duel.share_hint" style="font-size:.68rem;color:var(--mut);margin-top:12px">Puoi rivedere lo stato dei tuoi duelli dalla home.</p>
+  </div>
+
+  <div id="duel-share-err" style="display:none;text-align:center">
+    <div style="font-size:2.2rem;margin:24px 0 6px">⚠️</div>
+    <p data-i18n="duel.err_create" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Errore di rete: il duello non è stato creato.</p>
+    <button class="btn btn-gold" onclick="duelRetry()" data-i18n="duel.retry">↺ Riprova</button>
+  </div>
+
+  <button class="btn btn-ghost" onclick="showScreen('screen-home')" data-i18n="duel.back_home" style="margin-top:14px">🏠 Torna alla home</button>
+</div>
+
 <div class="screen" id="screen-era">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
@@ -1056,7 +1167,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
   <button id="btn-start-draft" data-i18n="form.start_draft" class="btn btn-gold btn-inactive" onclick="initDraft()">Start Draft →</button>
-  <button class="btn btn-ghost" onclick="showScreen('screen-format')">← Back</button>
+  <button class="btn btn-ghost" onclick="formationBack()">← Back</button>
   <button class="btn btn-ghost" style="width:100%;margin-top:6px;font-size:.72rem;opacity:.8" onclick="_startGameByMode()">↺ New Game</button>
 </div>
 
@@ -1348,7 +1459,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.11.2';
+const GAME_VERSION='5.12.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1452,7 +1563,44 @@ const STRINGS={
     'camp.league_tag':'LEGA',
     'camp.group_match':'Partita di Girone',
     'camp.league_match':'Partita di Lega',
-    'camp.kickoff':'⚽ Calcio d\'inizio →',
+    'duel.kind_classic':'🏆 Torneo + Era',
+'duel.kind_dynasty':'🏰 Dynasty (club)',
+'duel.pick_club':'Il tuo club',
+'duel.acc_challenge_club':'Il {club} di {nick} ti sfida a duello!',
+'duel.st_waiting':'in attesa dell’avversario…',
+'duel.st_done':'👑 verdetto pronto →',
+'duel.loading':'Caricamento duello…',
+'duel.acc_challenge':'ti sfida a duello!',
+'duel.acc_sub':'Drafta la tua rosa con gli stessi vincoli (formazione libera): la serie al meglio delle 3 si gioca appena confermi la squadra.',
+'duel.acc_btn':'⚔️ Accetta e drafta',
+'duel.acc_err':'Duello non trovato o non più valido.',
+'duel.sending':'Invio della rosa…',
+'duel.match_lbl':'Match',
+'duel.next_match':'⚽ Prossima partita →',
+'duel.go_verdict':'👑 Vai al verdetto →',
+'duel.series_lbl':'Serie:',
+'duel.pens_note':'rigori {a}–{b}',
+'duel.banner_title':'DUELLO 1v1',
+'duel.banner_desc':'Drafta la tua rosa, manda il link a un amico e scopri chi costruisce la squadra migliore. Serie al meglio delle 3.',
+'duel.banner_btn':'⚔️ Sfida un amico',
+'duel.setup_title':'⚔️ Duello 1v1',
+'duel.setup_sub':'Scegli torneo ed era: il tuo avversario drafterà con gli stessi vincoli. Formazione e tattica libere.',
+'duel.nick_label':'Il tuo nickname',
+'duel.nick_ph':'Il tuo nickname…',
+'duel.pick_tourn':'Torneo',
+'duel.pick_era':'Era',
+'duel.go_draft':'⚔️ Vai al draft →',
+'duel.creating':'Creazione duello…',
+'duel.share_title':'Duello creato!',
+'duel.share_sub':'La tua rosa è pronta. Manda questo link al tuo avversario: quando avrà draftato, la serie si giocherà e riceverete entrambi il verdetto.',
+'duel.copy':'📋 Copia link',
+'duel.copied':'✅ Copiato!',
+'duel.share_hint':'Puoi rivedere lo stato dei tuoi duelli dalla home.',
+'duel.err_create':'Errore di rete: il duello non è stato creato.',
+'duel.retry':'↺ Riprova',
+'duel.back_home':'🏠 Torna alla home',
+'duel.wa_msg':'⚔️ Ti sfido a duello su Decempionz! Drafta la tua squadra e battimi se ci riesci: {url}',
+'camp.kickoff':'⚽ Calcio d\'inizio →',
     'scout.likely':'Scout: gioca probabilmente',
     'scout.counter':'· Contromossa:',
     'tac.edge':'🟢 Vantaggio tattico — tua',
@@ -1692,7 +1840,44 @@ const STRINGS={
     'camp.league_tag':'LEAGUE',
     'camp.group_match':'Group Match',
     'camp.league_match':'League Match',
-    'camp.kickoff':'⚽ Kick Off →',
+    'duel.kind_classic':'🏆 Tournament + Era',
+'duel.kind_dynasty':'🏰 Dynasty (club)',
+'duel.pick_club':'Your club',
+'duel.acc_challenge_club':'{nick}’s {club} challenges you to a duel!',
+'duel.st_waiting':'waiting for your opponent…',
+'duel.st_done':'👑 verdict ready →',
+'duel.loading':'Loading duel…',
+'duel.acc_challenge':'challenges you to a duel!',
+'duel.acc_sub':'Draft your squad with the same constraints (free formation): the best-of-3 series plays out as soon as you confirm your team.',
+'duel.acc_btn':'⚔️ Accept and draft',
+'duel.acc_err':'Duel not found or no longer valid.',
+'duel.sending':'Sending your squad…',
+'duel.match_lbl':'Match',
+'duel.next_match':'⚽ Next match →',
+'duel.go_verdict':'👑 See the verdict →',
+'duel.series_lbl':'Series:',
+'duel.pens_note':'pens {a}–{b}',
+'duel.banner_title':'1v1 DUEL',
+'duel.banner_desc':'Draft your squad, send the link to a friend and find out who builds the better team. Best-of-3 series.',
+'duel.banner_btn':'⚔️ Challenge a friend',
+'duel.setup_title':'⚔️ 1v1 Duel',
+'duel.setup_sub':'Pick tournament and era: your opponent will draft with the same constraints. Formation and tactics are free.',
+'duel.nick_label':'Your nickname',
+'duel.nick_ph':'Your nickname…',
+'duel.pick_tourn':'Tournament',
+'duel.pick_era':'Era',
+'duel.go_draft':'⚔️ Go to draft →',
+'duel.creating':'Creating duel…',
+'duel.share_title':'Duel created!',
+'duel.share_sub':'Your squad is ready. Send this link to your opponent: once they draft, the series plays out and you both get the verdict.',
+'duel.copy':'📋 Copy link',
+'duel.copied':'✅ Copied!',
+'duel.share_hint':'You can check the status of your duels from the home screen.',
+'duel.err_create':'Network error: the duel was not created.',
+'duel.retry':'↺ Retry',
+'duel.back_home':'🏠 Back to home',
+'duel.wa_msg':'⚔️ I challenge you to a duel on Decempionz! Draft your squad and beat me if you can: {url}',
+'camp.kickoff':'⚽ Kick Off →',
     'scout.likely':'Scout: likely plays',
     'scout.counter':'· Counter:',
     'tac.edge':'🟢 Tactical edge — your',
@@ -1946,7 +2131,44 @@ const STRINGS={
     'camp.league_tag':'LIGA',
     'camp.group_match':'Partido de Grupo',
     'camp.league_match':'Partido de Liga',
-    'camp.kickoff':'⚽ Saque Inicial →',
+    'duel.kind_classic':'🏆 Torneo + Era',
+'duel.kind_dynasty':'🏰 Dynasty (club)',
+'duel.pick_club':'Tu club',
+'duel.acc_challenge_club':'¡El {club} de {nick} te reta a duelo!',
+'duel.st_waiting':'esperando al rival…',
+'duel.st_done':'👑 veredicto listo →',
+'duel.loading':'Cargando duelo…',
+'duel.acc_challenge':'¡te reta a un duelo!',
+'duel.acc_sub':'Draftea tu plantilla con las mismas condiciones (formación libre): la serie al mejor de 3 se juega en cuanto confirmes tu equipo.',
+'duel.acc_btn':'⚔️ Aceptar y draftear',
+'duel.acc_err':'Duelo no encontrado o ya no válido.',
+'duel.sending':'Enviando tu plantilla…',
+'duel.match_lbl':'Partido',
+'duel.next_match':'⚽ Siguiente partido →',
+'duel.go_verdict':'👑 Ver el veredicto →',
+'duel.series_lbl':'Serie:',
+'duel.pens_note':'penaltis {a}–{b}',
+'duel.banner_title':'DUELO 1v1',
+'duel.banner_desc':'Draftea tu plantilla, envía el enlace a un amigo y descubre quién arma el mejor equipo. Serie al mejor de 3.',
+'duel.banner_btn':'⚔️ Reta a un amigo',
+'duel.setup_title':'⚔️ Duelo 1v1',
+'duel.setup_sub':'Elige torneo y era: tu rival drafteará con las mismas condiciones. Formación y táctica libres.',
+'duel.nick_label':'Tu nickname',
+'duel.nick_ph':'Tu nickname…',
+'duel.pick_tourn':'Torneo',
+'duel.pick_era':'Era',
+'duel.go_draft':'⚔️ Ir al draft →',
+'duel.creating':'Creando duelo…',
+'duel.share_title':'¡Duelo creado!',
+'duel.share_sub':'Tu plantilla está lista. Envía este enlace a tu rival: cuando draftee, la serie se jugará y ambos recibiréis el veredicto.',
+'duel.copy':'📋 Copiar enlace',
+'duel.copied':'✅ ¡Copiado!',
+'duel.share_hint':'Puedes ver el estado de tus duelos desde la pantalla principal.',
+'duel.err_create':'Error de red: el duelo no se ha creado.',
+'duel.retry':'↺ Reintentar',
+'duel.back_home':'🏠 Volver al inicio',
+'duel.wa_msg':'⚔️ ¡Te reto a un duelo en Decempionz! Draftea tu equipo y gáname si puedes: {url}',
+'camp.kickoff':'⚽ Saque Inicial →',
     'scout.likely':'Scout: probablemente juega',
     'scout.counter':'· Contramedida:',
     'tac.edge':'🟢 Ventaja táctica — tuya',
@@ -2687,7 +2909,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -2711,6 +2933,494 @@ function posGroup(pos){
 function pgClass(pg){return{GK:'pg-gk',DEF:'pg-def',MID:'pg-mid',FWD:'pg-fwd'}[pg]}
 function teamStrength(teamId){const t=(_activeTeams()[teamId]||TEAMS[teamId]);return avg(t.players.map(p=>p.r))}
 function topPlayers(teamId,n){const t=(_activeTeams()[teamId]||TEAMS[teamId]);return [...t.players].sort((a,b)=>b.r-a.r).slice(0,n).map(p=>p.n).join(', ')}
+
+/* ═══════════════════════════════════════
+   DUELLO 1v1 — flusso client (lato A: crea)
+═══════════════════════════════════════ */
+var DUEL={mode:null,id:null,nick:'',tourn:'ucl',eraT:null,eraLabel:'',eraId:'',rematchOf:null,kind:'classic',club:null,clubName:null};
+var _eraFromDuel=false;
+
+function _duelTourList(k){return k==='copa'?COPA_TOURNAMENTS:k==='wc'?WC_TOURNAMENTS:TOURNAMENTS;}
+function _duelAllTime(k){return _duelTourList(k).find(function(x){return x.allTime||x.id==='alltime';})||null;}
+
+function duelStore(){try{return JSON.parse(localStorage.getItem('dcz_duels')||'[]');}catch(e){return [];}}
+function duelStoreSave(a){try{localStorage.setItem('dcz_duels',JSON.stringify(a.slice(-20)));}catch(e){}}
+function duelStoreAdd(e){var a=duelStore().filter(function(x){return x.id!==e.id;});a.push(e);duelStoreSave(a);}
+function duelStoreUpdate(id,patch){var a=duelStore();a.forEach(function(x){if(x.id===id)Object.assign(x,patch);});duelStoreSave(a);}
+
+function duelStart(){
+  DUEL.mode=null;DUEL.id=null;DUEL.rematchOf=null;
+  DUEL.tourn='ucl';
+  DUEL.eraT=_duelAllTime('ucl');
+  DUEL.kind='classic';DUEL.club=null;DUEL.clubName=null;
+  document.querySelectorAll('#duel-k-classic,#duel-k-dynasty').forEach(function(b){b.classList.remove('tact-sel');});
+  var kc=document.getElementById('duel-k-classic');if(kc)kc.classList.add('tact-sel');
+  var er=document.getElementById('duel-era-row');if(er)er.style.display='';
+  var cr=document.getElementById('duel-club-row');if(cr)cr.style.display='none';
+  var nick='';try{nick=localStorage.getItem('dcz_duel_nick')||'';}catch(e){}
+  var el=document.getElementById('duel-nick');
+  if(el){el.value=nick;el.style.borderColor='';}
+  ['ucl','copa','wc'].forEach(function(k){var b=document.getElementById('duel-t-'+k);if(b)b.classList.toggle('tact-sel',k==='ucl');});
+  duelUpdateEraDisplay();
+  showScreen('screen-duel-setup');
+}
+function duelPickTourn(k,el){
+  DUEL.tourn=k;
+  DUEL.eraT=_duelAllTime(k);
+  document.querySelectorAll('#duel-t-ucl,#duel-t-copa,#duel-t-wc').forEach(function(b){b.classList.remove('tact-sel');});
+  if(el)el.classList.add('tact-sel');
+  duelUpdateEraDisplay();
+  if(DUEL.kind==='dynasty')duelRenderClubGrid('duel-club-grid',k,'duel-club-selected');
+}
+
+function duelPickKind(k,el){
+  DUEL.kind=k;
+  document.querySelectorAll('#duel-k-classic,#duel-k-dynasty').forEach(function(b){b.classList.remove('tact-sel');});
+  if(el)el.classList.add('tact-sel');
+  var er=document.getElementById('duel-era-row');if(er)er.style.display=k==='dynasty'?'none':'';
+  var cr=document.getElementById('duel-club-row');if(cr)cr.style.display=k==='dynasty'?'':'none';
+  if(k==='dynasty')duelRenderClubGrid('duel-club-grid',DUEL.tourn,'duel-club-selected');
+}
+/* griglia club riusata da setup (lato A) e accept (lato B); mode = torneo del pool */
+function duelRenderClubGrid(gridId,mode,selId){
+  var grid=document.getElementById(gridId);if(!grid)return;
+  DUEL.club=null;DUEL.clubName=null;
+  var sel=document.getElementById(selId);if(sel)sel.style.display='none';
+  var clubs=_getDynClubs(mode);
+  grid.innerHTML=clubs.map(function(e){
+    var key=e[0].split('|')[0],info=e[1];
+    var cc=(typeof CLUB_COLORS!=='undefined'&&CLUB_COLORS[key])||'#888888';
+    return '<button data-club="'+key+'" data-name="'+String(info.name).replace(/"/g,'')+'" style="background:var(--s2);border:2px solid '+cc+';border-radius:10px;padding:10px 14px;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;line-height:1.2">'+info.name+'<span style="font-size:.62rem;font-weight:700;color:'+cc+';margin-left:6px;opacity:.85">×'+info.squads.length+'</span></button>';
+  }).join('');
+  Array.prototype.forEach.call(grid.querySelectorAll('button'),function(b){
+    b.onclick=function(){duelSelectClub(gridId,selId,mode,b);};
+  });
+}
+function duelSelectClub(gridId,selId,mode,btn){
+  DUEL.club=btn.getAttribute('data-club');
+  DUEL.clubName=btn.getAttribute('data-name');
+  DUEL.tourn=mode; /* il torneo segue il club scelto (cross-torneo libero) */
+  var grid=document.getElementById(gridId);
+  Array.prototype.forEach.call(grid.querySelectorAll('button'),function(b){b.style.outline='';b.style.background='var(--s2)';});
+  btn.style.outline='2px solid var(--gold)';btn.style.background='rgba(251,191,36,.12)';
+  var sel=document.getElementById(selId);
+  if(sel){sel.style.display='block';sel.textContent='✦ '+DUEL.clubName;}
+}
+function duelAccTab(mode){
+  ['ucl','copa','wc'].forEach(function(m){
+    var tb=document.getElementById('duel-acc-tab-'+m);
+    if(tb){tb.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc');if(m===mode)tb.classList.add('tab-active-'+m);}
+  });
+  duelRenderClubGrid('duel-acc-club-grid',mode,'duel-acc-club-selected');
+}
+function duelUpdateEraDisplay(){
+  var el=document.getElementById('duel-era-btn');if(!el)return;
+  var e=DUEL.eraT;
+  el.textContent=(e?((e.emoji||'🌍')+' '+e.name+(e.years?' · '+e.years:'')):'🌍 All Time')+'  ▾';
+}
+function duelBrowseEra(){
+  G.gameMode=DUEL.tourn;
+  _eraFromDuel=true;
+  showEraGrid();
+}
+function duelGoDraft(){
+  var nickEl=document.getElementById('duel-nick');
+  var nick=(nickEl?nickEl.value:'').trim().replace(/[<>"\\/&;]/g,'').slice(0,20);
+  if(nick.length<2){if(nickEl){nickEl.focus();nickEl.style.borderColor='#e05a5a';}return;}
+  if(nickEl)nickEl.style.borderColor='';
+  if(DUEL.kind==='dynasty'&&!DUEL.club){
+    var cg=document.getElementById('duel-club-grid');
+    if(cg){cg.style.outline='2px solid #e05a5a';setTimeout(function(){cg.style.outline='';},1400);cg.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
+  }
+  try{localStorage.setItem('dcz_duel_nick',nick);}catch(e){}
+  var _kind=DUEL.kind,_club=DUEL.club,_clubName=DUEL.clubName;
+  G.dynasty=false;G.dynastyClub=null;
+  G.gameMode=DUEL.tourn;
+  G.format='classic';
+  var eraT=DUEL.eraT||_duelAllTime(DUEL.tourn);
+  applyTournament(eraT); /* azzera anche DUEL.mode: i campi duello vanno impostati DOPO questa riga */
+  G.difficulty='normal';selectedDiff='normal';
+  DUEL.mode='create';
+  DUEL.nick=nick;
+  DUEL.kind=_kind;DUEL.club=_club;DUEL.clubName=_clubName;
+  if(_kind==='dynasty'){
+    G.dynasty=true;G.dynastyClub=_club;
+    _dynastyMode=DUEL.tourn;_dynastyClubDisplayName=_clubName||'';
+    DUEL.eraId='dynasty';
+    DUEL.eraLabel='Dynasty';
+  }else{
+    DUEL.eraId=eraT&&eraT.id?eraT.id:'alltime';
+    DUEL.eraLabel=eraT?(eraT.name+(eraT.years?' · '+eraT.years:'')):'All Time';
+  }
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  applyTournamentTheme(DUEL.tourn);
+  showScreen('screen-formation');
+}
+function formationBack(){
+  if(DUEL.mode){showScreen('screen-duel-setup');return;}
+  showScreen('screen-format');
+}
+function duelTeamPayload(){
+  var pl={
+    nick:DUEL.nick,
+    formation:G.formation,
+    tactic:G.draftTactic||G.tactic||'balanced',
+    players:G.slotPlayers.map(function(p){return p?{n:p.n,p:p.p,r:p.r}:null;}).filter(Boolean)
+  };
+  if(DUEL.kind==='dynasty'){pl.club=DUEL.club;pl.tmode=DUEL.tourn;pl.clubName=DUEL.clubName;}
+  return pl;
+}
+function duelAfterDraft(){
+  if(DUEL.mode==='join'){duelJoinAfterDraft();return;}
+  var payload={mode:DUEL.kind,tournament:DUEL.tourn,era:DUEL.eraLabel,eraId:DUEL.eraId,lang:G.lang||'it',team:duelTeamPayload()};
+  showScreen('screen-duel-share');
+  document.getElementById('duel-share-ok').style.display='none';
+  document.getElementById('duel-share-err').style.display='none';
+  document.getElementById('duel-share-wait').style.display='block';
+  fetch('duel-create.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(!res||!res.id)throw new Error('bad response');
+      DUEL.id=res.id;
+      duelStoreAdd({id:res.id,role:'a',status:'waiting',nick:DUEL.nick,opp:'',tourn:payload.tournament,era:payload.era,ts:Date.now()});
+      _ga('duel_create',{tournament:payload.tournament,era:payload.eraId||'alltime'});
+      document.getElementById('duel-share-wait').style.display='none';
+      document.getElementById('duel-share-ok').style.display='block';
+      var li=document.getElementById('duel-link');
+      if(li)li.value='https://decempionz.com/duel.php?id='+res.id;
+    })
+    .catch(function(){
+      document.getElementById('duel-share-wait').style.display='none';
+      document.getElementById('duel-share-err').style.display='block';
+    });
+}
+function duelCopyLink(){
+  var li=document.getElementById('duel-link');if(!li)return;
+  var btn=document.getElementById('duel-copy-btn');
+  (navigator.clipboard?navigator.clipboard.writeText(li.value):Promise.reject()).then(function(){
+    if(btn)btn.textContent=t('duel.copied');
+    setTimeout(function(){if(btn)btn.textContent=t('duel.copy');},1800);
+  }).catch(function(){li.select();try{document.execCommand('copy');}catch(e){}});
+}
+function duelShareWA(){
+  var li=document.getElementById('duel-link');if(!li)return;
+  var msg=t('duel.wa_msg').replace('{url}',li.value);
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function _duelEsc(str){return String(str).replace(/[<>&"]/g,'');}
+function _duelWait(txtKey){
+  showScreen('screen-duel-share');
+  document.getElementById('duel-share-ok').style.display='none';
+  document.getElementById('duel-share-err').style.display='none';
+  document.getElementById('duel-share-wait').style.display='block';
+  var w=document.getElementById('duel-wait-txt');if(w)w.textContent=t(txtKey);
+}
+function _duelFail(){
+  document.getElementById('duel-share-wait').style.display='none';
+  document.getElementById('duel-share-err').style.display='block';
+}
+function duelRetry(){
+  if(DUEL.mode==='join'&&DUEL.duelData&&DUEL.duelData.a&&DUEL.duelData.b){duelSimAndSend();return;}
+  duelAfterDraft();
+}
+
+/* ── Lato B: arrivo da ?duel=ID ── */
+function checkDuelURL(){
+  try{
+    var p=new URLSearchParams(window.location.search);
+    var id=p.get('duel');
+    if(id){duelOpenJoin(id);return;}
+    var rem=p.get('rematch');
+    if(rem)duelHandleRematch(rem);
+  }catch(e){}
+}
+function duelOpenJoin(id){
+  showScreen('screen-duel-accept');
+  document.getElementById('duel-acc-load').style.display='block';
+  document.getElementById('duel-acc-main').style.display='none';
+  document.getElementById('duel-acc-err').style.display='none';
+  fetch('duel-join.php?id='+encodeURIComponent(id))
+    .then(function(r){if(!r.ok)throw new Error('nf');return r.json();})
+    .then(function(d){
+      if(d.status==='done'){window.location.href='duel.php?id='+encodeURIComponent(id);return;}
+      DUEL.id=d.id;DUEL.duelData=d;
+      if(d.status==='simulating'){
+        /* rosa di B già committata: riprendi sim e invio */
+        duelResumeAfterCommit(d);
+        return;
+      }
+      document.getElementById('duel-acc-load').style.display='none';
+      document.getElementById('duel-acc-main').style.display='block';
+      var _isDyn=d.mode==='dynasty';
+      var _nickA=(d.a&&d.a.nick)||'?';
+      var _titleTxt=_isDyn&&d.a&&d.a.clubName
+        ?t('duel.acc_challenge_club').replace('{club}',d.a.clubName).replace('{nick}',_nickA)
+        :_nickA+' '+t('duel.acc_challenge');
+      document.getElementById('duel-acc-title').textContent='⚔️ '+_titleTxt;
+      var tl={ucl:'🏆 Champions League',copa:'🌎 Copa Libertadores',wc:'🌍 World Cup'};
+      document.getElementById('duel-acc-meta').textContent=_isDyn
+        ?('🏰 Dynasty · '+(tl[d.tournament]||''))
+        :((tl[d.tournament]||'Decempionz')+' · '+(d.era||'All Time'));
+      DUEL.kind=_isDyn?'dynasty':'classic';
+      var accClub=document.getElementById('duel-acc-club-row');
+      if(accClub)accClub.style.display=_isDyn?'':'none';
+      if(_isDyn)duelAccTab(d.tournament||'ucl');
+      var nick='';try{nick=localStorage.getItem('dcz_duel_nick')||'';}catch(e){}
+      var el=document.getElementById('duel-acc-nick');
+      if(el){el.value=nick;el.style.borderColor='';}
+    })
+    .catch(function(){
+      document.getElementById('duel-acc-load').style.display='none';
+      document.getElementById('duel-acc-err').style.display='block';
+    });
+}
+function duelAcceptGo(){
+  var d=DUEL.duelData;if(!d)return;
+  var nickEl=document.getElementById('duel-acc-nick');
+  var nick=(nickEl?nickEl.value:'').trim().replace(/[<>"\\/&;]/g,'').slice(0,20);
+  if(nick.length<2){if(nickEl){nickEl.focus();nickEl.style.borderColor='#e05a5a';}return;}
+  if(nickEl)nickEl.style.borderColor='';
+  var _isDyn=d.mode==='dynasty';
+  if(_isDyn&&!DUEL.club){
+    var cg=document.getElementById('duel-acc-club-grid');
+    if(cg){cg.style.outline='2px solid #e05a5a';setTimeout(function(){cg.style.outline='';},1400);cg.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
+  }
+  try{localStorage.setItem('dcz_duel_nick',nick);}catch(e){}
+  /* in dynasty il torneo segue il club scelto da B (cross-torneo libero); in classic quello del duello */
+  var tourn=_isDyn?DUEL.tourn:(d.tournament||'ucl');
+  var _club=DUEL.club,_clubName=DUEL.clubName;
+  var eraT=_isDyn?_duelAllTime(tourn):(_duelTourList(tourn).find(function(x){return x.id===d.eraId;})||_duelAllTime(tourn));
+  G.dynasty=false;G.dynastyClub=null;
+  G.gameMode=tourn;
+  G.format='classic';
+  applyTournament(eraT); /* azzera DUEL.mode: campi impostati dopo */
+  G.difficulty='normal';selectedDiff='normal';
+  DUEL.mode='join';
+  DUEL.id=d.id;
+  DUEL.nick=nick;
+  DUEL.tourn=tourn;
+  DUEL.kind=_isDyn?'dynasty':'classic';
+  DUEL.club=_club;DUEL.clubName=_clubName;
+  if(_isDyn){
+    G.dynasty=true;G.dynastyClub=_club;
+    _dynastyMode=tourn;_dynastyClubDisplayName=_clubName||'';
+    DUEL.eraId='dynasty';
+    DUEL.eraLabel='Dynasty';
+  }else{
+    DUEL.eraId=eraT&&eraT.id?eraT.id:'alltime';
+    DUEL.eraLabel=d.era||'All Time';
+  }
+  DUEL.duelData=d;
+  G.tactic='balanced';
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  applyTournamentTheme(tourn);
+  showScreen('screen-formation');
+  try{history.replaceState(null,'',location.pathname);}catch(e){}
+}
+
+/* Fase 1: committa la rosa di B → il server rivela quella di A */
+function duelJoinAfterDraft(){
+  _duelWait('duel.sending');
+  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'team',team:duelTeamPayload()})})
+    .then(function(r){
+      if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
+      if(!r.ok)throw new Error('http');
+      return r.json();
+    })
+    .then(function(res){
+      if(!res||!res.a||!res.b)throw new Error('bad');
+      DUEL.duelData.a=res.a;
+      DUEL.duelData.b=res.b;
+      duelSimAndSend();
+    })
+    .catch(function(e){if(e&&e.message==='handled')return;_duelFail();});
+}
+function duelResumeAfterCommit(d){
+  DUEL.mode='join';
+  DUEL.tourn=d.tournament||'ucl';
+  DUEL.eraLabel=d.era||'All Time';
+  DUEL.nick=(d.b&&d.b.nick)||'';
+  duelSimAndSend();
+}
+
+/* Fase 2: simula la serie sul client di B e invia il risultato; SOLO a invio riuscito parte la riproduzione animata */
+function duelSimAndSend(){
+  var d=DUEL.duelData;
+  _duelWait('duel.sending');
+  var res=duelSimSeries(d.a,d.b);
+  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'result',result:res})})
+    .then(function(r){
+      if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
+      if(!r.ok)throw new Error('http');
+      return r.json();
+    })
+    .then(function(){
+      DUEL.series=res;
+      duelStoreAdd({id:DUEL.id,role:'b',status:'done',nick:(d.b&&d.b.nick)||DUEL.nick,opp:(d.a&&d.a.nick)||'',tourn:d.tournament||DUEL.tourn,era:d.era||DUEL.eraLabel,ts:Date.now()});
+      _ga('duel_complete',{tournament:d.tournament||DUEL.tourn,winner:res.winner,matches:res.matches.length});
+      duelPlayMatch(0);
+    })
+    .catch(function(e){if(e&&e.message==='handled')return;_duelFail();});
+}
+
+/* ── Riproduzione animata della serie (B è la squadra di casa) ── */
+function duelPlayMatch(idx){
+  var d=DUEL.duelData,S=DUEL.series;
+  var m=S.matches[idx];
+  var myName=(d.b&&(d.b.clubName||d.b.nick))||'?',oppName=(d.a&&(d.a.clubName||d.a.nick))||'?';
+  var myG=m.gb,oppG=m.ga;
+  var scorers=(d.b.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
+  var oppPool=(d.a.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
+  var log=buildMatchLog(myG,oppG,myName,oppName,scorers,oppPool);
+  var roundLabel=t('duel.match_lbl')+' '+(idx+1)+'/'+S.matches.length;
+  M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
+     penResult:(m.pa!==null&&m.pa!==undefined)?{homeWon:m.pb>m.pa,pw:Math.max(m.pa,m.pb),pl:Math.min(m.pa,m.pb)}:null};
+  var posB=fmtPositions(d.b.formation,d.b.tactic||'balanced');
+  M.homeXI=(d.b.players||[]).map(function(p,i){return{n:p.n,p:posB[i]||p.p};});
+  var posA=fmtPositions(d.a.formation,d.a.tactic||'balanced');
+  M.awayXI=(d.a.players||[]).map(function(p,i){return{n:p.n,p:posA[i]||p.p};});
+  M.homeGoals={};M.awayGoals={};
+  document.getElementById('m-tag').innerHTML='<span class="tag tag-ko">⚔️ '+_duelEsc(roundLabel).toUpperCase()+'</span>';
+  document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">'+_duelEsc(myName)+'</span>';
+  document.getElementById('m-away').innerHTML=jerseyIcon('#8a4444',18)+'<span style="margin-left:4px">'+_duelEsc(oppName)+'</span>';
+  document.getElementById('m-score').textContent='0 — 0';
+  document.getElementById('m-score').className='m-score';
+  document.getElementById('m-timer').textContent="1'";
+  document.getElementById('m-ev1-min').textContent='';
+  document.getElementById('m-ev1-txt').textContent=(G.lang||'it')==='it'?'⚽ Calcio d\u0027inizio!':(G.lang==='es'?'⚽ ¡Saque inicial!':'⚽ Kick off!');
+  document.getElementById('m-ev1-txt').className='';
+  document.getElementById('m-ev2-min').textContent='';
+  document.getElementById('m-ev2-txt').textContent='';
+  document.getElementById('btn-mact').style.display='none';
+  document.getElementById('pen-zone').style.display='none';
+  M.speedKey='normal';
+  setMatchSpeed('normal');
+  renderMatchLineups();
+  var rz=document.getElementById('m-result-zone');
+  if(rz)rz.style.display='none';
+  var si=document.getElementById('m-speed-icons');
+  if(si)si.style.display='flex';
+  var evb=document.getElementById('m-ev-box');
+  if(evb)evb.style.display='';
+  showScreen('screen-match');
+  setTimeout(runLog,800);
+}
+function duelShowMatchResult(){
+  var S=DUEL.series,i=M.duelIdx,m=S.matches[i];
+  var myWon=m.gb>m.ga||(m.ga===m.gb&&m.pb>m.pa);
+  var myW=0,opW=0;
+  for(var k=0;k<=i;k++){
+    var mk=S.matches[k];
+    if(mk.gb>mk.ga||(mk.ga===mk.gb&&mk.pb>mk.pa))myW++;else opW++;
+  }
+  var oe=document.getElementById('r-out');
+  oe.textContent=myWon?t('result.win'):t('result.loss');
+  oe.className='ro '+(myWon?'ow':'ol');
+  var row=oe.parentElement;
+  if(row)row.style.setProperty('--res-color',myWon?'var(--grn2)':'var(--red2)');
+  var msg=t('duel.series_lbl')+' '+myW+'–'+opW;
+  if(m.pa!==null&&m.pa!==undefined)msg+=' · '+t('duel.pens_note').replace('{a}',m.pb).replace('{b}',m.pa);
+  document.getElementById('r-msg').textContent=msg;
+  document.getElementById('r-stars').innerHTML='';
+  var mc=document.getElementById('m-match-comment');if(mc)mc.style.display='none';
+  var nm=document.getElementById('r-next-match');if(nm)nm.style.display='none';
+  var bp=document.getElementById('m-bracket-panel');if(bp)bp.style.display='none';
+  var st=document.getElementById('m-stats-toggle');if(st)st.style.display='none';
+  var sp=document.getElementById('m-stats-panel');if(sp)sp.style.display='none';
+  var isLast=(i===S.matches.length-1);
+  var cb=document.getElementById('btn-rcont');
+  cb.textContent=isLast?t('duel.go_verdict'):t('duel.next_match');
+  cb.className='btn btn-gold';
+  var rz=document.getElementById('m-result-zone');
+  if(rz)rz.style.display='block';
+  var evb=document.getElementById('m-ev-box');if(evb)evb.style.display='none';
+  var si=document.getElementById('m-speed-icons');if(si)si.style.display='none';
+  var bm=document.getElementById('btn-mact');if(bm)bm.style.display='none';
+}
+function duelContinueSeries(){
+  var S=DUEL.series,next=M.duelIdx+1;
+  /* ripristina gli elementi nascosti dal risultato duello (il match screen campagna li riusa) */
+  var st=document.getElementById('m-stats-toggle');if(st)st.style.display='';
+  if(next<S.matches.length){duelPlayMatch(next);return;}
+  duelStoreUpdate(DUEL.id,{status:'done'});
+  window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);
+}
+/* ── Rivincita: /?rematch=ID → setup duello precompilato con gli stessi vincoli ── */
+function duelHandleRematch(id){
+  duelStart();
+  try{history.replaceState(null,'',location.pathname);}catch(e){}
+  fetch('duel-join.php?id='+encodeURIComponent(id))
+    .then(function(r){if(!r.ok)throw new Error('nf');return r.json();})
+    .then(function(d){
+      if(d.mode==='dynasty'){
+        var kd=document.getElementById('duel-k-dynasty');
+        duelPickKind('dynasty',kd);
+        /* precompila il club del richiedente, se lo conosciamo dal ruolo salvato */
+        var me=duelStore().find(function(x){return x.id===d.id;});
+        var mine=me&&me.role==='a'?d.a:me&&me.role==='b'?d.b:null;
+        if(mine&&mine.club&&mine.tmode){
+          var tb=document.getElementById('duel-t-'+mine.tmode);
+          duelPickTourn(mine.tmode,tb);
+          duelRenderClubGrid('duel-club-grid',mine.tmode,'duel-club-selected');
+          var btn=document.querySelector('#duel-club-grid button[data-club="'+mine.club+'"]');
+          if(btn)duelSelectClub('duel-club-grid','duel-club-selected',mine.tmode,btn);
+        }
+        return;
+      }
+      DUEL.tourn=d.tournament||'ucl';
+      DUEL.eraT=_duelTourList(DUEL.tourn).find(function(x){return x.id===d.eraId;})||_duelAllTime(DUEL.tourn);
+      ['ucl','copa','wc'].forEach(function(k){var b=document.getElementById('duel-t-'+k);if(b)b.classList.toggle('tact-sel',k===DUEL.tourn);});
+      duelUpdateEraDisplay();
+    })
+    .catch(function(){});
+}
+
+/* ── Stato duelli in home (ultimi 3 da dcz_duels, poll di quelli in attesa) ── */
+function _duelStatusRender(){
+  var box=document.getElementById('home-duel-status');if(!box)return;
+  var all=duelStore();
+  if(!all.length){box.style.display='none';return;}
+  var last=all.slice(-3).reverse();
+  box.style.display='block';
+  box.innerHTML=last.map(function(e){
+    var done=e.status==='done';
+    var st=done?t('duel.st_done'):t('duel.st_waiting');
+    var col=done?'var(--gold2)':'var(--mut)';
+    return '<a href="duel.php?id='+encodeURIComponent(e.id)+'" style="display:block;color:'+col+';text-decoration:none;padding:4px 0;border-top:1px solid var(--brd)">⚔️ '
+      +_duelEsc(e.era||'')+(e.opp?' · vs '+_duelEsc(e.opp):'')+' — '+st+'</a>';
+  }).join('');
+}
+function duelRenderHomeStatus(){
+  _duelStatusRender();
+  duelStore().slice(-3).forEach(function(e){
+    if(e.status==='done')return;
+    fetch('duel-join.php?id='+encodeURIComponent(e.id))
+      .then(function(r){
+        if(r.status===404){duelStoreSave(duelStore().filter(function(x){return x.id!==e.id;}));_duelStatusRender();throw new Error('handled');}
+        if(!r.ok)throw new Error('http');
+        return r.json();
+      })
+      .then(function(d){
+        if(d.status==='done'){
+          var opp=e.role==='a'?((d.b&&d.b.nick)||''):((d.a&&d.a.nick)||'');
+          duelStoreUpdate(e.id,{status:'done',opp:opp});
+          _duelStatusRender();
+        }
+      })
+      .catch(function(){});
+  });
+}
 
 /* ═══════════════════════════════════════
    START
@@ -2753,6 +3463,13 @@ function selectEra(idx, el){
 function selectAllTime(){
   var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
   const t=_tourList.find(function(x){return x.allTime;});
+  if(_eraFromDuel){
+    DUEL.eraT=t||null;
+    _eraFromDuel=false;
+    duelUpdateEraDisplay();
+    showScreen('screen-duel-setup');
+    return;
+  }
   if(_eraFromFormat){
     selectedEraT=null; // null = All Time
     _eraFromFormat=false;
@@ -2765,6 +3482,13 @@ function selectAllTime(){
 function confirmEra(){
   if(selectedEraIdx < 0) return;
   var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
+  if(_eraFromDuel){
+    DUEL.eraT=_tourList[selectedEraIdx];
+    _eraFromDuel=false;
+    duelUpdateEraDisplay();
+    showScreen('screen-duel-setup');
+    return;
+  }
   if(_eraFromFormat){
     selectedEraT=_tourList[selectedEraIdx];
     _eraFromFormat=false;
@@ -2776,6 +3500,7 @@ function confirmEra(){
 }
 function applyTournament(t){
   G.tournament = t;
+  if(typeof DUEL!=='undefined')DUEL.mode=null; /* ogni avvio campagna esce dalla modalità duello */
   G.formation = null; G.accepted = []; G.passes = 5; G.squad = []; G.momentum = 0; G.tactic='balanced';
   // G.format is preserved (set before applyTournament is called)
   G.phase = (G.format==='coppa')?'knockout':'group'; G.groupRound = 0; G.knockRound = 0;
@@ -2799,7 +3524,7 @@ function updateEraDisplay(){
   el.textContent=(t.emoji||'🌍')+' '+t.name+(t.years?' · '+t.years:'');
 }
 function browseEraFromFormat(){_eraFromFormat=true;showEraGrid();}
-function eraBack(){showScreen('screen-format');}
+function eraBack(){if(_eraFromDuel){_eraFromDuel=false;showScreen('screen-duel-setup');return;}showScreen('screen-format');}
 function _syncFormatBadge(){
   var m=G.gameMode||'ucl';
   var cfg={
@@ -3963,6 +4688,7 @@ function finalizeDraft(){
   // Update pitch one last time so user sees the completed squad
   renderDraftPitch(null);
   setTimeout(function(){
+    if(DUEL.mode){duelAfterDraft();return;}
     showCoachDraft();
   },1500);
 }
@@ -4219,6 +4945,119 @@ function playRound(){
   const oppTactic=storedOT||(oppTacRoll<oppTacWeights[0]?'attack':oppTacRoll<oppTacWeights[0]+oppTacWeights[1]?'balanced':'defend');
   _pendingMatch={oppName,oppStr,roundLabel,roundTag,isKnockout,oppTactic};
   _runMatch();
+}
+
+/* ══════════ DUELLO 1v1 — MOTORE SIMMETRICO ══════════ */
+/* Squadra da duello: {formation, tactic, players:[{n,p,r}×11] nell'ordine slot della formazione}.
+   Stessa pipeline della campagna (penalità posizionali via slotPenalty, reparti pesati,
+   star bonus, bonus r=10) ma applicata in modo identico a ENTRAMBE le squadre.
+   Restano fuori i concetti da campagna: DIFF_CFG, momentum, coach, roundBonus. */
+function duelTeamEval(team){
+  var pos=fmtPositions(team.formation,team.tactic||'balanced');
+  var grp={GK:[],DEF:[],MID:[],FWD:[]};
+  var effR={GK:[],DEF:[],MID:[],FWD:[]};
+  (team.players||[]).forEach(function(p,i){
+    if(!p)return;
+    var slotP=pos[i]||p.p;
+    var pen=slotPenalty(slotP,p.p);
+    var pg=posGroup(p.p);
+    grp[pg].push(p);
+    effR[pg].push(p.r*(1-pen));
+  });
+  var gkR=avg(effR.GK)||6,defR=avg(effR.DEF)||6,midR=avg(effR.MID)||6,fwdR=avg(effR.FWD)||6;
+  var pl=(team.players||[]).filter(Boolean);
+  var star=pl.reduce(function(b,p){return p.r>(b?b.r:0)?p:b;},null);
+  var r10={gk:0,def:0,midAtk:0,midDef:0,fwd:0};
+  pl.forEach(function(p){
+    if(p.r<10)return;
+    var pg=posGroup(p.p);
+    if(pg==='GK')r10.gk+=0.04;
+    else if(pg==='DEF')r10.def+=0.03;
+    else if(pg==='MID'){r10.midAtk+=0.03;r10.midDef+=0.02;}
+    else if(pg==='FWD')r10.fwd+=0.04;
+  });
+  var _FMT_OFF={'4-2-3-1':1,'3-4-3':1},_FMT_DEF={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
+  return {
+    atk:fwdR*.65+midR*.35,
+    def:defR*.70+gkR*.30,
+    starBonus:star?Math.max(0,(star.r-8.5)*0.06):0,
+    r10:r10,
+    tactic:TACT_MOD[team.tactic]?team.tactic:'balanced',
+    fmtT:_FMT_OFF[team.formation]?'off':_FMT_DEF[team.formation]?'def':'mid',
+    scorers:grp.FWD.concat(grp.MID)
+  };
+}
+
+/* Una partita secca tra due squadre valutate (ea, eb = output di duelTeamEval).
+   Ritorna {ga,gb,pa,pb,xa,xb}; pa/pb valorizzati solo se serve la lotteria dei rigori. */
+function duelSimMatch(ea,eb){
+  var FLOOR=.13,CAP=2.6;
+  /* xG base simmetrico — stessa forma calibrata della campagna */
+  var xa=(ea.atk-eb.def*.82)*.38+.46;
+  var xb=(eb.atk-ea.def*.82)*.38+.46;
+  /* tattica propria spinge, tattica avversaria decide cosa si concede */
+  xa*=TACT_MOD[ea.tactic].myXG*TACT_MOD[eb.tactic].oppXG;
+  xb*=TACT_MOD[eb.tactic].myXG*TACT_MOD[ea.tactic].oppXG;
+  /* contro-tattica: un solo lookup copre entrambi i lati */
+  var ct=COUNTER_MOD[ea.tactic+'-'+eb.tactic]||[1,1];
+  xa*=ct[0];xb*=ct[1];
+  /* star player */
+  xa+=ea.starBonus;xb+=eb.starBonus;
+  /* tipo formazione vs tattica avversaria (±4% come campagna), per entrambi */
+  if(ea.fmtT==='off'&&eb.tactic==='defend'){xa*=1.04;xb*=0.97;}
+  else if(ea.fmtT==='off'&&eb.tactic==='attack'){xa*=1.02;xb*=1.02;}
+  else if(ea.fmtT==='def'&&eb.tactic==='attack'){xb*=0.96;xa*=1.02;}
+  else if(ea.fmtT==='def'&&eb.tactic==='defend'){xa*=0.97;}
+  if(eb.fmtT==='off'&&ea.tactic==='defend'){xb*=1.04;xa*=0.97;}
+  else if(eb.fmtT==='off'&&ea.tactic==='attack'){xb*=1.02;xa*=1.02;}
+  else if(eb.fmtT==='def'&&ea.tactic==='attack'){xa*=0.96;xb*=1.02;}
+  else if(eb.fmtT==='def'&&ea.tactic==='defend'){xb*=0.97;}
+  /* bonus r=10 — stessi cap della campagna, applicati a entrambi */
+  if(ea.r10.gk)xb*=1-Math.min(ea.r10.gk,0.08);
+  if(ea.r10.def)xb*=1-Math.min(ea.r10.def,0.09);
+  if(ea.r10.midAtk)xa*=1+Math.min(ea.r10.midAtk,0.06);
+  if(ea.r10.midDef)xb*=1-Math.min(ea.r10.midDef,0.04);
+  if(ea.r10.fwd)xa*=1+Math.min(ea.r10.fwd,0.10);
+  if(eb.r10.gk)xa*=1-Math.min(eb.r10.gk,0.08);
+  if(eb.r10.def)xa*=1-Math.min(eb.r10.def,0.09);
+  if(eb.r10.midAtk)xb*=1+Math.min(eb.r10.midAtk,0.06);
+  if(eb.r10.midDef)xa*=1-Math.min(eb.r10.midDef,0.04);
+  if(eb.r10.fwd)xb*=1+Math.min(eb.r10.fwd,0.10);
+  /* draw-pull per match equilibrati */
+  var d=Math.abs(xa-xb);
+  if(d<0.35){var pull=0.05*(0.35-d)/0.35;xa-=pull;xb-=pull;}
+  xa=Math.max(FLOOR,Math.min(xa,CAP));
+  xb=Math.max(FLOOR,Math.min(xb,CAP));
+  var ga=poisson(xa),gb=poisson(xb),pa=null,pb=null;
+  if(ga===gb){var pen=duelPenalties();pa=pen[0];pb=pen[1];}
+  return {ga:ga,gb:gb,pa:pa,pb:pb,xa:xa,xb:xb};
+}
+
+/* Rigori equi (nessun fattore campo): 5 a testa poi oltranza. Ritorna [pa,pb], mai pari. */
+function duelPenalties(){
+  var a=0,b=0;
+  for(var i=0;i<5;i++){
+    if(Math.random()<0.75)a++;
+    if(Math.random()<0.75)b++;
+  }
+  while(a===b&&a<28){
+    if(Math.random()<0.75)a++;
+    if(Math.random()<0.75)b++;
+  }
+  if(a===b)a++;
+  return [a,b];
+}
+
+/* Serie al meglio delle 3: si chiude 2-0 o 2-1. Ritorna il blocco result per duel-result.php. */
+function duelSimSeries(teamA,teamB){
+  var ea=duelTeamEval(teamA),eb=duelTeamEval(teamB);
+  var matches=[],wa=0,wb=0;
+  while(wa<2&&wb<2&&matches.length<3){
+    var m=duelSimMatch(ea,eb);
+    if(m.ga>m.gb||(m.ga===m.gb&&m.pa>m.pb))wa++;else wb++;
+    matches.push({ga:m.ga,gb:m.gb,pa:m.pa,pb:m.pb});
+  }
+  return {matches:matches,winsA:wa,winsB:wb,winner:wa>wb?'a':'b'};
 }
 
 function _runMatch(){
@@ -4807,6 +5646,7 @@ function generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,i
 }
 
 function showResult(){
+  if(M&&M.duel){duelShowMatchResult();return;}
   const {myG,oppG,myXG,oppXG,isKnockout,roundLabel,oppName}=M;
   const diff=myG-oppG;
   let outcome,cls,stars,msg;
@@ -5184,6 +6024,7 @@ function buildRatingsGrid(campaignMatchRatings){
 }
 
 function continueResult(){
+  if(M&&M.duel){duelContinueSeries();return;}
   if(M.eliminated){showGameOver();return;}
 
   if(G.phase==='group'){
@@ -5655,6 +6496,7 @@ document.addEventListener('DOMContentLoaded',function(){
   _syncLangBtn(_initLang);
   applyLang();
   checkChallengeURL();
+  checkDuelURL();
   _renderGamesCounter();
   _loadChallengeBanner();
   _loadDailyBanner();
@@ -6061,6 +6903,7 @@ function _loadDailyBanner(){
 function startDailyPuzzle(replay){
   const pz=getDailyPuzzle();
   G.dailyPuzzle=pz.dateStr;G.dailyNum=pz.num;G.dailyReplay=!!replay;
+  if(typeof DUEL!=='undefined')DUEL.mode=null;
   if(!replay){try{localStorage.setItem('dcz_daily_run',pz.dateStr);}catch(e){}}
   G.gameMode=pz.mode;
   selectedDiff=pz.difficulty;selectedFormat='classic';
