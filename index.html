@@ -536,7 +536,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .end-btns-row{display:flex;gap:8px}
 
 /* ── Difficulty cards ── */
-.diff-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .diff-card{padding:10px 8px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s;text-align:center}
 .diff-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .diff-card.diff-sel{border-color:var(--gold);background:rgba(234,179,8,.08)}
@@ -544,6 +544,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .diff-easy .diff-title{color:#4ade80}
 .diff-normal .diff-title{color:var(--gold)}
 .diff-hard .diff-title{color:#f97316}
+.diff-legend .diff-title{color:#c084fc}
 .diff-desc{font-size:.65rem;color:var(--mut);line-height:1.3;margin-top:2px}
 /* ── Tactic screen ── */
 .tact-grid{display:flex;gap:10px;margin-bottom:16px}
@@ -932,6 +933,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div data-i18n="diff.hard" class="diff-title">🔴 Difficile</div>
         <div data-i18n="diff.hard_desc" class="diff-desc">2 reroll · Avversari più forti</div>
       </div>
+      <div class="diff-card diff-legend" id="dyn-dc-legend" onclick="selectDynDiff('legend',this)">
+        <div data-i18n="diff.legend" class="diff-title">⚫ Leggenda</div>
+        <div data-i18n="diff.legend_desc" class="diff-desc">0 reroll · Avversari al massimo</div>
+      </div>
     </div>
   </div>
 
@@ -1000,6 +1005,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="diff-card diff-hard" id="dc-hard" onclick="selectDiff('hard',this)">
       <div data-i18n="diff.hard" class="diff-title">🔴 Hard</div>
       <div data-i18n="diff.hard_desc" class="diff-desc">2 rerolls · Opponents stronger</div>
+    </div>
+    <div class="diff-card diff-legend" id="dc-legend" onclick="selectDiff('legend',this)">
+      <div data-i18n="diff.legend" class="diff-title">⚫ Leggenda</div>
+      <div data-i18n="diff.legend_desc" class="diff-desc">0 reroll · Avversari al massimo</div>
     </div>
   </div>
   <div style="margin-bottom:14px">
@@ -1339,7 +1348,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.10.2';
+const GAME_VERSION='5.11.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1397,7 +1406,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Ultimi 3 slot rimasti',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
-    'diff.hard_desc':'2 reroll · Avversari più forti',
+    'diff.hard_desc':'2 reroll · Avversari più forti','diff.legend':'⚫ Leggenda','diff.legend_desc':'0 reroll · Avversari al massimo',
     'tac.attack':'Pressione Alta',
     'tac.balanced':'Possesso Palla',
     'tac.defend':'Blocco Basso',
@@ -1637,7 +1646,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Last 3 slots remaining',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
-    'diff.hard_desc':'2 rerolls · Opponents stronger',
+    'diff.hard_desc':'2 rerolls · Opponents stronger','diff.legend':'⚫ Legend','diff.legend_desc':'0 rerolls · Opponents at maximum',
     'tac.attack':'High Press',
     'tac.balanced':'Possession',
     'tac.defend':'Low Block',
@@ -1891,7 +1900,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Últimos 3 huecos restantes',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
-    'diff.hard_desc':'2 rerolls · Rivales más fuertes',
+    'diff.hard_desc':'2 rerolls · Rivales más fuertes','diff.legend':'⚫ Leyenda','diff.legend_desc':'0 rerolls · Rivales al máximo',
     'tac.attack':'Presión Alta',
     'tac.balanced':'Posesión',
     'tac.defend':'Bloque Bajo',
@@ -3199,7 +3208,7 @@ function selectRandomFormation(){
 
 /* difficulty */
 var selectedDiff='normal';
-const DIFF_CFG={easy:{passes:5,oppMod:-.20},normal:{passes:3,oppMod:.15},hard:{passes:2,oppMod:.40}};
+const DIFF_CFG={easy:{passes:5,oppMod:-.20},normal:{passes:3,oppMod:.15},hard:{passes:2,oppMod:.40},legend:{passes:0,oppMod:.60}};
 function selectDiff(level,el){
   selectedDiff=level;
   document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
@@ -6007,7 +6016,7 @@ function _dailyLoad(){try{return JSON.parse(localStorage.getItem('dcz_daily')||'
 function _dailyStore(st){try{localStorage.setItem('dcz_daily',JSON.stringify(st));}catch(e){}}
 function _dailyPrevDay(ds){const p=ds.split('-');const d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]-1));return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
 const _DAILY_TEMOJI={ucl:'🏆',copa:'🌎',wc:'🌍'};
-const _DAILY_DIFFEMO={easy:'🟢',normal:'🟡',hard:'🔴'};
+const _DAILY_DIFFEMO={easy:'🟢',normal:'🟡',hard:'🔴',legend:'⚫'};
 function _dailyConfigLabel(pz){return _DAILY_TEMOJI[pz.mode]+' '+(pz.mode==='ucl'?'UCL':pz.mode==='copa'?'Copa':'World Cup')+' · '+(pz.era.emoji||'')+' '+pz.era.name;}
 function _dailyGrid(res){return (res||'').split('').map(function(c){return c==='W'?'🟩':c==='D'?'🟨':'🟥';}).join('');}
 function _loadDailyBanner(){
@@ -6445,7 +6454,7 @@ function _buildShareText(){
   const statusLine=d.isWinner
     ?(gradeEmoji+' Grade '+d.grade+' — '+formatLabel+(d.isIt?' Vinto!':' Won!'))
     :('💔 '+(d.isIt?'Eliminato':'Eliminated')+' · '+formatLabel+' ('+d.campW+(d.isIt?'V ':' W ')+d.campD+(d.isIt?'P ':' D ')+d.campL+(d.isIt?'S':'L')+')');
-  const diffLbl={easy:d.isIt?'🟢 Facile':'🟢 Easy',normal:d.isIt?'🟡 Normale':'🟡 Normal',hard:d.isIt?'🔴 Difficile':'🔴 Hard'}[G.difficulty||'normal']||'🟡';
+  const diffLbl={easy:d.isIt?'🟢 Facile':'🟢 Easy',normal:d.isIt?'🟡 Normale':'🟡 Normal',hard:d.isIt?'🔴 Difficile':'🔴 Hard',legend:d.isIt?'⚫ Leggenda':'⚫ Legend'}[G.difficulty||'normal']||'🟡';
   const coachStr=G.coach?(' · 👔 '+G.coach.name):'';
   const lineupLines=[
     d.grpMap.GK.length?'🧤 '+d.grpMap.GK.join(' · '):'',
@@ -6587,7 +6596,8 @@ var TROPHIES=[
   // Elite (3)
   {id:'all_star',tier:'elite',icon:'💎',nameIT:'All Stars',nameEN:'All Stars',nameES:'All Stars',descIT:'Rosa con 3+ giocatori rating ≥9.5',descEN:'Field 3+ players rated 9.5+',descES:'Alinea 3+ jugadores con valoración ≥9.5'},
   {id:'clean_final',tier:'elite',icon:'🧤',nameIT:'Finale Pulita',nameEN:'Clean Final',nameES:'Final Sin Goles',descIT:'Vinci la finale senza subire gol',descEN:'Win the final conceding 0 goals',descES:'Gana la final sin encajar ningún gol'},
-  {id:'legend',tier:'elite',icon:'🌟',nameIT:'Leggenda',nameEN:'Legend',nameES:'Leyenda',descIT:'Sblocca tutti e 7 i trofei base',descEN:'Unlock all 7 base trophies',descES:'Desbloquea los 7 trofeos base'}
+  {id:'legend',tier:'elite',icon:'🌟',nameIT:'Leggenda',nameEN:'Legend',nameES:'Leyenda',descIT:'Sblocca tutti e 7 i trofei base',descEN:'Unlock all 7 base trophies',descES:'Desbloquea los 7 trofeos base'},
+  {id:'immortal',tier:'elite',icon:'👑',nameIT:'Immortale',nameEN:'Immortal',nameES:'Inmortal',descIT:'Vinci una campagna in modalità Leggenda',descEN:'Win a campaign on Legend difficulty',descES:'Gana una campaña en dificultad Leyenda'}
 ];
 var _DCZ_TROPHY_KEY='dcz_trophies';
 var _DCZ_FORM_KEY='dcz_formations_won';
@@ -6633,6 +6643,8 @@ function checkTrophies(g){
   function _unlock(id){if(!data[id]){data[id]={unlocked:true,date:today};newUnlocked.push(id);}}
   var mode=g.gameMode||'ucl';
   var fmt=g.format||'classic';
+  // Immortale: vittoria in modalità Leggenda
+  if((g.difficulty||'')==='legend')_unlock('immortal');
   // Base
   if(mode==='ucl'&&fmt==='classic')_unlock('ucl_classic');
   if(mode==='ucl'&&fmt==='coppa')_unlock('ucl_oldcup');

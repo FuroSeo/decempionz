@@ -92,7 +92,7 @@ $approved = $isAdmin ? loadJson($approvedFile) : ['entries' => []];
 $pendingCount = count($pending['entries']);
 
 $tournLabels = ['ucl' => '🏆 UCL', 'copa' => '🌎 Copa', 'wc' => '🌍 World Cup'];
-$diffLabels  = ['easy' => '🟢 Facile', 'normal' => '🟡 Normale', 'hard' => '🔴 Difficile'];
+$diffLabels  = ['easy' => '🟢 Facile', 'normal' => '🟡 Normale', 'hard' => '🔴 Difficile', 'legend' => '⚫ Leggenda'];
 ?>
 <!DOCTYPE html>
 <html lang="it">

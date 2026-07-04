@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validazione campionato
     $validTournaments  = ['ucl', 'copa', 'wc'];
     $validFormats      = ['classic', 'coppa', 'nuovo'];
-    $validDifficulties = ['easy', 'normal', 'hard'];
+    $validDifficulties = ['easy', 'normal', 'hard', 'legend'];
     $validGrades       = ['S', 'A', 'B', 'C'];
 
     if (!in_array($data['tournament'] ?? '', $validTournaments)) {

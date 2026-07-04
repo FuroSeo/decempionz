@@ -36,7 +36,7 @@ if (!$nick || strlen($nick) > 24) {
 }
 
 $allowedGrades = ['S', 'A', 'B', 'C'];
-$allowedDiff   = ['easy', 'normal', 'hard'];
+$allowedDiff   = ['easy', 'normal', 'hard', 'legend'];
 $allowedTourn  = ['ucl', 'copa', 'wc', 'dynasty'];
 
 function sanitize($val, $maxLen = 50) {
