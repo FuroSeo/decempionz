@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.1';
+const GAME_VERSION='5.13.2';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1795,6 +1795,17 @@ const STRINGS={
     'pen.shootout_title':'⚽ Rigori','pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
     'stats.duels':'⚔️ Duelli 1v1',
+    'stats.btn':'📊 Statistiche',
+    'stats.matches':'Partite',
+    'stats.record':'Record',
+    'stats.winrate':'% Vittorie',
+    'stats.campaigns':'Campagne vinte',
+    'stats.goals':'Gol (fatti:subiti)',
+    'stats.fav_formation':'Modulo preferito',
+    'stats.most_drafted':'Più draftato',
+    'stats.by_tourn':'Per torneo',
+    'stats.reset':'🗑 Resetta stats',
+    'stats.empty':'Nessuna partita ancora. Inizia a giocare!',
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
@@ -6108,7 +6119,12 @@ function openStatsScreen(){
   var winRate=played?Math.round(wins/played*100):0;
   var campS=s.campaignsStarted||0,campW=s.campaignsWon||0;
   var gf=s.totalGF||0,ga=s.totalGA||0,bestWin=s.bestWinMargin||0;
-  var duelsPlayed=s.duelsPlayed||0,duelsWon=s.duelsWon||0;
+  /* duelsPlayed: il contatore incrementale (s.duelsPlayed) scatta solo guardando la
+     sequenza animata fino in fondo; per i duelli gia' 'done' da prima (mai rigiocati/rivisti
+     dopo l'introduzione di questo contatore) recupero il conteggio anche dallo storico locale
+     dcz_duels, cosi' non restano invisibili qui. duelsWon resta solo quello tracciato davvero. */
+  var duelsFromHistory=(typeof duelStore==='function')?duelStore().filter(function(x){return x.status==='done';}).length:0;
+  var duelsPlayed=Math.max(s.duelsPlayed||0,duelsFromHistory),duelsWon=s.duelsWon||0;
   var topForm=Object.entries(s.formationCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var topPl=Object.entries(s.playerDraftCount||{}).sort(function(a,b){return b[1]-a[1];})[0];
   var bt=s.byTournament||{};
@@ -8447,4 +8463,18 @@ if('serviceWorker' in navigator){
     <div class="modal-section">
       <h3>Cookie</h3>
       <p>Non vengono utilizzati cookie di profilazione o marketing. Google Analytics può impostare cookie tecnici propri (_ga, _gid) per distinguere le sessioni. Questi cookie non contengono dati personali identificativi.</p>
-    </div                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+    </div>
+    <div class="modal-section">
+      <h3>I tuoi diritti (GDPR – Reg. UE 2016/679)</h3>
+      <p>Ai sensi degli artt. 15-20 del GDPR hai diritto di accesso, rettifica, cancellazione, limitazione e portabilità dei tuoi dati. Per esercitare questi diritti scrivi a: <a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
+    </div>
+    <div class="modal-section">
+      <h3>Aggiornamenti</h3>
+      <p>Questa policy può essere aggiornata in caso di modifiche al gioco o alla normativa. Ultimo aggiornamento: giugno 2025.</p>
+    </div>
+    <button class="modal-legal-close" onclick="closePrivacy()">Chiudi</button>
+  </div>
+</div>
+
+</body>
+</html>

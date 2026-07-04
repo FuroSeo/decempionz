@@ -25,12 +25,17 @@ function dcz_log_err($reason) {
     @file_put_contents($duelsDir . '_errors.log', date('c') . ' create ' . $reason . "\n", FILE_APPEND | LOCK_EX);
 }
 
-/* Rate limit: 1 creazione ogni 20 secondi per IP */
+/* Rate limit: 1 creazione ogni 3 secondi per IP.
+   Era 20s, ma REMOTE_ADDR su rete mobile e' spesso condiviso da tanti utenti diversi (CGNAT
+   dei gestori italiani): con 20s bastava un altro utente qualunque sullo stesso IP carrier a farci
+   scattare il 429 e mostrare "errore di rete" a chi non aveva fatto nulla di sbagliato. 3s basta
+   comunque a fermare un doppio-tap/script impazzito; lo storage e' comunque limitato a parte
+   (dcz_cleanup_old_duels). */
 $ip      = md5($_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateDir = sys_get_temp_dir() . '/dcz_duels/';
 @mkdir($rateDir, 0755, true);
 $rf = $rateDir . $ip . '.tmp';
-if (file_exists($rf) && (time() - filemtime($rf)) < 20) {
+if (file_exists($rf) && (time() - filemtime($rf)) < 3) {
     dcz_log_err('rate_limit ip=' . $ip);
     http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
 }
