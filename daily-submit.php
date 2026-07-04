@@ -33,22 +33,26 @@ if (!in_array($day, [$today, $yest, $tom])) {
     exit;
 }
 
-// Rate limit: 1 invio per IP per giorno
-$ip      = md5(($_SERVER['REMOTE_ADDR'] ?? 'x') . '_daily_' . $day);
+$allowedGrades = ['S', 'A', 'B', 'C'];
+$nick = mb_substr(trim($data['nickname'] ?? ''), 0, 24);
+if (!$nick) {
+    http_response_code(400);
+    echo json_encode(['error' => 'missing nickname']);
+    exit;
+}
+
+// Rate limit: 1 invio per IP+nickname per giorno
+// (chiave include il nickname perché su reti mobili molti utenti diversi
+// condividono lo stesso IP pubblico per via del CGNAT degli operatori:
+// una chiave basata solo sull'IP bloccherebbe erroneamente utenti reali
+// distinti che giocano dalla stessa rete)
+$ip      = md5(($_SERVER['REMOTE_ADDR'] ?? 'x') . '_daily_' . $day . '_' . mb_strtolower($nick));
 $rateDir = sys_get_temp_dir() . '/dcz_daily/';
 @mkdir($rateDir, 0755, true);
 $rf = $rateDir . $ip . '.tmp';
 if (file_exists($rf) && (time() - filemtime($rf)) < 86400) {
     http_response_code(429);
     echo json_encode(['error' => 'already submitted']);
-    exit;
-}
-
-$allowedGrades = ['S', 'A', 'B', 'C'];
-$nick = mb_substr(trim($data['nickname'] ?? ''), 0, 24);
-if (!$nick) {
-    http_response_code(400);
-    echo json_encode(['error' => 'missing nickname']);
     exit;
 }
 $grade  = in_array($data['grade'] ?? '', $allowedGrades) ? $data['grade'] : 'C';
