@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.0';
+const GAME_VERSION='5.13.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -6618,6 +6618,9 @@ document.addEventListener('DOMContentLoaded',function(){
   _renderGamesCounter();
   _loadChallengeBanner();
   _loadDailyBanner();
+  /* home v2: al primo caricamento showScreen('screen-home') non viene chiamata */
+  try{duelRenderHomeStatus();}catch(e){}
+  try{_syncModeCells();}catch(e){}
 });
 
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
