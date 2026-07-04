@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.5';
+const GAME_VERSION='5.13.6';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3426,7 +3426,12 @@ function duelPlayMatch(idx){
   M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,myName:myName,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
      penResult:null,
      /* punteggio rigori gia' deciso (server/simulazione di B): l'animazione lo raggiunge, non lo inventa */
-     duelPenTarget:(m.pa!==null&&m.pa!==undefined)?{my:meIsB?m.pb:m.pa,opp:meIsB?m.pa:m.pb}:null};
+     duelPenTarget:(m.pa!==null&&m.pa!==undefined)?{my:meIsB?m.pb:m.pa,opp:meIsB?m.pa:m.pb}:null,
+     /* sequenza REALE calcio-per-calcio salvata dal server (duelli nuovi): stessa identica per
+        sfidante e sfidato, ciascuno con la propria riga vera e quella dell'avversario vera.
+        Duelli creati prima di questo fix non hanno pSeqA/pSeqB: si ricade sulla ricostruzione
+        plausibile di duelBuildPenSeq(). */
+     duelPenSeq:(Array.isArray(m.pSeqA)&&Array.isArray(m.pSeqB))?{mine:meIsB?m.pSeqB:m.pSeqA,opp:meIsB?m.pSeqA:m.pSeqB}:null};
   var posMe=fmtPositions(me.formation,me.tactic||'balanced');
   M.homeXI=(me.players||[]).map(function(p,i){return{n:p.n,p:posMe[i]||p.p};});
   var posOpp=fmtPositions(opp.formation,opp.tactic||'balanced');
@@ -5225,24 +5230,27 @@ function duelSimMatch(ea,eb){
   if(d<0.35){var pull=0.05*(0.35-d)/0.35;xa-=pull;xb-=pull;}
   xa=Math.max(FLOOR,Math.min(xa,CAP));
   xb=Math.max(FLOOR,Math.min(xb,CAP));
-  var ga=poisson(xa),gb=poisson(xb),pa=null,pb=null;
-  if(ga===gb){var pen=duelPenalties();pa=pen[0];pb=pen[1];}
-  return {ga:ga,gb:gb,pa:pa,pb:pb,xa:xa,xb:xb};
+  var ga=poisson(xa),gb=poisson(xb),pa=null,pb=null,pSeqA=null,pSeqB=null;
+  if(ga===gb){var pen=duelPenalties();pa=pen.a;pb=pen.b;pSeqA=pen.seqA;pSeqB=pen.seqB;}
+  return {ga:ga,gb:gb,pa:pa,pb:pb,pSeqA:pSeqA,pSeqB:pSeqB,xa:xa,xb:xb};
 }
 
-/* Rigori equi (nessun fattore campo): 5 a testa poi oltranza. Ritorna [pa,pb], mai pari. */
+/* Rigori equi (nessun fattore campo): 5 a testa poi oltranza. Ritorna {a,b,seqA,seqB}, mai pari.
+   seqA/seqB = sequenza reale calcio-per-calcio (booleani): viene salvata e inviata al server cosi'
+   entrambi gli spettatori (sfidante e sfidato) rivedono la STESSA identica sequenza vera invece di
+   una ricostruzione indipendente e quindi diversa per ciascuno. */
 function duelPenalties(){
-  var a=0,b=0;
+  var a=0,b=0,seqA=[],seqB=[];
   for(var i=0;i<5;i++){
-    if(Math.random()<0.75)a++;
-    if(Math.random()<0.75)b++;
+    var sa=Math.random()<0.75;seqA.push(sa);if(sa)a++;
+    var sb=Math.random()<0.75;seqB.push(sb);if(sb)b++;
   }
   while(a===b&&a<28){
-    if(Math.random()<0.75)a++;
-    if(Math.random()<0.75)b++;
+    var sa2=Math.random()<0.75;seqA.push(sa2);if(sa2)a++;
+    var sb2=Math.random()<0.75;seqB.push(sb2);if(sb2)b++;
   }
-  if(a===b)a++;
-  return [a,b];
+  if(a===b){a++;seqA.push(true);seqB.push(false);} // pareggio dopo il cap: mantiene seqA/seqB della stessa lunghezza
+  return {a:a,b:b,seqA:seqA,seqB:seqB};
 }
 
 /* Serie al meglio delle 3: si chiude 2-0 o 2-1. Ritorna il blocco result per duel-result.php. */
@@ -5252,7 +5260,7 @@ function duelSimSeries(teamA,teamB){
   while(wa<2&&wb<2&&matches.length<3){
     var m=duelSimMatch(ea,eb);
     if(m.ga>m.gb||(m.ga===m.gb&&m.pa>m.pb))wa++;else wb++;
-    matches.push({ga:m.ga,gb:m.gb,pa:m.pa,pb:m.pb});
+    matches.push({ga:m.ga,gb:m.gb,pa:m.pa,pb:m.pb,pSeqA:m.pSeqA,pSeqB:m.pSeqB});
   }
   return {matches:matches,winsA:wa,winsB:wb,winner:wa>wb?'a':'b'};
 }
@@ -5658,15 +5666,27 @@ function duelBuildPenSeq(myTarget,oppTarget){
   }
   return seq;
 }
+/* Interlaccia due sequenze REALI gia' fissate (calcio mio 1, calcio avversario 1, calcio mio 2, ...):
+   usata quando il duello ha una sequenza salvata dal server (vedi M.duelPenSeq), cosi' entrambi gli
+   spettatori rivedono la STESSA identica sequenza vera invece di una ricostruzione indipendente. */
+function _duelInterleaveSeq(mine,opp){
+  var seq=[],n=Math.max(mine.length,opp.length);
+  for(var i=0;i<n;i++){
+    if(i<mine.length)seq.push(!!mine[i]);
+    if(i<opp.length)seq.push(!!opp[i]);
+  }
+  return seq;
+}
 function duelStartPenalties(){
   var tgt=M.duelPenTarget;
   var myNames=(M.homeXI||[]).map(function(p){return p.n;});
   var oppNames=(M.awayXI||[]).map(function(p){return p.n;});
   if(!myNames.length)myNames=['Player'];
   if(!oppNames.length)oppNames=[M.oppName];
+  var _forced=M.duelPenSeq?_duelInterleaveSeq(M.duelPenSeq.mine,M.duelPenSeq.opp):duelBuildPenSeq(tgt.my,tgt.opp);
   P={round:0,side:'home',h:0,a:0,hKicks:[],aKicks:[],maxRounds:5,
      names:myNames,oppNames:oppNames,oppName:M.oppName,done:false,
-     forced:duelBuildPenSeq(tgt.my,tgt.opp),forcedIdx:0};
+     forced:_forced,forcedIdx:0};
   var _si=document.getElementById('m-speed-icons');if(_si)_si.style.display='none';
   document.getElementById('btn-mact').style.display='none';
   var penZone=document.getElementById('pen-zone');

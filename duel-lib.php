@@ -48,9 +48,25 @@ function dcz_sanitize_team($t) {
     ];
 }
 
+/* Valida una sequenza di rigori calcio-per-calcio (array di booleani): lunghezza ragionevole e
+   somma coerente con il punteggio finale gia' validato. Ritorna l'array booleano pulito o null. */
+function dcz_sanitize_pen_seq($seq, $expectedSum) {
+    if (!is_array($seq) || count($seq) < 1 || count($seq) > 40) return null;
+    $clean = [];
+    $sum = 0;
+    foreach ($seq as $v) {
+        $b = (bool)$v;
+        $clean[] = $b;
+        if ($b) $sum++;
+    }
+    if ($sum !== $expectedSum) return null;
+    return $clean;
+}
+
 /* Sanitizza il blocco risultato della serie best-of-3 simulata dal client di B.
-   Struttura: {matches:[{ga,gb,pa,pb}], winsA, winsB, winner}
-   ga/gb = gol nei 90'; pa/pb = rigori (null se non serviti).
+   Struttura: {matches:[{ga,gb,pa,pb,pSeqA,pSeqB}], winsA, winsB, winner}
+   ga/gb = gol nei 90'; pa/pb = rigori (null se non serviti); pSeqA/pSeqB = sequenza reale
+   calcio-per-calcio (opzionale: solo duelli creati dopo l'introduzione di questo campo).
    Ritorna l'array pulito o null se incoerente. */
 function dcz_sanitize_result($r) {
     if (!is_array($r) || !is_array($r['matches'] ?? null)) return null;
@@ -74,6 +90,15 @@ function dcz_sanitize_result($r) {
             if ($pa < 0 || $pa > 30 || $pb < 0 || $pb > 30 || $pa === $pb) return null;
             $cm['pa'] = $pa; $cm['pb'] = $pb;
             if ($pa > $pb) $winsA++; else $winsB++;
+            /* sequenza reale calcio-per-calcio: opzionale, se assente o incoerente si scarta
+               senza far fallire l'intero risultato (e' un arricchimento cosmetico, non un dato
+               che decide la partita: quello e' gia' validato sopra tramite pa/pb). */
+            $seqA = dcz_sanitize_pen_seq($m['pSeqA'] ?? null, $pa);
+            $seqB = dcz_sanitize_pen_seq($m['pSeqB'] ?? null, $pb);
+            if ($seqA !== null && $seqB !== null) {
+                $cm['pSeqA'] = $seqA;
+                $cm['pSeqB'] = $seqB;
+            }
         } else {
             if ($ga > $gb) $winsA++; else $winsB++;
         }
