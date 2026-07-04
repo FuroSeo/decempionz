@@ -34,7 +34,15 @@ if (strlen($id) >= 6 && strlen($id) <= 12 && file_exists(__DIR__ . '/drafts/' . 
     $tpl = preg_replace('/(<meta name="description" content=")[^"]*(">)/', '${1}'.$esc($desc).'$2', $tpl, 1);
     $tpl = preg_replace('/(<meta property="og:title" content=")[^"]*(">)/', '${1}'.$esc($title).'$2', $tpl, 1);
     $tpl = preg_replace('/(<meta property="og:description" content=")[^"]*(">)/', '${1}'.$esc($desc).'$2', $tpl, 1);
-    $tpl = preg_replace('/(<meta property="og:image" content=")[^"]*(">)/', '${1}'.$esc($img).'$2', $tpl, 1);
+    $hasCard = file_exists(__DIR__ . '/drafts/' . $id . '.jpg');
+    $imgMeta = '<meta property="og:image" content="'.$esc($img).'">';
+    if ($hasCard) {
+        $imgMeta .= "\n".'<meta property="og:image:type" content="image/jpeg">'
+                 .  "\n".'<meta property="og:image:width" content="1080">'
+                 .  "\n".'<meta property="og:image:height" content="1080">'
+                 .  "\n".'<meta property="og:image:alt" content="'.$esc($title).'">';
+    }
+    $tpl = preg_replace('/<meta property="og:image" content="[^"]*">/', $imgMeta, $tpl, 1);
     $tpl = preg_replace('/(<meta property="og:url" content=")[^"]*(">)/', '${1}'.$esc($url).'$2', $tpl, 1);
     // niente indicizzazione per le pagine condivise (og resta leggibile dai bot social)
     $tpl = str_replace('</head>', '<meta name="robots" content="noindex">'."\n".'</head>', $tpl);
