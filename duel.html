@@ -214,7 +214,13 @@ a{color:inherit;text-decoration:none}
           +'<a class="accept-btn" href="https://decempionz.com/?duel='+encodeURIComponent(d.id)+'">'+escH(t.accept)+'</a></div>';
       }
     } else {
-      /* done: verdetto */
+      /* done: verdetto — marca il duello come visto (la cella home smette di dire "verdetto pronto") */
+      try{
+        var st=JSON.parse(localStorage.getItem('dcz_duels')||'[]');
+        var ch=false;
+        st.forEach(function(x){if(x.id===d.id&&!x.seen){x.seen=true;x.status='done';ch=true;}});
+        if(ch)localStorage.setItem('dcz_duels',JSON.stringify(st));
+      }catch(e){}
       var r=d.result||{matches:[],winsA:0,winsB:0,winner:'a'};
       var aWin=r.winner==='a';
       var winSide=aWin?d.a:d.b;

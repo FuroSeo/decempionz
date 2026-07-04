@@ -700,6 +700,25 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 #challenge-modal.open{display:flex}
 #challenge-modal-box{background:#0f1520;border:2px solid #c9a227;border-radius:18px;
   padding:28px 24px 24px;max-width:360px;width:100%;box-sizing:border-box;text-align:center}
+
+/* ── Home v2: griglia modalità + pannelli accordion ── */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.mode-cell{display:block;background:var(--s1);border:1.5px solid var(--brd);border-radius:12px;padding:11px 6px 7px;text-align:center;text-decoration:none;color:var(--text);cursor:pointer;transition:transform .12s,border-color .12s,background .12s;font-family:inherit;width:100%}
+.mode-cell:hover{transform:translateY(-2px)}
+.mc-ico{font-size:1.35rem;line-height:1;margin-bottom:5px}
+.mc-title{font-size:.66rem;font-weight:800;letter-spacing:.02em;margin-bottom:3px}
+.mc-status{font-size:.56rem;color:var(--mut);line-height:1.3;min-height:1.3em}
+.mc-arrow{font-size:.6rem;color:var(--mut);margin-top:3px;transition:transform .18s}
+.mode-cell.mc-open .mc-arrow{transform:rotate(180deg)}
+.mc-daily.mc-open{border-color:rgba(201,162,39,.6);background:rgba(201,162,39,.07)}
+.mc-duel.mc-open{border-color:rgba(224,90,90,.6);background:rgba(224,90,90,.07)}
+.mc-weekly.mc-open{border-color:rgba(99,102,241,.6);background:rgba(99,102,241,.07)}
+.mode-panel{display:none;margin-top:8px;padding:13px 14px;background:var(--s1);border:1.5px solid var(--brd);border-radius:12px;animation:panelIn .18s ease}
+.mode-panel.open{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* i banner dentro i pannelli perdono la loro cornice (il pannello ce l'ha già) */
+.mode-panel #home-challenge-banner,.mode-panel #home-daily-banner,.mode-panel #home-duel-banner{background:none!important;border:none!important;padding:0!important;margin:0!important;border-radius:0!important}
+.mode-panel #home-challenge-banner>div:first-child,.mode-panel #home-daily-banner>div:first-child,.mode-panel #home-duel-banner>div:first-child{display:none}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG"></script>
@@ -728,14 +747,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen active" id="screen-home">
 
   <!-- Hero -->
-  <div style="text-align:center;margin-bottom:16px;padding-top:20px;background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(201,162,39,.07),transparent 70%)">
-    <div data-i18n="home.tagline" style="font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Il Draft di Calcio Definitivo</div>
-    <h1 class="logo">Decempionz</h1>
-    <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:10px;font-size:.85rem;line-height:1.5;font-style:italic">I grandi Campioni tutti insieme, per una volta sola.</p>
-    <div id="home-games-counter" style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:var(--s1);border-radius:20px;padding:4px 12px;border:1px solid var(--brd)">
-      <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0"></div>
-      <span style="font-size:.65rem;color:var(--mut);font-weight:600"><span id="home-games-num">0</span> <span id="home-games-lbl">partite giocate</span></span>
-    </div>
+  <div style="text-align:center;margin-bottom:12px;padding-top:12px;background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(201,162,39,.07),transparent 70%)">
+    <div data-i18n="home.tagline" style="font-size:.6rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Il Draft di Calcio Definitivo</div>
+    <h1 class="logo" style="font-size:2rem;margin:0">Decempionz</h1>
+    <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:5px;font-size:.78rem;line-height:1.4;font-style:italic">I grandi Campioni tutti insieme, per una volta sola.</p>
   </div>
 
   <!-- Tournament tab switcher -->
@@ -754,6 +769,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div class="tourn-name" data-i18n="tourn.ucl.name">UCL Legends</div>
         <div class="tourn-sub" data-i18n="tourn.ucl.sub">Champions League · 1956 – 2024</div>
       </div>
+      <a href="ucl.html" data-i18n="home.link_ucl" style="margin-left:auto;align-self:flex-start;font-size:.62rem;color:var(--blue-lt);text-decoration:none;white-space:nowrap;border:1px solid var(--brd);border-radius:14px;padding:3px 9px">rose →</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat">
@@ -774,7 +790,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGame()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="home.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="home.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="ucl.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_ucl">Sfoglia tutte le 83 rose UCL →</a></div>
   </div>
 
   <!-- Copa Libertadores -->
@@ -785,6 +800,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div class="tourn-name" data-i18n="tourn.copa.name">Copa Libertadores</div>
         <div class="tourn-sub" data-i18n="tourn.copa.sub">Sud America · 1960 – 2024</div>
       </div>
+      <a href="copa.html" data-i18n="home.link_copa" style="margin-left:auto;align-self:flex-start;font-size:.62rem;color:var(--blue-lt);text-decoration:none;white-space:nowrap;border:1px solid var(--brd);border-radius:14px;padding:3px 9px">rose →</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat"><div class="tourn-stat-val">51</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
@@ -796,7 +812,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="copa.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="copa.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="copa.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_copa">Sfoglia tutte le 51 rose Copa →</a></div>
   </div>
 
   <!-- World Cup Legends -->
@@ -807,6 +822,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div class="tourn-name" data-i18n="tourn.wc.name">World Cup Legends</div>
         <div class="tourn-sub" data-i18n="tourn.wc.sub">Mondiali · 1930 – 2022</div>
       </div>
+      <a href="worldcup.html" data-i18n="home.link_wc" style="margin-left:auto;align-self:flex-start;font-size:.62rem;color:var(--blue-lt);text-decoration:none;white-space:nowrap;border:1px solid var(--brd);border-radius:14px;padding:3px 9px">rose →</a>
     </div>
     <div class="tourn-stats">
       <div class="tourn-stat"><div class="tourn-stat-val">87</div><div class="tourn-stat-lbl" data-i18n="home.stat_squads">Rose</div></div>
@@ -818,7 +834,6 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="wc.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="wc.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
-    <div style="text-align:center;margin-top:10px"><a href="worldcup.html" style="font-size:.72rem;color:var(--blue-lt);text-decoration:none" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--blue-lt)'" data-i18n="home.link_wc">Sfoglia tutte le 87 rose World Cup →</a></div>
   </div>
 
   <!-- Dynasty Mode -->
@@ -839,6 +854,27 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 
 
+  <!-- Contatore partite globale -->
+  <div id="home-games-counter" style="display:flex;justify-content:center;align-items:center;gap:5px;margin-top:10px;font-size:.62rem;color:var(--mut)">
+    <span style="width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0"></span>
+    <span style="font-weight:600"><span id="home-games-num" style="color:var(--text);font-weight:800">0</span> <span id="home-games-lbl">partite giocate</span></span>
+  </div>
+
+  <!-- OGNI GIORNO — griglia modalità con pannelli accordion -->
+  <div data-i18n="home.sec_daily" style="font-size:.55rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px">Ogni giorno</div>
+  <div class="mode-grid">
+    <button class="mode-cell mc-daily" id="hmc-daily" onclick="homeTogglePanel('daily')">
+      <div class="mc-ico">🗓️</div><div class="mc-title" data-i18n="home.mc_daily">Daily Puzzle</div><div class="mc-status" id="hmc-daily-st" style="color:var(--gold2)"></div><div class="mc-arrow">▾</div>
+    </button>
+    <button class="mode-cell mc-duel" id="hmc-duel" onclick="homeTogglePanel('duel')">
+      <div class="mc-ico">⚔️</div><div class="mc-title" data-i18n="home.mc_duel">Duello 1v1</div><div class="mc-status" id="hmc-duel-st" style="color:#f0a0a0"></div><div class="mc-arrow">▾</div>
+    </button>
+    <button class="mode-cell mc-weekly" id="hmc-weekly" onclick="homeTogglePanel('weekly')">
+      <div class="mc-ico">⚡</div><div class="mc-title" data-i18n="home.mc_weekly">Sfida Weekly</div><div class="mc-status" id="hmc-weekly-st" style="color:#a5b4fc"></div><div class="mc-arrow">▾</div>
+    </button>
+  </div>
+
+  <div class="mode-panel" id="hmp-weekly" style="border-color:rgba(99,102,241,.45)">
   <!-- Banner sfida settimanale -->
   <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.45);border-radius:12px;border-left:3px solid #818cf8;text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;margin-bottom:5px">⚡ SFIDA DELLA SETTIMANA</div>
@@ -851,6 +887,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
 
+  </div>
+
+  <div class="mode-panel" id="hmp-daily" style="border-color:rgba(201,162,39,.45)">
   <!-- Banner puzzle del giorno -->
   <div id="home-daily-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.45);border-radius:12px;border-left:3px solid var(--gold);text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:5px">🗓️ <span data-i18n="daily.title">PUZZLE DEL GIORNO</span> <span id="hdb-num"></span></div>
@@ -866,6 +905,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="hdb-streak" style="font-size:.58rem;margin-top:7px;color:#6b7a8d"></div>
   </div>
 
+  </div>
+
+  <div class="mode-panel" id="hmp-duel" style="border-color:rgba(224,90,90,.45)">
   <!-- Banner duello 1v1 -->
   <div id="home-duel-banner" style="margin:10px 0 0;padding:13px 14px;background:rgba(170,45,45,.09);border:1.5px solid rgba(224,90,90,.45);border-radius:12px;border-left:3px solid #e05a5a;text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#e08a8a;margin-bottom:5px">⚔️ <span data-i18n="duel.banner_title">DUELLO 1v1</span></div>
@@ -874,13 +916,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div id="home-duel-status" style="display:none;font-size:.62rem;margin-top:8px;text-align:left"></div>
   </div>
 
-  <!-- Bottom actions -->
-  <div class="tourn-bottom-btns">
-    <button class="btn" onclick="openHallOfFame()" style="font-size:.82rem;background:transparent;border:1.5px solid var(--gold);color:var(--gold)">🏆 Hall of Fame</button>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button class="btn btn-ghost" onclick="openTrophiesScreen()" style="font-size:.78rem;margin-top:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px" data-i18n="trophies.btn"><span style="font-size:1.2rem">🏅</span>Trofei</button>
-      <button class="btn btn-ghost" onclick="openStatsScreen()" style="font-size:.78rem;margin-top:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px" data-i18n="stats.btn"><span style="font-size:1.2rem">📊</span>Stats</button>
-    </div>
+  </div>
+
+  <!-- I TUOI RECORD -->
+  <div data-i18n="home.sec_records" style="font-size:.55rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:12px 0 8px">I tuoi record</div>
+  <div class="mode-grid" style="margin-bottom:4px">
+    <button class="mode-cell" onclick="openHallOfFame()"><div class="mc-ico">🏆</div><div class="mc-title">Hall of Fame</div><div class="mc-status" data-i18n="home.mc_hof_sub">le rose leggendarie</div></button>
+    <button class="mode-cell" onclick="openTrophiesScreen()"><div class="mc-ico">🏅</div><div class="mc-title" data-i18n="home.mc_trophies">Trofei</div><div class="mc-status" data-i18n="home.mc_troph_sub">i tuoi successi</div></button>
+    <button class="mode-cell" onclick="openStatsScreen()"><div class="mc-ico">📊</div><div class="mc-title">Stats</div><div class="mc-status" data-i18n="home.mc_stats_sub">i tuoi numeri</div></button>
   </div>
 
   <div class="legal-footer">
@@ -1459,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.12.0';
+const GAME_VERSION='5.13.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1471,7 +1514,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
-    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'Sfoglia tutte le 83 rose UCL →','home.link_copa':'Sfoglia tutte le 51 rose Copa →','home.link_wc':'Sfoglia tutte le 87 rose World Cup →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.unfinished':'⚠️ Hai iniziato il puzzle di oggi senza completarlo: il risultato si registra solo a fine campagna.','daily.nick':'Il tuo nickname','daily.lb_send':'Invia in classifica','daily.lb_pos':'Sei #{N} su {C} oggi!','daily.lb_show':'🏆 Classifica di oggi →','daily.lb_empty':'Nessun risultato oggi — sii il primo!','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.link_ucl':'83 rose →','home.link_copa':'51 rose →','home.link_wc':'87 rose →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.unfinished':'⚠️ Hai iniziato il puzzle di oggi senza completarlo: il risultato si registra solo a fine campagna.','daily.nick':'Il tuo nickname','daily.lb_send':'Invia in classifica','daily.lb_pos':'Sei #{N} su {C} oggi!','daily.lb_show':'🏆 Classifica di oggi →','daily.lb_empty':'Nessun risultato oggi — sii il primo!','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1565,6 +1608,17 @@ const STRINGS={
     'camp.league_match':'Partita di Lega',
     'duel.kind_classic':'🏆 Torneo + Era',
 'duel.kind_dynasty':'🏰 Dynasty (club)',
+'home.sec_daily':'Ogni giorno',
+'home.sec_records':'I tuoi record',
+'home.mc_daily':'Daily Puzzle',
+'home.mc_duel':'Duello 1v1',
+'home.mc_weekly':'Sfida Weekly',
+'home.mc_duel_sub':'sfida un amico',
+'home.mc_weekly_sub':'classifica settimanale',
+'home.mc_hof_sub':'le rose leggendarie',
+'home.mc_trophies':'Trofei',
+'home.mc_troph_sub':'i tuoi successi',
+'home.mc_stats_sub':'i tuoi numeri',
 'duel.pick_club':'Il tuo club',
 'duel.acc_challenge_club':'Il {club} di {nick} ti sfida a duello!',
 'duel.st_waiting':'in attesa dell’avversario…',
@@ -1748,7 +1802,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'Browse all 83 UCL squads →','home.link_copa':'Browse all 51 Copa squads →','home.link_wc':'Browse all 87 World Cup squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.unfinished':'⚠️ You started today\'s puzzle without finishing it: the result is recorded only when the campaign ends.','daily.nick':'Your nickname','daily.lb_send':'Submit to leaderboard','daily.lb_pos':'You are #{N} of {C} today!','daily.lb_show':'🏆 Today\'s leaderboard →','daily.lb_empty':'No results yet today — be the first!','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.link_ucl':'83 squads →','home.link_copa':'51 squads →','home.link_wc':'87 squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.unfinished':'⚠️ You started today\'s puzzle without finishing it: the result is recorded only when the campaign ends.','daily.nick':'Your nickname','daily.lb_send':'Submit to leaderboard','daily.lb_pos':'You are #{N} of {C} today!','daily.lb_show':'🏆 Today\'s leaderboard →','daily.lb_empty':'No results yet today — be the first!','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1842,6 +1896,17 @@ const STRINGS={
     'camp.league_match':'League Match',
     'duel.kind_classic':'🏆 Tournament + Era',
 'duel.kind_dynasty':'🏰 Dynasty (club)',
+'home.sec_daily':'Every day',
+'home.sec_records':'Your records',
+'home.mc_daily':'Daily Puzzle',
+'home.mc_duel':'1v1 Duel',
+'home.mc_weekly':'Weekly Challenge',
+'home.mc_duel_sub':'challenge a friend',
+'home.mc_weekly_sub':'weekly leaderboard',
+'home.mc_hof_sub':'legendary squads',
+'home.mc_trophies':'Trophies',
+'home.mc_troph_sub':'your achievements',
+'home.mc_stats_sub':'your numbers',
 'duel.pick_club':'Your club',
 'duel.acc_challenge_club':'{nick}’s {club} challenges you to a duel!',
 'duel.st_waiting':'waiting for your opponent…',
@@ -2039,7 +2104,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'Explora los 76 equipos UCL →','home.link_copa':'Explora los 46 equipos Copa →','home.link_wc':'Explora los 79 equipos Mundial →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.unfinished':'⚠️ Empezaste el puzzle de hoy sin terminarlo: el resultado se registra solo al final de la campaña.','daily.nick':'Tu nickname','daily.lb_send':'Enviar a la clasificación','daily.lb_pos':'¡Eres #{N} de {C} hoy!','daily.lb_show':'🏆 Clasificación de hoy →','daily.lb_empty':'Aún no hay resultados hoy — ¡sé el primero!','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.link_ucl':'83 plantillas →','home.link_copa':'51 plantillas →','home.link_wc':'87 plantillas →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.unfinished':'⚠️ Empezaste el puzzle de hoy sin terminarlo: el resultado se registra solo al final de la campaña.','daily.nick':'Tu nickname','daily.lb_send':'Enviar a la clasificación','daily.lb_pos':'¡Eres #{N} de {C} hoy!','daily.lb_show':'🏆 Clasificación de hoy →','daily.lb_empty':'Aún no hay resultados hoy — ¡sé el primero!','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -2133,6 +2198,17 @@ const STRINGS={
     'camp.league_match':'Partido de Liga',
     'duel.kind_classic':'🏆 Torneo + Era',
 'duel.kind_dynasty':'🏰 Dynasty (club)',
+'home.sec_daily':'Cada día',
+'home.sec_records':'Tus récords',
+'home.mc_daily':'Daily Puzzle',
+'home.mc_duel':'Duelo 1v1',
+'home.mc_weekly':'Reto Semanal',
+'home.mc_duel_sub':'reta a un amigo',
+'home.mc_weekly_sub':'ranking semanal',
+'home.mc_hof_sub':'las plantillas legendarias',
+'home.mc_trophies':'Trofeos',
+'home.mc_troph_sub':'tus logros',
+'home.mc_stats_sub':'tus números',
 'duel.pick_club':'Tu club',
 'duel.acc_challenge_club':'¡El {club} de {nick} te reta a duelo!',
 'duel.st_waiting':'esperando al rival…',
@@ -2909,7 +2985,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}try{_syncModeCells();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function pickKnockSeq(rounds,usedClubs){
@@ -3384,6 +3460,48 @@ function duelHandleRematch(id){
       duelUpdateEraDisplay();
     })
     .catch(function(){});
+}
+
+/* ── Home v2: pannelli accordion e stato celle ── */
+var _mcOpen=null,_mcAutoOpened=false;
+function homeTogglePanel(k){
+  ['daily','duel','weekly'].forEach(function(m){
+    var open=(m===k&&_mcOpen!==k);
+    var pn=document.getElementById('hmp-'+m);
+    var cl=document.getElementById('hmc-'+m);
+    if(pn)pn.classList.toggle('open',open);
+    if(cl)cl.classList.toggle('mc-open',open);
+  });
+  _mcOpen=(_mcOpen===k)?null:k;
+}
+function _syncModeCells(){
+  try{
+    var pz=getDailyPuzzle();
+    var st=_dailyLoad();
+    var played=st.hist&&st.hist[pz.dateStr];
+    var el=document.getElementById('hmc-daily-st');
+    if(el)el.textContent=played?('#'+pz.num+' · ✅'):('#'+pz.num+(st.streak?' · 🔥 '+st.streak:''));
+  }catch(e){}
+  try{
+    var ds=duelStore();
+    var fresh=ds.some(function(x){return x.status==='done'&&!x.seen;});
+    var wait=ds.some(function(x){return x.status!=='done';});
+    var el2=document.getElementById('hmc-duel-st');
+    if(el2)el2.textContent=fresh?t('duel.st_done'):wait?t('duel.st_waiting'):t('home.mc_duel_sub');
+  }catch(e){}
+  try{
+    var el3=document.getElementById('hmc-weekly-st');
+    if(el3)el3.textContent=t('home.mc_weekly_sub');
+  }catch(e){}
+  if(!_mcAutoOpened){
+    _mcAutoOpened=true;
+    try{
+      var fresh2=duelStore().some(function(x){return x.status==='done'&&!x.seen;});
+      var pz2=getDailyPuzzle();var st2=_dailyLoad();
+      var todo=!(st2.hist&&st2.hist[pz2.dateStr]);
+      homeTogglePanel(fresh2?'duel':todo?'daily':'weekly');
+    }catch(e){homeTogglePanel('daily');}
+  }
 }
 
 /* ── Stato duelli in home (ultimi 3 da dcz_duels, poll di quelli in attesa) ── */
