@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.3';
+const GAME_VERSION='5.13.4';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1650,7 +1650,7 @@ const STRINGS={
 'duel.copy':'📋 Copia link',
 'duel.copied':'✅ Copiato!',
 'duel.share_hint':'Puoi rivedere lo stato dei tuoi duelli dalla home.',
-'duel.err_create':'Errore di rete: il duello non è stato creato.','duel.err_rate':'Hai appena creato un duello: attendi qualche secondo e riprova.',
+'duel.err_create':'Errore di rete: il duello non è stato creato.','duel.err_rate':'Hai appena creato un duello: attendi qualche secondo e riprova.','duel.err_send':'Errore di rete: invio non riuscito. Riprova.',
 'duel.retry':'↺ Riprova',
 'duel.back_home':'🏠 Torna alla home',
 'duel.wa_msg':'⚔️ Ti sfido a duello su Decempionz! Drafta la tua squadra e battimi se ci riesci: {url}',
@@ -1950,7 +1950,7 @@ const STRINGS={
 'duel.copy':'📋 Copy link',
 'duel.copied':'✅ Copied!',
 'duel.share_hint':'You can check the status of your duels from the home screen.',
-'duel.err_create':'Network error: the duel was not created.','duel.err_rate':'You just created a duel: wait a few seconds and try again.',
+'duel.err_create':'Network error: the duel was not created.','duel.err_rate':'You just created a duel: wait a few seconds and try again.','duel.err_send':'Network error: sending failed. Try again.',
 'duel.retry':'↺ Retry',
 'duel.back_home':'🏠 Back to home',
 'duel.wa_msg':'⚔️ I challenge you to a duel on Decempionz! Draft your squad and beat me if you can: {url}',
@@ -2253,7 +2253,7 @@ const STRINGS={
 'duel.copy':'📋 Copiar enlace',
 'duel.copied':'✅ ¡Copiado!',
 'duel.share_hint':'Puedes ver el estado de tus duelos desde la pantalla principal.',
-'duel.err_create':'Error de red: el duelo no se ha creado.','duel.err_rate':'Acabas de crear un duelo: espera unos segundos y vuelve a intentarlo.',
+'duel.err_create':'Error de red: el duelo no se ha creado.','duel.err_rate':'Acabas de crear un duelo: espera unos segundos y vuelve a intentarlo.','duel.err_send':'Error de red: el envío ha fallado. Vuelve a intentarlo.',
 'duel.retry':'↺ Reintentar',
 'duel.back_home':'🏠 Volver al inicio',
 'duel.wa_msg':'⚔️ ¡Te reto a un duelo en Decempionz! Draftea tu equipo y gáname si puedes: {url}',
@@ -3225,8 +3225,10 @@ function _duelWait(txtKey){
   document.getElementById('duel-share-wait').style.display='block';
   var w=document.getElementById('duel-wait-txt');if(w)w.textContent=t(txtKey);
 }
-function _duelFail(){
+function _duelFail(status){
   document.getElementById('duel-share-wait').style.display='none';
+  var msgEl=document.getElementById('duel-share-err-msg');
+  if(msgEl)msgEl.textContent=(status===429)?t('duel.err_rate'):t('duel.err_send');
   document.getElementById('duel-share-err').style.display='block';
 }
 function duelRetry(){
@@ -3342,20 +3344,31 @@ function duelAcceptGo(){
 
 /* Fase 1: committa la rosa di B → il server rivela quella di A */
 function duelJoinAfterDraft(){
+  _duelJoinAttempt(0);
+}
+function _duelJoinAttempt(attempt){
   _duelWait('duel.sending');
   fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'team',team:duelTeamPayload()})})
     .then(function(r){
       if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
-      if(!r.ok)throw new Error('http');
-      return r.json();
+      return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};});
     })
     .then(function(res){
-      if(!res||!res.a||!res.b)throw new Error('bad');
-      DUEL.duelData.a=res.a;
-      DUEL.duelData.b=res.b;
+      if(!res.ok||!res.body||!res.body.a||!res.body.b){var e=new Error('bad');e.status=res.status;throw e;}
+      DUEL.duelData.a=res.body.a;
+      DUEL.duelData.b=res.body.b;
       duelSimAndSend();
     })
-    .catch(function(e){if(e&&e.message==='handled')return;_duelFail();});
+    .catch(function(err){
+      if(err&&err.message==='handled')return;
+      var status=err&&err.status;
+      if(attempt<1){
+        /* stesso motivo del retry sul create: il 429 puo' scattare anche per un IP condiviso (CGNAT) */
+        setTimeout(function(){_duelJoinAttempt(attempt+1);},status===429?3500:1200);
+        return;
+      }
+      _duelFail(status);
+    });
 }
 function duelResumeAfterCommit(d){
   DUEL.mode='join';
@@ -3368,22 +3381,34 @@ function duelResumeAfterCommit(d){
 /* Fase 2: simula la serie sul client di B e invia il risultato; SOLO a invio riuscito parte la riproduzione animata */
 function duelSimAndSend(){
   var d=DUEL.duelData;
-  _duelWait('duel.sending');
   var res=duelSimSeries(d.a,d.b);
+  _duelResultAttempt(res,0);
+}
+function _duelResultAttempt(res,attempt){
+  var d=DUEL.duelData;
+  _duelWait('duel.sending');
   fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'result',result:res})})
     .then(function(r){
       if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
-      if(!r.ok)throw new Error('http');
-      return r.json();
+      return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};}).catch(function(){return{ok:r.ok,status:r.status,body:null};});
     })
-    .then(function(){
+    .then(function(response){
+      if(!response.ok){var e=new Error('bad');e.status=response.status;throw e;}
       DUEL.series=res;
       duelStoreAdd({id:DUEL.id,role:'b',status:'done',nick:(d.b&&d.b.nick)||DUEL.nick,opp:(d.a&&d.a.nick)||'',tourn:d.tournament||DUEL.tourn,era:d.era||DUEL.eraLabel,ts:Date.now()});
       _ga('duel_complete',{tournament:d.tournament||DUEL.tourn,winner:res.winner,matches:res.matches.length});
       DUEL.viewRole='b';
       duelPlayMatch(0);
     })
-    .catch(function(e){if(e&&e.message==='handled')return;_duelFail();});
+    .catch(function(err){
+      if(err&&err.message==='handled')return;
+      var status=err&&err.status;
+      if(attempt<1){
+        setTimeout(function(){_duelResultAttempt(res,attempt+1);},status===429?3500:1200);
+        return;
+      }
+      _duelFail(status);
+    });
 }
 
 /* ── Riproduzione animata della serie (B è la squadra di casa) ── */

@@ -13,22 +13,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405); echo json_encode(['error' => 'method not allowed']); exit;
 }
 
-/* Rate limit: 1 invio ogni 5 secondi per IP (le due fasi arrivano in sequenza ravvicinata ma >5s: la sim e l'apertura schermata stanno in mezzo; teniamo margine) */
-$ip      = md5($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-$rateDir = sys_get_temp_dir() . '/dcz_duels/';
-@mkdir($rateDir, 0755, true);
-$rf = $rateDir . 'r_' . $ip . '.tmp';
-if (file_exists($rf) && (time() - filemtime($rf)) < 5) {
-    http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
-}
-touch($rf);
-
 $raw = file_get_contents('php://input');
 if (strlen($raw) > 15000) {
     http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
 }
 $data = json_decode($raw, true);
 if (!$data) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
+
+$phasePre = (string)($data['phase'] ?? '');
+
+/* Rate limit: 1 invio ogni 5 secondi per IP, PER FASE.
+   Bug corretto: prima la chiave era condivisa fra 'team' e 'result', ma il client invia le due fasi
+   una dietro l'altra SENZA alcuna attesa (B committa la squadra e nello stesso istante manda gia' la
+   serie simulata) - quindi la seconda chiamata falliva sempre e sistematicamente contro il proprio
+   stesso limite, non per un IP condiviso o altro. Tenendo un contatore separato per fase, le due
+   richieste legittime e ravvicinate dello stesso B non si bloccano piu' a vicenda. */
+$ip      = md5($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+$rateDir = sys_get_temp_dir() . '/dcz_duels/';
+@mkdir($rateDir, 0755, true);
+$rf = $rateDir . 'r_' . $phasePre . '_' . $ip . '.tmp';
+if (file_exists($rf) && (time() - filemtime($rf)) < 5) {
+    http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
+}
+touch($rf);
 
 require __DIR__ . '/duel-lib.php';
 
