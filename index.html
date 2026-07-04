@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.4';
+const GAME_VERSION='5.13.5';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3591,7 +3591,10 @@ function _duelStatusRender(){
     /* mostra anche il proprio nickname (gia' salvato in e.nick), non solo l'avversario:
        altrimenti "Dynasty vs Gunners" non dice chi ero io ne' distingue due duelli Dynasty diversi */
     var vs=e.nick?(_duelEsc(e.nick)+(e.opp?' vs '+_duelEsc(e.opp):'')):(e.opp?'vs '+_duelEsc(e.opp):'');
-    return '<a href="duel.php?id='+encodeURIComponent(e.id)+'" style="display:block;color:'+col+';text-decoration:none;padding:4px 0;border-top:1px solid var(--brd)">⚔️ '
+    /* punta all'app (?duel=ID), NON a duel.php: quel link statico e' pensato per la condivisione
+       (anteprime social), e bypassa del tutto la riproduzione animata del verdetto in-app -
+       che e' esattamente cio' che si perdeva rivedendo i propri duelli dalla home. */
+    return '<a href="https://decempionz.com/?duel='+encodeURIComponent(e.id)+'" style="display:block;color:'+col+';text-decoration:none;padding:4px 0;border-top:1px solid var(--brd)">⚔️ '
       +_duelEsc(e.era||'')+(vs?' · '+vs:'')+' — '+st+'</a>';
   }).join('');
 }
