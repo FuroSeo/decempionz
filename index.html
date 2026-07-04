@@ -1502,7 +1502,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.2';
+const GAME_VERSION='5.13.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3190,9 +3190,12 @@ function _duelCreateAttempt(payload,attempt){
     })
     .catch(function(err){
       var status=err&&err.status;
-      if(attempt<1&&status!==429){
-        /* fallimento non da rate-limit: un retry automatico silenzioso prima di mostrare l'errore */
-        setTimeout(function(){_duelCreateAttempt(payload,attempt+1);},1200);
+      if(attempt<1){
+        /* retry automatico silenzioso prima di mostrare l'errore. Per il 429 (rate limit lato
+           server, 3s per IP: su rete mobile con CGNAT puo' scattare anche per un altro utente
+           qualunque sullo stesso IP carrier) aspetto abbastanza da superare la finestra, altrimenti
+           il retry fallirebbe di nuovo garantito. */
+        setTimeout(function(){_duelCreateAttempt(payload,attempt+1);},status===429?3500:1200);
         return;
       }
       document.getElementById('duel-share-wait').style.display='none';
@@ -3395,8 +3398,10 @@ function duelPlayMatch(idx){
   var oppPool=(opp.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
   var log=buildMatchLog(myG,oppG,myName,oppName,scorers,oppPool);
   var roundLabel=t('duel.match_lbl')+' '+(idx+1)+'/'+S.matches.length;
-  M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
-     penResult:(m.pa!==null&&m.pa!==undefined)?{homeWon:meIsB?(m.pb>m.pa):(m.pa>m.pb),pw:Math.max(m.pa,m.pb),pl:Math.min(m.pa,m.pb)}:null};
+  M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,myName:myName,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
+     penResult:null,
+     /* punteggio rigori gia' deciso (server/simulazione di B): l'animazione lo raggiunge, non lo inventa */
+     duelPenTarget:(m.pa!==null&&m.pa!==undefined)?{my:meIsB?m.pb:m.pa,opp:meIsB?m.pa:m.pb}:null};
   var posMe=fmtPositions(me.formation,me.tactic||'balanced');
   M.homeXI=(me.players||[]).map(function(p,i){return{n:p.n,p:posMe[i]||p.p};});
   var posOpp=fmtPositions(opp.formation,opp.tactic||'balanced');
@@ -5540,7 +5545,7 @@ function startPenalties(){
 function runPenaltyKick(){
   if(P.done)return;
   const isHome=P.side==='home';
-  const scored=Math.random()<(isHome?0.76:0.73);
+  const scored=(P.forced&&P.forcedIdx<P.forced.length)?P.forced[P.forcedIdx++]:Math.random()<(isHome?0.76:0.73);
   const lastName=n=>n.split(' ').slice(-1)[0];
   const name=isHome?(P.names[P.hKicks.length%P.names.length]||'Player'):(P.oppNames[P.aKicks.length%P.oppNames.length]||P.oppName);
   if(isHome){P.hKicks.push(scored);if(scored)P.h++;}
@@ -5565,6 +5570,13 @@ function runPenaltyKick(){
 }
 
 function checkPenDone(){
+  if(P.forced){
+    /* Duello: il punteggio finale e' gia' fissato dalla sequenza forzata (vedi duelBuildPenSeq).
+       Qui NON si applica l'euristica "vantaggio incolmabile" della campagna (pensata per un esito
+       che emerge dal caso): si fermerebbe prima di raggiungere il target esatto gia' deciso. */
+    if(P.forcedIdx>=P.forced.length){finishPenalties();return true;}
+    return false;
+  }
   const {h,a,hKicks,aKicks,maxRounds}=P;
   const hT=hKicks.length,aT=aKicks.length;
   if(a-h>maxRounds-hT){finishPenalties();return true;}
@@ -5593,6 +5605,58 @@ function finishPenalties(){
   document.getElementById('pen-msg').textContent=won?t('pen.win'):t('pen.loss');
   M.penResult={homeWon:won,pw:Math.max(P.h,P.a),pl:Math.min(P.h,P.a)};
   setTimeout(showResult,2200);
+}
+
+/* ── Rigori nei duelli: il punteggio finale (pa/pb) e' gia' deciso (dalla simulazione di B, o dal
+   duello salvato); qui si costruisce solo una sequenza tiro-per-tiro plausibile che ci arriva
+   esattamente, cosi' anche chi guarda il replay vede l'animazione e non solo il numero finale. */
+function duelBuildPenSeq(myTarget,oppTarget){
+  /* Niente interruzione anticipata "a incontro deciso": qui il punteggio finale e' gia' fissato
+     (non emerge dalla sequenza), quindi fermarsi prima avrebbe rischiato di mancare il target
+     esatto. Si gioca sempre l'intero numero di round necessari a raggiungerlo con precisione. */
+  var rounds=Math.max(5,myTarget,oppTarget);
+  var seq=[];
+  var h=0,a=0,hT=0,aT=0;
+  for(var r=0;r<rounds;r++){
+    var needH=myTarget-h,remH=rounds-hT;
+    var hScore=needH>0&&(needH>=remH||Math.random()<needH/remH);
+    seq.push(hScore);hT++;if(hScore)h++;
+    var needA=oppTarget-a,remA=rounds-aT;
+    var aScore=needA>0&&(needA>=remA||Math.random()<needA/remA);
+    seq.push(aScore);aT++;if(aScore)a++;
+  }
+  return seq;
+}
+function duelStartPenalties(){
+  var tgt=M.duelPenTarget;
+  var myNames=(M.homeXI||[]).map(function(p){return p.n;});
+  var oppNames=(M.awayXI||[]).map(function(p){return p.n;});
+  if(!myNames.length)myNames=['Player'];
+  if(!oppNames.length)oppNames=[M.oppName];
+  P={round:0,side:'home',h:0,a:0,hKicks:[],aKicks:[],maxRounds:5,
+     names:myNames,oppNames:oppNames,oppName:M.oppName,done:false,
+     forced:duelBuildPenSeq(tgt.my,tgt.opp),forcedIdx:0};
+  var _si=document.getElementById('m-speed-icons');if(_si)_si.style.display='none';
+  document.getElementById('btn-mact').style.display='none';
+  var penZone=document.getElementById('pen-zone');
+  penZone.style.display='block';
+  setTimeout(function(){penZone.scrollIntoView({behavior:'smooth',block:'start'});},80);
+  document.getElementById('pen-rows').innerHTML='';
+  document.getElementById('pen-score').textContent='0 – 0';
+  document.getElementById('pen-msg').textContent='';
+  var sdBanner=document.getElementById('pen-sd-banner');
+  if(sdBanner){sdBanner.style.display='none';sdBanner.textContent='';}
+  var rows=document.getElementById('pen-rows');
+  var hRow=document.createElement('div');
+  hRow.style='display:flex;align-items:center;gap:6px';
+  hRow.innerHTML='<span style="font-size:.6rem;color:var(--gold);width:64px;font-weight:700;flex-shrink:0">'+_duelEsc(M.myName||'Tu')+'</span>'
+    +'<div id="pen-home-icons" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
+  var aRow=document.createElement('div');
+  aRow.style='display:flex;align-items:center;gap:6px';
+  aRow.innerHTML='<span style="font-size:.6rem;color:var(--mut);width:64px;font-weight:700;flex-shrink:0">'+_duelEsc(M.oppName.split(' ')[0])+'</span>'
+    +'<div id="pen-away-icons" style="display:flex;gap:5px;flex-wrap:wrap"></div>';
+  rows.appendChild(hRow);rows.appendChild(aRow);
+  setTimeout(runPenaltyKick,1200);
 }
 
 function renderMatchLineups(){
@@ -5807,7 +5871,7 @@ function generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,i
 }
 
 function showResult(){
-  if(M&&M.duel){duelShowMatchResult();return;}
+  if(M&&M.duel){if(M.duelPenTarget&&!M.penResult){duelStartPenalties();return;}duelShowMatchResult();return;}
   const {myG,oppG,myXG,oppXG,isKnockout,roundLabel,oppName}=M;
   const diff=myG-oppG;
   let outcome,cls,stars,msg;
