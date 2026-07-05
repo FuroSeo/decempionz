@@ -878,6 +878,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Banner sfida settimanale -->
   <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.45);border-radius:12px;border-left:3px solid #818cf8;text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;margin-bottom:5px">⚡ SFIDA DELLA SETTIMANA</div>
+    <div data-i18n="challenge.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti i partecipanti: gioca la tua campagna entro la scadenza e scala la classifica settimanale.</div>
     <div id="hcb-era" style="font-size:.9rem;font-weight:700;line-height:1.3;margin-bottom:3px"></div>
     <div id="hcb-meta" style="font-size:.64rem;margin-bottom:10px"></div>
     <button id="hcb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.6);color:#c7d2fe" data-i18n="challenge.join">⚡ Partecipa</button>
@@ -893,6 +894,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Banner puzzle del giorno -->
   <div id="home-daily-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.45);border-radius:12px;border-left:3px solid var(--gold);text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:5px">🗓️ <span data-i18n="daily.title">PUZZLE DEL GIORNO</span> <span id="hdb-num"></span></div>
+    <div data-i18n="daily.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti, ogni giorno: gioca la tua campagna e scala la classifica giornaliera.</div>
     <div id="hdb-config" style="font-size:.9rem;font-weight:700;line-height:1.3;margin-bottom:3px"></div>
     <div id="hdb-meta" style="font-size:.64rem;margin-bottom:10px"></div>
     <button id="hdb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)" data-i18n="daily.play">🗓️ Gioca il puzzle di oggi</button>
@@ -1502,7 +1504,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.6';
+const GAME_VERSION='5.13.7';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1636,6 +1638,8 @@ const STRINGS={
 'duel.pens_note':'rigori {a}–{b}',
 'duel.banner_title':'DUELLO 1v1',
 'duel.banner_desc':'Drafta la tua rosa, manda il link a un amico e scopri chi costruisce la squadra migliore. Serie al meglio delle 3.',
+'daily.banner_desc':'Stesso torneo, era e formazione per tutti, ogni giorno: gioca la tua campagna e scala la classifica giornaliera.',
+'challenge.banner_desc':'Stesso torneo, era e formazione per tutti i partecipanti: gioca la tua campagna entro la scadenza e scala la classifica settimanale.',
 'duel.banner_btn':'⚔️ Sfida un amico',
 'duel.setup_title':'⚔️ Duello 1v1',
 'duel.setup_sub':'Scegli torneo ed era: il tuo avversario drafterà con gli stessi vincoli. Formazione e tattica libere.',
@@ -1936,6 +1940,8 @@ const STRINGS={
 'duel.pens_note':'pens {a}–{b}',
 'duel.banner_title':'1v1 DUEL',
 'duel.banner_desc':'Draft your squad, send the link to a friend and find out who builds the better team. Best-of-3 series.',
+'daily.banner_desc':'Same tournament, era and formation for everyone, every day: play your campaign and climb the daily leaderboard.',
+'challenge.banner_desc':'Same tournament, era and formation for every participant: play your campaign before it expires and climb the weekly leaderboard.',
 'duel.banner_btn':'⚔️ Challenge a friend',
 'duel.setup_title':'⚔️ 1v1 Duel',
 'duel.setup_sub':'Pick tournament and era: your opponent will draft with the same constraints. Formation and tactics are free.',
@@ -2239,6 +2245,8 @@ const STRINGS={
 'duel.pens_note':'penaltis {a}–{b}',
 'duel.banner_title':'DUELO 1v1',
 'duel.banner_desc':'Draftea tu plantilla, envía el enlace a un amigo y descubre quién arma el mejor equipo. Serie al mejor de 3.',
+'daily.banner_desc':'Mismo torneo, era y formación para todos, cada día: juega tu campaña y sube en la clasificación diaria.',
+'challenge.banner_desc':'Mismo torneo, era y formación para todos los participantes: juega tu campaña antes de que expire y sube en el ranking semanal.',
 'duel.banner_btn':'⚔️ Reta a un amigo',
 'duel.setup_title':'⚔️ Duelo 1v1',
 'duel.setup_sub':'Elige torneo y era: tu rival drafteará con las mismas condiciones. Formación y táctica libres.',
@@ -3507,7 +3515,7 @@ function duelContinueSeries(){
   var patch={status:'done',seen:true};
   if(oppNick)patch.opp=oppNick;
   duelStoreUpdate(DUEL.id,patch);
-  _dczStatsDuelPlayed(meIsB?(S.winner==='b'):(S.winner==='a'));
+  _dczStatsMaybeCount(DUEL.id,meIsB?(S.winner==='b'):(S.winner==='a'));
   window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);
 }
 /* ── Rivincita: /?rematch=ID → setup duello precompilato con gli stessi vincoli ── */
@@ -3560,12 +3568,19 @@ function _syncModeCells(){
     var el=document.getElementById('hmc-daily-st');
     if(el)el.textContent=played?('#'+pz.num+' · ✅'):('#'+pz.num+(st.streak?' · 🔥 '+st.streak:''));
   }catch(e){}
+  var _duelFresh=false;
   try{
     var ds=duelStore();
-    var fresh=ds.some(function(x){return x.status==='done'&&!x.seen;});
+    /* 'homeSeen' = l'utente ha gia' avuto occasione di notare il risultato qui in home (nella lista
+       sotto questo pannello): NON richiede di riguardare l'intera animazione (quello resta compito
+       del flag separato 'seen', usato solo per decidere se rimostrare il replay in duelOpenJoin).
+       Senza questo flag distinto il badge "verdetto pronto" restava bloccato per sempre non appena
+       UN SOLO duello vecchio veniva segnato 'done' dal poll in background senza mai essere riaperto:
+       bastava quello a tenere ds.some(...) sempre vero, per qualunque duello nuovo si giocasse dopo. */
+    _duelFresh=ds.some(function(x){return x.status==='done'&&!x.homeSeen;});
     var wait=ds.some(function(x){return x.status!=='done';});
     var el2=document.getElementById('hmc-duel-st');
-    if(el2)el2.textContent=fresh?t('duel.st_done'):wait?t('duel.st_waiting'):t('home.mc_duel_sub');
+    if(el2)el2.textContent=_duelFresh?t('duel.st_done'):wait?t('duel.st_waiting'):t('home.mc_duel_sub');
   }catch(e){}
   try{
     var el3=document.getElementById('hmc-weekly-st');
@@ -3574,12 +3589,21 @@ function _syncModeCells(){
   if(!_mcAutoOpened){
     _mcAutoOpened=true;
     try{
-      var fresh2=duelStore().some(function(x){return x.status==='done'&&!x.seen;});
       var pz2=getDailyPuzzle();var st2=_dailyLoad();
       var todo=!(st2.hist&&st2.hist[pz2.dateStr]);
-      homeTogglePanel(fresh2?'duel':todo?'daily':'weekly');
+      homeTogglePanel(_duelFresh?'duel':todo?'daily':'weekly');
     }catch(e){homeTogglePanel('daily');}
   }
+  /* segna come "notati in home" DOPO aver usato il valore per badge/auto-apertura di questo giro:
+     al prossimo giro (prossima visita alla home) il badge torna alla dicitura idle. */
+  try{
+    if(_duelFresh){
+      var ds2=duelStore();
+      var changed=false;
+      ds2.forEach(function(x){if(x.status==='done'&&!x.homeSeen){x.homeSeen=true;changed=true;}});
+      if(changed)duelStoreSave(ds2);
+    }
+  }catch(e){}
 }
 
 /* ── Stato duelli in home (ultimi 3 da dcz_duels, poll di quelli in attesa) ── */
@@ -3617,6 +3641,13 @@ function duelRenderHomeStatus(){
         if(d.status==='done'){
           var opp=e.role==='a'?((d.b&&d.b.nick)||''):((d.a&&d.a.nick)||'');
           duelStoreUpdate(e.id,{status:'done',opp:opp});
+          /* scoperto qui via poll, non guardando l'animazione: il risultato pero' c'e' gia'
+             (d.result.winner), quindi si conta subito invece di lasciarlo fuori dalle stats
+             finche' qualcuno non riapre per caso il replay di QUESTO specifico duello. */
+          if(d.result&&d.result.winner){
+            var won=e.role==='a'?d.result.winner==='a':d.result.winner==='b';
+            _dczStatsMaybeCount(e.id,won);
+          }
           _duelStatusRender();
         }
       })
@@ -6227,6 +6258,20 @@ function _dczStatsDuelPlayed(won){
   s.duelsPlayed=(s.duelsPlayed||0)+1;
   if(won)s.duelsWon=(s.duelsWon||0)+1;
   _dczSave(s);
+}
+/* Un duello 'done' puo' essere scoperto in due modi diversi: guardando l'animazione fino in fondo
+   (duelContinueSeries) oppure via il poll in background dalla home (duelRenderHomeStatus) - questo
+   secondo percorso prima non contava affatto la vittoria/sconfitta, lasciando duelsWon scollegato
+   da duelsPlayed (che invece viene gia' recuperato dallo storico in openStatsScreen). Questo helper
+   fa contare il duello UNA VOLTA SOLA, indipendentemente da quale dei due percorsi lo scopre per
+   primo, marcando l'entry con statCounted cosi' l'altro percorso (se scatta dopo) non lo raddoppia. */
+function _dczStatsMaybeCount(id,won){
+  var a=duelStore();
+  var e=a.find(function(x){return x.id===id;});
+  if(!e||e.statCounted)return;
+  e.statCounted=true;
+  duelStoreSave(a);
+  _dczStatsDuelPlayed(won);
 }
 function openStatsScreen(){
   var s=_dczLoad();
