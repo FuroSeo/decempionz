@@ -7219,7 +7219,16 @@ function _loadDailyBanner(){
      per tutti"), riusando il testo gia' scritto e localizzato per l'era (vedi era.<id>.desc, stesso
      usato nella schermata di scelta era) invece di una spiegazione generica sulla meccanica. */
   var hdbDesc=document.getElementById('hdb-desc');
-  if(hdbDesc)hdbDesc.textContent=t('era.'+pz.era.id+'.desc')||pz.era.desc||t('daily.banner_desc');
+  if(hdbDesc){
+    var _eraDescKey='era.'+pz.era.id+'.desc';
+    var _dLang=(G.lang||'it');
+    /* stessa cascata di lookup di t(), ma SENZA il suo fallback finale "ritorna la chiave stessa":
+       quel fallback e' quello che faceva stampare a schermo "era.wc_totale.desc" per Copa/World
+       Cup (che non hanno una voce localizzata era.<id>.desc, solo le 10 ere UCL la hanno) invece
+       di scendere sul vero fallback (pz.era.desc, sempre presente in game-data.js). */
+    var _localizedEraDesc=(STRINGS[_dLang]&&STRINGS[_dLang][_eraDescKey])||(STRINGS.en&&STRINGS.en[_eraDescKey])||(STRINGS.it&&STRINGS.it[_eraDescKey]);
+    hdbDesc.textContent=_localizedEraDesc||pz.era.desc||t('daily.banner_desc');
+  }
   const playBtn=document.getElementById('hdb-play-btn');
   const doneBox=document.getElementById('hdb-done');
   if(entry){
