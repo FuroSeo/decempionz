@@ -1504,7 +1504,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.7';
+const GAME_VERSION='5.13.8';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -6446,6 +6446,7 @@ function selectResultTactic(tactic,el){
 }
 
 function showGroupElimination(pos,pts){
+  _dailyFinish(false,'screen-gameover');
   const allRes=G.groupUserResults;
   const total=allRes.reduce((s,r)=>s+(r.stars||0),0);
   const max=allRes.length*3;
