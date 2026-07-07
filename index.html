@@ -878,7 +878,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Banner sfida settimanale -->
   <div id="home-challenge-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(99,102,241,.1);border:1.5px solid rgba(99,102,241,.45);border-radius:12px;border-left:3px solid #818cf8;text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;margin-bottom:5px">⚡ SFIDA DELLA SETTIMANA</div>
-    <div data-i18n="challenge.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti i partecipanti: gioca la tua campagna entro la scadenza e scala la classifica settimanale.</div>
+    <div id="hcb-desc" data-i18n="challenge.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti i partecipanti: gioca la tua campagna entro la scadenza e scala la classifica settimanale.</div>
     <div id="hcb-era" style="font-size:.9rem;font-weight:700;line-height:1.3;margin-bottom:3px"></div>
     <div id="hcb-meta" style="font-size:.64rem;margin-bottom:10px"></div>
     <button id="hcb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(99,102,241,.22);border-color:rgba(99,102,241,.6);color:#c7d2fe" data-i18n="challenge.join">⚡ Partecipa</button>
@@ -894,7 +894,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <!-- Banner puzzle del giorno -->
   <div id="home-daily-banner" style="display:none;margin:10px 0 0;padding:13px 14px;background:rgba(201,162,39,.08);border:1.5px solid rgba(201,162,39,.45);border-radius:12px;border-left:3px solid var(--gold);text-align:center">
     <div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:5px">🗓️ <span data-i18n="daily.title">PUZZLE DEL GIORNO</span> <span id="hdb-num"></span></div>
-    <div data-i18n="daily.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti, ogni giorno: gioca la tua campagna e scala la classifica giornaliera.</div>
+    <div id="hdb-desc" data-i18n="daily.banner_desc" style="font-size:.78rem;color:var(--mut);line-height:1.45;margin-bottom:8px">Stesso torneo, era e formazione per tutti, ogni giorno: gioca la tua campagna e scala la classifica giornaliera.</div>
     <div id="hdb-config" style="font-size:.9rem;font-weight:700;line-height:1.3;margin-bottom:3px"></div>
     <div id="hdb-meta" style="font-size:.64rem;margin-bottom:10px"></div>
     <button id="hdb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)" data-i18n="daily.play">🗓️ Gioca il puzzle di oggi</button>
@@ -2468,6 +2468,12 @@ function applyLang(){
   if(_shof&&_shof.classList.contains('active')&&_hofLoaded)_renderHofEntries();
   var _stro=document.getElementById('screen-trophies');
   if(_stro&&_stro.classList.contains('active'))openTrophiesScreen();
+  /* i banner daily/weekly scrivono una descrizione dinamica (era.*.desc / motivation_*) dentro
+     elementi che sono ANCHE [data-i18n] (per avere un fallback statico prima del primo caricamento):
+     il giro qui sopra li sovrascriverebbe con il testo generico ad ogni cambio lingua se non li
+     rigenerassimo subito dopo. */
+  try{_loadDailyBanner();}catch(e){}
+  try{_loadChallengeBanner();}catch(e){}
 }
 
 /* ═══════════════════════════════════════
@@ -7209,6 +7215,11 @@ function _loadDailyBanner(){
   document.getElementById('hdb-num').textContent='#'+pz.num;
   document.getElementById('hdb-config').textContent=_dailyConfigLabel(pz);
   document.getElementById('hdb-meta').textContent=pz.formation+' · '+diffLabel;
+  /* motivazione reale: cos'e' questa era e perche' dovrebbe interessare (non solo "stesso format
+     per tutti"), riusando il testo gia' scritto e localizzato per l'era (vedi era.<id>.desc, stesso
+     usato nella schermata di scelta era) invece di una spiegazione generica sulla meccanica. */
+  var hdbDesc=document.getElementById('hdb-desc');
+  if(hdbDesc)hdbDesc.textContent=t('era.'+pz.era.id+'.desc')||pz.era.desc||t('daily.banner_desc');
   const playBtn=document.getElementById('hdb-play-btn');
   const doneBox=document.getElementById('hdb-done');
   if(entry){
@@ -7374,6 +7385,12 @@ function _loadChallengeBanner(){
       var metaEl=document.getElementById('hcb-meta');
       var expEl=document.getElementById('hcb-expire');
       if(eraEl)eraEl.textContent=tLabel+' · '+c.eraName;
+      var descEl=document.getElementById('hcb-desc');
+      if(descEl){
+        var _clang=(G.lang||'it');
+        var motiv=c['motivation_'+_clang]||c.motivation_it||c.motivation_en;
+        descEl.textContent=motiv||t('challenge.banner_desc');
+      }
       var metaTxt=c.formation+' · '+diffLabel;
       if(cfg.participants)metaTxt+=' · '+cfg.participants+t('challenge.participants');
       if(metaEl)metaEl.textContent=metaTxt;
