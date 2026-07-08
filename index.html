@@ -1234,6 +1234,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="d-col-l">
   <div class="pbar-wrap"><div class="pbar-fill" id="d-bar" style="width:100%"></div></div>
   <div id="d-slot-chips"></div>
+  <div id="d-chem-bar" style="display:none;font-size:.62rem;color:var(--mut);margin:2px 0 8px;text-align:center;line-height:1.6"></div>
   <div class="draft-pitch" id="draft-pitch"></div>
   </div>
   <div class="d-col-r">
@@ -1504,7 +1505,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.13.8';
+const GAME_VERSION='5.14.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1562,7 +1563,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Ultimi 3 slot rimasti',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
-    'diff.hard_desc':'2 reroll · Avversari più forti','diff.legend':'⚫ Leggenda','diff.legend_desc':'0 reroll · Avversari al massimo',
+    'diff.hard_desc':'2 reroll · Avversari più forti','diff.legend':'⚫ Leggenda','diff.legend_desc':'0 reroll · Avversari al massimo','chem.label':'Intesa',
     'tac.attack':'Pressione Alta',
     'tac.balanced':'Possesso Palla',
     'tac.defend':'Blocco Basso',
@@ -1864,7 +1865,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Last 3 slots remaining',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
-    'diff.hard_desc':'2 rerolls · Opponents stronger','diff.legend':'⚫ Legend','diff.legend_desc':'0 rerolls · Opponents at maximum',
+    'diff.hard_desc':'2 rerolls · Opponents stronger','diff.legend':'⚫ Legend','diff.legend_desc':'0 rerolls · Opponents at maximum','chem.label':'Chemistry',
     'tac.attack':'High Press',
     'tac.balanced':'Possession',
     'tac.defend':'Low Block',
@@ -2169,7 +2170,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Últimos 3 huecos restantes',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
-    'diff.hard_desc':'2 rerolls · Rivales más fuertes','diff.legend':'⚫ Leyenda','diff.legend_desc':'0 rerolls · Rivales al máximo',
+    'diff.hard_desc':'2 rerolls · Rivales más fuertes','diff.legend':'⚫ Leyenda','diff.legend_desc':'0 rerolls · Rivales al máximo','chem.label':'Química',
     'tac.attack':'Presión Alta',
     'tac.balanced':'Posesión',
     'tac.defend':'Bloque Bajo',
@@ -4692,6 +4693,15 @@ function updateDraftScreen(){
 
 
   document.getElementById('d-count').textContent=filled+'/11';
+  var _chemEl=document.getElementById('d-chem-bar');
+  if(_chemEl){
+    G.chem=calcChemistry(G.slotPlayers,fmtPositions(G.formation,G.tactic),G.gameMode);
+    if(filled>0){
+      _chemEl.style.display='block';
+      _chemEl.innerHTML='🔗 '+t('chem.label')+' <strong style="color:'+(G.chem.pct>0?'#4ade80':'var(--mut)')+'">+'+G.chem.pct+'%</strong>'
+        +(G.chem.bonds.length?' &nbsp;·&nbsp; '+G.chem.bonds.map(function(b){return b.label+' <span style=\"color:#4ade80\">+'+b.pct+'%</span>';}).join(' &nbsp;·&nbsp; '):'');
+    }else{_chemEl.style.display='none';}
+  }
   document.getElementById('d-passes').innerHTML=
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
@@ -4749,6 +4759,17 @@ function renderThreeCards(){
       const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
       const nameSz=draftNameSz(p.n,isElite);
+      var chemBadge='';
+      try{
+        var _tI=_empSorted[0]?_empSorted[0].i:-1;
+        if(_tI>=0){
+          var _posArr=fmtPositions(G.formation,G.tactic);
+          var _cur=calcChemistry(G.slotPlayers,_posArr,G.gameMode);
+          var _sim=G.slotPlayers.slice();_sim[_tI]=p;
+          var _d=calcChemistry(_sim,_posArr,G.gameMode).pct-_cur.pct;
+          if(_d>0)chemBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:.5px;color:#4ade80;background:rgba(74,222,128,.12);border:0.5px solid rgba(74,222,128,.35);padding:1px 6px;border-radius:3px;margin-top:2px">🔗 +'+_d+'%</div>';
+        }
+      }catch(e){}
       const starBadge=(!blind&&isElite)?'<div style="font-size:.55rem;font-weight:900;letter-spacing:1.8px;color:#fbbf24;background:rgba(251,191,36,.12);border:0.5px solid rgba(251,191,36,.45);padding:2px 10px;border-radius:10px;margin-top:4px">★ LEGEND</div>':'';
       // Out-of-position badge
       var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
@@ -4769,6 +4790,7 @@ function renderThreeCards(){
         +starBadge
         +r10Badge
         +oopBadge
+        +chemBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+countryFlag+displayClub+(season?' · '+season:'')+'</div>'
         +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.15;max-width:100%;overflow:hidden;word-break:break-word">'+p.n+'</div>'
         +(p.nat&&!blind?'<div style="font-size:.8rem;line-height:1;margin-top:1px">'+natFlag(p.nat)+'</div>':'')
@@ -5371,6 +5393,8 @@ function _runMatch(){
 
   // Coach boost
   if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
+  // Chemistry boost (intesa di squadra)
+  if(G.chem&&G.chem.mul>1)myXG=Math.min(myXG*G.chem.mul,2.6);
 
   // r=10 positional bonus — small per-player xG modifier
   (function(){
@@ -7178,6 +7202,47 @@ function _tutMaybe(){
   ov.onclick=function(){idx++;show();};
   show();
   _ga('tutorial_start',{});
+}
+
+/* ══════════════════════════════════════
+   CHEMISTRY — intesa di squadra (v3.1 concordato 2026-07-05)
+   Regole: blocco nazionale ovunque; club solo UCL/Copa (no WC: club=nazione; no Dynasty: club unico);
+   reparto ≥3 stessa nazione (attacco ≥2, GK escluso). Cumulo permesso, cap totale.
+══════════════════════════════════════ */
+const CHEM_CFG={natMin:3,natBig:5,natPct:1,natBigPct:2,clubMin:3,clubBig:4,clubPct:1,clubBigPct:2,deptMin:3,deptFwdMin:2,deptPct:2,cap:6};
+function calcChemistry(players,positions,mode){
+  var cfg=CHEM_CFG,bonds=[],nats={},clubs={};
+  var dept={DEF:{},MID:{},FWD:{}},deptSize={DEF:0,MID:0,FWD:0};
+  (players||[]).forEach(function(p,i){
+    if(!p)return;
+    if(p.nat)nats[p.nat]=(nats[p.nat]||0)+1;
+    if(p.club)clubs[p.club]=(clubs[p.club]||0)+1;
+    var sp=(positions&&positions[i])||p.p;
+    var g=posGroup(sp);
+    if(dept[g]!==undefined){deptSize[g]++;if(p.nat)dept[g][p.nat]=(dept[g][p.nat]||0)+1;}
+  });
+  Object.keys(nats).forEach(function(k){
+    var c=nats[k];
+    if(c>=cfg.natBig)bonds.push({label:natFlag(k)+'×'+c,pct:cfg.natBigPct});
+    else if(c>=cfg.natMin)bonds.push({label:natFlag(k)+'×'+c,pct:cfg.natPct});
+  });
+  var m=mode||G.gameMode||'ucl';
+  if((m==='ucl'||m==='copa')&&!G.dynasty){
+    Object.keys(clubs).forEach(function(k){
+      var c=clubs[k];
+      if(c>=cfg.clubBig)bonds.push({label:'🏟️'+k+'×'+c,pct:cfg.clubBigPct});
+      else if(c>=cfg.clubMin)bonds.push({label:'🏟️'+k+'×'+c,pct:cfg.clubPct});
+    });
+  }
+  ['DEF','MID','FWD'].forEach(function(g){
+    var need=g==='FWD'?cfg.deptFwdMin:cfg.deptMin;
+    if(g==='FWD'&&deptSize[g]<2)return;
+    var best=0,bk='';
+    Object.keys(dept[g]).forEach(function(k){if(dept[g][k]>best){best=dept[g][k];bk=k;}});
+    if(best>=need)bonds.push({label:(g==='DEF'?'🛡':g==='MID'?'⚙':'⚡')+natFlag(bk)+'×'+best,pct:cfg.deptPct});
+  });
+  var pct=Math.min(cfg.cap,bonds.reduce(function(s,b){return s+b.pct;},0));
+  return {pct:pct,mul:1+pct/100,bonds:bonds};
 }
 
 /* ══════════════════════════════════════
