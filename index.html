@@ -1505,7 +1505,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.14.0';
+const GAME_VERSION='5.14.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -7209,24 +7209,38 @@ function _tutMaybe(){
    Regole: blocco nazionale ovunque; club solo UCL/Copa (no WC: club=nazione; no Dynasty: club unico);
    reparto ≥3 stessa nazione (attacco ≥2, GK escluso). Cumulo permesso, cap totale.
 ══════════════════════════════════════ */
-const CHEM_CFG={natMin:3,natBig:5,natPct:1,natBigPct:2,clubMin:3,clubBig:4,clubPct:1,clubBigPct:2,deptMin:3,deptFwdMin:2,deptPct:2,cap:6};
+const CHEM_CFG={natMin:3,natBig:5,natPct:1,natBigPct:2,clubMin:3,clubBig:4,clubPct:1,clubBigPct:2,deptMin:3,deptFwdMin:2,deptPct:2,cap:6,
+  /* Copa: pool concentrato (BR 40%, AR 32%) — soglie nat tarate su incidenza casuale UCL (34%/13%) */
+  copa:{natMin:6,natBig:7,deptMin:4,deptFwdMin:3}};
+function _chemNat(p){
+  if(p.nat)return p.nat;
+  if(p.teamId){
+    var db=(typeof _activeTeams==='function'?_activeTeams():null)||{};
+    var t=db[p.teamId]||(typeof WC_TEAMS!=='undefined'?WC_TEAMS[p.teamId]:null);
+    if(t&&t.country)return t.country;
+  }
+  return '';
+}
 function calcChemistry(players,positions,mode){
-  var cfg=CHEM_CFG,bonds=[],nats={},clubs={};
+  var m0=mode||G.gameMode||'ucl';
+  var cfg=Object.assign({},CHEM_CFG,m0==='copa'?CHEM_CFG.copa:{});
+  var bonds=[],nats={},clubs={};
   var dept={DEF:{},MID:{},FWD:{}},deptSize={DEF:0,MID:0,FWD:0};
   (players||[]).forEach(function(p,i){
     if(!p)return;
-    if(p.nat)nats[p.nat]=(nats[p.nat]||0)+1;
+    var pn=_chemNat(p);
+    if(pn)nats[pn]=(nats[pn]||0)+1;
     if(p.club)clubs[p.club]=(clubs[p.club]||0)+1;
     var sp=(positions&&positions[i])||p.p;
     var g=posGroup(sp);
-    if(dept[g]!==undefined){deptSize[g]++;if(p.nat)dept[g][p.nat]=(dept[g][p.nat]||0)+1;}
+    if(dept[g]!==undefined){deptSize[g]++;if(pn)dept[g][pn]=(dept[g][pn]||0)+1;}
   });
   Object.keys(nats).forEach(function(k){
     var c=nats[k];
     if(c>=cfg.natBig)bonds.push({label:natFlag(k)+'×'+c,pct:cfg.natBigPct});
     else if(c>=cfg.natMin)bonds.push({label:natFlag(k)+'×'+c,pct:cfg.natPct});
   });
-  var m=mode||G.gameMode||'ucl';
+  var m=m0;
   if((m==='ucl'||m==='copa')&&!G.dynasty){
     Object.keys(clubs).forEach(function(k){
       var c=clubs[k];
