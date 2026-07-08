@@ -1025,6 +1025,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div style="font-size:1.1rem;font-weight:800;color:var(--acc)" data-i18n="stats.title">📊 Le tue Statistiche</div>
   </div>
   <div id="stats-body"></div>
+  <div style="margin-top:18px;padding:12px 14px;background:var(--s1);border:1px solid var(--brd);border-radius:12px">
+    <div style="font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mut);margin-bottom:8px" data-i18n="bk.title">💾 Backup dei progressi</div>
+    <div style="font-size:.68rem;color:var(--mut);margin-bottom:10px;line-height:1.5" data-i18n="bk.desc">Trofei, streak e statistiche vivono su questo dispositivo. Esporta un file di backup per non perderli o per portarli su un altro dispositivo.</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="exportSave()" style="flex:1;margin:0;font-size:.74rem;padding:10px;background:rgba(201,162,39,.14);border:1.5px solid rgba(201,162,39,.5);color:var(--gold2)" data-i18n="bk.export">⬇️ Esporta</button>
+      <button class="btn" onclick="document.getElementById('bk-file').click()" style="flex:1;margin:0;font-size:.74rem;padding:10px;background:var(--s2);border:1.5px solid var(--brd);color:var(--text)" data-i18n="bk.import">⬆️ Importa</button>
+    </div>
+    <input type="file" id="bk-file" accept=".json,application/json" style="display:none" onchange="importSave(this)">
+  </div>
   <button data-i18n="ui.back" class="btn btn-gold" onclick="showScreen('screen-home')" style="margin-top:14px">← Back</button>
 </div>
 
@@ -1512,6 +1521,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <p data-i18n-html="howto.p3" style="margin-bottom:11px"><strong style="color:var(--text)">Pick an era and difficulty.</strong> Each tournament has its own eras (e.g. UCL: 1960s, 1980s… or All Time for the full pool). Easy = 5 rerolls, Normal = 3, Hard = 2. Difficulty also scales opponent strength. On Normal and Hard, reroll is locked for the last 3 slots — save your moves when it matters.</p>
     <p data-i18n-html="howto.p4" style="margin-bottom:11px"><strong style="color:var(--text)">Pick a formation and draft your XI.</strong> Ten formations available: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. All 3 draft cards always belong to the same rating tier: ★★★★ Elite (r=10), ★★★ High (r=9), ★★ Mid (r=8), or ★ Base (r≤7). Use <strong style="color:var(--gold)">↺ Reroll</strong> to change tier and options — each reroll can flip the pick quality. r=10 (★★★★ Elite) players show a ⚡/🛡️ badge and grant a direct xG bonus in simulation based on their role (attack, defence or midfield). When a card is assigned to a slot outside its natural position, a ⚠️ warning appears — the penalty is minor for adjacent roles, heavier for bigger tactical mismatches. UCL and Copa show club names; World Cup shows nation and year (e.g. 🇧🇷 Brazil · 1970).</p>
     <p data-i18n-html="howto.p_coach" style="margin-bottom:11px"></p>
+    <p data-i18n-html="howto.p_chem" style="margin-bottom:11px"></p>
     <p data-i18n-html="howto.p_dynasty" style="margin-bottom:11px"></p>
     <p data-i18n-html="howto.p5" style="margin-bottom:11px"><strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.</p>
     <p data-i18n-html="howto.p6" style="margin-bottom:11px"><strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent's likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives an xG advantage. Momentum rewards winning runs: each consecutive win adds +0.05 xG, each loss −0.05 (range ±3).</p>
@@ -1525,7 +1535,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.15.0';
+const GAME_VERSION='5.16.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1583,7 +1593,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Ultimi 3 slot rimasti',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
-    'diff.hard_desc':'2 reroll · Avversari più forti','diff.legend':'⚫ Leggenda','diff.legend_desc':'0 reroll · Avversari al massimo','chem.label':'Intesa','chem.def':'Difesa','chem.mid':'Centrocampo','chem.fwd':'Attacco',
+    'diff.hard_desc':'2 reroll · Avversari più forti','diff.legend':'⚫ Leggenda','diff.legend_desc':'0 reroll · Avversari al massimo','chem.label':'Intesa','chem.def':'Difesa','chem.mid':'Centrocampo','chem.fwd':'Attacco','howto.p_chem':'<strong style="color:var(--text)">L\'intesa premia i legami.</strong> Il pannello 🔗 nel draft misura l\'intesa di squadra: 3+ giocatori della stessa nazionalità, 3+ dello stesso club di qualsiasi epoca (solo UCL e Copa) o un reparto di connazionali aumentano l\'attacco fino a un massimo del +6%. Nella Copa servono blocchi nazionali più grandi — il calcio sudamericano è già una famiglia. Il badge 🔗 sulle card indica quale scelta accende un legame: a volte conviene il ★9 giusto più del ★10 sbagliato.','bk.title':'💾 Backup dei progressi','bk.desc':'Trofei, streak e statistiche vivono su questo dispositivo. Esporta un file di backup per non perderli o per portarli su un altro dispositivo.','bk.export':'⬇️ Esporta','bk.import':'⬆️ Importa','bk.confirm':'Importare {N} dati salvati? I progressi attuali su questo dispositivo verranno sovrascritti.','bk.done':'✅ Backup importato! La pagina si ricarica.','bk.invalid':'File non valido: non è un backup di Decempionz.','bk.err':'Errore di accesso ai salvataggi.',
     'tac.attack':'Pressione Alta',
     'tac.balanced':'Possesso Palla',
     'tac.defend':'Blocco Basso',
@@ -1885,7 +1895,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Last 3 slots remaining',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
-    'diff.hard_desc':'2 rerolls · Opponents stronger','diff.legend':'⚫ Legend','diff.legend_desc':'0 rerolls · Opponents at maximum','chem.label':'Chemistry','chem.def':'Defence','chem.mid':'Midfield','chem.fwd':'Attack',
+    'diff.hard_desc':'2 rerolls · Opponents stronger','diff.legend':'⚫ Legend','diff.legend_desc':'0 rerolls · Opponents at maximum','chem.label':'Chemistry','chem.def':'Defence','chem.mid':'Midfield','chem.fwd':'Attack','howto.p_chem':'<strong style="color:var(--text)">Chemistry rewards bonds.</strong> The 🔗 panel in the draft tracks your squad chemistry: 3+ players of the same nationality, 3+ from the same club of any era (UCL and Copa only) or a department of countrymen boost your attack up to +6%. In the Copa you need bigger national blocks — South American football is already one family. The 🔗 badge on cards shows which pick lights up a bond: sometimes the right ★9 beats the wrong ★10.','bk.title':'💾 Progress backup','bk.desc':'Trophies, streaks and stats live on this device. Export a backup file to keep them safe or move them to another device.','bk.export':'⬇️ Export','bk.import':'⬆️ Import','bk.confirm':'Import {N} saved entries? Current progress on this device will be overwritten.','bk.done':'✅ Backup imported! Reloading.','bk.invalid':'Invalid file: not a Decempionz backup.','bk.err':'Could not access saved data.',
     'tac.attack':'High Press',
     'tac.balanced':'Possession',
     'tac.defend':'Low Block',
@@ -2190,7 +2200,7 @@ const STRINGS={
     'draft.reroll_locked':'⚠️ Últimos 3 huecos restantes',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
-    'diff.hard_desc':'2 rerolls · Rivales más fuertes','diff.legend':'⚫ Leyenda','diff.legend_desc':'0 rerolls · Rivales al máximo','chem.label':'Química','chem.def':'Defensa','chem.mid':'Mediocampo','chem.fwd':'Ataque',
+    'diff.hard_desc':'2 rerolls · Rivales más fuertes','diff.legend':'⚫ Leyenda','diff.legend_desc':'0 rerolls · Rivales al máximo','chem.label':'Química','chem.def':'Defensa','chem.mid':'Mediocampo','chem.fwd':'Ataque','howto.p_chem':'<strong style="color:var(--text)">La química premia los vínculos.</strong> El panel 🔗 del draft mide la química del equipo: 3+ jugadores de la misma nacionalidad, 3+ del mismo club de cualquier época (solo UCL y Copa) o una línea de compatriotas aumentan tu ataque hasta un máximo de +6%. En la Copa hacen falta bloques nacionales más grandes — el fútbol sudamericano ya es una familia. La insignia 🔗 en las cartas indica qué elección enciende un vínculo: a veces conviene el ★9 correcto más que el ★10 equivocado.','bk.title':'💾 Copia de seguridad','bk.desc':'Trofeos, rachas y estadísticas viven en este dispositivo. Exporta una copia para no perderlos o llevarlos a otro dispositivo.','bk.export':'⬇️ Exportar','bk.import':'⬆️ Importar','bk.confirm':'¿Importar {N} datos guardados? El progreso actual en este dispositivo será sobrescrito.','bk.done':'✅ ¡Copia importada! Recargando.','bk.invalid':'Archivo no válido: no es una copia de Decempionz.','bk.err':'Error al acceder a los datos guardados.',
     'tac.attack':'Presión Alta',
     'tac.balanced':'Posesión',
     'tac.defend':'Bloque Bajo',
@@ -7225,6 +7235,46 @@ function _tutMaybe(){
   ov.onclick=function(){idx++;show();};
   show();
   _ga('tutorial_start',{});
+}
+
+/* ══════════════════════════════════════
+   BACKUP — export/import dei salvataggi (tutte le chiavi dcz_*)
+══════════════════════════════════════ */
+function exportSave(){
+  var data={};
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.indexOf('dcz_')===0)data[k]=localStorage.getItem(k);
+    }
+  }catch(e){alert(t('bk.err'));return;}
+  var payload={app:'decempionz',v:(typeof GAME_VERSION!=='undefined'?GAME_VERSION:''),date:new Date().toISOString(),data:data};
+  var blob=new Blob([JSON.stringify(payload,null,1)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='decempionz-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  _ga('save_export',{});
+}
+function importSave(inp){
+  var f=inp.files&&inp.files[0];
+  inp.value='';
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    var payload=null;
+    try{payload=JSON.parse(ev.target.result);}catch(e){}
+    if(!payload||payload.app!=='decempionz'||!payload.data||typeof payload.data!=='object'){alert(t('bk.invalid'));return;}
+    var keys=Object.keys(payload.data).filter(function(k){return k.indexOf('dcz_')===0;});
+    if(!keys.length){alert(t('bk.invalid'));return;}
+    if(!confirm(t('bk.confirm').replace('{N}',keys.length)))return;
+    try{keys.forEach(function(k){localStorage.setItem(k,String(payload.data[k]));});}catch(e){alert(t('bk.err'));return;}
+    _ga('save_import',{keys:keys.length});
+    alert(t('bk.done'));
+    location.reload();
+  };
+  r.readAsText(f,'utf-8');
 }
 
 /* ══════════════════════════════════════
