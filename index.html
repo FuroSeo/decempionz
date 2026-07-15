@@ -1535,7 +1535,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=591"></script>
 <script>
-const GAME_VERSION='5.16.1';
+const GAME_VERSION='5.16.3';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3047,8 +3047,15 @@ const G = {
 function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}try{_syncModeCells();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
+function _draftedTeamNames(){
+  /* squadre da cui l'utente ha pescato: mai affrontarle (fix Zidane vs Zidane) */
+  var s=new Set();var db=_activeTeams();
+  (G.slotPlayers||[]).forEach(function(p){if(p&&p.teamId&&db[p.teamId])s.add(db[p.teamId].name);});
+  return s;
+}
 function pickKnockSeq(rounds,usedClubs){
   var used=new Set(usedClubs||[]);
+  _draftedTeamNames().forEach(function(n){used.add(n);});
   return rounds.map(function(pool){
     var _aDB=_activeTeams();var avail=pool.filter(function(o){return!used.has(_aDB[o.id]?_aDB[o.id].name:o.name||'');});
     var chosen=avail.length?pick(avail):pick(pool); // graceful fallback if pool too small
@@ -4979,6 +4986,28 @@ function finalizeDraft(){
       i++;
     }
   }
+  if(G.squad.length<11){
+    /* PASS 2 — emergenza (fix "campagna in 9", daily #9 · 2026-07-05):
+       se il pool non ha compatibili SLOT_COMPAT per gli slot rimasti (es. LM/RM
+       nelle ere senza esterni), riempi IGNORANDO la compatibilità: prima lo stesso
+       reparto, poi il miglior rating assoluto. slotPenalty punirà l'adattamento
+       in partita, ma la squadra parte SEMPRE in 11. */
+    var _fPos=fmtPositions(G.formation,G.tactic);
+    var _cands=((G.draftPool||[]).concat(G.draftCards||[]))
+      .filter(function(pp){return !_draftedNames.has(pp.n);})
+      .sort(function(a,b){return b.r-a.r;});
+    G.slotPlayers.forEach(function(sp,idx){
+      if(sp!==null||!_cands.length)return;
+      var slotPos=_fPos[idx]||'CM';
+      var k=-1;
+      for(var c=0;c<_cands.length;c++){if(posGroup(_cands[c].p)===posGroup(slotPos)){k=c;break;}}
+      if(k<0)k=0;
+      var chosen=_cands.splice(k,1)[0];
+      G.slotPlayers[idx]=chosen;
+      G.squad.push(chosen);
+      _draftedNames.add(chosen.n);
+    });
+  }
   // Update pitch one last time so user sees the completed squad
   renderDraftPitch(null);
   setTimeout(function(){
@@ -5080,8 +5109,9 @@ function setupCampaign(){
   if(G.format==='nuovo'){
     const allKeys=Object.keys(_DB);
     const shuffledN=[...allKeys].sort(()=>Math.random()-.5);
-    const seenN=new Set();const pickedN=[];
-    for(const id of shuffledN){const club=_DB[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
+    const seenN=new Set();const _dftN=_draftedTeamNames();const pickedN=[];
+    for(const id of shuffledN){const club=_DB[id].name;if(!seenN.has(club)&&!_dftN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}
+    if(pickedN.length<6){for(const id of shuffledN){const club=_DB[id].name;if(!seenN.has(club)){seenN.add(club);pickedN.push(id);}if(pickedN.length>=6)break;}}
     G.groupTeams=pickedN.map(id=>({id,team:_DB[id]}));
     G.groupOppResults=[];
     var _nuovoUsed=G.groupTeams.map(function(g){return g.team.name;});
@@ -5090,9 +5120,10 @@ function setupCampaign(){
     return;
   }
 
-  // Classic: 3 group opponents from different clubs
-  {const seen=new Set();const pool=[...t.teams].sort(()=>Math.random()-.5);const picked=[];
-  for(const id of pool){const club=_DB[id].name;if(!seen.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}
+  // Classic: 3 group opponents from different clubs (mai le squadre dei draftati)
+  {const seen=new Set();const _dft=_draftedTeamNames();const pool=[...t.teams].sort(()=>Math.random()-.5);const picked=[];
+  for(const id of pool){const club=_DB[id].name;if(!seen.has(club)&&!_dft.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}
+  if(picked.length<3){for(const id of pool){const club=_DB[id].name;if(!seen.has(club)){seen.add(club);picked.push(id);}if(picked.length>=3)break;}}
   G.groupTeams=picked.map(id=>({id,team:_DB[id]}));}
   const [t1,t2,t3] = G.groupTeams;
   G.groupOppResults = [
@@ -5483,7 +5514,9 @@ function _runMatch(){
   var _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
   if(_oppTid&&(_aDB[_oppTid]||TEAMS[_oppTid])){
     const _posW={GK:0,CB:1,LB:1,RB:1,DM:2,CM:2,AM:2,RM:2,LM:2,RW:3,LW:3,ST:4,CF:4,SS:4};
-    _awayXI=[...(_aDB[_oppTid]||TEAMS[_oppTid]).players].sort(function(a,b){return b.r-a.r;}).slice(0,11)
+    var _dupNames=new Set();
+    (G.slotPlayers||[]).forEach(function(pp){if(pp&&pp.teamId===_oppTid)_dupNames.add(pp.n);});
+    _awayXI=[...(_aDB[_oppTid]||TEAMS[_oppTid]).players].filter(function(p){return !_dupNames.has(p.n);}).sort(function(a,b){return b.r-a.r;}).slice(0,11)
       .sort(function(a,b){return(_posW[a.p]??3)-(_posW[b.p]??3);})
       .map(function(p){return{n:p.n,p:p.p};});
   } else {
