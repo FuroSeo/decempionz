@@ -1,3 +1,11 @@
+# Consolidamento canonico: forza https + non-www su https://decempionz.com
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://decempionz.com%{REQUEST_URI} [L,R=301,NE]
+</IfModule>
+
 # Decempionz — cache control
 # index.html e sw.js non devono mai essere cachati dal browser
 <FilesMatch "(index\.html|sw\.js)$">
