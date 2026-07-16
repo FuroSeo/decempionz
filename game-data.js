@@ -1,8 +1,3 @@
-/* Decempionz — game-data.js
-   Dataset squadre e liste ere. Cache lunga: quando modifichi questo file,
-   BUMPA la query ?v= nello <script src> di index.html.
-   Generato lo split: 2026-07-03 (v5.9.1) */
-
 const TEAMS = {
   por_8687:{name:'Porto',season:'1986-87',country:'🇵🇹',club:'porto',players:[{n:'Mlynarczyk',p:'GK',r:8,nat:'PL'},{n:'Joao Pinto',p:'RB',r:8,nat:'PT'},{n:'Eduardo Luis',p:'CB',r:8,nat:'PT'},{n:'Inacio',p:'CB',r:8,nat:'PT'},{n:'Celso',p:'LB',r:7,nat:'PT'},{n:'Andre',p:'CDM',r:8,nat:'PT'},{n:'Jaime Magalhaes',p:'CM',r:8,nat:'PT'},{n:'Sousa',p:'CM',r:7,nat:'PT'},{n:'Madjer',p:'LW',r:9,nat:'DZ'},{n:'Futre',p:'RM',r:9,nat:'PT'},{n:'Vermeersch',p:'ST',r:8,nat:'BE'},{n:'Lima Pereira',p:'CB',r:7,nat:'PT'},{n:'Frasco',p:'CAM',r:7,nat:'PT'},{n:'Rui Barros',p:'LM',r:7,nat:'PT'},{n:'Gomes',p:'ST',r:7,nat:'PT'}]},
   rm_6566:{name:'Real Madrid',season:'1965-66',country:'🇪🇸',club:'real_madrid',players:[{n:'Araquistain',p:'GK',r:8,nat:'ES'},{n:'Pachin',p:'RB',r:7,nat:'ES'},{n:'De Felipe',p:'CB',r:8,nat:'ES'},{n:'Mazon',p:'LB',r:7,nat:'ES'},{n:'Zoco',p:'CDM',r:8,nat:'ES'},{n:'Pirri',p:'CM',r:9,nat:'ES'},{n:'Velazquez',p:'CM',r:8,nat:'ES'},{n:'Serena',p:'RW',r:8,nat:'ES'},{n:'Amancio',p:'CAM',r:9,nat:'ES'},{n:'Grosso',p:'ST',r:8,nat:'ES'},{n:'Gento',p:'LW',r:9,nat:'ES'},{n:'Felix',p:'ST',r:7,nat:'ES'},{n:'Puskas',p:'ST',r:9,nat:'HU'},{n:'Sanchis Sr',p:'RM',r:7,nat:'ES'},{n:'Felo',p:'LM',r:7,nat:'ES'},{n:'Betancort',p:'GK',r:7,nat:'ES'}]},
@@ -86,10 +81,8 @@ const TEAMS = {
   rm_2324:{name:'Real Madrid',season:'2023-24',country:'🇪🇸',club:'real_madrid',players:[{n:'Lunin',p:'GK',r:8,nat:'UA'},{n:'Carvajal',p:'RB',r:9,nat:'ES'},{n:'Militao',p:'CB',r:8,nat:'BR'},{n:'Rüdiger',p:'CB',r:9,nat:'DE'},{n:'Mendy',p:'LB',r:7,nat:'FR'},{n:'Tchouaméni',p:'CDM',r:8,nat:'FR'},{n:'Valverde',p:'CM',r:9,nat:'UY'},{n:'Kroos',p:'CM',r:9,nat:'DE'},{n:'Bellingham',p:'CAM',r:10,nat:'EN'},{n:'Vinicius Jr',p:'LW',r:10,nat:'BR'},{n:'Joselu',p:'ST',r:7,nat:'ES'},{n:'Rodrygo',p:'RW',r:9,nat:'BR'},{n:'Camavinga',p:'CM',r:8,nat:'FR'},{n:'Modric',p:'CM',r:8,nat:'HR'},{n:'Nacho',p:'CB',r:7,nat:'ES'},{n:'Brahim',p:'AM',r:7,nat:'ES'}]},
   bvb_2324:{name:'Borussia Dortmund',season:'2023-24',country:'🇩🇪',club:'dortmund',players:[{n:'Kobel',p:'GK',r:8,nat:'CH'},{n:'Ryerson',p:'RB',r:7,nat:'US'},{n:'Mats Hummels',p:'CB',r:9,nat:'DE'},{n:'Schlotterbeck',p:'CB',r:8,nat:'DE'},{n:'Maatsen',p:'LB',r:8,nat:'NL'},{n:'Can',p:'CDM',r:8,nat:'DE'},{n:'Sabitzer',p:'CM',r:8,nat:'AT'},{n:'Brandt',p:'AM',r:8,nat:'DE'},{n:'Marco Reus',p:'LW',r:8,nat:'DE'},{n:'Sancho',p:'RW',r:8,nat:'EN'},{n:'Füllkrug',p:'ST',r:8,nat:'DE'},{n:'Adeyemi',p:'LW',r:7,nat:'DE'},{n:'Malen',p:'RW',r:7,nat:'NL'},{n:'Bensebaïni',p:'LB',r:7,nat:'DZ'},{n:'Nmecha',p:'CM',r:7,nat:'DE'},{n:'Haller',p:'ST',r:7,nat:'CI'}]},
   atm_1920:{name:'Atlético Madrid',season:'2019-20',country:'🇪🇸',club:'atletico',players:[{n:'Jan Oblak',p:'GK',r:9,nat:'SI'},{n:'Trippier',p:'RB',r:8,nat:'EN'},{n:'Savic',p:'CB',r:8,nat:'ME'},{n:'José María Giménez',p:'CB',r:8,nat:'UY'},{n:'Felipe',p:'CB',r:7,nat:'BR'},{n:'Lodi',p:'LB',r:7,nat:'BR'},{n:'Koke',p:'CM',r:8,nat:'ES'},{n:'Saúl Ñíguez',p:'CM',r:8,nat:'ES'},{n:'Thomas Partey',p:'CDM',r:9,nat:'GH'},{n:'João Félix',p:'CAM',r:9,nat:'PT'},{n:'Diego Costa',p:'ST',r:8,nat:'ES'},{n:'Morata',p:'ST',r:8,nat:'ES'},{n:'Marcos Llorente',p:'CM',r:8,nat:'ES'},{n:'Ángel Correa',p:'RW',r:7,nat:'AR'},{n:'Vitolo',p:'LW',r:7,nat:'ES'},{n:'Lemar',p:'CM',r:7,nat:'FR'}]},
-  psg_2425:{name:'PSG',season:'2024-25',country:'🇫🇷',club:'psg',players:[{n:'Gianluigi Donnarumma',p:'GK',r:9,nat:'IT'},{n:'Achraf Hakimi',p:'RB',r:9,nat:'MA'},{n:'Marquinhos',p:'CB',r:9,nat:'BR'},{n:'Pacho',p:'CB',r:8,nat:'EC'},{n:'Nuno Mendes',p:'LB',r:9,nat:'PT'},{n:'João Neves',p:'CDM',r:9,nat:'PT'},{n:'Vitinha',p:'CM',r:8,nat:'PT'},{n:'Fabian Ruiz',p:'CM',r:8,nat:'ES'},{n:'Doué',p:'RW',r:8,nat:'FR'},{n:'Dembélé',p:'ST',r:9,nat:'FR'},{n:'Kvaratskhelia',p:'LW',r:9,nat:'GE'},{n:'Zaïre-Emery',p:'CM',r:8,nat:'FR'},{n:'Barcola',p:'LW',r:8,nat:'FR'},{n:'Lucas Hernandez',p:'LB',r:7,nat:'FR'},{n:'Mayulu',p:'ST',r:7,nat:'FR'},{n:'G.Ramos',p:'ST',r:7,nat:'PT'}]}
+  psg_2425:{name:'PSG',season:'2024-25',country:'🇫🇷',club:'psg',players:[{n:'Gianluigi Donnarumma',p:'GK',r:9,nat:'IT'},{n:'Achraf Hakimi',p:'RB',r:9,nat:'MA'},{n:'Marquinhos',p:'CB',r:9,nat:'BR'},{n:'Pacho',p:'CB',r:8,nat:'EC'},{n:'Nuno Mendes',p:'LB',r:9,nat:'PT'},{n:'João Neves',p:'CDM',r:9,nat:'PT'},{n:'Vitinha',p:'CM',r:8,nat:'PT'},{n:'Fabian Ruiz',p:'CM',r:8,nat:'ES'},{n:'Doué',p:'RW',r:8,nat:'FR'},{n:'Dembélé',p:'ST',r:9,nat:'FR'},{n:'Kvaratskhelia',p:'LW',r:9,nat:'GE'},{n:'Zaïre-Emery',p:'CM',r:8,nat:'FR'},{n:'Barcola',p:'LW',r:8,nat:'FR'},{n:'Lucas Hernandez',p:'LB',r:7,nat:'FR'},{n:'Mayulu',p:'ST',r:7,nat:'FR'},{n:'G.Ramos',p:'ST',r:7,nat:'PT'}]},
 };
-
-
 
 const COPA_TEAMS = {
   pen_6061:{name:'Peñarol',season:'1960-61',country:'🇺🇾',club:'penarol',players:[{n:'Alberto Spencer',p:'ST',r:10,nat:'UY'},{n:'Luis Cubilla',p:'RW',r:9,nat:'UY'},{n:'Nestor Goncalves',p:'CM',r:9,nat:'UY'},{n:'Pedro Rocha',p:'CM',r:8,nat:'UY'},{n:'Jose Sasia',p:'ST',r:8,nat:'UY'},{n:'Ladislao Mazurkiewicz',p:'GK',r:8,nat:'UY'},{n:'Juan Hohberg',p:'CAM',r:7,nat:'UY'},{n:'Omar Caetano',p:'CB',r:7,nat:'UY'},{n:'Jorge Manicera',p:'CB',r:7,nat:'UY'},{n:'Julio Abbadie',p:'LW',r:7,nat:'UY'},{n:'Eliseo Alvarez',p:'RB',r:7,nat:'UY'},{n:'Carlos Borges',p:'LW',r:7,nat:'UY'},{n:'H. Rodriguez',p:'LB',r:6,nat:'UY'}]},
@@ -142,11 +135,10 @@ const COPA_TEAMS = {
   ind_8384:{name:'Independiente',season:'1984',country:'🇦🇷',club:'independiente',players:[{n:'Ricardo Bochini',p:'CAM',r:9,nat:'AR'},{n:'Jorge Burruchaga',p:'CM',r:9,nat:'AR'},{n:'Oscar Ruggeri',p:'CB',r:8,nat:'AR'},{n:'Jorge Comas',p:'GK',r:8,nat:'AR'},{n:'Néstor Clausen',p:'LB',r:7,nat:'AR'},{n:'Héctor Trossero',p:'CB',r:7,nat:'AR'},{n:'Julio Toresani',p:'RB',r:7,nat:'AR'},{n:'Mario Zanabria',p:'CDM',r:7,nat:'AR'},{n:'Enzo Trossero',p:'LW',r:7,nat:'AR'},{n:'Pablo Comelles',p:'ST',r:7,nat:'AR'},{n:'Jorge Pavoni',p:'RW',r:7,nat:'AR'},{n:'Gaspar Viegas',p:'CM',r:7,nat:'AR'}]},
   oli_0102:{name:'Olimpia',season:'2002',country:'🇵🇾',club:'olimpia',players:[{n:'Fredy Bareiro',p:'ST',r:8,nat:'PY'},{n:'Diego Gavilán',p:'CM',r:7,nat:'PY'},{n:'Julio González',p:'GK',r:7,nat:'PY'},{n:'Cristian Riveros',p:'CM',r:7,nat:'PY'},{n:'Pablo Zeballos',p:'RW',r:7,nat:'PY'},{n:'Roberto Gamarra',p:'CB',r:7,nat:'PY'},{n:'Nelson Cuevas',p:'LW',r:8,nat:'PY'},{n:'Juan Olivares',p:'CB',r:7,nat:'PY'},{n:'Edgar Rotela',p:'LB',r:7,nat:'PY'},{n:'Osvaldo Martínez',p:'CDM',r:7,nat:'PY'},{n:'Roberto Cabañas',p:'ST',r:7,nat:'PY'},{n:'Carlos Gamarra',p:'RB',r:8,nat:'PY'}]},
   nat_7980:{name:'Nacional',season:'1980',country:'🇺🇾',club:'nacional_uru',players:[{n:'Waldemar Victorino',p:'ST',r:9,nat:'UY'},{n:'Hugo De León',p:'CDM',r:8,nat:'UY'},{n:'Rodolfo Rodríguez',p:'CB',r:8,nat:'UY'},{n:'Rubén Paz',p:'CAM',r:8,nat:'UY'},{n:'Carlos Aguilera',p:'ST',r:7,nat:'UY'},{n:'Nelson Fernández',p:'GK',r:7,nat:'UY'},{n:'Víctor Díaz',p:'RB',r:7,nat:'UY'},{n:'Alberto Cortés',p:'CB',r:7,nat:'UY'},{n:'Roberto Gabrich',p:'LB',r:7,nat:'UY'},{n:'José Marchena',p:'LW',r:7,nat:'UY'},{n:'Luis Ramos',p:'RW',r:7,nat:'UY'},{n:'Juan Carlos Blanco',p:'CM',r:7,nat:'UY'}]},
-  nat_8889:{name:'Nacional',season:'1988',country:'🇺🇾',club:'nacional_uru',players:[{n:'Rubén Paz',p:'CM',r:9,nat:'UY'},{n:'Carlos Aguilera',p:'ST',r:9,nat:'UY'},{n:'Diego Aguirre',p:'CAM',r:8,nat:'UY'},{n:'Gustavo Méndez',p:'CB',r:7,nat:'UY'},{n:'Washington Rodríguez',p:'GK',r:7,nat:'UY'},{n:'Eduardo Espinel',p:'RB',r:7,nat:'UY'},{n:'Héctor Morán',p:'CB',r:7,nat:'UY'},{n:'Marcelo Saralegui',p:'LW',r:7,nat:'UY'},{n:'Daniel Allende',p:'CDM',r:7,nat:'UY'},{n:'Julio Ribas',p:'RW',r:7,nat:'UY'},{n:'Hugo Sosa',p:'CM',r:7,nat:'UY'},{n:'Sergio Reyes',p:'LB',r:7,nat:'UY'}]}
+  nat_8889:{name:'Nacional',season:'1988',country:'🇺🇾',club:'nacional_uru',players:[{n:'Rubén Paz',p:'CM',r:9,nat:'UY'},{n:'Carlos Aguilera',p:'ST',r:9,nat:'UY'},{n:'Diego Aguirre',p:'CAM',r:8,nat:'UY'},{n:'Gustavo Méndez',p:'CB',r:7,nat:'UY'},{n:'Washington Rodríguez',p:'GK',r:7,nat:'UY'},{n:'Eduardo Espinel',p:'RB',r:7,nat:'UY'},{n:'Héctor Morán',p:'CB',r:7,nat:'UY'},{n:'Marcelo Saralegui',p:'LW',r:7,nat:'UY'},{n:'Daniel Allende',p:'CDM',r:7,nat:'UY'},{n:'Julio Ribas',p:'RW',r:7,nat:'UY'},{n:'Hugo Sosa',p:'CM',r:7,nat:'UY'},{n:'Sergio Reyes',p:'LB',r:7,nat:'UY'}]},
 };
 
-
-const WC_TEAMS={
+const WC_TEAMS = {
   uru_1930:{name:'Uruguay',season:'1930',country:'🇺🇾',club:'uruguay',players:[{n:'Enrique Ballesteros',p:'GK',r:8},{n:'José Nasazzi',p:'CB',r:9},{n:'José Andrade',p:'CDM',r:9},{n:'Lorenzo Fernández',p:'CM',r:8},{n:'Álvaro Gestido',p:'CB',r:8},{n:'Juan Piriz',p:'RB',r:7},{n:'Hector Scarone',p:'CAM',r:9},{n:'Pablo Dorado',p:'LW',r:8},{n:'Héctor Castro',p:'ST',r:8},{n:'Pedro Cea',p:'ST',r:8},{n:'Santos Iriarte',p:'RW',r:8},{n:'Pedro Petrone',p:'ST',r:8}]},
   arg_1930:{name:'Argentina',season:'1930',country:'🇦🇷',club:'argentina',players:[{n:'Juan Botasso',p:'GK',r:8},{n:'Luis Monti',p:'CDM',r:9},{n:'Guillermo Stábile',p:'ST',r:9},{n:'Carlos Peucelle',p:'RW',r:8},{n:'Francisco Varallo',p:'ST',r:8},{n:'Manuel Ferreira',p:'CAM',r:8},{n:'Adolfo Zumelzú',p:'LB',r:7},{n:'Fernando Paternoster',p:'RB',r:7},{n:'Alfredo Desiderio',p:'CB',r:7},{n:'Alberto Chividini',p:'CB',r:7},{n:'Alejandro Scopelli',p:'CM',r:7},{n:'Roberto Cherro',p:'LW',r:8}]},
   ita_1934:{name:'Italia',season:'1934',country:'🇮🇹',club:'italy',players:[{n:'Gianpiero Combi',p:'GK',r:9},{n:'Giuseppe Meazza',p:'CAM',r:10},{n:'Angelo Schiavio',p:'ST',r:9},{n:'Giovanni Ferrari',p:'CM',r:8},{n:'Raimundo Orsi',p:'LW',r:8},{n:'Luis Monti',p:'CDM',r:8},{n:'Pietro Ferraris',p:'RW',r:8},{n:'Virginio Rosetta',p:'RB',r:8},{n:'Luigi Allemandi',p:'LB',r:7},{n:'Eraldo Monzeglio',p:'CB',r:7},{n:'Umberto Caligaris',p:'CB',r:8},{n:'Giovanni Guaita',p:'LW',r:7}]},
@@ -233,9 +225,8 @@ const WC_TEAMS={
   pol_2022:{name:'Polonia',season:'2022',country:'🇵🇱',club:'poland',players:[{n:'Wojciech Szczęsny',p:'GK',r:9},{n:'Robert Lewandowski',p:'ST',r:10},{n:'Piotr Zieliński',p:'CM',r:8},{n:'Kamil Glik',p:'CB',r:7},{n:'Jan Bednarek',p:'CB',r:7},{n:'Matty Cash',p:'RB',r:7},{n:'Bartłomiej Beręczyński',p:'LB',r:7},{n:'Grzegorz Krychowiak',p:'CDM',r:7},{n:'Sebastian Szymański',p:'CAM',r:7},{n:'Arkadiusz Milik',p:'ST',r:7},{n:'Jakub Kamiński',p:'LW',r:7},{n:'Kamil Grosicki',p:'RW',r:7}]},
   swe_2018:{name:'Svezia',season:'2018',country:'🇸🇪',club:'sweden',players:[{n:'Robin Olsen',p:'GK',r:7},{n:'Emil Forsberg',p:'CM',r:8},{n:'Victor Lindelöf',p:'CB',r:8},{n:'Andreas Granqvist',p:'CB',r:7},{n:'Mikael Lustig',p:'RB',r:7},{n:'Martin Olsson',p:'LB',r:7},{n:'Albin Ekdal',p:'CDM',r:7},{n:'Sebastian Larsson',p:'CM',r:7},{n:'Viktor Claesson',p:'RW',r:7},{n:'Marcus Berg',p:'ST',r:7},{n:'Ola Toivonen',p:'ST',r:7},{n:'Jimmy Durmaz',p:'LW',r:7}]},
   por_2022:{name:'Portogallo',season:'2022',country:'🇵🇹',club:'portugal',players:[{n:'Rui Patrício',p:'GK',r:7},{n:'Cristiano Ronaldo',p:'ST',r:9},{n:'Bruno Fernandes',p:'CAM',r:9},{n:'Bernardo Silva',p:'CM',r:9},{n:'Gonçalo Ramos',p:'ST',r:8},{n:'Pepe',p:'CB',r:8},{n:'Rúben Dias',p:'CB',r:8},{n:'João Cancelo',p:'RB',r:8},{n:'Raphael Guerreiro',p:'LB',r:8},{n:'Rafael Leão',p:'LW',r:8},{n:'João Félix',p:'CAM',r:8},{n:'William Carvalho',p:'CDM',r:7}]},
-  hun_1962:{name:'Ungheria',season:'1962',country:'🇭🇺',club:'hungary',players:[{n:'Gyula Grosics',p:'GK',r:8},{n:'Flórián Albert',p:'ST',r:9},{n:'Lajos Tichy',p:'ST',r:8},{n:'Kálmán Mészöly',p:'CM',r:8},{n:'János Göröcs',p:'CAM',r:7},{n:'Ernő Solymosi',p:'CDM',r:7},{n:'Imre Fenyvesi',p:'LW',r:7},{n:'Sándor Mátrai',p:'CB',r:7},{n:'Jenő Dalnoki',p:'RB',r:7},{n:'Pál Várhidi',p:'LB',r:7},{n:'Ferenc Sipos',p:'RW',r:7},{n:'István Kuharszky',p:'CB',r:7}]}
+  hun_1962:{name:'Ungheria',season:'1962',country:'🇭🇺',club:'hungary',players:[{n:'Gyula Grosics',p:'GK',r:8},{n:'Flórián Albert',p:'ST',r:9},{n:'Lajos Tichy',p:'ST',r:8},{n:'Kálmán Mészöly',p:'CM',r:8},{n:'János Göröcs',p:'CAM',r:7},{n:'Ernő Solymosi',p:'CDM',r:7},{n:'Imre Fenyvesi',p:'LW',r:7},{n:'Sándor Mátrai',p:'CB',r:7},{n:'Jenő Dalnoki',p:'RB',r:7},{n:'Pál Várhidi',p:'LB',r:7},{n:'Ferenc Sipos',p:'RW',r:7},{n:'István Kuharszky',p:'CB',r:7}]},
 };
-
 
 const TOURNAMENTS = [
   {id:'pioneers', name:'European Pioneers', years:'1960–80', emoji:'🏙️',
@@ -254,10 +245,10 @@ const TOURNAMENTS = [
    desc:'Superstar signings, Hollywood glamour and true artistry. The era of untouchable names.',
    teams:['rm_0102','int_0203','mil_0203','juve_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','ars_0506','che_0506','mil_0607']},
   {id:'cr7pep', name:'CR7 & Pep', years:'2007–12', emoji:'🔴',
-   desc:"Ronaldo's rise meets Guardiola's revolution. Two titans redefine football.",
+   desc:'Ronaldo\'s rise meets Guardiola\'s revolution. Two titans redefine football.',
    teams:['mu_0708','ars_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','mci_1112']},
   {id:'decima', name:'La Decima Era', years:'2012–15', emoji:'🏅',
-   desc:"Madrid's obsession made real. And three squads that nearly stopped them.",
+   desc:'Madrid\'s obsession made real. And three squads that nearly stopped them.',
    teams:['bay_1213','bvb_1213','che_1112','atm_1314','bar_1415','juv_1415']},
   {id:'modern', name:'Modern Masters', years:'2015–20', emoji:'👑',
    desc:'Pressing intensity, Mbappe at 18 and a Champions League comeback for the ages.',
@@ -268,8 +259,8 @@ const TOURNAMENTS = [
   {id:'alltime', name:'All Time', years:'1961–2025', emoji:'🌍',
    desc:'Every legendary squad. No era limits. The ultimate Decempionz draft pool.',
    teams:['ben_6162','int_6465','rm_6566','cel_6667','mu_6768','mil_6869','fey_6970','aja_7172','bay_7475','liv_7677','not_7980','ham_8283','ast_8182','liv_8384','juv_8485','ste_8586','por_8687','psv_8788','mil_8889','red_9091','bar_9192','mars_9293','aja_9495','mil_9394','juv_9596','bvb_9697','mu_9899','val_0001','bay_0001','rm_0102','mil_0203','juve_0203','ars_0304','mu_0203','por_0304','liv_0405','bar_0506','ars_0506','che_0506','mil_0607','mu_0708','ars_0708','bar_0809','che_0809','bay_0910','int_0910','mu_1011','bay_1213','bvb_1213','che_1112','atm_1314','bar_1415','atm_1516','mon_1617','rm_1718','rom_1718','tot_1819','liv_1819','mci_1819','bay_1920','che_2021','rm_2122','mci_2223','rm_9798','juv_9798','bay_9899','gal_9900','rm_5960','glad_7677','sam_9192','juv_1415','aja_1819','int_0203','mci_1112','por_2122','psg_1920','psg_2122','atm_1920','inter_2223','ars_2425','rm_2324','bvb_2324','psg_2425'],
-   allTime:true}];
-
+   allTime:true},
+];
 
 const COPA_TOURNAMENTS = [
   {id:'copa_pioneros', name:'Los Pioneros', years:'1960–75', emoji:'🏅',
@@ -277,50 +268,40 @@ const COPA_TOURNAMENTS = [
    teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172','pen_6566','rac_6768']},
   {id:'copa_dorados', name:'Años Dorados', years:'1976–92', emoji:'⭐',
    desc:'Zico, il Bocha, Higuita visionario. L\'era d\'oro della Copa Libertadores.',
-   teams:['boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091','cru_7677','oli_7980','arj_8485','oli_9091']},
+   teams:['boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091','cru_7677','oli_7980','arj_8485','oli_9091','pen_8182','ind_8384','nat_7980','nat_8889']},
   {id:'copa_clasica', name:'Era Clásica', years:'1992–2007', emoji:'🔵',
    desc:'São Paulo dominante, River di Francescoli, Boca di Riquelme e Tévez. Il decennio d\'oro.',
-   teams:['sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607','vel_9394','gre_9596','cru_9697','vas_9899','cal_0304','sao_0506']},
+   teams:['sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607','vel_9394','gre_9596','cru_9697','vas_9899','cal_0304','sao_0506','oli_0102']},
   {id:'copa_moderna', name:'Era Moderna', years:'2008–2024', emoji:'🚀',
    desc:'Neymar a Santos, il Superclásico 2018, Flamengo di Jorge Jesus. Il Brasile conquista tutto.',
    teams:['san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324','atm_1314','riv_1516','est_0910','int_1011','cor_1213','slo_1415','gre_1718','bot_2425','ldu_0708','atl_1617']},
   {id:'copa_alltime', name:'All Time', years:'1960–2024', emoji:'🌎',
    desc:'Tutte le leggende sudamericane senza limite d\'era. Il draft definitivo della Libertadores.',
-   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172',
-          'boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091',
-          'sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607',
-          'san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324',
-          'pen_6566','rac_6768','cru_7677','oli_7980',
-          'vel_9394','gre_9596','cru_9697','vas_9899',
-          'atm_1314','riv_1516','est_0910','int_1011','cor_1213','slo_1415','gre_1718','bot_2425',
-          'arj_8485','oli_9091','cal_0304','sao_0506','ldu_0708','atl_1617','pen_8182','ind_8384','oli_0102','nat_7980','nat_8889'],
-   allTime:true}
+   teams:['pen_6061','san_6263','ind_6465','est_6870','ind_7275','nac_7172','boc_7778','fla_8182','gre_8384','riv_8687','atl_8990','col_9091','sao_9293','riv_9596','pal_9900','boc_0001','boc_0304','int_0607','san_1112','riv_1819','fla_1920','pal_2021','fla_2223','flu_2324','pen_6566','rac_6768','cru_7677','oli_7980','vel_9394','gre_9596','cru_9697','vas_9899','atm_1314','riv_1516','est_0910','int_1011','cor_1213','slo_1415','gre_1718','bot_2425','arj_8485','oli_9091','cal_0304','sao_0506','ldu_0708','atl_1617','pen_8182','ind_8384','oli_0102','nat_7980','nat_8889'],
+   allTime:true},
 ];
 
-
 const WC_TOURNAMENTS=[
-  {id:'wc_pionieri',name:'I Pionieri',years:'1930–1954',emoji:'🏅',
+  {id:'wc_pionieri', name:'I Pionieri', years:'1930–1954', emoji:'🏅',
    desc:'Uruguay biscampione in casa, l\'Italia di Pozzo vince due volte, l\'Ungheria di Puskás e Kocsis incanta il mondo.',
    teams:['uru_1930','arg_1930','ita_1934','cze_1934','ita_1938','hun_1938','uru_1950','bra_1950','ger_1954','hun_1954']},
-  {id:'wc_pele',name:"L'Era di Pelé",years:'1958–1970',emoji:'⭐',
+  {id:'wc_pele', name:'L\'Era di Pelé', years:'1958–1970', emoji:'⭐',
    desc:'Il Brasile di Pelé domina tre edizioni, l\'Inghilterra vince in casa, il Portogallo di Eusébio sorprende tutti.',
-   teams:['bra_1958','swe_1958','fra_1958','ger_1958','bra_1962','cze_1962','chi_1962','eng_1966','ger_1966','por_1966','ussr_1966','bra_1970','ita_1970']},
-  {id:'wc_totale',name:'Calcio Totale',years:'1974–1982',emoji:'🔵',
+   teams:['bra_1958','swe_1958','fra_1958','ger_1958','bra_1962','cze_1962','chi_1962','eng_1966','ger_1966','por_1966','ussr_1966','bra_1970','ita_1970','hun_1962']},
+  {id:'wc_totale', name:'Calcio Totale', years:'1974–1982', emoji:'🔵',
    desc:'La Germania di Beckenbauer campione, l\'Olanda di Cruyff rivoluziona il gioco, l\'Italia di Zoff e Rossi trionfa.',
    teams:['ger_1974','ned_1974','pol_1974','arg_1978','ned_1978','bra_1978','ita_1982','bra_1982','ger_1982','pol_1982','fra_1982']},
-  {id:'wc_campioni',name:'Era dei Campioni',years:'1986–1994',emoji:'🔴',
+  {id:'wc_campioni', name:'Era dei Campioni', years:'1986–1994', emoji:'🔴',
    desc:'Maradona leggendario con l\'Argentina, la Germania efficace di Matthäus, il Brasile di Romário, il Baggio delle notti italiane.',
-   teams:['arg_1986','ger_1986','fra_1986','bra_1986','mex_1986','ger_1990','arg_1990','ita_1990','eng_1990','cmr_1990','yug_1990','bra_1994','ita_1994','bul_1994','rom_1994','swe_1994','nga_1994']},
-  {id:'wc_tattica',name:'Rivoluzione Tattica',years:'1998–2006',emoji:'🚀',
+   teams:['arg_1986','ger_1986','fra_1986','bra_1986','mex_1986','ger_1990','arg_1990','ita_1990','eng_1990','cmr_1990','yug_1990','bra_1994','ita_1994','bul_1994','rom_1994','swe_1994','nga_1994','esp_1986','esp_1994']},
+  {id:'wc_tattica', name:'Rivoluzione Tattica', years:'1998–2006', emoji:'🚀',
    desc:'La Francia di Zidane campione in casa, il Brasile di Ronaldo inarrestabile, l\'Italia campione in Germania con Buffon e Pirlo.',
-   teams:['fra_1998','bra_1998','cro_1998','ned_1998','bra_2002','ger_2002','tur_2002','kor_2002','sen_2002','ita_2006','fra_2006','ger_2006','por_2006']},
-  {id:'wc_moderna',name:'Era Moderna',years:'2010–2022',emoji:'🌟',
+   teams:['fra_1998','bra_1998','cro_1998','ned_1998','bra_2002','ger_2002','tur_2002','kor_2002','sen_2002','ita_2006','fra_2006','ger_2006','por_2006','esp_2002']},
+  {id:'wc_moderna', name:'Era Moderna', years:'2010–2022', emoji:'🌟',
    desc:'La Spagna del tiki-taka, la Germania del falso nueve, la Francia campione bis, l\'Argentina di Messi finalmente campione.',
-   teams:['esp_2010','ned_2010','uru_2010','ger_2014','arg_2014','bra_2014','ned_2014','col_2014','fra_2018','cro_2018','bel_2018','arg_2022','fra_2022','mar_2022','cro_2022']},
-  {id:'wc_alltime',name:'All Time',years:'1930–2022',emoji:'🌍',
+   teams:['esp_2010','ned_2010','uru_2010','ger_2014','arg_2014','bra_2014','ned_2014','col_2014','fra_2018','cro_2018','bel_2018','arg_2022','fra_2022','mar_2022','cro_2022','eng_2018','pol_2022','swe_2018','por_2022']},
+  {id:'wc_alltime', name:'All Time', years:'1930–2022', emoji:'🌍',
    desc:'Tutte le leggende mondiali senza limite di era. Il draft definitivo della Coppa del Mondo.',
    teams:['uru_1930','arg_1930','ita_1934','cze_1934','ita_1938','hun_1938','uru_1950','bra_1950','ger_1954','hun_1954','bra_1958','swe_1958','bra_1962','cze_1962','eng_1966','ger_1966','por_1966','bra_1970','ita_1970','ger_1974','ned_1974','pol_1974','arg_1978','ned_1978','bra_1978','ita_1982','bra_1982','ger_1982','pol_1982','fra_1982','arg_1986','ger_1986','fra_1986','bra_1986','ger_1990','arg_1990','ita_1990','eng_1990','bra_1994','ita_1994','bul_1994','fra_1998','bra_1998','cro_1998','ned_1998','bra_2002','ger_2002','tur_2002','kor_2002','ita_2006','fra_2006','ger_2006','por_2006','esp_2010','ned_2010','ger_2014','arg_2014','bra_2014','fra_2018','cro_2018','bel_2018','arg_2022','fra_2022','mar_2022','cro_2022','ger_1958','fra_1958','chi_1962','ussr_1966','rom_1994','swe_1994','uru_2010','ned_2014','mex_1986','cmr_1990','yug_1990','nga_1994','sen_2002','col_2014','esp_1986','esp_1994','esp_2002','eng_2018','pol_2022','swe_2018','por_2022','hun_1962'],
    allTime:true},
 ];
-
-
