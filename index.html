@@ -3721,7 +3721,7 @@ function showEraGrid(){
       +'<div class="era-years">'+trn.years+'</div></div>'
       +'<div style="text-align:right"><div style="font-size:.7rem;color:var(--mut)">avg str</div>'
       +'<div style="font-size:1rem;font-weight:900;color:var(--gold)">'+avgStr+'</div></div></div>'
-      +'<div class="era-desc">'+(t('era.'+trn.id+'.desc')||trn.desc)+'</div>'
+      +'<div class="era-desc">'+((STRINGS[G.lang]&&STRINGS[G.lang]['era.'+trn.id+'.desc'])||(STRINGS.en&&STRINGS.en['era.'+trn.id+'.desc'])||(STRINGS.it&&STRINGS.it['era.'+trn.id+'.desc'])||trn.desc)+'</div>'
       +'<div class="era-teams">'+trn.teams.map(function(id){
         var tm=_teamDb[id];return '<span class="era-team-chip">'+tm.country+' '+tm.name+' ('+tm.season+')</span>';
       }).join('')+'</div></div>';
