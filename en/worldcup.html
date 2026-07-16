@@ -145,7 +145,7 @@
   </header>
 
   <div class="lang-bar">
-    <a class="lang-btn" href="/en/worldcup.html" style="text-decoration:none;display:inline-block">🇮🇹 Italiano</a>
+    <a class="lang-btn" href="/worldcup.html" style="text-decoration:none;display:inline-block">🇮🇹 Italiano</a>
     <a class="lang-btn active" href="/en/worldcup.html" style="text-decoration:none;display:inline-block">🇬🇧 English</a>
   </div>
 
@@ -1014,5 +1014,15 @@
     <a href="/en/about.html">About</a>
   </footer>
 
+
+<script>
+function toggleSquad(id){
+  var r=document.getElementById('roster-'+id);
+  var a=document.getElementById('arrow-'+id);
+  if(!r)return;
+  r.classList.toggle('open');
+  if(a)a.classList.toggle('open');
+}
+</script>
 </body>
 </html>
