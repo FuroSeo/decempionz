@@ -1,7 +1,8 @@
 <?php
-/* duel-result.php — chiusura duello in DUE FASI (la rosa di A resta nascosta finché B non committa).
-   POST {id, phase:'team',   team:{rosa di B}}   → status waiting→simulating, ritorna le due rose (per la sim sul client di B)
-   POST {id, phase:'result', result:{serie bo3}} → status simulating→done (one-shot) */
+/* duel-result.php — chiusura duello in due fasi.
+   1) B committa la rosa; il server genera e custodisce la serie autoritativa.
+   2) Il client segnala la fine del proprio flusso; il server ignora il risultato client
+      e pubblica esclusivamente la serie già generata lato server. */
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: https://decempionz.com');
@@ -30,35 +31,73 @@ if (!in_array($phase, ['team', 'result'], true)) {
     http_response_code(400); echo json_encode(['error' => 'invalid phase']); exit;
 }
 
-/* Rate limit: 1 invio ogni 5 secondi per IP, PER FASE.
-   Le due fasi legittime possono arrivare una dietro l'altra senza bloccarsi a vicenda. */
+/* Rate limit atomico: 1 invio ogni 5 secondi per IP, per fase. */
 $ip = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateDir = sys_get_temp_dir() . '/dcz_duels/';
 @mkdir($rateDir, 0755, true);
 $rf = $rateDir . 'r_' . $phase . '_' . $ip . '.tmp';
-if (file_exists($rf) && (time() - filemtime($rf)) < 5) {
+$rateFp = @fopen($rf, 'c+');
+if (!$rateFp || !flock($rateFp, LOCK_EX)) {
+    if ($rateFp) fclose($rateFp);
+    http_response_code(500); echo json_encode(['error' => 'internal']); exit;
+}
+$last = (int)trim(stream_get_contents($rateFp));
+if ($last > 0 && (time() - $last) < 5) {
+    flock($rateFp, LOCK_UN); fclose($rateFp);
     http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
 }
-touch($rf);
+rewind($rateFp);
+ftruncate($rateFp, 0);
+fwrite($rateFp, (string)time());
+fflush($rateFp);
+flock($rateFp, LOCK_UN);
+fclose($rateFp);
 
-require __DIR__ . '/duel-lib.php';
+require_once __DIR__ . '/duel-lib.php';
+require_once __DIR__ . '/duel-engine.php';
+require_once __DIR__ . '/runtime-backup-lib.php';
 
-/* Incrementa game-counter.json come fa game-counter.php (stessa logica, stesso file) */
+/* Incrementa game-counter.json con la stessa semantica fail-safe dell'endpoint dedicato. */
 function dcz_bump_games_counter() {
     $file = __DIR__ . '/game-counter.json';
-    $MIN_TOTAL = 318;
+    $minimum = 318;
     $fp = @fopen($file, 'c+');
-    if (!$fp) return;
-    if (!flock($fp, LOCK_EX)) { fclose($fp); return; }
+    if (!$fp || !flock($fp, LOCK_EX)) {
+        if ($fp) fclose($fp);
+        return;
+    }
     $raw = stream_get_contents($fp);
-    $d = $raw ? json_decode($raw, true) : null;
-    $total = (isset($d['total']) && (int)$d['total'] >= $MIN_TOTAL) ? (int)$d['total'] + 1 : $MIN_TOTAL + 1;
+    if (trim($raw) !== '') {
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded) || !isset($decoded['total']) || !is_numeric($decoded['total'])) {
+            flock($fp, LOCK_UN); fclose($fp);
+            error_log('Decempionz duel counter skipped: counter storage corrupt.');
+            return;
+        }
+        dcz_backup_snapshot('game-counter', 'main', $raw, 30, 90);
+    } else {
+        $decoded = [];
+    }
+    $current = isset($decoded['total']) ? (int)$decoded['total'] : $minimum;
+    $total = max($minimum, $current) + 1;
     rewind($fp);
     ftruncate($fp, 0);
     fwrite($fp, json_encode(['total' => $total]));
     fflush($fp);
     flock($fp, LOCK_UN);
     fclose($fp);
+}
+
+function dcz_duel_generate_authoritative_result($teamA, $teamB) {
+    for ($attempt = 0; $attempt < 3; $attempt++) {
+        $seed = random_int(1, 0x7ffffffe);
+        $result = dcz_duel_simulate_series($teamA, $teamB, $seed);
+        $clean = dcz_sanitize_result($result);
+        if ($clean !== null) {
+            return ['seed' => $seed, 'result' => $clean];
+        }
+    }
+    return null;
 }
 
 $id = preg_replace('/[^a-zA-Z0-9]/', '', (string)($data['id'] ?? ''));
@@ -70,14 +109,14 @@ if (!file_exists($file)) {
     http_response_code(404); echo json_encode(['error' => 'not found']); exit;
 }
 
-/* Lock esclusivo per tutta la transazione (anti doppio-join / doppio-risultato) */
+/* Lock esclusivo per tutta la transazione (anti doppio-join / doppio-risultato). */
 $fp = fopen($file, 'c+');
 if (!$fp || !flock($fp, LOCK_EX)) {
     if ($fp) fclose($fp);
     http_response_code(500); echo json_encode(['error' => 'lock failed']); exit;
 }
 $d = json_decode(stream_get_contents($fp), true);
-if (!$d) {
+if (!is_array($d)) {
     flock($fp, LOCK_UN); fclose($fp);
     http_response_code(500); echo json_encode(['error' => 'corrupt duel']); exit;
 }
@@ -112,37 +151,69 @@ if ($phase === 'team') {
         flock($fp, LOCK_UN); fclose($fp);
         http_response_code(400); echo json_encode(['error' => 'dynasty duel requires a club']); exit;
     }
+
+    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team);
+    if ($generated === null) {
+        flock($fp, LOCK_UN); fclose($fp);
+        http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
+    }
+
     $d['status'] = 'simulating';
     $d['b'] = $team;
+    /* Campi interni: duel-join.php non deve mai esporli al browser. */
+    $d['_serverSeed'] = $generated['seed'];
+    $d['_serverEngine'] = DCZ_DUEL_ENGINE_VERSION;
+    $d['_serverResult'] = $generated['result'];
     if (!dcz_write_and_close($fp, $d)) {
         http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
     }
-    /* solo ORA la rosa di A viene rivelata: B è già vincolato alla sua */
+
+    /* Solo ora la rosa di A viene rivelata: B è già vincolato alla sua. */
     echo json_encode(['ok' => true, 'a' => $d['a'], 'b' => $d['b']], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-/* phase === 'result' */
+/* phase === 'result'. Il risultato inviato dal client è intenzionalmente ignorato. */
 if (($d['status'] ?? '') !== 'simulating' || !is_array($d['b'] ?? null)) {
     flock($fp, LOCK_UN); fclose($fp);
     http_response_code(409); echo json_encode(['error' => 'duel not simulating', 'status' => $d['status'] ?? '?']); exit;
 }
-$result = dcz_sanitize_result($data['result'] ?? null);
+
+$result = dcz_sanitize_result($d['_serverResult'] ?? null);
+$engine = (string)($d['_serverEngine'] ?? '');
 if ($result === null) {
-    flock($fp, LOCK_UN); fclose($fp);
-    http_response_code(400); echo json_encode(['error' => 'invalid result']); exit;
+    /* Migrazione trasparente dei vecchi duelli rimasti in stato simulating. */
+    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $d['b']);
+    if ($generated === null) {
+        flock($fp, LOCK_UN); fclose($fp);
+        http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
+    }
+    $result = $generated['result'];
+    $engine = DCZ_DUEL_ENGINE_VERSION;
 }
+
 $d['status'] = 'done';
 $d['result'] = $result;
 $d['doneAt'] = date('c');
+$d['integrity'] = [
+    'result' => 'server-authoritative',
+    'engine' => $engine !== '' ? $engine : DCZ_DUEL_ENGINE_VERSION,
+    'squad' => 'client-submitted',
+];
+unset($d['_serverSeed'], $d['_serverEngine'], $d['_serverResult']);
 if (!dcz_write_and_close($fp, $d)) {
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
 }
 
-/* il duello chiuso conta come una partita giocata nel contatore globale (una volta sola, qui) */
+/* Il duello chiuso conta una sola volta nel contatore globale. */
 dcz_bump_games_counter();
 
+/* Compatibilità con il client monolitico attuale: su 409 esso apre subito la pagina canonica.
+   Così non riproduce la serie casuale locale, che non è più la fonte autoritativa. */
+http_response_code(409);
 echo json_encode([
-    'ok'  => true,
+    'ok' => true,
+    'finalized' => true,
+    'authoritative' => true,
     'url' => 'https://decempionz.com/duel.php?id=' . $id,
 ]);
