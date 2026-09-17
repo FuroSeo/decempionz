@@ -18,7 +18,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
 - **5.16.0** — save export/import for all `dcz_*` localStorage keys and Chemistry explanation in How to Play.
-- **Duel integrity 2026-09-17** — newly finalized Duel results are generated server-side after both squads are committed; client-reported match scores are no longer authoritative. Squad provenance remains client-submitted and structurally validated.
+- **Duel integrity 2026-09-17** — newly finalized Duel results are generated server-side atomically when player B commits the second squad; client-reported match scores are no longer authoritative. Squad provenance remains client-submitted and structurally validated.
 - **Infrastructure 2026-09-17** — Service Worker cache namespace moved to `decempionz-v5.16.4`; dynamic endpoints bypass cache; navigation timeout and controlled offline fallback added. This did **not** bump the public app version.
 - **Workflow 2026-09-17** — branch/PR/CI workflow introduced; direct legacy `_push.bat` deployment retired; Dataset Editor and Studio recovered and versioned as non-deployed tools.
 
@@ -207,15 +207,17 @@ Production challenge configuration/state is server-maintained and excluded from 
 
 Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php` and the server-side simulation engine in `duel-engine.php`.
 
-The protocol prevents the second player from seeing the first player's hidden squad before committing their own squad. After both squads are committed, the server generates the authoritative best-of-3 result and keeps the seed/precomputed series private until finalization. `duel-result.php` does not use client-reported scores to choose the winner.
+The protocol prevents the second player from seeing the first player's hidden squad before committing their own squad. Under the same exclusive server lock that accepts player B's squad, the backend generates fresh server randomness, computes the authoritative best-of-3 and writes the final result. New Duel records therefore move directly from `waiting` to `done` before A's squad is returned to B.
 
 The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the current Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; moving result authority server-side is not intended as a balance change.
 
-Squad provenance is still client-submitted: the backend validates formation, tactic, 11 unique player names, supported positions and the dataset-compatible rating range, but it does not yet prove that every player came from the exact draft offers shown in the browser. The detailed trust model and migration rules live in `COMPETITIVE_INTEGRITY.md`.
+The current browser can still calculate a local series for compatibility, but `duel-result.php` ignores that client result. Its follow-up result request receives the already-finalized state and sends B to the canonical Duel page, so a locally generated outcome cannot overwrite or masquerade as the official result. The redirect also restores B's local Duel history through a short-lived HttpOnly marker.
 
-Historical completed duels remain readable as legacy client-reported records. A historical duel left in `simulating` state receives a fresh server-authoritative result when finalized.
+Squad provenance is still client-submitted: the backend validates formation, tactic, supported positions and the dataset-compatible 6–10 rating range, but it does not yet prove that every player came from the exact draft offers shown in the browser. Display names are not canonical identities because the same historical label can legitimately occur in multiple squads/eras. The detailed trust model and migration rules live in `COMPETITIVE_INTEGRITY.md`.
 
-With the current monolithic client, player B is redirected to the canonical Duel result page after server finalization rather than replaying a locally generated series that may differ from the authoritative result. A future client refactor can restore the animation by consuming the server result directly.
+Historical completed duels remain readable as legacy client-reported records. A historical duel left in `simulating` state receives a fresh server-authoritative result when its next finalization request arrives.
+
+With the current monolithic client, player B is redirected to the canonical Duel result page rather than replaying a locally generated series that may differ from the authoritative result. A future client refactor can restore the in-app animation by consuming the server result directly.
 
 Classic and Dynasty duel variants remain supported. Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
 
