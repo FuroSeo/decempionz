@@ -4,6 +4,7 @@ header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: https://decempionz.com');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 $file = __DIR__ . '/global-stats.json';
 
@@ -138,6 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['error'=>'io error']);
         exit;
     }
+
+    // Snapshot dello stato precedente mentre il lock esclusivo è ancora attivo.
+    dcz_backup_snapshot('global-stats', 'main', $content, 30, 90);
+
     rewind($fh);
     ftruncate($fh, 0);
     $written = fwrite($fh, $encoded);
