@@ -42,3 +42,6 @@ jobs:
           while IFS= read -r -d '' file; do
             php -l "$file"
           done < <(find . -type f -name '*.php' -not -path './vendor/*' -print0)
+
+      - name: Runtime backup tests
+        run: php scripts/test_runtime_backup.php
