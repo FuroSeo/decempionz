@@ -136,6 +136,7 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         "GAME_MANUAL.md",
         "VADEMECUM.md",
         "ROADMAP.md",
+        "RUNTIME_RECOVERY.md",
         "RECOVERY_INVENTORY.md",
         "dataset-editor.html",
         "_studio.html",
@@ -147,6 +148,37 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
     for filename in local_only_files:
         if filename not in deploy_yml:
             fail(f"Deploy exclusion missing for local/internal file: {filename}")
+
+
+def validate_runtime_backup() -> None:
+    htaccess = read(".htaccess")
+    backup_lib = read("runtime-backup-lib.php")
+    recovery = read("runtime-recovery.php")
+
+    if "PHP_SAPI !== 'cli'" not in recovery:
+        fail("Runtime recovery tool must refuse web execution")
+    for filename in ("runtime-backup-lib.php", "runtime-recovery.php"):
+        if filename.replace(".", "\\.") not in htaccess and filename not in htaccess:
+            fail(f".htaccess must deny direct HTTP access to {filename}")
+
+    if "dirname(__DIR__)" not in backup_lib or "decempionz-runtime-backups" not in backup_lib:
+        fail("Runtime backups must default outside public_html")
+    if "json_decode" not in backup_lib:
+        fail("Runtime backup library must validate JSON before snapshotting")
+
+    writers = {
+        "game-counter.php": "'game-counter', 'main'",
+        "global-stats.php": "'global-stats', 'main'",
+        "daily-submit.php": "'daily', $day",
+        "challenge-submit.php": "'challenge', $weekId",
+        "hof-submit.php": "'hall-of-fame', 'main'",
+    }
+    for filename, marker in writers.items():
+        text = read(filename)
+        if "runtime-backup-lib.php" not in text:
+            fail(f"Runtime backup library not loaded by durable writer: {filename}")
+        if "dcz_backup_snapshot(" not in text or marker not in text:
+            fail(f"Runtime snapshot hook missing from durable writer: {filename}")
 
 
 def validate_local_html_tools() -> None:
@@ -203,6 +235,7 @@ def main() -> int:
     validate_versions(index_html, sw_js)
     validate_service_worker(sw_js)
     validate_deploy_workflow(deploy_yml)
+    validate_runtime_backup()
     validate_local_html_tools()
 
     for message in NOTES:

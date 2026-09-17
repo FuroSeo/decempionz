@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -36,7 +37,6 @@ if (!preg_match('/^\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])$/', $weekId)) {
 
 $isRetro = !empty($data['isRetro']);
 
-// Accetta soltanto settimane realmente configurate; le entry non-retro devono essere nella finestra attiva.
 $configFile = __DIR__ . '/challenge-config.json';
 $config = null;
 if (file_exists($configFile)) {
@@ -102,7 +102,6 @@ $entry = [
     'submittedAt' => date('c'),
 ];
 
-// Throttle atomico per IP+nickname+settimana: evita burst/doppio invio senza penalizzare CGNAT intere.
 $rateDir = sys_get_temp_dir() . '/dcz_challenge/';
 @mkdir($rateDir, 0755, true);
 $rateKey = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? 'x') . '_' . $weekId . '_' . mb_strtolower($nick) . ($isRetro ? '_retro' : ''));
@@ -160,6 +159,10 @@ if (count($db['entries']) >= 2000) {
     echo json_encode(['error' => 'classifica piena']);
     exit;
 }
+
+// Weekly Challenge: 20 versioni / 60 giorni per ogni settimana.
+dcz_backup_snapshot('challenge', $weekId, $content, 20, 60);
+
 $db['entries'][] = $entry;
 $encoded = json_encode($db, JSON_UNESCAPED_UNICODE);
 if ($encoded === false) {

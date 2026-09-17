@@ -34,8 +34,8 @@
   Header set Cache-Control "public, max-age=31536000, immutable"
 </FilesMatch>
 
-# File riservati: mai serviti via HTTP (PHP continua a leggerli da disco)
-<FilesMatch "^(hof-config\.php|challenge-config\.json|GAME_MANUAL\.md|hall-of-fame-pending\.json|duel-lib\.php)$">
+# File riservati: mai serviti via HTTP (PHP continua a leggerli da disco).
+<FilesMatch "^(hof-config\.php|challenge-config\.json|GAME_MANUAL\.md|hall-of-fame-pending\.json|duel-lib\.php|runtime-backup-lib\.php|runtime-recovery\.php)$">
   Require all denied
 </FilesMatch>
 

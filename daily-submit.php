@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -27,14 +28,12 @@ if (!is_array($data)) {
     exit;
 }
 
-// Validazione giorno (YYYY-MM-DD)
 $day = preg_replace('/[^0-9\-]/', '', (string)($data['day'] ?? ''));
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
     http_response_code(400);
     echo json_encode(['error' => 'invalid day']);
     exit;
 }
-// Accetta oggi, ieri o domani per tollerare i fusi orari tra client e server.
 $today = date('Y-m-d');
 $yest  = date('Y-m-d', time() - 86400);
 $tom   = date('Y-m-d', time() + 86400);
@@ -72,8 +71,6 @@ $entry = [
     'submittedAt' => date('c'),
 ];
 
-// Rate limit atomico: 1 invio per IP+nickname+giorno nelle 24 ore.
-// La combinazione evita di bloccare intere reti mobili CGNAT sulla sola base dell'IP.
 $rateDir = sys_get_temp_dir() . '/dcz_daily/';
 @mkdir($rateDir, 0755, true);
 $rateKey = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? 'x') . '_daily_' . $day . '_' . mb_strtolower($nick));
@@ -131,6 +128,10 @@ if (count($db['entries']) >= 2000) {
     echo json_encode(['error' => 'full']);
     exit;
 }
+
+// Daily è attivo per poco tempo: 15 versioni / 30 giorni per ogni data sono sufficienti.
+dcz_backup_snapshot('daily', $day, $content, 15, 30);
+
 $db['entries'][] = $entry;
 $encoded = json_encode($db, JSON_UNESCAPED_UNICODE);
 if ($encoded === false) {
@@ -156,7 +157,6 @@ if ($written === false) {
     exit;
 }
 
-// Segna il rate limit solo dopo un salvataggio riuscito, mantenendo il lock fino a qui.
 rewind($rateFp);
 ftruncate($rateFp, 0);
 fwrite($rateFp, (string)time());

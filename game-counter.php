@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 $file = __DIR__ . '/game-counter.json';
 $MIN_TOTAL = 318; // valore minimo di partenza
@@ -51,16 +52,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $raw = stream_get_contents($fp);
-    $d = $raw ? json_decode($raw, true) : null;
+    if (trim($raw) !== '') {
+        $d = json_decode($raw, true);
+        if (!is_array($d) || !isset($d['total']) || !is_numeric($d['total'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            http_response_code(500);
+            echo json_encode(['error' => 'counter storage corrupt']);
+            exit;
+        }
+        dcz_backup_snapshot('game-counter', 'main', $raw, 30, 90);
+    } else {
+        $d = [];
+    }
     $current = isset($d['total']) ? (int)$d['total'] : $MIN_TOTAL;
     $total = max($MIN_TOTAL, $current) + 1;
 
     rewind($fp);
     ftruncate($fp, 0);
-    fwrite($fp, json_encode(['total' => $total]));
+    $written = fwrite($fp, json_encode(['total' => $total]));
     fflush($fp);
     flock($fp, LOCK_UN);
     fclose($fp);
+    if ($written === false) {
+        http_response_code(500);
+        echo json_encode(['error' => 'io error']);
+        exit;
+    }
 
     echo json_encode(['total' => $total]);
     exit;
