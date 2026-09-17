@@ -24,9 +24,18 @@ Use one branch per logical change:
 3. Run repository validation and syntax checks.
 4. Open a pull request against `main`.
 5. Review the diff and confirm that unrelated files are unchanged.
-6. Merge only after the change is approved for production.
-7. Confirm the FTP deploy workflow completes successfully.
-8. Perform a smoke test on the live site.
+6. Update `GAME_MANUAL.md` in the same PR when the change affects gameplay, rules, modes, scoring, datasets, Daily/Weekly, Duel, Dynasty, progression or significant UX. For purely technical changes, explicitly state `No manual impact` in the PR.
+7. Merge only after the change is explicitly approved for production.
+8. Confirm the FTP deploy workflow completes successfully.
+9. Perform a smoke test on the live site.
+
+## Canonical documentation
+
+`GAME_MANUAL.md` is the canonical functional record of Decempionz. It must describe the behavior that actually exists in the current code, not planned behavior.
+
+`DEVELOPMENT.md` documents the engineering/release process. `LOCAL_SETUP.md` documents the Windows working-copy setup. `RECOVERY_INVENTORY.md` records what was recovered from the legacy Claude-era workspace.
+
+Because this repository is public, none of these files may contain credentials, private tokens or passwords.
 
 ## Version meanings
 
@@ -51,6 +60,14 @@ The query string in `game-data.js?v=...` invalidates the long-lived browser cach
 Increment it whenever `game-data.js` changes in production.
 
 A future architecture refactor may move these values into a shared release manifest. Until then, their roles must remain explicit and validated.
+
+## Local working copy
+
+The old `C:\Projects\decempionz` workspace and `_push.bat` workflow are retired. `_push.bat` cloned GitHub to a temporary folder, copied a partial file list and pushed directly to `main`, bypassing the current PR/CI process.
+
+A normal local workspace must be a real Git clone of `FuroSeo/decempionz`. Follow `LOCAL_SETUP.md` to migrate safely while preserving the historical folder as an archive.
+
+Recovered developer tools such as `dataset-editor.html`, `_studio.html`, `_build_rose.py` and `_build_i18n.py` are versioned but excluded from FTP deployment. They are still visible in the public GitHub repository, so they must remain free of secrets.
 
 ## Required smoke test
 
@@ -93,4 +110,5 @@ A change is complete only when:
 - automated validation passes;
 - production deployment succeeds;
 - the live feature is smoke-tested;
+- `GAME_MANUAL.md` is updated when the change has functional impact, or the PR explicitly says `No manual impact`;
 - any relevant roadmap item is updated as completed.

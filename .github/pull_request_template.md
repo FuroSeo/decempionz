@@ -2,6 +2,13 @@
 
 Descrivi in poche righe cosa cambia e perché.
 
+## Game Manual
+
+- [ ] `GAME_MANUAL.md` aggiornato perché la PR cambia comportamento/regole/modalità/dati/UX significativa
+- [ ] Oppure: **No manual impact** — modifica puramente tecnica/operativa
+
+> Selezionare una delle due opzioni sopra. Il manuale è il registro funzionale canonico del progetto.
+
 ## Checklist
 
 - [ ] Il cambiamento è limitato a un solo obiettivo logico
@@ -12,6 +19,7 @@ Descrivi in poche righe cosa cambia e perché.
 - [ ] Se cambiano asset/cache del Service Worker, è stato valutato l'aggiornamento del namespace `CACHE`
 - [ ] Gli endpoint PHP e i dati dinamici restano esclusi dalla cache del Service Worker
 - [ ] I file di stato server-side non vengono sovrascritti dal deploy FTP
+- [ ] I tool/documenti interni restano esclusi dal deploy FTP e non contengono segreti
 
 ## Test manuali
 
