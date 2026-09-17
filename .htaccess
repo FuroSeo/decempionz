@@ -6,12 +6,27 @@
   RewriteRule ^ https://decempionz.com%{REQUEST_URI} [L,R=301,NE]
 </IfModule>
 
+# Header di sicurezza compatibili con l'app attuale (che usa ancora JS inline).
+# CSP verra' valutata separatamente quando il codice inline sara' stato isolato.
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
 # Decempionz — cache control
 # index.html e sw.js non devono mai essere cachati dal browser
 <FilesMatch "(index\.html|sw\.js)$">
   Header set Cache-Control "no-cache, no-store, must-revalidate"
   Header set Pragma "no-cache"
   Header set Expires 0
+</FilesMatch>
+
+# Tutti gli endpoint/pagine PHP sono dinamici: niente cache condivisa o browser persistente.
+<FilesMatch "\.php$">
+  Header set Cache-Control "no-store, max-age=0"
+  Header set Pragma "no-cache"
 </FilesMatch>
 
 # Asset statici: cache lunga (cambiano raramente)

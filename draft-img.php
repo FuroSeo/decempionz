@@ -6,14 +6,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405); echo json_encode(['error' => 'method not allowed']); exit;
 }
 
+$maxBody = 600000;
+if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxBody) {
+    http_response_code(413); echo json_encode(['error' => 'too large']); exit;
+}
 $raw = file_get_contents('php://input');
-if (strlen($raw) > 600000) {
+if ($raw === false || strlen($raw) > $maxBody) {
     http_response_code(413); echo json_encode(['error' => 'too large']); exit;
 }
 $data = json_decode($raw, true);
-if (!$data) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
+if (!is_array($data)) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
 
-$id = preg_replace('/[^a-zA-Z0-9]/', '', $data['id'] ?? '');
+// L'upload immagine non deve essere un endpoint ad alta frequenza.
+$rateDir = sys_get_temp_dir() . '/dcz_draft_img/';
+@mkdir($rateDir, 0755, true);
+$rateKey = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown');
+$rateFile = $rateDir . $rateKey . '.tmp';
+if (file_exists($rateFile) && (time() - filemtime($rateFile)) < 5) {
+    http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
+}
+
+$id = preg_replace('/[^a-zA-Z0-9]/', '', (string)($data['id'] ?? ''));
 if (strlen($id) < 6 || strlen($id) > 12) {
     http_response_code(400); echo json_encode(['error' => 'invalid id']); exit;
 }
@@ -34,7 +47,6 @@ $bin = base64_decode(substr($img, 23), true);
 if ($bin === false || strlen($bin) < 1000 || strlen($bin) > 450000) {
     http_response_code(400); echo json_encode(['error' => 'invalid image']); exit;
 }
-// magic bytes JPEG + verifica dimensioni
 if (substr($bin, 0, 3) !== "\xFF\xD8\xFF") {
     http_response_code(400); echo json_encode(['error' => 'not a jpeg']); exit;
 }
@@ -43,5 +55,8 @@ if (!$info || $info[2] !== IMAGETYPE_JPEG || $info[0] < 200 || $info[0] > 2000 |
     http_response_code(400); echo json_encode(['error' => 'bad dimensions']); exit;
 }
 
-file_put_contents($imgFile, $bin, LOCK_EX);
+if (file_put_contents($imgFile, $bin, LOCK_EX) === false) {
+    http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+}
+touch($rateFile);
 echo json_encode(['success' => true]);
