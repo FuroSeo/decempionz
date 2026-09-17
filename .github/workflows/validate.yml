@@ -45,3 +45,6 @@ jobs:
 
       - name: Runtime backup tests
         run: php scripts/test_runtime_backup.php
+
+      - name: Draft storage tests
+        run: php scripts/test_draft_storage.php

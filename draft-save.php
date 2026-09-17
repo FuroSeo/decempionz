@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 $draftsDir = __DIR__ . '/drafts/';
 if (!is_dir($draftsDir)) { @mkdir($draftsDir, 0755, true); }
+require_once __DIR__ . '/draft-storage-lib.php';
 
 function dcz_plain_text($value, $maxLen) {
     $s = mb_substr(trim((string)$value), 0, $maxLen);
@@ -63,25 +64,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 /* ── POST: salva draft ── */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Rate limit: 1 salvataggio ogni 20 secondi per IP
+    // Rate limit atomico: 1 salvataggio ogni 20 secondi per IP.
     $ip = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown');
     $rateDir = sys_get_temp_dir() . '/dcz_drafts/';
     @mkdir($rateDir, 0755, true);
     $rf = $rateDir . $ip . '.tmp';
-    if (file_exists($rf) && (time() - filemtime($rf)) < 20) {
+    $rateFp = @fopen($rf, 'c+');
+    if (!$rateFp || !flock($rateFp, LOCK_EX)) {
+        if ($rateFp) fclose($rateFp);
+        http_response_code(500); echo json_encode(['error' => 'internal']); exit;
+    }
+    $lastSave = (int)trim(stream_get_contents($rateFp));
+    if ($lastSave > 0 && (time() - $lastSave) < 20) {
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
     }
 
     $maxBody = 25000;
     if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxBody) {
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
     }
     $raw = file_get_contents('php://input');
     if ($raw === false || strlen($raw) > $maxBody) {
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
     }
     $data = json_decode($raw, true);
     if (!is_array($data)) {
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(400); echo json_encode(['error' => 'invalid json']); exit;
     }
 
@@ -92,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $validFormations   = ['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5-3-2','5-4-1'];
 
     if (!in_array($data['tournament'] ?? '', $validTournaments, true)) {
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(400); echo json_encode(['error' => 'invalid tournament']); exit;
     }
 
@@ -148,10 +160,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     $encoded = json_encode($payload, JSON_UNESCAPED_UNICODE);
-    if ($encoded === false || file_put_contents($file, $encoded, LOCK_EX) === false) {
+    $tmpFile = $file . '.tmp.' . bin2hex(random_bytes(4));
+    if ($encoded === false || file_put_contents($tmpFile, $encoded, LOCK_EX) === false || !@rename($tmpFile, $file)) {
+        @unlink($tmpFile);
+        flock($rateFp, LOCK_UN); fclose($rateFp);
         http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
     }
-    touch($rf);
+
+    // Grant one-time per l'immagine: il browser riceve solo un cookie HttpOnly breve,
+    // mentre sul server resta esclusivamente l'hash del token.
+    $uploadToken = dcz_draft_create_upload_grant($draftsDir, $id);
+    if ($uploadToken === null) {
+        @unlink($file);
+        flock($rateFp, LOCK_UN); fclose($rateFp);
+        http_response_code(500); echo json_encode(['error' => 'upload grant failed']); exit;
+    }
+    dcz_draft_set_upload_cookie($id, $uploadToken);
+
+    rewind($rateFp);
+    ftruncate($rateFp, 0);
+    fwrite($rateFp, (string)time());
+    fflush($rateFp);
+    flock($rateFp, LOCK_UN);
+    fclose($rateFp);
+
+    // Retention opportunistica, al massimo una scansione ogni 6 ore.
+    dcz_draft_maybe_cleanup($draftsDir);
 
     echo json_encode([
         'id'  => $id,

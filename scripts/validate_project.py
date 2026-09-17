@@ -181,6 +181,45 @@ def validate_runtime_backup() -> None:
             fail(f"Runtime snapshot hook missing from durable writer: {filename}")
 
 
+def validate_draft_storage() -> None:
+    htaccess = read(".htaccess")
+    storage_lib = read("draft-storage-lib.php")
+    draft_save = read("draft-save.php")
+    draft_img = read("draft-img.php")
+
+    protected_markers = ("draft-storage-lib\\.php", "\\.draft-auth")
+    for marker in protected_markers:
+        if marker not in htaccess:
+            fail(f"Draft storage HTTP protection missing from .htaccess: {marker}")
+
+    lib_guards = {
+        "short-lived upload grant": "DCZ_DRAFT_UPLOAD_TTL = 900",
+        "one-year retention": "DCZ_DRAFT_RETENTION_SECONDS = 31536000",
+        "HttpOnly upload cookie": "'httponly' => true",
+        "strict SameSite upload cookie": "'samesite' => 'Strict'",
+        "server-side token hash": "hash('sha256', $token)",
+        "paired draft cleanup": "dcz_draft_cleanup",
+    }
+    for label, fragment in lib_guards.items():
+        if fragment not in storage_lib:
+            fail(f"Draft storage guard missing: {label}")
+
+    if "dcz_draft_create_upload_grant" not in draft_save or "dcz_draft_set_upload_cookie" not in draft_save:
+        fail("Draft creation must issue a short-lived image upload grant")
+    if "dcz_draft_maybe_cleanup" not in draft_save:
+        fail("Draft creation must trigger bounded retention cleanup")
+
+    upload_guards = (
+        "dcz_draft_cookie_token_for_id",
+        "dcz_draft_validate_upload_grant",
+        "dcz_draft_consume_upload_grant",
+        "flock($draftFp, LOCK_EX)",
+    )
+    for marker in upload_guards:
+        if marker not in draft_img:
+            fail(f"Draft image write-once authorization guard missing: {marker}")
+
+
 def validate_local_html_tools() -> None:
     """Syntax-check inline JavaScript in recovered local-only HTML tools."""
     for filename in ("dataset-editor.html", "_studio.html"):
@@ -236,6 +275,7 @@ def main() -> int:
     validate_service_worker(sw_js)
     validate_deploy_workflow(deploy_yml)
     validate_runtime_backup()
+    validate_draft_storage()
     validate_local_html_tools()
 
     for message in NOTES:
