@@ -115,6 +115,22 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         if filename not in deploy_yml:
             fail(f"Deploy exclusion missing for runtime/server file: {filename}")
 
+    local_only_files = (
+        "GAME_MANUAL.md",
+        "VADEMECUM.md",
+        "ROADMAP.md",
+        "RECOVERY_INVENTORY.md",
+        "dataset-editor.html",
+        "_studio.html",
+        "_mock_*.html",
+        "_build_*.py",
+        "_sync_version.py",
+        "tools/**",
+    )
+    for filename in local_only_files:
+        if filename not in deploy_yml:
+            fail(f"Deploy exclusion missing for local/internal file: {filename}")
+
 
 def main() -> int:
     index_html = read("index.html")
