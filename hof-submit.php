@@ -49,7 +49,8 @@ if ($nick === '') {
     exit;
 }
 
-// Doppia barriera: sessione + IP/nickname. La seconda non dipende dai cookie ed evita bypass banali.
+// Doppia barriera: sessione (120s) + IP (10s). L'IP breve blocca spam senza cookie
+// ma resta abbastanza corto da non penalizzare a lungo utenti distinti dietro CGNAT.
 if (isset($_SESSION['hof_last']) && time() - (int)$_SESSION['hof_last'] < 120) {
     http_response_code(429);
     echo json_encode(['error' => 'Hai già inviato un risultato di recente. Aspetta qualche minuto.']);
@@ -57,7 +58,7 @@ if (isset($_SESSION['hof_last']) && time() - (int)$_SESSION['hof_last'] < 120) {
 }
 $rateDir = sys_get_temp_dir() . '/dcz_hof/';
 @mkdir($rateDir, 0755, true);
-$rateKey = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? 'x') . '_' . mb_strtolower($nick));
+$rateKey = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'x');
 $rateFile = $rateDir . $rateKey . '.tmp';
 $rateFp = @fopen($rateFile, 'c+');
 if (!$rateFp || !flock($rateFp, LOCK_EX)) {
@@ -67,11 +68,11 @@ if (!$rateFp || !flock($rateFp, LOCK_EX)) {
     exit;
 }
 $lastSubmit = (int)trim(stream_get_contents($rateFp));
-if ($lastSubmit > 0 && (time() - $lastSubmit) < 120) {
+if ($lastSubmit > 0 && (time() - $lastSubmit) < 10) {
     flock($rateFp, LOCK_UN);
     fclose($rateFp);
     http_response_code(429);
-    echo json_encode(['error' => 'Hai già inviato un risultato di recente. Aspetta qualche minuto.']);
+    echo json_encode(['error' => 'Troppi invii ravvicinati. Riprova tra qualche secondo.']);
     exit;
 }
 
