@@ -43,9 +43,9 @@ $badRating = sample_team('BadR', '4-3-3', 'balanced', 40);
 $badRating['players'][0]['r'] = 11;
 t_assert(dcz_sanitize_team($badRating) === null, 'rating above dataset maximum must be rejected');
 
-$badDuplicate = sample_team('Dup', '4-3-3', 'balanced', 60);
-$badDuplicate['players'][1]['n'] = $badDuplicate['players'][0]['n'];
-t_assert(dcz_sanitize_team($badDuplicate) === null, 'duplicate player names must be rejected');
+$repeatedLabel = sample_team('Repeat', '4-3-3', 'balanced', 60);
+$repeatedLabel['players'][1]['n'] = $repeatedLabel['players'][0]['n'];
+t_assert(dcz_sanitize_team($repeatedLabel) !== null, 'repeated historical display labels must not be rejected without canonical player ids');
 
 $badFormation = sample_team('BadF', '2-2-6', 'balanced', 80);
 t_assert(dcz_sanitize_team($badFormation) === null, 'unknown formation must be rejected');
