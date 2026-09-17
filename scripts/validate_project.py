@@ -105,6 +105,17 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         if marker not in deploy_yml:
             fail(f"Deploy workflow must read {secret} from GitHub Secrets")
 
+    deploy_guard_fragments = {
+        "pull-request read permission": "pull-requests: read",
+        "merged-PR verification step": "Verify main update came from merged PR",
+        "commit-to-PR API lookup": 'commits/${{ github.sha }}/pulls',
+        "main-base PR filter": '.base.ref == \"main\"',
+        "direct-push deploy refusal": "Refusing production deploy: main update is not associated with a merged PR.",
+    }
+    for label, fragment in deploy_guard_fragments.items():
+        if fragment not in deploy_yml:
+            fail(f"Production deploy guard missing: {label}")
+
     protected_runtime_files = (
         "game-counter.json",
         "hall-of-fame-pending.json",
