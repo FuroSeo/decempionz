@@ -29,16 +29,16 @@ The server engine intentionally mirrors the current Duel coefficients: positiona
 
 ### Remaining Duel limitation
 
-Squad provenance is still **client-submitted**. The backend now rejects malformed structures, unknown formations/tactics, duplicate player names, invalid positions and ratings outside the dataset-compatible 6–10 range, but it does not yet prove that every submitted XI came from the exact offers shown by the browser.
+Squad provenance is still **client-submitted**. The backend rejects malformed structures, unknown formations/tactics, unsupported positions and ratings outside the dataset-compatible 6–10 range, but it does not yet prove that every submitted XI came from the exact offers shown by the browser. Player display names are not treated as canonical identities because the same historical label can legitimately occur in multiple squads/eras.
 
-A future high-assurance design should use a server-issued draft session (or signed deterministic seed + choice history) and validate every accepted card against the canonical dataset. That is a larger architecture change and should be implemented without adding account friction.
+A future high-assurance design should use a server-issued draft session (or signed deterministic seed + choice history) and validate every accepted card against the canonical dataset using stable player/source identifiers. That is a larger architecture change and should be implemented without adding account friction.
 
 ## Backward compatibility
 
 - Already completed historical duels remain readable and are exposed as `legacy-client-reported` when no integrity metadata exists.
 - A historical duel left in `simulating` state is migrated on its next finalization request: the server generates and stores a fresh authoritative result from the already committed squads.
 - Public Duel URLs and create/join flows remain unchanged.
-- The current B-side animated replay is temporarily replaced by redirecting to the canonical result page after authoritative finalization. Restoring that animation safely requires the client to consume the server result rather than a locally generated result.
+- The current B-side animated replay is temporarily replaced by redirecting to the canonical result page after authoritative finalization. The redirect restores B's local Duel history through a short-lived HttpOnly marker. Restoring the in-app animation safely requires the client to consume the server result rather than a locally generated result.
 
 ## Daily / Weekly / Hall of Fame
 
