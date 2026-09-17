@@ -22,11 +22,29 @@ Use one branch per logical change:
 1. Create a branch from current `main`.
 2. Keep the change focused on one logical purpose.
 3. Run repository validation and syntax checks.
-4. Open a pull request against `main`.
-5. Review the diff and confirm that unrelated files are unchanged.
-6. Merge only after the change is approved for production.
-7. Confirm the FTP deploy workflow completes successfully.
-8. Perform a smoke test on the live site.
+4. Update `GAME_MANUAL.md` when the change affects gameplay, rules, modes, scoring, tactics, Daily/Weekly, Duel, Dynasty, player/coach behavior, historical content used by the game, or any user-facing mechanic that should be documented. If the change has no manual impact, state that explicitly in the PR.
+5. Open a pull request against `main`.
+6. Review the diff and confirm that unrelated files are unchanged.
+7. Merge only after the change is approved for production.
+8. Confirm the FTP deploy workflow completes successfully.
+9. Perform a smoke test on the live site.
+
+## Game Manual policy
+
+`GAME_MANUAL.md` is the canonical functional record of how Decempionz works. It must evolve together with the game rather than being updated retrospectively.
+
+Update it in the same PR whenever a change modifies any of the following:
+
+- gameplay rules or match logic visible to players;
+- draft behavior, formations, roles, chemistry, tactics, coaches, momentum or modifiers;
+- Daily, Weekly, Challenge, Duel or Dynasty rules;
+- scoring, grades, leaderboards, streaks, trophies or progression;
+- relevant player/team/era data when the change affects the playable experience;
+- onboarding, controls or user-facing flows whose explanation belongs in the manual.
+
+Pure infrastructure, CI, deployment, internal refactors with no behavior change, or invisible bug fixes do not require a manual edit, but the PR must explicitly mark `No manual impact`.
+
+A gameplay-affecting change is not considered complete until its manual documentation is updated and reviewed with the code.
 
 ## Version meanings
 
@@ -93,4 +111,5 @@ A change is complete only when:
 - automated validation passes;
 - production deployment succeeds;
 - the live feature is smoke-tested;
+- `GAME_MANUAL.md` is updated when the change has manual impact, or the PR explicitly records `No manual impact`;
 - any relevant roadmap item is updated as completed.
