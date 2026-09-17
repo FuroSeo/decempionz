@@ -8,7 +8,7 @@ This document records what the backend can actually prove for user-submitted com
 
 | Surface | Current result trust | Current squad/run trust | Notes |
 | --- | --- | --- | --- |
-| Duel 1v1 | **server-authoritative** for newly finalized duels | **client-submitted** squads, structurally validated | The server generates the best-of-3 after B commits. Client-reported scores are ignored. |
+| Duel 1v1 | **server-authoritative** for newly finalized duels | **client-submitted** squads, structurally validated | The server generates and stores the best-of-3 atomically when B commits. Client-reported scores are ignored. |
 | Daily leaderboard | client-reported | client-reported | Date/range/rate-limit/storage validation makes abuse harder but does not prove the browser played the exact run. |
 | Weekly Challenge | client-reported | client-reported | Score/config consistency and rate limiting are validation layers, not cryptographic proof of play. |
 | Hall of Fame | client-reported showcase | client-reported | Sanitization, throttling and admin removal protect the service; entries are not an anti-cheat competitive record. |
@@ -18,12 +18,12 @@ This document records what the backend can actually prove for user-submitted com
 For duels created/completed after the server-authoritative engine rollout:
 
 1. Player A creates a duel and commits a sanitized squad.
-2. Player B drafts without seeing A's full squad, then commits a sanitized squad.
-3. After B's commit, the server generates a random seed and computes the best-of-3 using `duel-engine.php`.
-4. The seed and precomputed series remain private server state while the duel is `simulating`.
+2. Player B drafts without seeing A's full squad, then submits a sanitized squad.
+3. Under the same exclusive server lock, the backend generates fresh server randomness, computes the best-of-3 with `duel-engine.php`, stores B's squad and stores the authoritative result.
+4. Only after that atomic commit does the endpoint return A's squad to B. New duels therefore move directly from `waiting` to `done`.
 5. The existing browser may still calculate a local series for compatibility, but `duel-result.php` **does not trust or use that client result**.
-6. On finalization the server publishes only its own precomputed series, removes the private seed/result fields and marks `integrity.result = server-authoritative`.
-7. The current monolithic client is redirected to the canonical Duel result page after finalization so it cannot replay a different locally generated series.
+6. The browser's follow-up `phase=result` request receives the already-finalized state and redirects to the canonical Duel page, preventing a different locally generated series from being displayed as authoritative.
+7. The stored record is marked `integrity.result = server-authoritative` and records the server engine version.
 
 The server engine intentionally mirrors the current Duel coefficients: positional penalties, formation/tactic interactions, star/rating-10 bonuses, draw pull, Poisson goals and penalties. Moving authority to the server is not intended to rebalance Duel.
 
@@ -36,7 +36,7 @@ A future high-assurance design should use a server-issued draft session (or sign
 ## Backward compatibility
 
 - Already completed historical duels remain readable and are exposed as `legacy-client-reported` when no integrity metadata exists.
-- A historical duel left in `simulating` state is migrated on finalization: the server generates a fresh authoritative result from the already committed squads.
+- A historical duel left in `simulating` state is migrated on its next finalization request: the server generates and stores a fresh authoritative result from the already committed squads.
 - Public Duel URLs and create/join flows remain unchanged.
 - The current B-side animated replay is temporarily replaced by redirecting to the canonical result page after authoritative finalization. Restoring that animation safely requires the client to consume the server result rather than a locally generated result.
 
