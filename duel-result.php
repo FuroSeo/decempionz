@@ -1,8 +1,9 @@
 <?php
-/* duel-result.php — chiusura duello in due fasi.
-   1) B committa la rosa; il server genera e custodisce la serie autoritativa.
-   2) Il client segnala la fine del proprio flusso; il server ignora il risultato client
-      e pubblica esclusivamente la serie già generata lato server. */
+/* duel-result.php — chiusura autoritativa del duello.
+   - phase team: B committa la rosa; il server genera e SALVA subito la serie best-of-3.
+   - phase result: compatibilità con il client storico. Il risultato client è ignorato;
+     per i nuovi duelli il server risponde con redirect logico perché il duello è già done.
+   - vecchi duelli rimasti in simulating vengono migrati generando ora un risultato server-side. */
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: https://decempionz.com');
@@ -93,11 +94,27 @@ function dcz_duel_generate_authoritative_result($teamA, $teamB) {
         $seed = random_int(1, 0x7ffffffe);
         $result = dcz_duel_simulate_series($teamA, $teamB, $seed);
         $clean = dcz_sanitize_result($result);
-        if ($clean !== null) {
-            return ['seed' => $seed, 'result' => $clean];
-        }
+        if ($clean !== null) return $clean;
     }
     return null;
+}
+
+function dcz_duel_integrity_meta() {
+    return [
+        'result' => 'server-authoritative',
+        'engine' => DCZ_DUEL_ENGINE_VERSION,
+        'squad' => 'client-submitted',
+    ];
+}
+
+function dcz_duel_redirect_response($id, $extra = []) {
+    http_response_code(409);
+    echo json_encode(array_merge([
+        'ok' => true,
+        'finalized' => true,
+        'authoritative' => true,
+        'url' => 'https://decempionz.com/duel.php?id=' . $id,
+    ], $extra));
 }
 
 $id = preg_replace('/[^a-zA-Z0-9]/', '', (string)($data['id'] ?? ''));
@@ -139,9 +156,12 @@ function dcz_write_and_close($fp, $d) {
 
 if ($phase === 'team') {
     if (($d['status'] ?? '') !== 'waiting') {
+        $status = $d['status'] ?? '?';
         flock($fp, LOCK_UN); fclose($fp);
-        http_response_code(409); echo json_encode(['error' => 'duel not open', 'status' => $d['status'] ?? '?']); exit;
+        if ($status === 'done') { dcz_duel_redirect_response($id, ['status' => 'done']); exit; }
+        http_response_code(409); echo json_encode(['error' => 'duel not open', 'status' => $status]); exit;
     }
+
     $team = dcz_sanitize_team($data['team'] ?? null);
     if ($team === null) {
         flock($fp, LOCK_UN); fclose($fp);
@@ -152,68 +172,62 @@ if ($phase === 'team') {
         http_response_code(400); echo json_encode(['error' => 'dynasty duel requires a club']); exit;
     }
 
-    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team);
-    if ($generated === null) {
+    $result = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team);
+    if ($result === null) {
         flock($fp, LOCK_UN); fclose($fp);
         http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
     }
 
-    $d['status'] = 'simulating';
+    /* Commit atomico: dopo che B è vincolato alla sua rosa, il duello è già deciso server-side. */
     $d['b'] = $team;
-    /* Campi interni: duel-join.php non deve mai esporli al browser. */
-    $d['_serverSeed'] = $generated['seed'];
-    $d['_serverEngine'] = DCZ_DUEL_ENGINE_VERSION;
-    $d['_serverResult'] = $generated['result'];
+    $d['status'] = 'done';
+    $d['result'] = $result;
+    $d['doneAt'] = date('c');
+    $d['integrity'] = dcz_duel_integrity_meta();
+    unset($d['_serverSeed'], $d['_serverEngine'], $d['_serverResult']);
     if (!dcz_write_and_close($fp, $d)) {
         http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
     }
 
-    /* Solo ora la rosa di A viene rivelata: B è già vincolato alla sua. */
-    echo json_encode(['ok' => true, 'a' => $d['a'], 'b' => $d['b']], JSON_UNESCAPED_UNICODE);
+    dcz_bump_games_counter();
+
+    /* Il client corrente usa le rose per completare il suo flusso locale; il suo successivo
+       phase=result riceverà 409 e aprirà la pagina canonica con il verdetto server. */
+    echo json_encode([
+        'ok' => true,
+        'a' => $d['a'],
+        'b' => $d['b'],
+        'authoritativeReady' => true,
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-/* phase === 'result'. Il risultato inviato dal client è intenzionalmente ignorato. */
-if (($d['status'] ?? '') !== 'simulating' || !is_array($d['b'] ?? null)) {
+/* phase === result. Il risultato inviato dal client è intenzionalmente ignorato. */
+$status = (string)($d['status'] ?? '');
+if ($status === 'done') {
     flock($fp, LOCK_UN); fclose($fp);
-    http_response_code(409); echo json_encode(['error' => 'duel not simulating', 'status' => $d['status'] ?? '?']); exit;
+    dcz_duel_redirect_response($id, ['status' => 'done']);
+    exit;
 }
 
-$result = dcz_sanitize_result($d['_serverResult'] ?? null);
-$engine = (string)($d['_serverEngine'] ?? '');
+/* Migrazione trasparente dei vecchi duelli già rimasti in stato simulating. */
+if ($status !== 'simulating' || !is_array($d['b'] ?? null)) {
+    flock($fp, LOCK_UN); fclose($fp);
+    http_response_code(409); echo json_encode(['error' => 'duel not simulating', 'status' => $status ?: '?']); exit;
+}
+
+$result = dcz_duel_generate_authoritative_result($d['a'] ?? null, $d['b']);
 if ($result === null) {
-    /* Migrazione trasparente dei vecchi duelli rimasti in stato simulating. */
-    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $d['b']);
-    if ($generated === null) {
-        flock($fp, LOCK_UN); fclose($fp);
-        http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
-    }
-    $result = $generated['result'];
-    $engine = DCZ_DUEL_ENGINE_VERSION;
+    flock($fp, LOCK_UN); fclose($fp);
+    http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
 }
-
 $d['status'] = 'done';
 $d['result'] = $result;
 $d['doneAt'] = date('c');
-$d['integrity'] = [
-    'result' => 'server-authoritative',
-    'engine' => $engine !== '' ? $engine : DCZ_DUEL_ENGINE_VERSION,
-    'squad' => 'client-submitted',
-];
+$d['integrity'] = dcz_duel_integrity_meta();
 unset($d['_serverSeed'], $d['_serverEngine'], $d['_serverResult']);
 if (!dcz_write_and_close($fp, $d)) {
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
 }
-
-/* Il duello chiuso conta una sola volta nel contatore globale. */
 dcz_bump_games_counter();
-
-/* Compatibilità con il client monolitico attuale: su 409 esso apre subito la pagina canonica.
-   Così non riproduce la serie casuale locale, che non è più la fonte autoritativa. */
-http_response_code(409);
-echo json_encode([
-    'ok' => true,
-    'finalized' => true,
-    'authoritative' => true,
-    'url' => 'https://decempionz.com/duel.php?id=' . $id,
-]);
+dcz_duel_redirect_response($id, ['status' => 'done', 'migrated' => true]);
