@@ -44,10 +44,15 @@ jobs:
             **/node_modules/**
             .cpanel.yml
             game-counter.json
+            global-stats.json
             hall-of-fame-pending.json
             hall-of-fame.json
             challenge-config.json
             hof-config.php
+            daily-scores/**
+            challenge-scores/**
+            drafts/**
+            duels/**
             GAME_MANUAL.md
             VADEMECUM.md
             ROADMAP.md
