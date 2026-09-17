@@ -1,8 +1,6 @@
 <?php
-/* duel-join.php — stato di un duello.
-   GET ?id=xxx
-   - status 'waiting': ritorna solo i vincoli (torneo, era, nick dello sfidante) — la rosa di A resta nascosta.
-   - status 'done': ritorna il duello completo (serve al verdetto per entrambi). */
+/* duel-join.php — stato pubblico di un duello.
+   I campi interni usati dal motore autoritativo (_server*) non vengono mai serializzati. */
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: https://decempionz.com');
@@ -23,17 +21,54 @@ if (!file_exists($file)) {
     http_response_code(404); echo json_encode(['error' => 'not found']); exit;
 }
 
-$d = json_decode(file_get_contents($file), true);
-if (!$d) { http_response_code(500); echo json_encode(['error' => 'corrupt duel']); exit; }
+$d = json_decode((string)file_get_contents($file), true);
+if (!is_array($d)) { http_response_code(500); echo json_encode(['error' => 'corrupt duel']); exit; }
+$status = (string)($d['status'] ?? 'waiting');
 
-/* done E simulating: rose visibili (B ha già committato la sua).
-   In 'simulating' il client di B può riprendere la sim se si era interrotta. */
-if (in_array($d['status'] ?? '', ['done', 'simulating'])) {
-    echo json_encode($d, JSON_UNESCAPED_UNICODE);
+/* Dopo il commit di B le rose sono pubbliche, ma seed/risultato autoritativo restano privati
+   finché il duello non viene finalizzato. */
+if ($status === 'simulating') {
+    echo json_encode([
+        'id'         => $d['id'],
+        'status'     => 'simulating',
+        'mode'       => $d['mode'] ?? 'classic',
+        'tournament' => $d['tournament'],
+        'era'        => $d['era'],
+        'eraId'      => $d['eraId'],
+        'lang'       => $d['lang'],
+        'a'          => $d['a'],
+        'b'          => $d['b'],
+        'result'     => null,
+        'createdAt'  => $d['createdAt'],
+        'doneAt'     => null,
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-/* waiting: esporre solo i vincoli, MAI la rosa di A */
+if ($status === 'done') {
+    echo json_encode([
+        'id'         => $d['id'],
+        'status'     => 'done',
+        'mode'       => $d['mode'] ?? 'classic',
+        'tournament' => $d['tournament'],
+        'era'        => $d['era'],
+        'eraId'      => $d['eraId'],
+        'lang'       => $d['lang'],
+        'a'          => $d['a'],
+        'b'          => $d['b'],
+        'result'     => $d['result'] ?? null,
+        'createdAt'  => $d['createdAt'],
+        'doneAt'     => $d['doneAt'] ?? null,
+        'integrity'  => $d['integrity'] ?? [
+            'result' => 'legacy-client-reported',
+            'engine' => null,
+            'squad' => 'client-submitted',
+        ],
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/* waiting: esporre solo i vincoli, MAI la rosa di A. */
 echo json_encode([
     'id'         => $d['id'],
     'status'     => 'waiting',
