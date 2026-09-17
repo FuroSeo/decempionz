@@ -1,5 +1,12 @@
-
-# File dati server (gestiti da PHP, non deployati)
+# File dati/config server (gestiti da PHP, non versionati/deployati)
 game-counter.json
+global-stats.json
 hall-of-fame-pending.json
 hall-of-fame.json
+challenge-config.json
+hof-config.php
+
+daily-scores/
+challenge-scores/
+drafts/
+duels/
