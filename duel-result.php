@@ -13,25 +13,29 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405); echo json_encode(['error' => 'method not allowed']); exit;
 }
 
+$maxBody = 15000;
+if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxBody) {
+    http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
+}
 $raw = file_get_contents('php://input');
-if (strlen($raw) > 15000) {
+if ($raw === false || strlen($raw) > $maxBody) {
     http_response_code(413); echo json_encode(['error' => 'payload too large']); exit;
 }
 $data = json_decode($raw, true);
-if (!$data) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
+if (!is_array($data)) { http_response_code(400); echo json_encode(['error' => 'invalid json']); exit; }
 
-$phasePre = (string)($data['phase'] ?? '');
+/* Validare la fase PRIMA di usarla in qualunque path/nome file temporaneo. */
+$phase = (string)($data['phase'] ?? '');
+if (!in_array($phase, ['team', 'result'], true)) {
+    http_response_code(400); echo json_encode(['error' => 'invalid phase']); exit;
+}
 
 /* Rate limit: 1 invio ogni 5 secondi per IP, PER FASE.
-   Bug corretto: prima la chiave era condivisa fra 'team' e 'result', ma il client invia le due fasi
-   una dietro l'altra SENZA alcuna attesa (B committa la squadra e nello stesso istante manda gia' la
-   serie simulata) - quindi la seconda chiamata falliva sempre e sistematicamente contro il proprio
-   stesso limite, non per un IP condiviso o altro. Tenendo un contatore separato per fase, le due
-   richieste legittime e ravvicinate dello stesso B non si bloccano piu' a vicenda. */
-$ip      = md5($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+   Le due fasi legittime possono arrivare una dietro l'altra senza bloccarsi a vicenda. */
+$ip = hash('sha256', $_SERVER['REMOTE_ADDR'] ?? 'unknown');
 $rateDir = sys_get_temp_dir() . '/dcz_duels/';
 @mkdir($rateDir, 0755, true);
-$rf = $rateDir . 'r_' . $phasePre . '_' . $ip . '.tmp';
+$rf = $rateDir . 'r_' . $phase . '_' . $ip . '.tmp';
 if (file_exists($rf) && (time() - filemtime($rf)) < 5) {
     http_response_code(429); echo json_encode(['error' => 'too many requests']); exit;
 }
@@ -66,14 +70,10 @@ if (!file_exists($file)) {
     http_response_code(404); echo json_encode(['error' => 'not found']); exit;
 }
 
-$phase = (string)($data['phase'] ?? '');
-if (!in_array($phase, ['team', 'result'])) {
-    http_response_code(400); echo json_encode(['error' => 'invalid phase']); exit;
-}
-
 /* Lock esclusivo per tutta la transazione (anti doppio-join / doppio-risultato) */
 $fp = fopen($file, 'c+');
 if (!$fp || !flock($fp, LOCK_EX)) {
+    if ($fp) fclose($fp);
     http_response_code(500); echo json_encode(['error' => 'lock failed']); exit;
 }
 $d = json_decode(stream_get_contents($fp), true);
@@ -83,12 +83,19 @@ if (!$d) {
 }
 
 function dcz_write_and_close($fp, $d) {
+    $encoded = json_encode($d, JSON_UNESCAPED_UNICODE);
+    if ($encoded === false) {
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        return false;
+    }
     rewind($fp);
     ftruncate($fp, 0);
-    fwrite($fp, json_encode($d, JSON_UNESCAPED_UNICODE));
+    $written = fwrite($fp, $encoded);
     fflush($fp);
     flock($fp, LOCK_UN);
     fclose($fp);
+    return $written !== false;
 }
 
 if ($phase === 'team') {
@@ -106,8 +113,10 @@ if ($phase === 'team') {
         http_response_code(400); echo json_encode(['error' => 'dynasty duel requires a club']); exit;
     }
     $d['status'] = 'simulating';
-    $d['b']      = $team;
-    dcz_write_and_close($fp, $d);
+    $d['b'] = $team;
+    if (!dcz_write_and_close($fp, $d)) {
+        http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+    }
     /* solo ORA la rosa di A viene rivelata: B è già vincolato alla sua */
     echo json_encode(['ok' => true, 'a' => $d['a'], 'b' => $d['b']], JSON_UNESCAPED_UNICODE);
     exit;
@@ -126,7 +135,9 @@ if ($result === null) {
 $d['status'] = 'done';
 $d['result'] = $result;
 $d['doneAt'] = date('c');
-dcz_write_and_close($fp, $d);
+if (!dcz_write_and_close($fp, $d)) {
+    http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+}
 
 /* il duello chiuso conta come una partita giocata nel contatore globale (una volta sola, qui) */
 dcz_bump_games_counter();
