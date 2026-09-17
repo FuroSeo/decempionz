@@ -107,6 +107,16 @@ function dcz_duel_integrity_meta() {
     ];
 }
 
+function dcz_duel_mark_joined_cookie($id) {
+    setcookie('dcz_duel_joined', $id, [
+        'expires' => time() + 900,
+        'path' => '/duel.php',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict',
+    ]);
+}
+
 function dcz_duel_redirect_response($id, $extra = []) {
     http_response_code(409);
     echo json_encode(array_merge([
@@ -158,7 +168,10 @@ if ($phase === 'team') {
     if (($d['status'] ?? '') !== 'waiting') {
         $status = $d['status'] ?? '?';
         flock($fp, LOCK_UN); fclose($fp);
-        if ($status === 'done') { dcz_duel_redirect_response($id, ['status' => 'done']); exit; }
+        if ($status === 'done') {
+            dcz_duel_mark_joined_cookie($id);
+            dcz_duel_redirect_response($id, ['status' => 'done']); exit;
+        }
         http_response_code(409); echo json_encode(['error' => 'duel not open', 'status' => $status]); exit;
     }
 
@@ -190,6 +203,7 @@ if ($phase === 'team') {
     }
 
     dcz_bump_games_counter();
+    dcz_duel_mark_joined_cookie($id);
 
     /* Il client corrente usa le rose per completare il suo flusso locale; il suo successivo
        phase=result riceverà 409 e aprirà la pagina canonica con il verdetto server. */
@@ -206,6 +220,7 @@ if ($phase === 'team') {
 $status = (string)($d['status'] ?? '');
 if ($status === 'done') {
     flock($fp, LOCK_UN); fclose($fp);
+    dcz_duel_mark_joined_cookie($id);
     dcz_duel_redirect_response($id, ['status' => 'done']);
     exit;
 }
@@ -230,4 +245,5 @@ if (!dcz_write_and_close($fp, $d)) {
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
 }
 dcz_bump_games_counter();
+dcz_duel_mark_joined_cookie($id);
 dcz_duel_redirect_response($id, ['status' => 'done', 'migrated' => true]);
