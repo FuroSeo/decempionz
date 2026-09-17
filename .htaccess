@@ -35,7 +35,7 @@
 </FilesMatch>
 
 # File riservati: mai serviti via HTTP (PHP continua a leggerli da disco).
-<FilesMatch "^(hof-config\.php|challenge-config\.json|GAME_MANUAL\.md|hall-of-fame-pending\.json|duel-lib\.php|runtime-backup-lib\.php|runtime-recovery\.php|draft-storage-lib\.php)$">
+<FilesMatch "^(hof-config\.php|challenge-config\.json|GAME_MANUAL\.md|hall-of-fame-pending\.json|duel-lib\.php|duel-engine\.php|runtime-backup-lib\.php|runtime-recovery\.php|draft-storage-lib\.php)$">
   Require all denied
 </FilesMatch>
 
