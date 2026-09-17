@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decempionz — Dataset Editor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1923;color:#e2e8f0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+.header{background:#131f35;border-bottom:1px solid #1e2d42;padding:10px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.header h1{font-size:.95rem;font-weight:700;color:#fbbf24;letter-spacing:.02em}
+.spacer{flex:1}
+.btn{padding:7px 14px;border-radius:6px;border:1px solid #2a3a50;background:#1a2535;color:#cbd5e1;cursor:pointer;font-size:.78rem;font-family:inherit}
+.btn:hover{background:#1e2d42;color:#e2e8f0}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-blue{background:#312e81;border-color:#4338ca;color:#c7d2fe}
+.btn-blue:hover:not(:disabled){background:#3730a3}
+.btn-green{background:#064e3b;border-color:#059669;color:#6ee7b7}
+.btn-green:hover:not(:disabled){background:#065f46}
+.btn-amber{background:#78350f;border-color:#d97706;color:#fde68a}
+.btn-amber:hover:not(:disabled){background:#92400e}
+.btn-red{background:none;border:none;color:#f87171;cursor:pointer;padding:3px 7px;font-size:.78rem;font-family:inherit;border-radius:4px}
+.btn-red:hover{background:rgba(248,113,113,.12)}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:#b45309;color:#fef3c7;font-size:.65rem;font-weight:700;padding:0 5px;margin-left:5px}
+
+.tabs{display:flex;gap:0;background:#0d1720;border-bottom:1px solid #1e2d42;flex-shrink:0;padding:0 18px}
+.tab{padding:9px 18px;cursor:pointer;font-size:.78rem;color:#64748b;border-bottom:2px solid transparent;transition:color .15s;display:flex;align-items:center;gap:4px}
+.tab.active{color:#e2e8f0;border-bottom-color:#6366f1}
+.tab:hover:not(.active){color:#94a3b8}
+.tab-dot{width:6px;height:6px;border-radius:50%;background:#d97706;display:none}
+.tab.dirty .tab-dot{display:inline-block}
+
+.body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:270px;border-right:1px solid #1e2d42;display:flex;flex-direction:column;flex-shrink:0}
+.search-wrap{padding:10px;border-bottom:1px solid #1e2d42}
+.search-wrap input{width:100%;padding:6px 10px;background:#0d1720;border:1px solid #1e2d42;border-radius:6px;color:#e2e8f0;font-size:.78rem;outline:none}
+.search-wrap input:focus{border-color:#4338ca}
+.team-list{overflow-y:auto;flex:1}
+.team-row{padding:8px 12px;border-bottom:1px solid #14202d;cursor:pointer;font-size:.76rem;display:flex;align-items:center;gap:7px}
+.team-row:hover{background:#14202d}
+.team-row.active{background:#1e2d42;color:#fff}
+.team-row.changed{border-left:3px solid #d97706}
+.team-row .season{color:#64748b;font-size:.67rem;margin-left:auto}
+
+.detail{flex:1;overflow-y:auto;padding:18px 22px}
+.empty{display:flex;flex:1;align-items:center;justify-content:center;color:#64748b;font-size:.85rem;flex-direction:column;gap:12px;text-align:center}
+.empty strong{color:#94a3b8}
+.team-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.team-head h2{font-size:1.15rem}
+.team-meta{color:#64748b;font-size:.72rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.field label{display:block;color:#64748b;font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.field input,.field select{width:100%;padding:7px 9px;background:#0d1720;border:1px solid #26374a;border-radius:6px;color:#e2e8f0;font-size:.78rem;outline:none}
+.field input:focus,.field select:focus{border-color:#4338ca}
+.players{border:1px solid #1e2d42;border-radius:8px;overflow:hidden}
+.prow{display:grid;grid-template-columns:1.9fr .75fr .55fr 1fr 32px;gap:6px;padding:6px 8px;border-bottom:1px solid #182533;align-items:center}
+.prow:last-child{border-bottom:none}
+.prow.head{background:#131f35;color:#64748b;font-size:.62rem;text-transform:uppercase;font-weight:600}
+.prow input,.prow select{width:100%;padding:5px 6px;background:#0d1720;border:1px solid #26374a;border-radius:4px;color:#e2e8f0;font-size:.73rem;outline:none}
+.prow input:focus,.prow select:focus{border-color:#4338ca}
+.add-player{margin-top:9px}
+.changed-field{border-color:#b45309!important;background:#1c1609!important}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:20}
+.modal-bg.show{display:flex}
+.modal{background:#131f35;border:1px solid #2a3a50;border-radius:10px;width:min(720px,92vw);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{padding:12px 16px;border-bottom:1px solid #1e2d42;display:flex;align-items:center;font-weight:700;font-size:.87rem}
+.modal-body{padding:14px 16px;overflow-y:auto;font-size:.76rem}
+.change-item{padding:7px 0;border-bottom:1px solid #1e2d42;color:#cbd5e1}
+.change-item strong{color:#fbbf24}
+.change-item .old{color:#f87171}.change-item .new{color:#6ee7b7}
+.modal-foot{padding:11px 16px;border-top:1px solid #1e2d42;display:flex;gap:8px;justify-content:flex-end}
+
+@media(max-width:800px){.sidebar{width:220px}.prow{grid-template-columns:1.5fr .7fr .55fr .9fr 28px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>⚽ Decempionz — Dataset Editor</h1>
+  <div class="spacer"></div>
+  <button class="btn btn-blue" onclick="openFile()">📂 Carica game-data.js</button>
+  <input type="file" id="file-in" accept=".js,.html" style="display:none">
+  <button class="btn btn-amber" id="btn-changes" onclick="showChangelog()" disabled>Modifiche <span class="badge" id="chg-count">0</span></button>
+  <button class="btn btn-green" id="btn-save" onclick="confirmSave()" disabled>💾 Salva</button>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="body" id="root">
+  <div class="empty">
+    <div style="font-size:2.5rem">📊</div>
+    <p>Carica <strong>game-data.js</strong> per iniziare a modificare i dataset (dal v5.9.1 i dataset vivono lì, non più in index.html)</p>
+    <p style="font-size:.7rem;color:#475569">Il file resta sul tuo computer. Nessun dato viene inviato online.</p>
+  </div>
+</div>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-head">Riepilogo modifiche <div class="spacer"></div><button class="btn-red" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">Annulla</button>
+      <button class="btn btn-green" onclick="saveFile()">💾 Conferma e salva</button>
+    </div>
+  </div>
+</div>
+<script>
+let raw='', data={}, original={}, activeT='ucl', activeTeam=null;
+const CFG={
+  ucl:{label:'🏆 UCL',key:'TEAMS',tour:'TOURNAMENTS'},
+  copa:{label:'🌎 Copa',key:'COPA_TEAMS',tour:'COPA_TOURNAMENTS'},
+  wc:{label:'🌍 World Cup',key:'WC_TEAMS',tour:'WC_TOURNAMENTS'}
+};
+const POS=['GK','RB','CB','LB','CDM','CM','CAM','AM','LM','RM','LW','RW','SS','CF','ST'];
+
+function openFile(){document.getElementById('file-in').click()}
+document.getElementById('file-in').addEventListener('change', e => {
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{raw=r.result;try{loadDatasets(raw);init()}catch(err){alert('Errore nel parsing: '+err.message)}};
+  r.readAsText(f,'UTF-8');
+});
+
+function init(){original=deepClone(data);activeTeam=null;renderAll();document.getElementById('btn-save').disabled=false;document.getElementById('btn-changes').disabled=false}
+function deepClone(x){return JSON.parse(JSON.stringify(x))}
+
+function extractBlock(src,name){
+  const re=new RegExp('const\\s+'+name+'\\s*=\\s*');const m=re.exec(src);if(!m)throw new Error(name+' non trovato');
+  let i=m.index+m[0].length,open=src[i],close=open==='{'?'}':']',depth=0,j=i,inStr=false,quote='',esc=false;
+  for(;j<src.length;j++){
+    const c=src[j];
+    if(inStr){if(esc){esc=false;continue}if(c==='\\'){esc=true;continue}if(c===quote){inStr=false}continue}
+    if(c==='"'||c==="'"||c==='`'){inStr=true;quote=c;continue}
+    if(c===open)depth++; else if(c===close){depth--;if(depth===0)break}
+  }
+  if(depth!==0)throw new Error(name+' non chiuso');
+  return {start:i,end:j+1,text:src.slice(i,j+1)};
+}
+function loadDatasets(src){
+  data={};
+  Object.values(CFG).forEach(c=>{
+    const b=extractBlock(src,c.key);
+    data[c.key]=Function('"use strict";return ('+b.text+')')();
+  });
+}
+
+function computeChangelog(){
+  const out=[];
+  Object.entries(CFG).forEach(([mode,c])=>{
+    const now=data[c.key],old=original[c.key];
+    Object.keys(now).forEach(id=>{
+      if(!old[id]){out.push({mode,id,type:'team-add',text:`${id}: squadra aggiunta`});return}
+      const a=old[id],b=now[id];
+      ['name','season','country','club'].forEach(k=>{if(a[k]!==b[k])out.push({mode,id,type:'field',field:k,old:a[k],new:b[k]})});
+      const max=Math.max(a.players?.length||0,b.players?.length||0);
+      for(let i=0;i<max;i++){
+        const p=a.players?.[i],q=b.players?.[i];
+        if(!p&&q)out.push({mode,id,type:'player-add',new:q});
+        else if(p&&!q)out.push({mode,id,type:'player-del',old:p});
+        else if(JSON.stringify(p)!==JSON.stringify(q))out.push({mode,id,type:'player-edit',old:p,new:q});
+      }
+    });
+    Object.keys(old).forEach(id=>{if(!now[id])out.push({mode,id,type:'team-del',text:`${id}: squadra rimossa`})});
+  });
+  return out;
+}
+function countChanges(){return computeChangelog().length}
+function isTeamChanged(mode,id){
+  const c=CFG[mode];return JSON.stringify(data[c.key]?.[id])!==JSON.stringify(original[c.key]?.[id]);
+}
+
+function renderAll(){renderTabs();document.getElementById('root').innerHTML=`<div class="sidebar"><div class="search-wrap"><input id="srch" placeholder="Cerca squadra..." oninput="renderList()"></div><div class="team-list" id="tlist"></div></div><div class="detail" id="detail"><div class="empty">Seleziona una squadra</div></div>`;renderList();updateChangeCount()}
+function renderTabs(){
+  const el=document.getElementById('tabs');
+  el.innerHTML=Object.entries(CFG).map(([k,c])=>`<div class="tab ${k===activeT?'active':''}" onclick="switchT('${k}')">${c.label}<span class="tab-dot"></span></div>`).join('');
+}
+function switchT(k){activeT=k;activeTeam=null;renderTabs();document.getElementById('detail').innerHTML='<div class="empty">Seleziona una squadra</div>';renderList()}
+function renderList(){
+  const el=document.getElementById('tlist'),q=(document.getElementById('srch')?.value||'').toLowerCase(),c=CFG[activeT],teams=data[c.key];
+  if(!teams)return;
+  el.innerHTML=Object.entries(teams).filter(([id,t])=>!q||id.toLowerCase().includes(q)||t.name.toLowerCase().includes(q)||String(t.season).includes(q)).map(([id,t])=>`<div class="team-row ${id===activeTeam?'active':''} ${isTeamChanged(activeT,id)?'changed':''}" onclick="selectTeam('${id}')"><span>${t.country||''}</span><span>${esc(t.name)}</span><span class="season">${esc(String(t.season||''))}</span></div>`).join('');
+}
+function selectTeam(id){activeTeam=id;renderList();renderDetail()}
+function renderDetail(){
+  const c=CFG[activeT],t=data[c.key][activeTeam],o=original[c.key]?.[activeTeam]||{};if(!t)return;
+  const fld=(k,label)=>`<div class="field"><label>${label}</label><input value="${escAttr(t[k]??'')}" class="${t[k]!==o[k]?'changed-field':''}" oninput="upd('${k}',this.value)"></div>`;
+  let h=`<div class="team-head"><h2>${esc(t.name)} ${esc(String(t.season||''))}</h2><span class="team-meta">${activeTeam} · ${t.players?.length||0} giocatori</span></div><div class="grid">${fld('name','Nome')}${fld('season','Stagione')}${fld('country','Bandiera')}${fld('club','Club / slug')}</div>`;
+  h+=`<div class="players"><div class="prow head"><div>Nome</div><div>Ruolo</div><div>Rating</div><div>Naz.</div><div></div></div>`;
+  (t.players||[]).forEach((p,i)=>h+=rowHtml(p,i,o.players?.[i]));
+  h+=`</div><button class="btn add-player" onclick="addPlayer()">＋ Aggiungi giocatore</button>`;
+  document.getElementById('detail').innerHTML=h;
+}
+function rowHtml(p,i,op){
+  const ch=(k)=>op&&p[k]!==op[k]?'changed-field':'';
+  return `<div class="prow"><input value="${escAttr(p.n||'')}" class="${ch('n')}" oninput="upd('players.${i}.n',this.value)"><select class="${ch('p')}" onchange="upd('players.${i}.p',this.value)">${POS.map(x=>`<option ${p.p===x?'selected':''}>${x}</option>`).join('')}</select><input type="number" min="1" max="10" value="${p.r??''}" class="${ch('r')}" oninput="upd('players.${i}.r',Number(this.value))"><input value="${escAttr(p.nat||'')}" class="${ch('nat')}" oninput="upd('players.${i}.nat',this.value.toUpperCase())"><button class="btn-red" onclick="removePlayer(${i})">✕</button></div>`;
+}
+function upd(path,val){
+  const t=data[CFG[activeT].key][activeTeam],parts=path.split('.');let x=t;
+  for(let i=0;i<parts.length-1;i++)x=x[parts[i]];
+  x[parts.at(-1)]=val;updateChangeCount();renderList();
+}
+function removePlayer(i){if(!confirm('Rimuovere il giocatore?'))return;data[CFG[activeT].key][activeTeam].players.splice(i,1);renderDetail();renderList();updateChangeCount()}
+function addPlayer(){data[CFG[activeT].key][activeTeam].players.push({n:'Nuovo giocatore',p:'CM',r:7,nat:''});renderDetail();updateChangeCount()}
+function updateChangeCount(){const n=countChanges();document.getElementById('chg-count').textContent=n;document.getElementById('btn-save').disabled=!raw||n===0;document.getElementById('btn-changes').disabled=!raw;document.querySelectorAll('.tab').forEach((el,i)=>{const m=Object.keys(CFG)[i],dirty=Object.keys(data[CFG[m].key]||{}).some(id=>isTeamChanged(m,id));el.classList.toggle('dirty',dirty)})}
+
+function showChangelog(){
+  const ch=computeChangelog(),body=document.getElementById('modal-body');
+  if(!ch.length)body.innerHTML='<p>Nessuna modifica.</p>';
+  else body.innerHTML=ch.map(x=>{
+    const c=CFG[x.mode].label;
+    if(x.type==='field')return `<div class="change-item"><strong>${c} · ${x.id}</strong> · ${x.field}: <span class="old">${esc(String(x.old??''))}</span> → <span class="new">${esc(String(x.new??''))}</span></div>`;
+    if(x.type==='player-add')return `<div class="change-item"><strong>${c} · ${x.id}</strong> · giocatore aggiunto: <span class="new">${esc(x.new.n)} (${x.new.p}, ${x.new.r})</span></div>`;
+    if(x.type==='player-del')return `<div class="change-item"><strong>${c} · ${x.id}</strong> · giocatore rimosso: <span class="old">${esc(x.old.n)} (${x.old.p}, ${x.old.r})</span></div>`;
+    if(x.type==='player-edit')return `<div class="change-item"><strong>${c} · ${x.id}</strong> · <span class="old">${esc(x.old.n)} / ${x.old.p} / ${x.old.r} / ${x.old.nat||''}</span> → <span class="new">${esc(x.new.n)} / ${x.new.p} / ${x.new.r} / ${x.new.nat||''}</span></div>`;
+    return `<div class="change-item"><strong>${c}</strong> · ${esc(x.text||x.type)}</div>`;
+  }).join('');
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function confirmSave(){showChangelog()}
+
+function escStr(s){return JSON.stringify(String(s)).slice(1,-1)}
+function esc(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function escAttr(s){return esc(s).replace(/"/g,'&quot;')}
+function serializePlayer(p){return `{n:"${escStr(p.n)}",p:"${escStr(p.p)}",r:${Number(p.r)||0}${p.nat?`,nat:"${escStr(p.nat)}"`:''}}`}
+function serializeTeam(t){return `{name:"${escStr(t.name)}",season:"${escStr(t.season)}",country:"${escStr(t.country||'')}",club:"${escStr(t.club||'')}",players:[${(t.players||[]).map(serializePlayer).join(',')}]}`}
+function serializeDataset(obj){return '{\n'+Object.entries(obj).map(([id,t])=>`  ${JSON.stringify(id)}:${serializeTeam(t)}`).join(',\n')+'\n}'}
+function buildResult(){
+  let out=raw;
+  Object.values(CFG).forEach(c=>{const b=extractBlock(out,c.key);out=out.slice(0,b.start)+serializeDataset(data[c.key])+out.slice(b.end)});
+  return out;
+}
+async function saveFile(){
+  const result=buildResult();closeModal();
+  try{
+    if('showSaveFilePicker' in window){
+      const h=await window.showSaveFilePicker({suggestedName:'game-data.js',types:[{description:'JavaScript',accept:{'text/javascript':['.js']}}]});
+      const w=await h.createWritable();await w.write(result);await w.close();
+      original=deepClone(data);raw=result;updateChangeCount();renderList();renderDetail();
+      alert('✓ Salvato! Ricorda: 1) bumpa ?v= nello script tag game-data.js di index.html  2) rilancia _build_rose.py  3) push con _push.bat.');
+      return;
+    }
+  }catch(e){if(e.name==='AbortError')return;console.warn(e)}
+  const blob=new Blob([result],{type:'text/javascript;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='game-data.js';a.click();URL.revokeObjectURL(url);
+  original=deepClone(data);raw=result;updateChangeCount();
+}
+</script>
+</body>
+</html>

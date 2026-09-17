@@ -11,6 +11,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -115,6 +116,66 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         if filename not in deploy_yml:
             fail(f"Deploy exclusion missing for runtime/server file: {filename}")
 
+    local_only_files = (
+        "GAME_MANUAL.md",
+        "VADEMECUM.md",
+        "ROADMAP.md",
+        "RECOVERY_INVENTORY.md",
+        "dataset-editor.html",
+        "_studio.html",
+        "_mock_*.html",
+        "_build_*.py",
+        "_sync_version.py",
+        "tools/**",
+    )
+    for filename in local_only_files:
+        if filename not in deploy_yml:
+            fail(f"Deploy exclusion missing for local/internal file: {filename}")
+
+
+def validate_local_html_tools() -> None:
+    """Syntax-check inline JavaScript in recovered local-only HTML tools."""
+    for filename in ("dataset-editor.html", "_studio.html"):
+        path = ROOT / filename
+        if not path.exists():
+            continue
+
+        html = path.read_text(encoding="utf-8")
+        scripts = re.findall(
+            r"<script(?![^>]*\bsrc\s*=)[^>]*>(.*?)</script>",
+            html,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if not scripts:
+            fail(f"No inline JavaScript found in recovered tool: {filename}")
+            continue
+
+        combined = "\n;\n".join(scripts)
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".js", encoding="utf-8", delete=False
+            ) as tmp:
+                tmp.write(combined)
+                tmp_path = Path(tmp.name)
+
+            result = subprocess.run(
+                ["node", "--check", str(tmp_path)],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                detail = (result.stderr or result.stdout).strip()
+                fail(f"Inline JavaScript syntax error in {filename}: {detail}")
+            else:
+                note(f"Recovered tool JavaScript syntax OK: {filename}")
+        except FileNotFoundError:
+            fail("Node.js is required to validate recovered local HTML tools")
+        finally:
+            if "tmp_path" in locals() and tmp_path.exists():
+                tmp_path.unlink()
+
 
 def main() -> int:
     index_html = read("index.html")
@@ -126,6 +187,7 @@ def main() -> int:
     validate_versions(index_html, sw_js)
     validate_service_worker(sw_js)
     validate_deploy_workflow(deploy_yml)
+    validate_local_html_tools()
 
     for message in NOTES:
         print(f"[info] {message}")

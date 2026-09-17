@@ -29,3 +29,20 @@ jobs:
             hall-of-fame.json
             challenge-config.json
             hof-config.php
+            GAME_MANUAL.md
+            VADEMECUM.md
+            ROADMAP.md
+            ANALISI_SITO_2026-07.md
+            DATASET_ANALYSIS.md
+            CHECKLIST_TEST_5.6.2.md
+            RECOVERY_INVENTORY.md
+            dataset-editor.html
+            _studio.html
+            _mock_*.html
+            _launch_kit.md
+            _build_*.py
+            _sync_version.py
+            wc_build.py
+            wc_patch.py
+            wc_constants.js
+            tools/**
