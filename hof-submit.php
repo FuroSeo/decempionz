@@ -4,6 +4,7 @@ header('Cache-Control: no-store');
 header('Access-Control-Allow-Origin: https://decempionz.com');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -49,8 +50,6 @@ if ($nick === '') {
     exit;
 }
 
-// Doppia barriera: sessione (120s) + IP (10s). L'IP breve blocca spam senza cookie
-// ma resta abbastanza corto da non penalizzare a lungo utenti distinti dietro CGNAT.
 if (isset($_SESSION['hof_last']) && time() - (int)$_SESSION['hof_last'] < 120) {
     http_response_code(429);
     echo json_encode(['error' => 'Hai già inviato un risultato di recente. Aspetta qualche minuto.']);
@@ -121,7 +120,6 @@ $entry = [
     'date'         => date('Y-m-d'),
 ];
 
-// Il comportamento corrente e' auto-publish; il pannello admin permette la rimozione successiva.
 $approvedFile = __DIR__ . '/hall-of-fame.json';
 $fh = @fopen($approvedFile, 'c+');
 if (!$fh || !flock($fh, LOCK_EX)) {
@@ -156,6 +154,10 @@ if (count($approved['entries']) >= 2000) {
     echo json_encode(['error' => 'Hall of Fame temporaneamente piena.']);
     exit;
 }
+
+// Hall of Fame è dati durevoli: conserva una cronologia più lunga.
+dcz_backup_snapshot('hall-of-fame', 'main', $content, 30, 90);
+
 $approved['entries'][] = $entry;
 $encoded = json_encode($approved, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 if ($encoded === false) {
