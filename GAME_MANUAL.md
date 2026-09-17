@@ -18,6 +18,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
 - **5.16.0** — save export/import for all `dcz_*` localStorage keys and Chemistry explanation in How to Play.
+- **Duel integrity 2026-09-17** — newly finalized Duel results are generated server-side after both squads are committed; client-reported match scores are no longer authoritative. Squad provenance remains client-submitted and structurally validated.
 - **Infrastructure 2026-09-17** — Service Worker cache namespace moved to `decempionz-v5.16.4`; dynamic endpoints bypass cache; navigation timeout and controlled offline fallback added. This did **not** bump the public app version.
 - **Workflow 2026-09-17** — branch/PR/CI workflow introduced; direct legacy `_push.bat` deployment retired; Dataset Editor and Studio recovered and versioned as non-deployed tools.
 
@@ -204,13 +205,19 @@ Production challenge configuration/state is server-maintained and excluded from 
 
 ## 13. Duel 1v1
 
-Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php`.
+Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php` and the server-side simulation engine in `duel-engine.php`.
 
-The protocol prevents the second player from seeing the first player's hidden squad before committing their own result flow. Duel state is stored server-side under `duels/` and protected from direct JSON access.
+The protocol prevents the second player from seeing the first player's hidden squad before committing their own squad. After both squads are committed, the server generates the authoritative best-of-3 result and keeps the seed/precomputed series private until finalization. `duel-result.php` does not use client-reported scores to choose the winner.
 
-The Duel simulator is designed to evaluate both sides symmetrically and avoid campaign-only advantages such as user difficulty settings. Classic and Dynasty duel variants are supported by the UI/backend flow.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the current Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; moving result authority server-side is not intended as a balance change.
 
-Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
+Squad provenance is still client-submitted: the backend validates formation, tactic, 11 unique player names, supported positions and the dataset-compatible rating range, but it does not yet prove that every player came from the exact draft offers shown in the browser. The detailed trust model and migration rules live in `COMPETITIVE_INTEGRITY.md`.
+
+Historical completed duels remain readable as legacy client-reported records. A historical duel left in `simulating` state receives a fresh server-authoritative result when finalized.
+
+With the current monolithic client, player B is redirected to the canonical Duel result page after server finalization rather than replaying a locally generated series that may differ from the authoritative result. A future client refactor can restore the animation by consuming the server result directly.
+
+Classic and Dynasty duel variants remain supported. Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
 
 ---
 
@@ -366,7 +373,7 @@ The old `C:\Projects\decempionz` + `_push.bat` flow is retired. Follow `LOCAL_SE
 
 ### Developer files versioned in Git but excluded from FTP
 
-`GAME_MANUAL.md`, `DEVELOPMENT.md`, `LOCAL_SETUP.md`, `RECOVERY_INVENTORY.md`, `dataset-editor.html`, `_studio.html`, `_build_i18n.py`, `_build_rose.py` and other explicitly excluded dev artifacts.
+`GAME_MANUAL.md`, `DEVELOPMENT.md`, `LOCAL_SETUP.md`, `COMPETITIVE_INTEGRITY.md`, `RECOVERY_INVENTORY.md`, `dataset-editor.html`, `_studio.html`, `_build_i18n.py`, `_build_rose.py` and other explicitly excluded dev artifacts.
 
 The repository is public: FTP exclusion does **not** make a Git file private.
 
