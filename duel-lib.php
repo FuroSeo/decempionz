@@ -11,7 +11,8 @@ function dcz_plain_label($value, $maxLen) {
 }
 
 /* Sanitizza un blocco squadra {nick, formation, tactic, players[11]}.
-   Ritorna l'array pulito o null se non valido. */
+   La provenienza dal draft resta client-trusted, ma la struttura deve essere compatibile
+   con il dataset/engine reale: formazione e tattica valide, 11 nomi distinti, rating 7..10. */
 function dcz_sanitize_team($t) {
     if (!is_array($t)) return null;
 
@@ -20,26 +21,32 @@ function dcz_sanitize_team($t) {
     if ($nick === '') return null;
 
     $validFormations = ['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5-3-2','5-4-1'];
-    $formation = in_array($t['formation'] ?? '', $validFormations, true) ? $t['formation'] : '4-3-3';
+    $formation = (string)($t['formation'] ?? '');
+    if (!in_array($formation, $validFormations, true)) return null;
 
     $validTactics = ['attack', 'balanced', 'defend'];
-    $tactic = in_array($t['tactic'] ?? '', $validTactics, true) ? $t['tactic'] : 'balanced';
+    $tactic = (string)($t['tactic'] ?? '');
+    if (!in_array($tactic, $validTactics, true)) return null;
 
-    $players = array_slice(
-        array_map(function ($p) {
-            if (!is_array($p)) $p = [];
-            return [
-                'n' => dcz_plain_label($p['n'] ?? '', 30),
-                'p' => substr(preg_replace('/[^A-Z]/', '', (string)($p['p'] ?? '')), 0, 5),
-                'r' => min(10, max(1, (int)($p['r'] ?? 7))),
-            ];
-        }, (array)($t['players'] ?? [])),
-        0,
-        11
-    );
-    if (count($players) !== 11) return null;
-    foreach ($players as $p) {
-        if ($p['n'] === '' || $p['p'] === '') return null;
+    $validPositions = ['GK','CB','RB','LB','LWB','RWB','SW','DC','DF','CM','CDM','CAM','RM','LM','DM','MF','RW','LW','ST','CF','SS','FW'];
+    $rawPlayers = (array)($t['players'] ?? []);
+    if (count($rawPlayers) !== 11) return null;
+
+    $players = [];
+    $seenNames = [];
+    foreach ($rawPlayers as $p) {
+        if (!is_array($p)) return null;
+        $name = dcz_plain_label($p['n'] ?? '', 30);
+        $pos = substr(preg_replace('/[^A-Z]/', '', (string)($p['p'] ?? '')), 0, 5);
+        $ratingRaw = $p['r'] ?? null;
+        if ($name === '' || !in_array($pos, $validPositions, true)) return null;
+        if (!is_int($ratingRaw) && !(is_string($ratingRaw) && preg_match('/^\d+$/', $ratingRaw))) return null;
+        $rating = (int)$ratingRaw;
+        if ($rating < 7 || $rating > 10) return null;
+        $nameKey = mb_strtolower($name, 'UTF-8');
+        if (isset($seenNames[$nameKey])) return null;
+        $seenNames[$nameKey] = true;
+        $players[] = ['n' => $name, 'p' => $pos, 'r' => $rating];
     }
 
     /* Dynasty duel: club opzionale (key dataset + torneo di provenienza + nome visualizzato) */
@@ -73,7 +80,8 @@ function dcz_sanitize_pen_seq($seq, $expectedSum) {
     return $clean;
 }
 
-/* Sanitizza il blocco risultato della serie best-of-3 simulata dal client di B. */
+/* Valida/canonicalizza una serie best-of-3. Usato sui risultati prodotti dal motore server
+   e per compatibilità con dati Duel storici; non rende autoritativo un risultato client. */
 function dcz_sanitize_result($r) {
     if (!is_array($r) || !is_array($r['matches'] ?? null)) return null;
 
