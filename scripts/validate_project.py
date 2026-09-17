@@ -118,10 +118,15 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
 
     protected_runtime_files = (
         "game-counter.json",
+        "global-stats.json",
         "hall-of-fame-pending.json",
         "hall-of-fame.json",
         "challenge-config.json",
         "hof-config.php",
+        "daily-scores/**",
+        "challenge-scores/**",
+        "drafts/**",
+        "duels/**",
     )
     for filename in protected_runtime_files:
         if filename not in deploy_yml:
