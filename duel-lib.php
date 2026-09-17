@@ -12,7 +12,7 @@ function dcz_plain_label($value, $maxLen) {
 
 /* Sanitizza un blocco squadra {nick, formation, tactic, players[11]}.
    La provenienza dal draft resta client-trusted, ma la struttura deve essere compatibile
-   con il dataset/engine reale: formazione e tattica valide, 11 nomi distinti, rating 6..10. */
+   con il dataset/engine reale: formazione e tattica valide, 11 giocatori, rating 6..10. */
 function dcz_sanitize_team($t) {
     if (!is_array($t)) return null;
 
@@ -33,7 +33,6 @@ function dcz_sanitize_team($t) {
     if (count($rawPlayers) !== 11) return null;
 
     $players = [];
-    $seenNames = [];
     foreach ($rawPlayers as $p) {
         if (!is_array($p)) return null;
         $name = dcz_plain_label($p['n'] ?? '', 30);
@@ -43,9 +42,6 @@ function dcz_sanitize_team($t) {
         if (!is_int($ratingRaw) && !(is_string($ratingRaw) && preg_match('/^\d+$/', $ratingRaw))) return null;
         $rating = (int)$ratingRaw;
         if ($rating < 6 || $rating > 10) return null;
-        $nameKey = mb_strtolower($name, 'UTF-8');
-        if (isset($seenNames[$nameKey])) return null;
-        $seenNames[$nameKey] = true;
         $players[] = ['n' => $name, 'p' => $pos, 'r' => $rating];
     }
 
