@@ -14,6 +14,7 @@ session_set_cookie_params([
     'samesite' => 'Strict',
 ]);
 session_start();
+require_once __DIR__ . '/runtime-backup-lib.php';
 
 $configFile = __DIR__ . '/hof-config.php';
 if (!file_exists($configFile)) {
@@ -62,8 +63,7 @@ function hof_rate_read(string $file): array {
 
 function hof_rate_remaining(string $file): int {
     $data = hof_rate_read($file);
-    $until = (int)($data['blocked_until'] ?? 0);
-    return max(0, $until - time());
+    return max(0, (int)($data['blocked_until'] ?? 0) - time());
 }
 
 function hof_rate_fail(string $file): int {
@@ -87,9 +87,7 @@ function hof_rate_fail(string $file): int {
             $data = ['fails' => 0, 'first' => $now, 'blocked_until' => 0];
         }
         $data['fails'] = (int)($data['fails'] ?? 0) + 1;
-        if ($data['fails'] >= $maxAttempts) {
-            $data['blocked_until'] = $now + $window;
-        }
+        if ($data['fails'] >= $maxAttempts) $data['blocked_until'] = $now + $window;
         $remaining = max(0, (int)$data['blocked_until'] - $now);
     }
 
@@ -156,6 +154,9 @@ function hof_delete_entry(string $file, string $id, ?string &$error = null): boo
         return false;
     }
 
+    // Prima di una cancellazione amministrativa conserva l'intero stato corrente.
+    dcz_backup_snapshot('hall-of-fame', 'main', $raw, 30, 90);
+
     $encoded = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     if ($encoded === false) {
         flock($fp, LOCK_UN);
@@ -180,7 +181,6 @@ if (!isset($_SESSION['hof_csrf']) || !is_string($_SESSION['hof_csrf'])) {
     $_SESSION['hof_csrf'] = bin2hex(random_bytes(32));
 }
 
-// Scadenza della sessione admin dopo 60 minuti di inattività.
 if (!empty($_SESSION['hof_admin'])) {
     $lastSeen = (int)($_SESSION['hof_last_seen'] ?? 0);
     if ($lastSeen > 0 && (time() - $lastSeen) > 3600) {
@@ -203,7 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $adminError = 'Richiesta non valida o scaduta. Ricarica la pagina e riprova.';
     } else {
         $action = (string)($_POST['action'] ?? '');
-
         if ($action === 'login') {
             $remaining = hof_rate_remaining($loginRateFile);
             if ($remaining > 0) {
@@ -213,9 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $password = (string)($_POST['password'] ?? '');
                 if (strlen($password) > 256 || !hof_password_ok($password)) {
                     $remaining = hof_rate_fail($loginRateFile);
-                    $loginError = $remaining > 0
-                        ? 'Troppi tentativi. Accesso temporaneamente bloccato.'
-                        : 'Password errata.';
+                    $loginError = $remaining > 0 ? 'Troppi tentativi. Accesso temporaneamente bloccato.' : 'Password errata.';
                 } else {
                     @unlink($loginRateFile);
                     session_regenerate_id(true);
@@ -258,18 +255,8 @@ if ($isAdmin) {
     if (isset($_GET['deleted']) && $_GET['deleted'] === '1') $notice = 'Entry eliminata.';
 }
 
-$tournLabels = [
-    'ucl' => '🏆 UCL',
-    'copa' => '🌎 Copa',
-    'wc' => '🌍 World Cup',
-    'dynasty' => '🏰 Dynasty',
-];
-$diffLabels = [
-    'easy' => '🟢 Facile',
-    'normal' => '🟡 Normale',
-    'hard' => '🔴 Difficile',
-    'legend' => '⚫ Leggenda',
-];
+$tournLabels = ['ucl'=>'🏆 UCL','copa'=>'🌎 Copa','wc'=>'🌍 World Cup','dynasty'=>'🏰 Dynasty'];
+$diffLabels = ['easy'=>'🟢 Facile','normal'=>'🟡 Normale','hard'=>'🔴 Difficile','legend'=>'⚫ Leggenda'];
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -279,8 +266,7 @@ $diffLabels = [
 <meta name="robots" content="noindex,nofollow,noarchive">
 <title>HoF Admin — Decempionz</title>
 <style>
-:root{--bg:#070a12;--surface:#0d1320;--text:#e8edf5;--mut:#6b7e95;--gold:#c9a227;--brd:#1e2d42;--red:#ef4444;--green:#22c55e}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;font-size:15px;line-height:1.6}.header{background:#0a0f1e;border-bottom:1px solid var(--brd);padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}.container{max-width:900px;margin:0 auto;padding:24px 20px}.login-box{max-width:340px;margin:80px auto;background:var(--surface);border:1px solid var(--brd);border-radius:16px;padding:32px}.login-box h2{margin-bottom:20px;font-size:1.2rem}input[type=password]{width:100%;background:#07090f;border:1px solid var(--brd);border-radius:8px;color:var(--text);padding:10px 14px;font-size:1rem;margin-bottom:12px;outline:none}.btn{display:inline-block;padding:9px 22px;border-radius:8px;border:none;font-weight:700;font-size:.88rem;cursor:pointer}.btn-gold{background:linear-gradient(135deg,#c9a227,#e8c84a);color:#07090f}.btn-ghost{background:transparent;border:1px solid var(--brd);color:var(--mut)}.btn-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red)}.error{color:var(--red);font-size:.85rem;margin:10px 0}.notice{color:var(--green);font-size:.85rem;margin-bottom:14px}.section-title{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}.sub{font-size:.78rem;color:var(--mut);margin:-8px 0 18px}.card{background:var(--surface);border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:12px}.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:12px}.nickname{font-weight:800}.grade{font-size:1.1rem;font-weight:900}.grade-S{color:#c9a227}.grade-A{color:#16a34a}.grade-B{color:#2451a8}.grade-C{color:#dc2626}.meta{font-size:.75rem;color:var(--mut);margin-bottom:8px}.lineup{font-size:.72rem;color:var(--mut);border-top:1px solid var(--brd);padding-top:8px;margin-top:8px;line-height:1.8}.actions{display:flex;gap:8px;margin-top:12px}.empty{color:var(--mut);font-size:.9rem;padding:20px 0}.count{color:var(--mut);font-size:.8rem}
+:root{--bg:#070a12;--surface:#0d1320;--text:#e8edf5;--mut:#6b7e95;--gold:#c9a227;--brd:#1e2d42;--red:#ef4444;--green:#22c55e}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;font-size:15px;line-height:1.6}.header{background:#0a0f1e;border-bottom:1px solid var(--brd);padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}.container{max-width:900px;margin:0 auto;padding:24px 20px}.login-box{max-width:340px;margin:80px auto;background:var(--surface);border:1px solid var(--brd);border-radius:16px;padding:32px}.login-box h2{margin-bottom:20px;font-size:1.2rem}input[type=password]{width:100%;background:#07090f;border:1px solid var(--brd);border-radius:8px;color:var(--text);padding:10px 14px;font-size:1rem;margin-bottom:12px;outline:none}.btn{display:inline-block;padding:9px 22px;border-radius:8px;border:none;font-weight:700;font-size:.88rem;cursor:pointer}.btn-gold{background:linear-gradient(135deg,#c9a227,#e8c84a);color:#07090f}.btn-ghost{background:transparent;border:1px solid var(--brd);color:var(--mut)}.btn-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red)}.error{color:var(--red);font-size:.85rem;margin:10px 0}.notice{color:var(--green);font-size:.85rem;margin-bottom:14px}.section-title{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}.sub{font-size:.78rem;color:var(--mut);margin:-8px 0 18px}.card{background:var(--surface);border:1px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:12px}.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:12px}.nickname{font-weight:800}.grade{font-size:1.1rem;font-weight:900}.grade-S{color:#c9a227}.grade-A{color:#16a34a}.grade-B{color:#2451a8}.grade-C{color:#dc2626}.meta{font-size:.75rem;color:var(--mut);margin-bottom:8px}.lineup{font-size:.72rem;color:var(--mut);border-top:1px solid var(--brd);padding-top:8px;margin-top:8px;line-height:1.8}.actions{display:flex;gap:8px;margin-top:12px}.empty{color:var(--mut);font-size:.9rem;padding:20px 0}.count{color:var(--mut);font-size:.8rem}
 </style>
 </head>
 <body>
@@ -294,7 +280,6 @@ $diffLabels = [
   </form>
   <?php endif; ?>
 </div>
-
 <?php if (!$isAdmin): ?>
 <div class="login-box">
   <h2>🔒 Accesso Admin</h2>
@@ -313,46 +298,20 @@ $diffLabels = [
   <div class="sub">Le submission vengono pubblicate automaticamente. Da questo pannello puoi rimuovere le entry indesiderate.</div>
   <?php if ($notice): ?><p class="notice"><?= h($notice) ?></p><?php endif; ?>
   <?php if ($adminError): ?><p class="error"><?= h($adminError) ?></p><?php endif; ?>
-
   <?php if (empty($approved)): ?>
     <p class="empty">Nessuna entry pubblicata.</p>
   <?php else: ?>
     <?php foreach (array_reverse($approved) as $entry): ?>
     <div class="card">
       <div class="card-head">
-        <div>
-          <span class="nickname"><?= h($entry['nickname'] ?? '?') ?></span>
-          &nbsp;·&nbsp;
-          <span class="grade grade-<?= h($entry['grade'] ?? 'C') ?>"><?= h($entry['grade'] ?? 'C') ?></span>
-          &nbsp;·&nbsp;
-          <span style="font-size:.8rem;color:var(--mut)"><?= !empty($entry['winner']) ? '🏆 Campione' : '💔 Eliminato' ?></span>
-        </div>
+        <div><span class="nickname"><?= h($entry['nickname'] ?? '?') ?></span>&nbsp;·&nbsp;<span class="grade grade-<?= h($entry['grade'] ?? 'C') ?>"><?= h($entry['grade'] ?? 'C') ?></span>&nbsp;·&nbsp;<span style="font-size:.8rem;color:var(--mut)"><?= !empty($entry['winner']) ? '🏆 Campione' : '💔 Eliminato' ?></span></div>
         <span style="font-size:.72rem;color:var(--mut)"><?= h($entry['date'] ?? '') ?></span>
       </div>
-      <div class="meta">
-        <?= h($tournLabels[$entry['tournament'] ?? ''] ?? ($entry['tournament'] ?? '')) ?>
-        &nbsp;·&nbsp; <?= h($entry['era'] ?? '') ?>
-        &nbsp;·&nbsp; <?= h($entry['formation'] ?? '') ?>
-        &nbsp;·&nbsp; <?= h($diffLabels[$entry['difficulty'] ?? ''] ?? ($entry['difficulty'] ?? '')) ?>
-        &nbsp;·&nbsp; <?= h($entry['record'] ?? '') ?>
-        &nbsp;·&nbsp; Gol: <?= h($entry['goals'] ?? '') ?>
-        <?php if (!empty($entry['topScorer'])): ?>&nbsp;·&nbsp; ⚽ <?= h($entry['topScorer']) ?><?php endif; ?>
-      </div>
+      <div class="meta"><?= h($tournLabels[$entry['tournament'] ?? ''] ?? ($entry['tournament'] ?? '')) ?>&nbsp;·&nbsp;<?= h($entry['era'] ?? '') ?>&nbsp;·&nbsp;<?= h($entry['formation'] ?? '') ?>&nbsp;·&nbsp;<?= h($diffLabels[$entry['difficulty'] ?? ''] ?? ($entry['difficulty'] ?? '')) ?>&nbsp;·&nbsp;<?= h($entry['record'] ?? '') ?>&nbsp;·&nbsp;Gol: <?= h($entry['goals'] ?? '') ?><?php if (!empty($entry['topScorer'])): ?>&nbsp;·&nbsp;⚽ <?= h($entry['topScorer']) ?><?php endif; ?></div>
       <?php if (!empty($entry['lineup']) && is_array($entry['lineup'])): ?>
-      <div class="lineup">
-        <?php foreach (['GK'=>'🧤','DEF'=>'🛡️','MID'=>'⚙️','FWD'=>'⚡'] as $role => $icon): ?>
-          <?= $icon ?> <?= h(implode(', ', array_map('strval', (array)($entry['lineup'][$role] ?? [])))) ?><br>
-        <?php endforeach; ?>
-      </div>
+      <div class="lineup"><?php foreach (['GK'=>'🧤','DEF'=>'🛡️','MID'=>'⚙️','FWD'=>'⚡'] as $role=>$icon): ?><?= $icon ?> <?= h(implode(', ', array_map('strval', (array)($entry['lineup'][$role] ?? [])))) ?><br><?php endforeach; ?></div>
       <?php endif; ?>
-      <div class="actions">
-        <form method="post" onsubmit="return confirm('Eliminare definitivamente questa entry dalla Hall of Fame?')">
-          <input type="hidden" name="csrf" value="<?= h($_SESSION['hof_csrf']) ?>">
-          <input type="hidden" name="action" value="delete">
-          <input type="hidden" name="id" value="<?= h($entry['id'] ?? '') ?>">
-          <button class="btn btn-red" type="submit">🗑 Elimina</button>
-        </form>
-      </div>
+      <div class="actions"><form method="post" onsubmit="return confirm('Eliminare definitivamente questa entry dalla Hall of Fame?')"><input type="hidden" name="csrf" value="<?= h($_SESSION['hof_csrf']) ?>"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= h($entry['id'] ?? '') ?>"><button class="btn btn-red" type="submit">🗑 Elimina</button></form></div>
     </div>
     <?php endforeach; ?>
   <?php endif; ?>
