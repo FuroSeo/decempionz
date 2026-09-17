@@ -36,6 +36,7 @@ try {
     t_assert(!dcz_draft_validate_upload_grant($root, $id, $token, $now + DCZ_DRAFT_UPLOAD_TTL + 1), 'expired grant must be rejected');
     dcz_draft_consume_upload_grant($root, $id);
     t_assert(!file_exists(dcz_draft_auth_path($root, $id)), 'consumed grant must be deleted');
+    @unlink($root . '/' . $id . '.json');
 
     $oldId = 'Old12345';
     file_put_contents($root . '/' . $oldId . '.json', '{"id":"Old12345"}');
@@ -55,6 +56,7 @@ try {
     $expiredAuthId = 'Tok12345';
     file_put_contents($root . '/' . $expiredAuthId . '.json', '{"id":"Tok12345"}');
     file_put_contents(dcz_draft_auth_path($root, $expiredAuthId), '{"tokenHash":"' . str_repeat('b', 64) . '","expiresAt":' . ($now - DCZ_DRAFT_ORPHAN_GRACE - 10) . '}');
+    touch($root . '/' . $expiredAuthId . '.json', $now - 60);
 
     $orphanId = 'Img12345';
     file_put_contents($root . '/' . $orphanId . '.jpg', 'jpeg');
@@ -66,6 +68,7 @@ try {
     t_assert(!file_exists(dcz_draft_auth_path($root, $oldId)), 'old draft auth must be removed with JSON');
     t_assert(file_exists($root . '/' . $recentId . '.json'), 'recent draft JSON must survive retention');
     t_assert(file_exists($root . '/' . $recentId . '.jpg'), 'recent draft image must survive retention');
+    t_assert(file_exists($root . '/' . $expiredAuthId . '.json'), 'draft with expired grant must remain valid');
     t_assert(!file_exists(dcz_draft_auth_path($root, $expiredAuthId)), 'long-expired auth grant must be cleaned');
     t_assert(!file_exists($root . '/' . $orphanId . '.jpg'), 'old orphan image must be cleaned');
     t_assert(($stats['drafts'] ?? 0) === 1, 'cleanup must report one expired draft pair');
