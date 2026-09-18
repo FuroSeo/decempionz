@@ -99,6 +99,13 @@ def test_i18n_generator() -> None:
                 if f"https://decempionz.com/{lang}/{page}.html" not in html:
                     fail(f"missing localized canonical URL in {lang}/{page}.html")
 
+                if lang == "es" and page in {"copa", "worldcup"}:
+                    committed = ROOT / lang / f"{page}.html"
+                    if not committed.exists():
+                        fail(f"missing committed generated page: {lang}/{page}.html")
+                    if committed.read_text(encoding="utf-8") != html:
+                        fail(f"committed generated page is stale: {lang}/{page}.html")
+
         patterns = (
             "ucl.html",
             "copa.html",
@@ -168,6 +175,11 @@ def test_rose_generator() -> None:
             fail(f"sitemap URL count mismatch: xml={len(url_nodes)}, log={sitemap_count}")
         if sitemap_count < (count_it * 2):
             fail("sitemap does not contain both IT and EN squad pages")
+
+        sitemap_text = sitemap.read_text(encoding="utf-8")
+        for localized in ("es/ucl.html", "es/copa.html", "es/worldcup.html", "es/about.html"):
+            if f"https://decempionz.com/{localized}" not in sitemap_text:
+                fail(f"generated sitemap missing localized page: {localized}")
 
         patterns = ("rose/*.html", "en/rose/*.html", "sitemap.xml")
         digest1 = digest_tree(work, patterns)
