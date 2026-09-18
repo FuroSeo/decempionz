@@ -221,6 +221,74 @@ function validateHomepageSummary() {
 
 validateHomepageSummary();
 
+function validateHomepageOnboarding() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const primerIndex = homepage.indexOf("data-home-onboarding");
+  const tabsIndex = homepage.indexOf("<!-- Tournament tab switcher -->");
+
+  if (primerIndex < 0) {
+    error("homepage: first-run primer missing");
+  } else if (tabsIndex < 0 || primerIndex > tabsIndex) {
+    error("homepage: first-run primer must appear before tournament selection");
+  }
+  if (!homepage.includes(
+    'class="home-onboarding-help" onclick="showScreen(\'screen-howto\')"'
+  )) {
+    error("homepage: visible how-to action missing from first-run primer");
+  }
+
+  const onboardingKeys = [
+    "home.onboarding.pick",
+    "home.onboarding.draft",
+    "home.onboarding.play"
+  ];
+  for (const key of onboardingKeys) {
+    const translationCount = homepage.split("'" + key + "':").length - 1;
+    if (translationCount !== 3) {
+      error("homepage: expected IT/EN/ES translations for " + key);
+    }
+    if (!homepage.includes('data-i18n="' + key + '"')) {
+      error("homepage: primer does not render " + key);
+    }
+  }
+
+  const guideEntries = Array.from(
+    homepage.matchAll(/'howto\.p1':'([^\n]+)',/g),
+    function (match) { return match[1]; }
+  );
+  const guideExpectations = [
+    [
+      summary.ucl.teams + " rose",
+      summary.copa.teams + " rose",
+      summary.wc.teams + " nazionali"
+    ],
+    [
+      summary.ucl.teams + " squads",
+      summary.copa.teams + " squads",
+      summary.wc.teams + " national teams"
+    ],
+    [
+      summary.ucl.teams + " plantillas",
+      summary.copa.teams + " plantillas",
+      summary.wc.teams + " selecciones"
+    ]
+  ];
+
+  if (guideEntries.length !== guideExpectations.length) {
+    error("homepage: expected three localized how-to introductions");
+  } else {
+    guideExpectations.forEach(function (fragments, index) {
+      for (const fragment of fragments) {
+        if (!guideEntries[index].includes(fragment)) {
+          error("homepage: localized how-to copy missing canonical total " + fragment);
+        }
+      }
+    });
+  }
+}
+
+validateHomepageOnboarding();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
