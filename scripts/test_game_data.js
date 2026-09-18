@@ -584,6 +584,51 @@ function validateSetupChoiceAccessibility() {
 
 validateSetupChoiceAccessibility();
 
+function validateEraAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf("function showEraGrid()");
+  const end = homepage.indexOf("\nfunction selectAllTime(", start);
+  if (start < 0 || end < 0) {
+    error("era: unable to locate era picker");
+    return;
+  }
+  const picker = homepage.slice(start, end);
+
+  if (!picker.includes(
+    "return '<button type=\"button\" class=\"era-card\" aria-pressed=\"false\""
+  )) {
+    error("era: choices must use native button semantics");
+  }
+  if (picker.includes("return '<div class=\"era-card\"")) {
+    error("era: non-keyboard clickable choice returned");
+  }
+  if (!picker.includes("+'</div></button>';")) {
+    error("era: choice button is not closed correctly");
+  }
+  if (!picker.includes("selectedEraIdx=-1;") ||
+      !picker.includes("confirmBtn.disabled=true;") ||
+      !picker.includes("confirmBtn.disabled=false;")) {
+    error("era: current selection and native confirm state are not reset correctly");
+  }
+  if (!picker.includes("_setSingleChoice('.era-card',el,'era-sel')")) {
+    error("era: selected state is not exposed with aria-pressed");
+  }
+  if (!homepage.includes(
+    '.era-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}'
+  )) {
+    error("era: keyboard focus indicator missing from choices");
+  }
+  if (!homepage.includes(
+    'id="era-grid" role="group" aria-labelledby="era-specific-label"'
+  ) || !homepage.includes(
+    'id="btn-era-confirm" data-i18n="era.use_this" class="btn btn-gold btn-inactive" onclick="confirmEra()" disabled'
+  )) {
+    error("era: choice group label or initial native confirm state missing");
+  }
+}
+
+validateEraAccessibility();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
