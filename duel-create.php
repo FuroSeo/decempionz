@@ -54,6 +54,7 @@ if (!is_array($data)) {
 }
 
 require __DIR__ . '/duel-lib.php';
+require_once __DIR__ . '/duel-draft-lib.php';
 
 $validTournaments = ['ucl', 'copa', 'wc'];
 if (!in_array($data['tournament'] ?? '', $validTournaments, true)) {
@@ -68,6 +69,7 @@ if ($team === null) {
     http_response_code(400); echo json_encode(['error' => 'invalid team']); exit;
 }
 
+$eraId = preg_replace('/[^a-zA-Z0-9_]/', '', (string)($data['eraId'] ?? ''));
 if ($mode === 'dynasty') {
     if (empty($team['club']) || empty($team['tmode']) || $team['tmode'] !== $data['tournament']) {
         dcz_log_err('dynasty_scope_invalid');
@@ -80,6 +82,28 @@ if ($mode === 'dynasty') {
 if (!$datasetOk) {
     dcz_log_err('dataset_team_mismatch');
     http_response_code(400); echo json_encode(['error' => 'invalid team source']); exit;
+}
+
+$draftSessionId = preg_replace('/[^a-f0-9]/', '', strtolower((string)($data['draftSessionId'] ?? '')));
+if (strlen($draftSessionId) !== 32) {
+    dcz_log_err('missing_draft_session');
+    http_response_code(400); echo json_encode(['error' => 'verified draft required']); exit;
+}
+$draftExpect = [
+    'role' => 'a',
+    'mode' => $mode,
+    'tournament' => $data['tournament'],
+    'formation' => $team['formation'],
+    'tactic' => $team['tactic'],
+    'eraId' => $mode === 'dynasty' ? 'dynasty' : $eraId,
+    'club' => $mode === 'dynasty' ? $team['club'] : null,
+    'duelId' => null,
+];
+$draftVerified = dcz_draft_verify_completed_session($draftSessionId, $team, $draftExpect);
+if (empty($draftVerified['ok'])) {
+    dcz_log_err('draft_proof_failed reason=' . ($draftVerified['error'] ?? 'unknown'));
+    http_response_code((int)($draftVerified['code'] ?? 400));
+    echo json_encode(['error' => 'draft verification failed']); exit;
 }
 
 /* Genera ID unico di 8 caratteri */
@@ -96,13 +120,14 @@ $payload = [
     'mode'       => $mode,
     'tournament' => $data['tournament'],
     'era'        => mb_substr((string)($data['era'] ?? ''), 0, 60),
-    'eraId'      => preg_replace('/[^a-zA-Z0-9_]/', '', (string)($data['eraId'] ?? '')),
+    'eraId'      => $eraId,
     'lang'       => in_array($data['lang'] ?? 'it', ['it', 'en', 'es'], true) ? $data['lang'] : 'it',
     'a'          => $team,
     'b'          => null,
     'result'     => null,
     'createdAt'  => date('c'),
     'doneAt'     => null,
+    '_draftA'     => $draftVerified['proof'],
 ];
 
 $encoded = json_encode($payload, JSON_UNESCAPED_UNICODE);
@@ -110,6 +135,11 @@ $written = $encoded === false ? false : file_put_contents($file, $encoded, LOCK_
 if ($written === false) {
     dcz_log_err('write_failed file=' . $id);
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+}
+if (!dcz_draft_consume_session($draftSessionId)) {
+    @unlink($file);
+    dcz_log_err('draft_consume_failed');
+    http_response_code(500); echo json_encode(['error' => 'draft verification commit failed']); exit;
 }
 
 dcz_cleanup_old_duels($duelsDir);
