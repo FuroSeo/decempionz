@@ -719,7 +719,11 @@ function dcz_draft_team_equals_final($team, $finalTeam) {
 function dcz_draft_verify_completed_session($id, $team, $expect) {
     return dcz_draft_with_session_lock($id, function ($state, $fp) use ($id, $team, $expect) {
         if ($state['status'] !== 'done' || !is_array($state['finalTeam'] ?? null)) return ['error'=>'draft not complete', 'code'=>409];
-        if (!empty($state['consumedAt'])) return ['error'=>'draft session already used', 'code'=>409];
+        if (!empty($state['consumedAt'])) return [
+            'error'=>'draft session already used',
+            'code'=>409,
+            'consumedRef'=>$state['consumedRef'] ?? null,
+        ];
         $cfg = $state['config'] ?? [];
         foreach (['role','mode','tournament','formation','tactic'] as $key) {
             if (isset($expect[$key]) && ($cfg[$key] ?? null) !== $expect[$key]) return ['error'=>'draft context mismatch', 'code'=>400];
@@ -742,10 +746,14 @@ function dcz_draft_verify_completed_session($id, $team, $expect) {
     });
 }
 
-function dcz_draft_consume_session($id) {
-    return dcz_draft_with_session_lock($id, function ($state, $fp) {
-        if (!empty($state['consumedAt'])) return true;
+function dcz_draft_consume_session($id, $reference = null) {
+    return dcz_draft_with_session_lock($id, function ($state, $fp) use ($reference) {
+        if (!empty($state['consumedAt'])) {
+            if ($reference === null) return false;
+            return (string)($state['consumedRef'] ?? '') === (string)$reference;
+        }
         $state['consumedAt'] = time();
+        $state['consumedRef'] = $reference !== null ? (string)$reference : null;
         return dcz_draft_write_locked($fp, $state);
     });
 }
