@@ -59,7 +59,7 @@ The following same-name entries already exist in the Copa data and require histo
 
 These warnings are allowlisted only to make the current baseline testable. They are not considered verified-correct data.
 
-Nationality (`nat`) remains optional because the recovered World Cup dataset does not currently store it consistently. When present, it must be a two-letter uppercase code.
+Nationality (`nat`) remains optional because the recovered World Cup dataset does not currently store it consistently. When present, it must be a 2–3 letter uppercase code (the historical dataset uses values such as `WLS` and `NIR`).
 
 ## Editing rule
 
