@@ -65,9 +65,10 @@ Dopo una modifica a `game-data.js`:
 
 1. aggiorna la revisione `game-data.js?v=...` in `index.html`;
 2. rigenera le rose se necessario con `python _build_rose.py`;
-3. esegui `python scripts\validate_project.py`;
-4. controlla il diff dei file generati;
-5. commit/push sul branch e PR.
+3. esegui `python scripts\test_generators.py` per verificare in una copia temporanea entrambi i generatori recuperati;
+4. esegui `python scripts\validate_project.py`;
+5. controlla il diff dei file generati;
+6. commit/push sul branch e PR.
 
 ## Produzione
 

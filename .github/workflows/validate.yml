@@ -32,7 +32,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python3 -m py_compile scripts/validate_project.py scripts/smoke_test.py
+          python3 -m py_compile scripts/validate_project.py scripts/smoke_test.py scripts/test_generators.py
           python3 -m py_compile _build_i18n.py _build_rose.py
 
       - name: JavaScript syntax
@@ -59,6 +59,9 @@ jobs:
 
       - name: Duel draft session tests
         run: php scripts/test_duel_draft.php
+
+      - name: Generator E2E tests
+        run: python3 scripts/test_generators.py
 
       - name: HTTP smoke test
         run: python3 scripts/smoke_test.py
