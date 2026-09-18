@@ -73,12 +73,12 @@ function dcz_draft_dataset($path = null) {
         if ($mode === null) continue;
 
         if (!preg_match('/^\s*([A-Za-z0-9_]+):\{/', $line, $idm)) continue;
-        if (!preg_match("/\bname:'((?:\\.|[^'\\])*)'/", $line, $nm)) continue;
+        if (!preg_match('/\bname:\'((?:\\\\.|[^\'\\\\])*)\'/', $line, $nm)) continue;
         if (!preg_match("/\bclub:'([a-z0-9_]+)'/", $line, $cm)) continue;
         if (!preg_match('/players:\[(.*)\]\},?\s*$/u', $line, $pm)) continue;
 
         $players = [];
-        preg_match_all("/\{n:'((?:\\.|[^'\\])*)',p:'([A-Z]+)',r:(\d+)(?:,nat:'((?:\\.|[^'\\])*)')?\}/u", $pm[1], $matches, PREG_SET_ORDER);
+        preg_match_all('/\{n:\'((?:\\\\.|[^\'\\\\])*)\',p:\'([A-Z]+)\',r:(\d+)(?:,nat:\'((?:\\\\.|[^\'\\\\])*)\')?\}/u', $pm[1], $matches, PREG_SET_ORDER);
         foreach ($matches as $m) {
             $p = [
                 'n' => dcz_draft_js_unescape($m[1]),
