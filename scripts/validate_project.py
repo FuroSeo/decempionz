@@ -12,7 +12,9 @@ import re
 import subprocess
 import sys
 import tempfile
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 ERRORS: list[str] = []
@@ -150,6 +152,139 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
     for filename in local_only_files:
         if filename not in deploy_yml:
             fail(f"Deploy exclusion missing for local/internal file: {filename}")
+
+
+
+class LocalReferenceParser(HTMLParser):
+    """Collect static local file references from HTML tags."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.refs: list[tuple[str, str]] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        values = {key.lower(): value for key, value in attrs if value is not None}
+        tag = tag.lower()
+        if tag in {"script", "img", "source", "iframe"} and values.get("src"):
+            self.refs.append((tag, values["src"]))
+        elif tag == "link" and values.get("href"):
+            self.refs.append((tag, values["href"]))
+        elif tag == "a" and values.get("href"):
+            path = urlsplit(values["href"]).path
+            if Path(path).suffix.lower() in {
+                ".html",
+                ".php",
+                ".js",
+                ".css",
+                ".json",
+                ".xml",
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".webp",
+                ".svg",
+                ".ico",
+                ".webmanifest",
+            }:
+                self.refs.append((tag, values["href"]))
+
+
+def resolve_local_reference(source: Path, ref: str) -> Path | None:
+    ref = ref.strip()
+    if not ref or ref.startswith(
+        ("#", "data:", "javascript:", "mailto:", "tel:", "//")
+    ):
+        return None
+    if any(token in ref for token in ("{{", "}}", "<%", "%>")):
+        return None
+
+    parts = urlsplit(ref)
+    if parts.scheme or parts.netloc:
+        return None
+
+    raw_path = unquote(parts.path)
+    if not raw_path:
+        return None
+    if raw_path == "/":
+        return ROOT / "index.html"
+    if raw_path.startswith("/"):
+        return ROOT / raw_path.lstrip("/")
+    return (source.parent / raw_path).resolve()
+
+
+def validate_local_references() -> None:
+    checked = 0
+    for path in tracked_files("*.html"):
+        try:
+            html = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            fail(f"Unable to read HTML as UTF-8: {path.relative_to(ROOT)}: {exc}")
+            continue
+
+        parser = LocalReferenceParser()
+        try:
+            parser.feed(html)
+        except Exception as exc:  # noqa: BLE001
+            fail(f"Unable to parse HTML references in {path.relative_to(ROOT)}: {exc}")
+            continue
+
+        for tag, ref in parser.refs:
+            target = resolve_local_reference(path, ref)
+            if target is None:
+                continue
+            checked += 1
+            if not target.exists():
+                try:
+                    display = target.relative_to(ROOT)
+                except ValueError:
+                    display = target
+                fail(
+                    f"Missing local file referenced by {path.relative_to(ROOT)} "
+                    f"<{tag}>: {ref} -> {display}"
+                )
+
+    note(f"Static local HTML references checked: {checked}")
+
+
+def validate_manifest_assets() -> None:
+    path = ROOT / "manifest.json"
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        fail(f"Unable to parse manifest.json for asset validation: {exc}")
+        return
+
+    icons = manifest.get("icons")
+    if not isinstance(icons, list) or not icons:
+        fail("manifest.json must define at least one icon")
+        return
+
+    checked = 0
+    for icon in icons:
+        if not isinstance(icon, dict):
+            fail("manifest.json contains an invalid icon entry")
+            continue
+        src = icon.get("src")
+        if not isinstance(src, str) or not src.strip():
+            fail("manifest.json icon is missing src")
+            continue
+        target = resolve_local_reference(path, src)
+        if target is None:
+            fail(f"manifest.json icon must be a local asset: {src}")
+            continue
+        checked += 1
+        if not target.exists():
+            fail(f"Missing manifest icon: {src}")
+
+    start_url = manifest.get("start_url")
+    if isinstance(start_url, str):
+        target = resolve_local_reference(path, start_url)
+        if target is not None and not target.exists():
+            fail(f"manifest.json start_url does not resolve locally: {start_url}")
+
+    note(f"Manifest assets checked: {checked}")
 
 
 def validate_runtime_backup() -> None:
@@ -472,6 +607,8 @@ def main() -> int:
     validate_versions(index_html, sw_js)
     validate_service_worker(sw_js)
     validate_deploy_workflow(deploy_yml)
+    validate_local_references()
+    validate_manifest_assets()
     validate_runtime_backup()
     validate_draft_storage()
     validate_duel_integrity()
