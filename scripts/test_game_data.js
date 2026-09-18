@@ -186,6 +186,68 @@ for (const entry of idFamilies.entries()) {
   }
 }
 
+function validateVerifiedHistoricFixtures() {
+  const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
+  if (!argentinos || !Array.isArray(argentinos.players)) {
+    error("copa/arj_8485: verified historic fixture missing");
+    return;
+  }
+
+  const names = new Set(argentinos.players.map(function (p) { return p.n; }));
+  const required = [
+    "Enrique Vidallé",
+    "Carmelo Villalba",
+    "José Luis Pavoni",
+    "Jorge Olguín",
+    "Adrián Domenech",
+    "Sergio Batista",
+    "Emilio Commisso",
+    "Mario Videla",
+    "José Antonio Castro",
+    "Claudio Borghi",
+    "Carlos Ereros",
+    "Jorge Pellegrini",
+    "Renato Corsi"
+  ];
+  const forbidden = [
+    "Traverso", "Rodas", "Navarro", "López", "Fren",
+    "Caniggia", "Gareca", "Muñoz", "Giusti"
+  ];
+
+  for (const name of required) {
+    if (!names.has(name)) error("copa/arj_8485: verified player missing: " + name);
+  }
+  for (const name of forbidden) {
+    if (names.has(name)) error("copa/arj_8485: contaminated legacy player returned: " + name);
+  }
+  if (argentinos.players.length !== required.length) {
+    error("copa/arj_8485: expected " + required.length + " verified players, found " + argentinos.players.length);
+  }
+
+  const expectedRoles = {
+    "Enrique Vidallé": "GK",
+    "Carmelo Villalba": "RB",
+    "José Luis Pavoni": "CB",
+    "Jorge Olguín": "CB",
+    "Adrián Domenech": "LB",
+    "Sergio Batista": "CDM",
+    "Emilio Commisso": "CM",
+    "Mario Videla": "CM",
+    "José Antonio Castro": "RW",
+    "Claudio Borghi": "CAM",
+    "Carlos Ereros": "ST",
+    "Jorge Pellegrini": "CB",
+    "Renato Corsi": "CM"
+  };
+  for (const player of argentinos.players) {
+    if (expectedRoles[player.n] && player.p !== expectedRoles[player.n]) {
+      error("copa/arj_8485: unexpected role for " + player.n + ": " + player.p);
+    }
+  }
+}
+
+validateVerifiedHistoricFixtures();
+
 console.log("Canonical game-data summary:");
 for (const entry of Object.entries(summary)) {
   const mode = entry[0];

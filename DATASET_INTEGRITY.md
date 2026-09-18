@@ -9,7 +9,7 @@ Last reviewed: 2026-09-18
 | Family | Teams | Players | Tournament groups |
 | --- | ---: | ---: | ---: |
 | UCL | 83 | 1326 | 10 |
-| Copa Libertadores | 51 | 650 | 5 |
+| Copa Libertadores | 51 | 651 | 5 |
 | World Cup | 87 | 1030 | 7 |
 
 All current tournament references resolve to an existing team and every team is referenced by at least one tournament group.
@@ -53,13 +53,33 @@ The 2026-09-18 review removed three verified duplicate entries:
 - one duplicate Danilo and one duplicate Junior from São Paulo 2004-05;
 - one duplicate Borghi from Argentinos Juniors 1984-85.
 
-A separate historical-data task tracks the broader accuracy problem discovered in the Argentinos Juniors 1984-85 roster; duplicate cleanup does not imply that the rest of that roster is historically verified.
-
 Historical evidence used for the duplicate review:
 - São Paulo FC 2005 Libertadores registration: https://www.saopaulofc.net/enciclopedia-jogadores-listas-de-inscritos/
 - São Paulo FC 2005 Libertadores campaign/final: https://www.saopaulofc.net/campeao-da-conmebol-libertadores-2005/
-- Argentinos Juniors historical Borghi profile: https://argentinosjuniors.com.ar/noticias/depto-de-historia/tradicion-el-bichi-borghi/
-- Argentinos Juniors 1985 Libertadores deciding final history: https://argentinosjuniors.com.ar/noticias/depto-de-historia/el-futbol-de-la-paternal-hecho-poesia/
+
+### Argentinos Juniors 1984-85 verified rebuild
+
+The former `arj_8485` entry mixed players from unrelated teams/seasons. It was rebuilt on 2026-09-18 as a compact **13-player representative Libertadores squad**, matching the size/style of other Decempionz historical rosters rather than pretending to be a complete registration list.
+
+Composition rules:
+- the core XI comes from the documented 1985 Libertadores campaign;
+- Jorge Pellegrini and Renato Corsi are included because both are documented in decisive Copa matches, including the final series;
+- players not supported by the 1985 Argentinos evidence were removed;
+- positions are based on historical role sources, then mapped to the nearest Decempionz position code;
+- ratings are game-design values, not historical-source claims. They were reviewed against neighboring Copa champion squads so the rebuild does not receive an arbitrary power spike.
+
+Verified sources:
+- Argentinos Juniors, deciding final history (official club): https://argentinosjuniors.com.ar/noticias/depto-de-historia/el-futbol-de-la-paternal-hecho-poesia/
+- Argentinos Juniors, Libertadores title history (official club): https://argentinosjuniors.com.ar/el-club/titulos/
+- Argentinos Juniors first Libertadores match + squad/substitutes (RSSSF): https://www.rsssf.org/tablesa/argjuniors.html
+- Copa Libertadores 1985 results/scorers (RSSSF): https://www.rsssf.org/sacups/copa85.html
+- Adrián Domenech profile/role (official club): https://argentinosjuniors.com.ar/noticias/depto-de-historia/tradicion-el-ruso-domenech/
+- Sergio Batista profile (official club): https://argentinosjuniors.com.ar/noticias/actualidad/una-historia-de-amor/
+- Argentinos Juniors academy/historical player index, including Renato Corsi (official club): https://argentinosjuniors.com.ar/semillero-del-mundo/
+- Renato Corsi historical position: https://www.bdfa.com.ar/cronologico-RENATO-CORSI-3065.html
+- José Antonio Castro historical position: https://www.bdfa.com.ar/jugadores-JOSE-ANTONIO-CASTRO-964.html
+
+The CI fixture now requires the verified `arj_8485` names/roles and explicitly rejects the contaminated legacy names that were removed.
 
 Nationality (`nat`) remains optional because the recovered World Cup dataset does not currently store it consistently. When present, it must be a 2–3 letter uppercase code (the historical dataset uses values such as `WLS` and `NIR`).
 
