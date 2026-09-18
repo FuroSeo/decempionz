@@ -252,6 +252,7 @@ def validate_duel_integrity() -> None:
     draft_guards = {
         "draft engine version": "DCZ_DUEL_DRAFT_ENGINE_VERSION",
         "private runtime directory": ".draft-sessions",
+        "bounded runtime sessions": "DCZ_DUEL_DRAFT_MAX_SESSIONS",
         "runtime HTTP deny": "Require all denied",
         "server pool builder": "dcz_draft_build_pool",
         "server card draw": "dcz_draft_draw_cards",
