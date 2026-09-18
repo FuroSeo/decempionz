@@ -1,7 +1,7 @@
 # Decempionz — Game Manual
 
 **App version:** 5.16.3  
-**Last updated:** 2026-09-17  
+**Last updated:** 2026-09-18  
 **Production:** `https://decempionz.com/`  
 **Repository:** `FuroSeo/decempionz` (public)  
 **Production branch:** `main`
