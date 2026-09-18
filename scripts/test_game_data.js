@@ -186,6 +186,41 @@ for (const entry of idFamilies.entries()) {
   }
 }
 
+function validateHomepageSummary() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+
+  for (const family of families) {
+    const row = summary[family.mode];
+    if (!row) continue;
+
+    const expected = {
+      teams: row.teams,
+      players: row.players,
+      tournaments: row.tournaments
+    };
+
+    for (const entry of Object.entries(expected)) {
+      const metric = entry[0];
+      const value = entry[1];
+      const attribute = family.mode + "-" + metric;
+      const pattern = new RegExp(
+        '<div class="tourn-stat-val" data-home-stat="' + attribute + '">(\\d+)</div>'
+      );
+      const match = homepage.match(pattern);
+      if (!match) {
+        error("homepage: missing canonical stat marker " + attribute);
+      } else if (Number(match[1]) !== value) {
+        error(
+          "homepage: stale " + attribute + " total " + match[1] +
+          " (canonical " + value + ")"
+        );
+      }
+    }
+  }
+}
+
+validateHomepageSummary();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
