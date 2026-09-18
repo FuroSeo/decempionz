@@ -45,6 +45,12 @@ function dd_finish_session(array $config, bool $rerollFirst = false): array {
 $dataset = dcz_draft_dataset();
 dd_assert(is_array($dataset) && count($dataset) > 200, 'all canonical team families must parse');
 
+foreach (['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5-3-2','5-4-1'] as $formation) {
+    foreach (['attack','balanced','defend'] as $tactic) {
+        dd_assert(count(dcz_draft_positions($formation, $tactic)) === 11, "formation/tactic must expose 11 slots: {$formation} {$tactic}");
+    }
+}
+
 $tournaments = dcz_draft_tournaments();
 dd_assert(isset($tournaments['ucl']['pioneers'], $tournaments['copa']['copa_pioneros'], $tournaments['wc']['wc_pionieri']), 'canonical era definitions must parse');
 
@@ -92,7 +98,9 @@ $bad = dcz_draft_verify_completed_session($done['sessionId'], $tampered, [
 ]);
 dd_assert(empty($bad['ok']), 'tampered final team must fail draft verification');
 
-dd_assert(dcz_draft_consume_session($done['sessionId']) === true, 'completed draft must be consumable');
+dd_assert(dcz_draft_consume_session($done['sessionId'], 'TESTDUEL') === true, 'completed draft must be consumable');
+dd_assert(dcz_draft_consume_session($done['sessionId'], 'TESTDUEL') === true, 'same consume reference must be idempotent');
+dd_assert(dcz_draft_consume_session($done['sessionId'], 'OTHERDUEL') === false, 'different consume reference must lose the race');
 $reused = dcz_draft_verify_completed_session($done['sessionId'], $team, [
     'role'=>'a','mode'=>'classic','tournament'=>'ucl','eraId'=>'pioneers',
     'formation'=>'4-3-3','tactic'=>'balanced','club'=>null,'duelId'=>null,
