@@ -1,44 +1,51 @@
 # Decempionz — Competitive Integrity
 
-Last reviewed: 2026-09-17
+Last reviewed: 2026-09-18
 
-This document records what the backend can actually prove for user-submitted competitive/community data. It intentionally distinguishes structural validation from authoritative game verification.
+This document records what the backend can actually prove for user-submitted competitive/community data. Structural validation, canonical dataset validation and full proof of a gameplay run are deliberately kept separate.
 
 ## Trust model
 
-| Surface | Current result trust | Current squad/run trust | Notes |
+| Surface | Result trust | Squad/run trust | Notes |
 | --- | --- | --- | --- |
-| Duel 1v1 | **server-authoritative** for newly finalized duels | **client-submitted** squads, structurally validated | The server generates and stores the best-of-3 atomically when B commits. Client-reported scores are ignored. |
+| Duel 1v1 | **server-authoritative** for newly finalized duels | **dataset-source-verified** squad data; exact draft history **client-unverified** | The server verifies every submitted player against `game-data.js`, chooses private randomness and computes the official best-of-3. |
 | Daily leaderboard | client-reported | client-reported | Date/range/rate-limit/storage validation makes abuse harder but does not prove the browser played the exact run. |
 | Weekly Challenge | client-reported | client-reported | Score/config consistency and rate limiting are validation layers, not cryptographic proof of play. |
 | Hall of Fame | client-reported showcase | client-reported | Sanitization, throttling and admin removal protect the service; entries are not an anti-cheat competitive record. |
 
-## Duel 1v1 — server-authoritative result
+## Duel 1v1 — authoritative result and canonical squad sources
 
-For duels created/completed after the server-authoritative engine rollout:
+For new Duel submissions:
 
-1. Player A creates a duel and commits a sanitized squad.
-2. Player B drafts without seeing A's full squad, then submits a sanitized squad.
-3. Under the same exclusive server lock, the backend generates fresh server randomness, computes the best-of-3 with `duel-engine.php`, stores B's squad and stores the authoritative result.
-4. Only after that atomic commit does the endpoint return A's squad to B. New duels therefore move directly from `waiting` to `done`.
-5. The existing browser may still calculate a local series for compatibility, but `duel-result.php` **does not trust or use that client result**.
-6. The browser's follow-up `phase=result` request receives the already-finalized state and redirects to the canonical Duel page, preventing a different locally generated series from being displayed as authoritative.
-7. The stored record is marked `integrity.result = server-authoritative` and records the server engine version.
+1. The browser sends each drafted player as `{n,p,r,teamId}`.
+2. The backend parses the three canonical dataset families in `game-data.js` without executing JavaScript.
+3. For every player it verifies the exact `teamId + name + position + rating` tuple against that historical squad.
+4. Classic Duel sources must belong to the Duel tournament. Dynasty sources must belong to the submitted tournament family and the selected historical club.
+5. Player B commits the second squad without seeing A's full XI.
+6. Under the exclusive Duel-file lock, the backend generates a private random seed and computes the best-of-3 with `duel-engine.php`.
+7. The seed and engine version remain private in the server JSON; the public API exposes only the official result and integrity metadata.
+8. The browser consumes that server result for the normal in-app match animation. It no longer sends locally generated scores as the official result.
+9. Any legacy `phase=result` payload is ignored by the backend.
 
-The server engine intentionally mirrors the current Duel coefficients: positional penalties, formation/tactic interactions, star/rating-10 bonuses, draw pull, Poisson goals and penalties. Moving authority to the server is not intended to rebalance Duel.
+The server engine mirrors the current Duel coefficients for positional penalties, tactic/counter interactions, star and rating-10 bonuses, xG, Poisson goals and penalties. Moving authority to the server is intended as an integrity change, not a balance change.
+
+A stored private seed makes a newly generated Duel replayable by the server: the same teams, engine version and seed reproduce the same series.
 
 ### Remaining Duel limitation
 
-Squad provenance is still **client-submitted**. The backend rejects malformed structures, unknown formations/tactics, unsupported positions and ratings outside the dataset-compatible 6–10 range, but it does not yet prove that every submitted XI came from the exact offers shown by the browser. Player display names are not treated as canonical identities because the same historical label can legitimately occur in multiple squads/eras.
+The server now proves that the submitted players are real canonical dataset entries from allowed source squads, but it **does not yet prove the exact browser draft history**.
 
-A future high-assurance design should use a server-issued draft session (or signed deterministic seed + choice history) and validate every accepted card against the canonical dataset using stable player/source identifiers. That is a larger architecture change and should be implemented without adding account friction.
+In particular, the current monolithic client does not send a server-issued draft session or signed choice history. A modified client could therefore try to assemble a different combination of otherwise valid players from the allowed tournament (or, in Dynasty, from the selected club) rather than only the cards actually offered during that run. Classic era/card-offer provenance is not yet cryptographically bound.
+
+The higher-assurance follow-up for issue #13 is a server-issued draft seed/session with replayable offers and accepted-choice history. That is a larger architecture step and should be introduced without account friction.
 
 ## Backward compatibility
 
 - Already completed historical duels remain readable and are exposed as `legacy-client-reported` when no integrity metadata exists.
-- A historical duel left in `simulating` state is migrated on its next finalization request: the server generates and stores a fresh authoritative result from the already committed squads.
-- Public Duel URLs and create/join flows remain unchanged.
-- The current B-side animated replay is temporarily replaced by redirecting to the canonical result page after authoritative finalization. The redirect restores B's local Duel history through a short-lived HttpOnly marker. Restoring the in-app animation safely requires the client to consume the server result rather than a locally generated result.
+- A historical duel left in `simulating` is finalized on its next request with a fresh server-authoritative result.
+- A historical waiting duel whose A-side predates `teamId` can still finish; its integrity metadata is marked `mixed-legacy-a`.
+- A stale browser tab running the old protocol cannot overwrite the official result; it is redirected to the canonical Duel page when it submits its local series.
+- Public Duel URLs remain unchanged.
 
 ## Daily / Weekly / Hall of Fame
 
@@ -53,5 +60,6 @@ No client-controlled result should be described as verified merely because it pa
 - who chooses randomness;
 - who computes the result;
 - what the server can replay or verify;
-- whether squads/choices are authoritative or client-submitted;
+- whether squad entries are canonical dataset records;
+- whether the exact draft/run history is authoritative or client-unverified;
 - migration behavior for existing records.
