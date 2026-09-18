@@ -412,7 +412,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* Reveal card */
 .reveal-zone{perspective:800px;min-height:210px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.draft-pick-card{background:transparent;appearance:none;-webkit-appearance:none}
 .draft-pick-card:active{transform:scale(.96);opacity:.88}
+.draft-pick-card:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
 .prc{background:#0e1828;border:1px solid #1e2d42;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 14px 34px rgba(0,0,0,.38),0 2px 8px rgba(0,0,0,.22)}
 .prc::before{content:'';position:absolute;top:0;left:-15%;right:-15%;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);pointer-events:none}
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tier-c,var(--gold))}
@@ -4963,6 +4965,7 @@ function renderSlotChips(compatIndices){
 function renderThreeCards(){
   const container=document.getElementById('d-reveal');
   if(!container)return;
+  const restoreCardFocus=!!(document.activeElement&&document.activeElement.classList&&document.activeElement.classList.contains('draft-pick-card'));
   const n=G.draftCards.length;
   container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0;overflow:hidden">'
     +G.draftCards.map(function(p,i){
@@ -5007,10 +5010,10 @@ function renderThreeCards(){
       if(!blind&&p.r>=10){var _pg10=posGroup(p.p);r10Badge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ffd700;background:rgba(255,215,0,.12);padding:1px 6px;border-radius:3px;margin-top:1px">'
         +(_pg10==='GK'?'🛡️ +DEF':_pg10==='DEF'?'🛡️ +DEF':_pg10==='MID'?'⚡ +MID':'⚡ +ATT')+'</div>';}
       var _ci=empSlots.map(function(s){return s.i;});
-      return'<div onclick="draftTap('+i+')" onmouseenter="previewCard('+i+')" onmouseleave="clearPreview()" class="draft-pick-card"'
+      return'<button type="button" onclick="draftTap('+i+')" onmouseenter="previewCard('+i+')" onmouseleave="clearPreview()" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
-        +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s;position:relative">'
+        +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s;position:relative">'
         +playerSprite(col)
         +starBadge
         +r10Badge
@@ -5024,9 +5027,13 @@ function renderThreeCards(){
           +(blind?'<span style="font-size:.75rem;font-weight:900;color:var(--mut)">?</span>':'<span style="font-size:'+(isElite?'.85':'.75')+'rem;font-weight:900;color:'+ratingCol+'">'+p.r+'</span>')
         +'</div>'
         +'<div style="font-size:.58rem;color:var(--mut);margin-top:3px">→ '+targetSlot+' slot</div>'
-        +'</div>';
+        +'</button>';
     }).join('')
     +'</div>';
+  if(restoreCardFocus){
+    var firstCard=container.querySelector('.draft-pick-card');
+    if(firstCard)firstCard.focus();
+  }
 }
 
 function draftPick(i){
