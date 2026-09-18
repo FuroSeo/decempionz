@@ -55,6 +55,12 @@ The 2026-09-18 review removed three verified duplicate entries:
 
 A separate historical-data task tracks the broader accuracy problem discovered in the Argentinos Juniors 1984-85 roster; duplicate cleanup does not imply that the rest of that roster is historically verified.
 
+Historical evidence used for the duplicate review:
+- São Paulo FC 2005 Libertadores registration: https://www.saopaulofc.net/enciclopedia-jogadores-listas-de-inscritos/
+- São Paulo FC 2005 Libertadores campaign/final: https://www.saopaulofc.net/campeao-da-conmebol-libertadores-2005/
+- Argentinos Juniors historical Borghi profile: https://argentinosjuniors.com.ar/noticias/depto-de-historia/tradicion-el-bichi-borghi/
+- Argentinos Juniors 1985 Libertadores deciding final history: https://argentinosjuniors.com.ar/noticias/depto-de-historia/el-futbol-de-la-paternal-hecho-poesia/
+
 Nationality (`nat`) remains optional because the recovered World Cup dataset does not currently store it consistently. When present, it must be a 2–3 letter uppercase code (the historical dataset uses values such as `WLS` and `NIR`).
 
 ## Editing rule
