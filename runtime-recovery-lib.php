@@ -87,6 +87,28 @@ function dcz_recovery_verify_snapshot(
     ];
 }
 
+function dcz_recovery_quarantine_current(
+    string $category,
+    string $logicalName,
+    string $raw
+): bool {
+    $category = dcz_backup_safe_segment($category);
+    $logicalName = dcz_backup_safe_segment($logicalName);
+    $dir = dcz_backup_root() . DIRECTORY_SEPARATOR . $category . DIRECTORY_SEPARATOR . $logicalName;
+
+    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) return false;
+
+    try {
+        $suffix = bin2hex(random_bytes(4));
+    } catch (Throwable $e) {
+        $suffix = substr(hash('sha256', microtime(true) . mt_rand()), 0, 8);
+    }
+    $path = $dir . DIRECTORY_SEPARATOR . gmdate('Ymd_His') . '_' . $suffix . '.corrupt';
+    if (@file_put_contents($path, $raw, LOCK_EX) === false) return false;
+    @chmod($path, 0600);
+    return true;
+}
+
 function dcz_recovery_restore_snapshot(
     string $category,
     string $logicalName,
@@ -106,11 +128,16 @@ function dcz_recovery_restore_snapshot(
 
     $currentRaw = is_file($target) ? @file_get_contents($target) : '';
     if (is_string($currentRaw) && trim($currentRaw) !== '') {
-        if (!dcz_recovery_validate_json($currentRaw, $category)) {
-            return ['ok' => false, 'code' => 'current_target_invalid'];
-        }
-        if (!dcz_backup_snapshot($category, $logicalName, $currentRaw)) {
-            return ['ok' => false, 'code' => 'pre_restore_snapshot_failed'];
+        if (dcz_recovery_validate_json($currentRaw, $category)) {
+            if (!dcz_backup_snapshot($category, $logicalName, $currentRaw)) {
+                return ['ok' => false, 'code' => 'pre_restore_snapshot_failed'];
+            }
+        } else {
+            /* A corrupt target is exactly when recovery is needed. Preserve the raw bytes
+               privately for forensics, then continue with the verified snapshot. */
+            if (!dcz_recovery_quarantine_current($category, $logicalName, $currentRaw)) {
+                return ['ok' => false, 'code' => 'corrupt_quarantine_failed'];
+            }
         }
     }
 
