@@ -1,7 +1,7 @@
 # Decempionz — Game Manual
 
 **App version:** 5.16.3  
-**Last updated:** 2026-09-17  
+**Last updated:** 2026-09-18  
 **Production:** `https://decempionz.com/`  
 **Repository:** `FuroSeo/decempionz` (public)  
 **Production branch:** `main`
@@ -18,6 +18,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
 - **5.16.0** — save export/import for all `dcz_*` localStorage keys and Chemistry explanation in How to Play.
+- **Duel integrity 2026-09-18** — Duel results are generated server-side when player B commits the second squad. New squad submissions carry source `teamId` values and are checked against canonical `game-data.js` name/position/rating records and tournament/club scope. Exact browser draft-offer history remains client-unverified.
 - **Infrastructure 2026-09-17** — Service Worker cache namespace moved to `decempionz-v5.16.4`; dynamic endpoints bypass cache; navigation timeout and controlled offline fallback added. This did **not** bump the public app version.
 - **Workflow 2026-09-17** — branch/PR/CI workflow introduced; direct legacy `_push.bat` deployment retired; Dataset Editor and Studio recovered and versioned as non-deployed tools.
 
@@ -204,16 +205,23 @@ Production challenge configuration/state is server-maintained and excluded from 
 
 ## 13. Duel 1v1
 
-Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php`.
+Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php` and the server-side simulation engine in `duel-engine.php`.
 
-The protocol prevents the second player from seeing the first player's hidden squad before committing their own result flow. Duel state is stored server-side under `duels/` and protected from direct JSON access.
+The protocol prevents player B from seeing player A's hidden squad before committing B's own squad. New Duel player payloads include `teamId` for every selected player. The backend verifies the exact `teamId + name + natural position + rating` tuple against `game-data.js`; Classic sources must belong to the Duel tournament, while Dynasty sources must belong to the selected club/tournament family.
 
-The Duel simulator is designed to evaluate both sides symmetrically and avoid campaign-only advantages such as user difficulty settings. Classic and Dynasty duel variants are supported by the UI/backend flow.
+After B's validated squad is accepted, the backend generates a private seed and computes the authoritative best-of-3 under the Duel-file lock. The server stores the official result, seed and engine version before returning the two squads and public result. The browser then uses that official result for the existing in-app match animation. Client-generated scores are not authoritative and legacy result payloads are ignored.
 
-Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; the authority change is not intended as a balance change.
+
+The private seed makes a newly generated result replayable by the server with the stored teams and engine version. Private `_server*` fields are never exposed by `duel-join.php`.
+
+Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can be finalized with a fresh server result, and a stale pre-upgrade client cannot overwrite that result.
+
+Remaining integrity boundary: the server proves that submitted players are real canonical records from allowed source squads, but it does not yet prove the exact card offers/choices shown during the browser draft. A modified client could still choose a different combination of otherwise valid players within the allowed source scope. The detailed trust model and future server-issued draft-session direction are documented in `COMPETITIVE_INTEGRITY.md`.
+
+Classic and Dynasty duel variants remain supported. Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
 
 ---
-
 ## 14. Hall of Fame, trophies and statistics
 
 Hall of Fame uses PHP submission/status/admin endpoints plus server-side JSON state. Admin secrets/configuration must never be committed to the public repository.
@@ -366,7 +374,7 @@ The old `C:\Projects\decempionz` + `_push.bat` flow is retired. Follow `LOCAL_SE
 
 ### Developer files versioned in Git but excluded from FTP
 
-`GAME_MANUAL.md`, `DEVELOPMENT.md`, `LOCAL_SETUP.md`, `RECOVERY_INVENTORY.md`, `dataset-editor.html`, `_studio.html`, `_build_i18n.py`, `_build_rose.py` and other explicitly excluded dev artifacts.
+`GAME_MANUAL.md`, `DEVELOPMENT.md`, `LOCAL_SETUP.md`, `COMPETITIVE_INTEGRITY.md`, `RECOVERY_INVENTORY.md`, `dataset-editor.html`, `_studio.html`, `_build_i18n.py`, `_build_rose.py` and other explicitly excluded dev artifacts.
 
 The repository is public: FTP exclusion does **not** make a Git file private.
 

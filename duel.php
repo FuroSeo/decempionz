@@ -33,6 +33,42 @@ if (strlen($id) >= 6 && strlen($id) <= 12 && file_exists(__DIR__ . '/duels/' . $
             : ($isEs
                 ? '👑 ' . $winN . ' gana el duelo ' . $tLabel . ($era ? ' ' . $era : '') . '. ¡Mira las alineaciones y reta a tus amigos!'
                 : '👑 ' . $winN . ' wins the ' . $tLabel . ($era ? ' ' . $era : '') . ' duel. Check both line-ups and challenge your friends!');
+
+        /* Il client monolitico viene reindirizzato qui dopo la finalizzazione server-side.
+           Un cookie HttpOnly breve identifica quel browser come player B solo per ripristinare
+           la cronologia locale; non concede alcun privilegio e viene consumato una sola volta. */
+        $joinedCookie = (string)($_COOKIE['dcz_duel_joined'] ?? '');
+        if ($joinedCookie !== '' && hash_equals($id, $joinedCookie)) {
+            $doneTs = strtotime((string)($d['doneAt'] ?? ''));
+            $historyEntry = [
+                'id' => $id,
+                'role' => 'b',
+                'status' => 'done',
+                'nick' => $nickB,
+                'opp' => $nickA,
+                'tourn' => $d['tournament'] ?? 'ucl',
+                'era' => $d['era'] ?? '',
+                'ts' => ($doneTs !== false ? $doneTs : time()) * 1000,
+            ];
+            $entryJson = json_encode(
+                $historyEntry,
+                JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+            );
+            if ($entryJson !== false) {
+                $historyScript = '<script>(function(){try{var e=' . $entryJson
+                    . ';var a=JSON.parse(localStorage.getItem("dcz_duels")||"[]");'
+                    . 'if(!Array.isArray(a))a=[];a=a.filter(function(x){return x&&x.id!==e.id;});'
+                    . 'a.push(e);localStorage.setItem("dcz_duels",JSON.stringify(a.slice(-20)));}catch(_e){}})();</script>';
+                $tpl = str_replace('</body>', $historyScript . "\n</body>", $tpl);
+            }
+            setcookie('dcz_duel_joined', '', [
+                'expires' => time() - 3600,
+                'path' => '/duel.php',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'Strict',
+            ]);
+        }
     } else {
         $chalName = ($isDyn && $clubA !== '')
             ? ($isIt ? 'Il ' . $clubA . ' di ' . $nickA : ($isEs ? 'El ' . $clubA . ' de ' . $nickA : $nickA . "'s " . $clubA))

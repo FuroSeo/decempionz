@@ -61,16 +61,25 @@ if (!in_array($data['tournament'] ?? '', $validTournaments, true)) {
     http_response_code(400); echo json_encode(['error' => 'invalid tournament']); exit;
 }
 
+$mode = ($data['mode'] ?? 'classic') === 'dynasty' ? 'dynasty' : 'classic';
 $team = dcz_sanitize_team($data['team'] ?? null);
 if ($team === null) {
     dcz_log_err('invalid_team');
     http_response_code(400); echo json_encode(['error' => 'invalid team']); exit;
 }
 
-$mode = ($data['mode'] ?? 'classic') === 'dynasty' ? 'dynasty' : 'classic';
-if ($mode === 'dynasty' && empty($team['club'])) {
-    dcz_log_err('dynasty_no_club');
-    http_response_code(400); echo json_encode(['error' => 'dynasty duel requires a club']); exit;
+if ($mode === 'dynasty') {
+    if (empty($team['club']) || empty($team['tmode']) || $team['tmode'] !== $data['tournament']) {
+        dcz_log_err('dynasty_scope_invalid');
+        http_response_code(400); echo json_encode(['error' => 'invalid dynasty team scope']); exit;
+    }
+    $datasetOk = dcz_duel_validate_team_dataset($team, $team['tmode'], $team['club']);
+} else {
+    $datasetOk = dcz_duel_validate_team_dataset($team, $data['tournament']);
+}
+if (!$datasetOk) {
+    dcz_log_err('dataset_team_mismatch');
+    http_response_code(400); echo json_encode(['error' => 'invalid team source']); exit;
 }
 
 /* Genera ID unico di 8 caratteri */

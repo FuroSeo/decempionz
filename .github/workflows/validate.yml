@@ -48,3 +48,6 @@ jobs:
 
       - name: Draft storage tests
         run: php scripts/test_draft_storage.php
+
+      - name: Duel engine tests
+        run: php scripts/test_duel_engine.php

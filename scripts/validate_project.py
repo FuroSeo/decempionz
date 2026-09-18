@@ -137,6 +137,7 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         "VADEMECUM.md",
         "ROADMAP.md",
         "RUNTIME_RECOVERY.md",
+        "COMPETITIVE_INTEGRITY.md",
         "RECOVERY_INVENTORY.md",
         "dataset-editor.html",
         "_studio.html",
@@ -220,6 +221,82 @@ def validate_draft_storage() -> None:
             fail(f"Draft image write-once authorization guard missing: {marker}")
 
 
+def validate_duel_integrity() -> None:
+    htaccess = read(".htaccess")
+    duel_lib = read("duel-lib.php")
+    engine = read("duel-engine.php")
+    endpoint = read("duel-result.php")
+    create = read("duel-create.php")
+    join = read("duel-join.php")
+    index_html = read("index.html")
+    integrity_doc = read("COMPETITIVE_INTEGRITY.md")
+
+    if "duel-engine\\.php" not in htaccess and "duel-engine.php" not in htaccess:
+        fail(".htaccess must deny direct HTTP access to duel-engine.php")
+
+    dataset_guards = {
+        "canonical dataset registry": "dcz_duel_dataset_registry",
+        "canonical team validation": "dcz_duel_validate_team_dataset",
+        "source team id": "teamId",
+        "game-data source": "game-data.js",
+    }
+    for label, fragment in dataset_guards.items():
+        if fragment not in duel_lib:
+            fail(f"Duel squad integrity guard missing: {label}")
+
+    engine_guards = {
+        "engine version": "DCZ_DUEL_ENGINE_VERSION",
+        "server series simulation": "dcz_duel_simulate_series",
+        "deterministic RNG": "dcz_duel_rng_float",
+        "Poisson goals": "dcz_duel_poisson",
+        "server penalties": "dcz_duel_penalties",
+    }
+    for label, fragment in engine_guards.items():
+        if fragment not in engine:
+            fail(f"Server-authoritative Duel engine guard missing: {label}")
+
+    if "dcz_duel_validate_team_dataset" not in create:
+        fail("Duel creation must verify player sources against the canonical dataset")
+
+    endpoint_guards = {
+        "engine loaded": "duel-engine.php",
+        "authoritative simulation": "dcz_duel_simulate_series",
+        "private replay seed": "_serverSeed",
+        "server-authoritative marker": "server-authoritative",
+        "dataset verification": "dcz_duel_validate_team_dataset",
+        "client result explicitly ignored": "risultato inviato dal client è intenzionalmente ignorato",
+        "legacy simulating migration": "Migrazione trasparente",
+        "counter snapshot": "dcz_backup_snapshot('game-counter', 'main'",
+    }
+    for label, fragment in endpoint_guards.items():
+        if fragment not in endpoint:
+            fail(f"Duel result authority guard missing: {label}")
+
+    if "dcz_sanitize_result($data['result']" in endpoint or "$d['result'] = $data['result']" in endpoint:
+        fail("Duel endpoint must never trust the client-submitted match result")
+    if "echo json_encode($d" in join:
+        fail("Duel public state endpoint must not serialize raw server state")
+    if "'result'     => null" not in join:
+        fail("Simulating Duel response must hide server-internal finalization state")
+
+    client_guards = {
+        "player source sent by draft": "teamId:p.teamId||''",
+        "authoritative result consumer": "duelUseAuthoritativeResult",
+        "server result required": "res.body.result",
+        "server authority analytics marker": "authority:'server'",
+    }
+    for label, fragment in client_guards.items():
+        if fragment not in index_html:
+            fail(f"Duel client authority guard missing: {label}")
+    if "phase:'result',result:res" in index_html:
+        fail("Duel client must not submit locally simulated match scores")
+
+    if "server-authoritative" not in integrity_doc:
+        fail("Competitive integrity documentation must state Duel result authority")
+    if "dataset-source-verified" not in integrity_doc or "client-unverified" not in integrity_doc:
+        fail("Competitive integrity documentation must state squad-source and draft-history trust levels")
+
+
 def validate_local_html_tools() -> None:
     """Syntax-check inline JavaScript in recovered local-only HTML tools."""
     for filename in ("dataset-editor.html", "_studio.html"):
@@ -276,6 +353,7 @@ def main() -> int:
     validate_deploy_workflow(deploy_yml)
     validate_runtime_backup()
     validate_draft_storage()
+    validate_duel_integrity()
     validate_local_html_tools()
 
     for message in NOTES:
