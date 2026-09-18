@@ -224,6 +224,8 @@ def validate_draft_storage() -> None:
 def validate_duel_integrity() -> None:
     htaccess = read(".htaccess")
     duel_lib = read("duel-lib.php")
+    draft_lib = read("duel-draft-lib.php")
+    draft_endpoint = read("duel-draft-session.php")
     engine = read("duel-engine.php")
     endpoint = read("duel-result.php")
     create = read("duel-create.php")
@@ -231,8 +233,10 @@ def validate_duel_integrity() -> None:
     index_html = read("index.html")
     integrity_doc = read("COMPETITIVE_INTEGRITY.md")
 
-    if "duel-engine\\.php" not in htaccess and "duel-engine.php" not in htaccess:
-        fail(".htaccess must deny direct HTTP access to duel-engine.php")
+    for filename in ("duel-engine.php", "duel-draft-lib.php"):
+        escaped = filename.replace(".", "\\.")
+        if escaped not in htaccess and filename not in htaccess:
+            fail(f".htaccess must deny direct HTTP access to {filename}")
 
     dataset_guards = {
         "canonical dataset registry": "dcz_duel_dataset_registry",
@@ -243,6 +247,32 @@ def validate_duel_integrity() -> None:
     for label, fragment in dataset_guards.items():
         if fragment not in duel_lib:
             fail(f"Duel squad integrity guard missing: {label}")
+
+    draft_guards = {
+        "draft engine version": "DCZ_DUEL_DRAFT_ENGINE_VERSION",
+        "private runtime directory": ".draft-sessions",
+        "runtime HTTP deny": "Require all denied",
+        "server pool builder": "dcz_draft_build_pool",
+        "server card draw": "dcz_draft_draw_cards",
+        "versioned actions": "dcz_draft_session_action",
+        "offer history": "'history'=>[]",
+        "final team verification": "dcz_draft_verify_completed_session",
+        "single-use session": "consumedAt",
+    }
+    for label, fragment in draft_guards.items():
+        if fragment not in draft_lib:
+            fail(f"Server-authoritative Duel draft guard missing: {label}")
+
+    endpoint_draft_guards = {
+        "start action": "$action === 'start'",
+        "player B Duel binding": "$config['role'] === 'b'",
+        "classic scope binding": "duel scope mismatch",
+        "versioned pick": "dcz_draft_session_action($id, $version, 'pick'",
+        "versioned reroll": "dcz_draft_session_action($id, $version, 'reroll'",
+    }
+    for label, fragment in endpoint_draft_guards.items():
+        if fragment not in draft_endpoint:
+            fail(f"Duel draft endpoint guard missing: {label}")
 
     engine_guards = {
         "engine version": "DCZ_DUEL_ENGINE_VERSION",
@@ -255,8 +285,9 @@ def validate_duel_integrity() -> None:
         if fragment not in engine:
             fail(f"Server-authoritative Duel engine guard missing: {label}")
 
-    if "dcz_duel_validate_team_dataset" not in create:
-        fail("Duel creation must verify player sources against the canonical dataset")
+    for filename, content in (("duel-create.php", create), ("duel-result.php", endpoint)):
+        if "dcz_draft_verify_completed_session" not in content or "draftSessionId" not in content:
+            fail(f"{filename} must require a completed server-authoritative Duel draft")
 
     endpoint_guards = {
         "engine loaded": "duel-engine.php",
@@ -264,6 +295,7 @@ def validate_duel_integrity() -> None:
         "private replay seed": "_serverSeed",
         "server-authoritative marker": "server-authoritative",
         "dataset verification": "dcz_duel_validate_team_dataset",
+        "draft B proof": "_draftB",
         "client result explicitly ignored": "risultato inviato dal client è intenzionalmente ignorato",
         "legacy simulating migration": "Migrazione trasparente",
         "counter snapshot": "dcz_backup_snapshot('game-counter', 'main'",
@@ -272,6 +304,8 @@ def validate_duel_integrity() -> None:
         if fragment not in endpoint:
             fail(f"Duel result authority guard missing: {label}")
 
+    if "_draftA" not in create:
+        fail("Duel creation must persist the private player-A draft proof")
     if "dcz_sanitize_result($data['result']" in endpoint or "$d['result'] = $data['result']" in endpoint:
         fail("Duel endpoint must never trust the client-submitted match result")
     if "echo json_encode($d" in join:
@@ -281,6 +315,12 @@ def validate_duel_integrity() -> None:
 
     client_guards = {
         "player source sent by draft": "teamId:p.teamId||''",
+        "server draft start": "_duelInitServerDraft",
+        "server draft endpoint": "duel-draft-session.php",
+        "versioned draft state": "DUEL.draftVersion",
+        "server pick routing": "_duelDraftAction('pick'",
+        "server reroll routing": "_duelDraftAction('reroll'",
+        "draft proof submission": "draftSessionId:DUEL.draftSessionId",
         "authoritative result consumer": "duelUseAuthoritativeResult",
         "server result required": "res.body.result",
         "server authority analytics marker": "authority:'server'",
@@ -293,8 +333,8 @@ def validate_duel_integrity() -> None:
 
     if "server-authoritative" not in integrity_doc:
         fail("Competitive integrity documentation must state Duel result authority")
-    if "dataset-source-verified" not in integrity_doc or "client-unverified" not in integrity_doc:
-        fail("Competitive integrity documentation must state squad-source and draft-history trust levels")
+    if "server-offers-authoritative" not in integrity_doc:
+        fail("Competitive integrity documentation must state Duel draft-offer authority")
 
 
 def validate_local_html_tools() -> None:
