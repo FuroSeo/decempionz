@@ -12,49 +12,81 @@ function t_assert(bool $condition, string $message): void {
     }
 }
 
-function sample_team(string $nick, string $formation, string $tactic, int $offset = 0): array {
-    $base = [
-        ['GK',8], ['LB',7], ['CB',9], ['CB',8], ['RB',7],
-        ['CDM',8], ['CM',9], ['CAM',10], ['LW',8], ['ST',10], ['RW',7],
-    ];
-    $players = [];
-    foreach ($base as $i => [$pos, $rating]) {
-        $players[] = [
-            'n' => $nick . ' P' . ($i + 1 + $offset),
-            'p' => $pos,
-            'r' => $i === 10 ? 6 : $rating,
-        ];
-    }
-    return [
+function team_fixture(string $nick, string $formation, string $tactic, string $teamId, array $players, ?string $club = null): array {
+    $team = [
         'nick' => $nick,
         'formation' => $formation,
         'tactic' => $tactic,
-        'players' => $players,
+        'players' => array_map(
+            fn(array $p): array => ['n'=>$p[0], 'p'=>$p[1], 'r'=>$p[2], 'teamId'=>$teamId],
+            $players
+        ),
     ];
+    if ($club !== null) {
+        $team['club'] = $club;
+        $team['tmode'] = 'ucl';
+        $team['clubName'] = $club;
+    }
+    return $team;
 }
 
-$teamA = dcz_sanitize_team(sample_team('Alpha', '4-3-3', 'attack'));
-$teamB = dcz_sanitize_team(sample_team('Beta', '4-2-3-1', 'defend', 20));
-t_assert($teamA !== null, 'valid team A must pass structural validation');
-t_assert($teamB !== null, 'valid team B must pass structural validation');
-t_assert($teamA['players'][10]['r'] === 6, 'dataset-compatible rating 6 must remain valid');
+$rmPlayers = [
+    ['Rogelio','GK',8], ['Marquitos','RB',8], ['Santamaría','CB',9], ['Pachin','LB',7],
+    ['Zárraga','CDM',8], ['Rial','CM',8], ['Del Sol','CM',8], ['Canario','RW',8],
+    ['Di Stéfano','CF',10], ['Puskas','LW',10], ['Gento','LW',9],
+];
+$barPlayers = [
+    ['Ter Stegen','GK',8], ['Alves','RB',8], ['Pique','CB',8], ['Mascherano','CB',8],
+    ['Alba','LB',9], ['Busquets','CDM',9], ['Rakitic','CM',8], ['Iniesta','CM',10],
+    ['Messi','SS',10], ['Neymar','LW',9], ['Suarez','ST',9],
+];
 
-$badRating = sample_team('BadR', '4-3-3', 'balanced', 40);
-$badRating['players'][0]['r'] = 11;
-t_assert(dcz_sanitize_team($badRating) === null, 'rating above dataset maximum must be rejected');
+$teamA = dcz_sanitize_team(team_fixture('Alpha', '4-3-3', 'attack', 'rm_5960', $rmPlayers));
+$teamB = dcz_sanitize_team(team_fixture('Beta', '4-2-3-1', 'defend', 'bar_1415', $barPlayers));
+t_assert($teamA !== null, 'valid canonical team A must pass structural validation');
+t_assert($teamB !== null, 'valid canonical team B must pass structural validation');
 
-$repeatedLabel = sample_team('Repeat', '4-3-3', 'balanced', 60);
-$repeatedLabel['players'][1]['n'] = $repeatedLabel['players'][0]['n'];
-t_assert(dcz_sanitize_team($repeatedLabel) !== null, 'repeated historical display labels must not be rejected without canonical player ids');
+$registry = dcz_duel_dataset_registry();
+t_assert(is_array($registry) && count($registry) > 200, 'canonical dataset registry must load all tournament families');
+t_assert(isset($registry['rm_5960'], $registry['bar_1415']), 'known canonical squads must be indexed');
+t_assert(dcz_duel_validate_team_dataset($teamA, 'ucl'), 'real Madrid fixture must match canonical UCL data');
+t_assert(dcz_duel_validate_team_dataset($teamB, 'ucl'), 'Barcelona fixture must match canonical UCL data');
+t_assert(!dcz_duel_validate_team_dataset($teamA, 'copa'), 'UCL sources must not validate as Copa sources');
 
-$badFormation = sample_team('BadF', '2-2-6', 'balanced', 80);
+$dynRaw = team_fixture('Dynasty', '4-3-3', 'balanced', 'rm_5960', $rmPlayers, 'real_madrid');
+$dynTeam = dcz_sanitize_team($dynRaw);
+t_assert($dynTeam !== null, 'Dynasty fixture must pass structural validation');
+t_assert(dcz_duel_validate_team_dataset($dynTeam, 'ucl', 'real_madrid'), 'Dynasty sources must match selected club');
+t_assert(!dcz_duel_validate_team_dataset($dynTeam, 'ucl', 'barcelona'), 'Dynasty sources from another club must be rejected');
+
+$badRating = team_fixture('BadR', '4-3-3', 'balanced', 'rm_5960', $rmPlayers);
+$badRating['players'][8]['r'] = 9; // Di Stéfano is canonical r=10 in rm_5960.
+$badRatingTeam = dcz_sanitize_team($badRating);
+t_assert($badRatingTeam !== null, 'plausible but tampered rating stays structurally valid');
+t_assert(!dcz_duel_validate_team_dataset($badRatingTeam, 'ucl'), 'tampered canonical rating must be rejected by dataset validation');
+
+$badSource = team_fixture('BadS', '4-3-3', 'balanced', 'rm_5960', $rmPlayers);
+$badSource['players'][8]['teamId'] = 'bar_1415';
+$badSourceTeam = dcz_sanitize_team($badSource);
+t_assert($badSourceTeam !== null, 'plausible but false source stays structurally valid');
+t_assert(!dcz_duel_validate_team_dataset($badSourceTeam, 'ucl'), 'player absent from declared source squad must be rejected');
+
+$missingSource = team_fixture('NoSource', '4-3-3', 'balanced', 'rm_5960', $rmPlayers);
+unset($missingSource['players'][0]['teamId']);
+t_assert(dcz_sanitize_team($missingSource) === null, 'new Duel payloads require source teamId for every player');
+
+$duplicate = team_fixture('Repeat', '4-3-3', 'balanced', 'rm_5960', $rmPlayers);
+$duplicate['players'][1] = $duplicate['players'][0];
+t_assert(dcz_sanitize_team($duplicate) === null, 'duplicate player names must be rejected');
+
+$badFormation = team_fixture('BadF', '2-2-6', 'balanced', 'rm_5960', $rmPlayers);
 t_assert(dcz_sanitize_team($badFormation) === null, 'unknown formation must be rejected');
 
 $seed = 123456789;
 $result1 = dcz_duel_simulate_series($teamA, $teamB, $seed);
 $result2 = dcz_duel_simulate_series($teamA, $teamB, $seed);
 t_assert(is_array($result1), 'server simulation must return a result');
-t_assert($result1 === $result2, 'same teams and seed must produce identical series');
+t_assert($result1 === $result2, 'same teams and private seed must replay the identical series');
 t_assert(dcz_sanitize_result($result1) !== null, 'server result must satisfy best-of-3 canonical validation');
 t_assert(in_array(count($result1['matches']), [2, 3], true), 'best-of-3 must contain two or three matches');
 t_assert(max((int)$result1['winsA'], (int)$result1['winsB']) === 2, 'series winner must reach two wins');
@@ -68,4 +100,4 @@ foreach ($result1['matches'] as $match) {
     }
 }
 
-echo "Duel engine tests passed.\n";
+echo "Duel integrity tests passed.\n";
