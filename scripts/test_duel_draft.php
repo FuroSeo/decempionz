@@ -87,7 +87,28 @@ $verified = dcz_draft_verify_completed_session($done['sessionId'], $team, [
 ]);
 dd_assert(!empty($verified['ok']), 'completed server draft must verify');
 dd_assert(($verified['proof']['engine'] ?? '') === DCZ_DUEL_DRAFT_ENGINE_VERSION, 'proof must record draft engine version');
-dd_assert(count($verified['proof']['history'] ?? []) >= 12, 'proof must keep offer/action history');
+$history = $verified['proof']['history'] ?? [];
+dd_assert(count($history) >= 3, 'proof must keep a non-empty offer/action history');
+$hasReroll = false; $hasPick = false; $hasFinalize = false;
+foreach ($history as $event) {
+    $action = $event['action'] ?? '';
+    if ($action === 'reroll') {
+        $hasReroll = true;
+        dd_assert(is_array($event['offer'] ?? null) && count($event['offer']) >= 1 && count($event['offer']) <= 3, 'reroll must record the visible offer');
+    } elseif ($action === 'pick') {
+        $hasPick = true;
+        $offer = $event['offer'] ?? [];
+        $chosen = $event['chosen'] ?? '';
+        dd_assert(is_array($offer) && count($offer) >= 1 && count($offer) <= 3, 'pick must record the visible offer');
+        dd_assert(in_array($chosen, $offer, true), 'accepted player must belong to the recorded server offer');
+        dd_assert(isset($event['slot']) && is_int($event['slot']), 'pick must record assigned slot');
+    } elseif ($action === 'finalize') {
+        $hasFinalize = true;
+    }
+}
+dd_assert($hasReroll, 'proof must record the requested reroll');
+dd_assert($hasPick, 'proof must contain at least one accepted server offer');
+dd_assert($hasFinalize, 'proof must record server-side finalization/emergency completion');
 
 $tampered = $team;
 $tampered['players'][0]['r'] = max(6, (int)$tampered['players'][0]['r'] - 1);
