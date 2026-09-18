@@ -3101,7 +3101,7 @@ function topPlayers(teamId,n){const t=(_activeTeams()[teamId]||TEAMS[teamId]);re
 /* ═══════════════════════════════════════
    DUELLO 1v1 — flusso client (lato A: crea)
 ═══════════════════════════════════════ */
-var DUEL={mode:null,id:null,nick:'',tourn:'ucl',eraT:null,eraLabel:'',eraId:'',rematchOf:null,kind:'classic',club:null,clubName:null,viewRole:null};
+var DUEL={mode:null,id:null,nick:'',tourn:'ucl',eraT:null,eraLabel:'',eraId:'',rematchOf:null,kind:'classic',club:null,clubName:null,viewRole:null,draftSessionId:null,draftVersion:0,draftBusy:false};
 var _eraFromDuel=false;
 
 function _duelTourList(k){return k==='copa'?COPA_TOURNAMENTS:k==='wc'?WC_TOURNAMENTS:TOURNAMENTS;}
@@ -3113,7 +3113,7 @@ function duelStoreAdd(e){var a=duelStore().filter(function(x){return x.id!==e.id
 function duelStoreUpdate(id,patch){var a=duelStore();a.forEach(function(x){if(x.id===id)Object.assign(x,patch);});duelStoreSave(a);}
 
 function duelStart(){
-  DUEL.mode=null;DUEL.id=null;DUEL.rematchOf=null;
+  DUEL.mode=null;DUEL.id=null;DUEL.rematchOf=null;DUEL.draftSessionId=null;DUEL.draftVersion=0;DUEL.draftBusy=false;
   DUEL.tourn='ucl';
   DUEL.eraT=_duelAllTime('ucl');
   DUEL.kind='classic';DUEL.club=null;DUEL.clubName=null;
@@ -3242,7 +3242,7 @@ function duelTeamPayload(){
 }
 function duelAfterDraft(){
   if(DUEL.mode==='join'){duelJoinAfterDraft();return;}
-  var payload={mode:DUEL.kind,tournament:DUEL.tourn,era:DUEL.eraLabel,eraId:DUEL.eraId,lang:G.lang||'it',team:duelTeamPayload()};
+  var payload={mode:DUEL.kind,tournament:DUEL.tourn,era:DUEL.eraLabel,eraId:DUEL.eraId,lang:G.lang||'it',team:duelTeamPayload(),draftSessionId:DUEL.draftSessionId};
   showScreen('screen-duel-share');
   document.getElementById('duel-share-ok').style.display='none';
   document.getElementById('duel-share-err').style.display='none';
@@ -3422,7 +3422,7 @@ function duelJoinAfterDraft(){
 }
 function _duelJoinAttempt(attempt){
   _duelWait('duel.sending');
-  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'team',team:duelTeamPayload()})})
+  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'team',team:duelTeamPayload(),draftSessionId:DUEL.draftSessionId})})
     .then(function(r){
       if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
       return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};});
@@ -4297,8 +4297,99 @@ function _abbrevTeam(name){
   if(result.length>MAX) result=result.slice(0,MAX-1)+'…';
   return result;
 }
+function _duelDraftConfig(){
+  return {
+    role:DUEL.mode==='join'?'b':'a',
+    mode:DUEL.kind==='dynasty'?'dynasty':'classic',
+    tournament:G.gameMode||DUEL.tourn||'ucl',
+    eraId:DUEL.kind==='dynasty'?'dynasty':((G.tournament&&G.tournament.id)||DUEL.eraId||'alltime'),
+    formation:G.formation,
+    tactic:G.tactic||'balanced',
+    club:DUEL.kind==='dynasty'?(DUEL.club||null):null,
+    duelId:DUEL.mode==='join'?DUEL.id:null
+  };
+}
+function _duelDraftRequest(payload){
+  return fetch('duel-draft-session.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};}).catch(function(){return{ok:false,status:r.status,body:null};});});
+}
+function _duelDraftApplyState(st){
+  if(!st||!st.sessionId)return false;
+  DUEL.draftSessionId=st.sessionId;
+  DUEL.draftVersion=Number(st.version)||0;
+  G.slotPlayers=Array.isArray(st.slots)?st.slots.slice(0,11):new Array(11).fill(null);
+  while(G.slotPlayers.length<11)G.slotPlayers.push(null);
+  G.draftCards=Array.isArray(st.cards)?st.cards:[];
+  G.passes=Number(st.passes)||0;
+  G.squad=G.slotPlayers.filter(Boolean);
+  G.draftLock=false;
+  if(st.status==='done'){
+    G.draftFinalized=true;
+    renderDraftPitch(null);
+    document.getElementById('d-count').textContent='11/11';
+    document.getElementById('d-bar').style.width='100%';
+    setTimeout(function(){duelAfterDraft();},450);
+    return true;
+  }
+  G.draftFinalized=false;
+  updateDraftScreen();
+  return true;
+}
+function _duelDraftSync(){
+  if(!DUEL.draftSessionId)return Promise.reject(new Error('no session'));
+  return _duelDraftRequest({action:'state',sessionId:DUEL.draftSessionId}).then(function(res){
+    if(!res.body||!res.body.sessionId)throw new Error('sync failed');
+    _duelDraftApplyState(res.body);
+    return res.body;
+  });
+}
+function _duelDraftAction(action,cardIndex){
+  if(DUEL.draftBusy||!DUEL.draftSessionId)return;
+  DUEL.draftBusy=true;G.draftLock=true;
+  var payload={action:action,sessionId:DUEL.draftSessionId,version:DUEL.draftVersion};
+  if(action==='pick')payload.cardIndex=cardIndex;
+  _duelDraftRequest(payload).then(function(res){
+    if(res.body&&res.body.sessionId&&(res.ok||res.status===409)){
+      _duelDraftApplyState(res.body);
+      return;
+    }
+    var e=new Error('draft action failed');e.status=res.status;throw e;
+  }).catch(function(){
+    return _duelDraftSync().catch(function(){
+      G.draftLock=false;
+      var msg={it:'Connessione persa durante il Draft Duel. Riprova.',en:'Connection lost during the Duel Draft. Try again.',es:'Conexión perdida durante el Draft Duel. Inténtalo de nuevo.'}[G.lang||'it'];
+      alert(msg);
+    });
+  }).finally(function(){DUEL.draftBusy=false;});
+}
+function _duelInitServerDraft(){
+  if(DUEL.draftBusy)return;
+  DUEL.draftBusy=true;DUEL.draftSessionId=null;DUEL.draftVersion=0;
+  var btn=document.getElementById('btn-start-draft');
+  if(btn){btn.disabled=true;btn.textContent='…';}
+  _duelDraftRequest({action:'start',config:_duelDraftConfig()}).then(function(res){
+    if(!res.ok||!res.body||!res.body.sessionId){var e=new Error('draft start failed');e.status=res.status;throw e;}
+    G.draftTactic=G.tactic||'balanced';
+    G.draftPool=[];G.draftTiers={10:[],9:[],8:[],7:[]};G.draftDiscarded=[];
+    G.draftCurrentTier=null;G.draftIdx=0;G.draftCards=[];
+    G.draftLock=false;G.draftFinalized=false;G.slotPlayers=new Array(11).fill(null);G.accepted=[];
+    _dczStatsCampaignStart();
+    document.getElementById('d-title').textContent=G.tournament?G.tournament.name:(DUEL.eraLabel||'Duel');
+    var df=document.getElementById('d-formation');if(df)df.textContent=G.formation||'';
+    showScreen('screen-draft');
+    _duelDraftApplyState(res.body);
+  }).catch(function(){
+    var msg={it:'Impossibile avviare il Draft Duel verificato. Controlla la connessione e riprova.',en:'Unable to start the verified Duel Draft. Check your connection and try again.',es:'No se pudo iniciar el Draft Duel verificado. Comprueba la conexión e inténtalo de nuevo.'}[G.lang||'it'];
+    alert(msg);
+  }).finally(function(){
+    DUEL.draftBusy=false;
+    if(btn){btn.disabled=false;btn.textContent=t('form.start_draft');}
+  });
+}
+
 function initDraft(){
   if(!G.formation) return;
+  if(typeof DUEL!=='undefined'&&DUEL.mode){_duelInitServerDraft();return;}
   _ga('game_start',{tournament:G.dynasty?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
@@ -4877,6 +4968,7 @@ function renderThreeCards(){
 }
 
 function draftPick(i){
+  if(typeof DUEL!=='undefined'&&DUEL.mode&&DUEL.draftSessionId){_duelDraftAction('pick',i);return;}
   if(G.draftLock)return;
   G.draftLock=true;
   try{
@@ -4951,6 +5043,7 @@ document.addEventListener('touchstart',function(e){
 },{passive:true});
 
 function draftReroll(){
+  if(typeof DUEL!=='undefined'&&DUEL.mode&&DUEL.draftSessionId){_duelDraftAction('reroll');return;}
   if(G.passes<=0)return;
   var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
   if((G.difficulty||'normal')!=='easy'&&_emptySlots<=2)return;
