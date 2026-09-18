@@ -9,7 +9,7 @@ Last reviewed: 2026-09-18
 | Family | Teams | Players | Tournament groups |
 | --- | ---: | ---: | ---: |
 | UCL | 83 | 1326 | 10 |
-| Copa Libertadores | 51 | 653 | 5 |
+| Copa Libertadores | 51 | 650 | 5 |
 | World Cup | 87 | 1030 | 7 |
 
 All current tournament references resolve to an existing team and every team is referenced by at least one tournament group.
@@ -47,17 +47,13 @@ The Duel dataset parsers are intentionally grouped by `ucl`, `copa` and `wc` so 
 - duplicate player names inside one roster;
 - cross-family `teamId` collisions.
 
-Known legacy anomalies are explicit warnings. Any **new** same-name collision or new cross-family short-ID collision fails CI until reviewed.
+Same-name duplicates inside a single roster are now a hard CI failure. There is no legacy allowlist for duplicate player names.
 
-## Known legacy warnings
+The 2026-09-18 review removed three verified duplicate entries:
+- one duplicate Danilo and one duplicate Junior from São Paulo 2004-05;
+- one duplicate Borghi from Argentinos Juniors 1984-85.
 
-The following same-name entries already exist in the Copa data and require historical review before editing:
-
-- `sao_0506 / Danilo` — includes one exact duplicate record;
-- `sao_0506 / Junior` — appears twice with different listed roles/ratings;
-- `arj_8485 / Borghi` — appears twice with different ratings.
-
-These warnings are allowlisted only to make the current baseline testable. They are not considered verified-correct data.
+A separate historical-data task tracks the broader accuracy problem discovered in the Argentinos Juniors 1984-85 roster; duplicate cleanup does not imply that the rest of that roster is historically verified.
 
 Nationality (`nat`) remains optional because the recovered World Cup dataset does not currently store it consistently. When present, it must be a 2–3 letter uppercase code (the historical dataset uses values such as `WLS` and `NIR`).
 
