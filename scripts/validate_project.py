@@ -145,6 +145,7 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         "_build_*.py",
         "_sync_version.py",
         "tools/**",
+        "scripts/**",
     )
     for filename in local_only_files:
         if filename not in deploy_yml:
