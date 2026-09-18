@@ -66,9 +66,10 @@ function dcz_duel_form_positions($formation, $tactic) {
 }
 
 function dcz_duel_pos_group($pos) {
+    /* Parità intenzionale con posGroup() nel client corrente. */
     if ($pos === 'GK') return 'GK';
-    if (in_array($pos, ['CB','RB','LB','LWB','RWB','SW','DC','DF'], true)) return 'DEF';
-    if (in_array($pos, ['CM','CDM','CAM','RM','LM','DM','MF'], true)) return 'MID';
+    if (in_array($pos, ['CB','RB','LB'], true)) return 'DEF';
+    if (in_array($pos, ['CM','CDM','CAM','RM','LM'], true)) return 'MID';
     return 'FWD';
 }
 
