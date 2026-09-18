@@ -2498,6 +2498,15 @@ function t(key){
   return(STRINGS[lang]&&STRINGS[lang][key])||(STRINGS.en[key])||(STRINGS.it[key])||key;
 }
 
+function _detectInitialLang(stored,browserLang) {
+  var supported=['it','en','es'];
+  if(supported.indexOf(stored)!==-1)return stored;
+  var base=typeof browserLang==='string'
+    ? browserLang.toLowerCase().split(/[-_]/)[0]
+    : '';
+  return supported.indexOf(base)!==-1?base:'it';
+}
+
 function _syncLangBtn(lang){
   var el=document.getElementById('lb-lang');
   if(el)el.textContent=lang.toUpperCase();
@@ -7068,9 +7077,12 @@ function syncThemeIcon(){
 document.addEventListener('DOMContentLoaded',function(){
   syncThemeIcon();
   document.querySelectorAll('#game-version,.gv').forEach(function(v){v.textContent=GAME_VERSION;});
-  // Init language from localStorage, default Italian
-  var _initLang='it';
-  try{_initLang=localStorage.getItem('dcz_lang')||'it';}catch(e){}
+  // Saved preference wins; otherwise detect EN/ES on the first visit.
+  var _storedLang=null;
+  try{_storedLang=localStorage.getItem('dcz_lang');}catch(e){}
+  var _browserLang='';
+  try{_browserLang=(navigator.languages&&navigator.languages[0])||navigator.language||'';}catch(e){}
+  var _initLang=_detectInitialLang(_storedLang,_browserLang);
   if(typeof G!=='undefined'&&G)G.lang=_initLang;
   var _lb=document.getElementById('lang-btn');
   _syncLangBtn(_initLang);
