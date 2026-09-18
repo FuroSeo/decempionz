@@ -290,8 +290,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* ── FORMATION PICK ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0}
-.form-card{background:var(--s1);border:2px solid var(--brd);border-radius:10px;padding:8px 6px;cursor:pointer;transition:all .13s;text-align:center}
+.form-card{background:var(--s1);border:2px solid var(--brd);border-radius:10px;padding:8px 6px;cursor:pointer;transition:all .13s;text-align:center;appearance:none;-webkit-appearance:none;width:100%;color:inherit;font:inherit}
 .form-card:hover{border-color:var(--blue2)}
+.form-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 .form-card.sel{border-color:var(--gold);background:#1a1600}
 .form-name{font-size:.88rem;font-weight:900;margin-bottom:4px}
 .form-pitch{display:flex;flex-direction:column;gap:3px;align-items:center}
@@ -1272,10 +1273,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-formation">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <div data-i18n="form.title" style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
+  <div id="formation-title" data-i18n="form.title" style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
   <div class="tourn-badge" style="display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.6px;padding:3px 10px;border-radius:20px;margin-bottom:6px"></div>
   <div data-i18n="form.subtitle" style="font-size:.72rem;color:var(--mut);margin-bottom:10px">Determines your draft slots</div>
-  <div class="form-grid" id="form-grid"></div>
+  <div class="form-grid" id="form-grid" role="group" aria-labelledby="formation-title"></div>
   <div style="margin-top:10px;margin-bottom:10px">
     <div data-i18n="form.playing_style" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Playing Style</div>
     <div class="mini-tact-row">
@@ -4266,29 +4267,30 @@ function renderFormationGrid(){
         return '<div class="fp-dot '+slotGroup(pos)+'"></div>';
       }).join('')+'</div>';
     }).join('');
-    return '<div class="form-card" id="fc-'+safeKey+'" onclick="selectFormation(this,\''+key+'\')">'+
+    return '<button type="button" class="form-card" aria-pressed="false" id="fc-'+safeKey+'" onclick="selectFormation(this,\''+key+'\')">'+
       '<div class="form-name">'+key+'</div>'+
       '<div class="form-pitch">'+dots+'</div>'+
-      '<div class="form-desc">'+t('form.desc.'+key.replace(/-/g,''))+'</div></div>';
+      '<div class="form-desc">'+t('form.desc.'+key.replace(/-/g,''))+'</div></button>';
   }).join('')
-  +'<div class="form-card" id="fc-formation-random" onclick="selectRandomFormation()" style="border-style:dashed;opacity:.85">'+
+  +'<button type="button" class="form-card" aria-pressed="false" id="fc-formation-random" onclick="selectRandomFormation()" style="border-style:dashed;opacity:.85">'+
     '<div class="form-name">&#x1F3B2;</div>'+
     '<div class="form-pitch" style="display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.8rem">?</div>'+
-    '<div class="form-desc">'+_rndLbl+'</div></div>';
+    '<div class="form-desc">'+_rndLbl+'</div></button>';
 }
 
 function selectFormation(el, key){
   G.formation = key;
-  document.querySelectorAll('.form-card').forEach(function(card){ card.classList.remove('sel'); });
+  document.querySelectorAll('.form-card').forEach(function(card){card.classList.remove('sel');card.setAttribute('aria-pressed','false');});
   el.classList.add('sel');
+  el.setAttribute('aria-pressed','true');
   var btn = document.getElementById('btn-start-draft');
   btn.classList.remove('btn-inactive');
 }
 function selectRandomFormation(){
   var key=FKEYS[Math.floor(Math.random()*FKEYS.length)];
   G.formation=key;
-  document.querySelectorAll('.form-card').forEach(function(c){c.classList.remove('sel');});
-  var el=document.getElementById('fc-formation-random');if(el)el.classList.add('sel');
+  document.querySelectorAll('.form-card').forEach(function(c){c.classList.remove('sel');c.setAttribute('aria-pressed','false');});
+  var el=document.getElementById('fc-formation-random');if(el){el.classList.add('sel');el.setAttribute('aria-pressed','true');}
   var _t=document.getElementById('share-toast');
   if(_t){_t.textContent='🎲 '+key;_t.classList.add('show');setTimeout(function(){_t.classList.remove('show');},2500);}
   initDraft();
