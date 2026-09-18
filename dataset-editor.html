@@ -235,13 +235,17 @@ async function saveFile(){
       const h=await window.showSaveFilePicker({suggestedName:'game-data.js',types:[{description:'JavaScript',accept:{'text/javascript':['.js']}}]});
       const w=await h.createWritable();await w.write(result);await w.close();
       original=deepClone(data);raw=result;updateChangeCount();renderList();renderDetail();
-      alert('✓ Salvato! Ricorda: 1) bumpa ?v= nello script tag game-data.js di index.html  2) rilancia _build_rose.py  3) push con _push.bat.');
+      showPostSaveInstructions();
       return;
     }
   }catch(e){if(e.name==='AbortError')return;console.warn(e)}
   const blob=new Blob([result],{type:'text/javascript;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='game-data.js';a.click();URL.revokeObjectURL(url);
   original=deepClone(data);raw=result;updateChangeCount();
+  showPostSaveInstructions();
+}
+function showPostSaveInstructions(){
+  alert('✓ game-data.js salvato. Prossimi passi:\n1) sostituisci il file nella tua branch Git\n2) aggiorna game-data.js?v=... in index.html\n3) esegui python _build_rose.py\n4) esegui python scripts\\validate_project.py\n5) controlla il diff, commit/push della branch e PR verso main.\n\nNon usare _push.bat: il vecchio workflow è ritirato.');
 }
 </script>
 </body>
