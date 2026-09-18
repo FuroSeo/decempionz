@@ -7,6 +7,7 @@ work without mutating the checked-out repository.
 
 from __future__ import annotations
 
+import difflib
 import hashlib
 import re
 import shutil
@@ -103,8 +104,23 @@ def test_i18n_generator() -> None:
                     committed = ROOT / lang / f"{page}.html"
                     if not committed.exists():
                         fail(f"missing committed generated page: {lang}/{page}.html")
-                    if committed.read_text(encoding="utf-8") != html:
-                        fail(f"committed generated page is stale: {lang}/{page}.html")
+                    committed_text = committed.read_text(encoding="utf-8")
+                    if committed_text != html:
+                        diff = "\n".join(
+                            list(
+                                difflib.unified_diff(
+                                    committed_text.splitlines(),
+                                    html.splitlines(),
+                                    fromfile=f"committed/{lang}/{page}.html",
+                                    tofile=f"generated/{lang}/{page}.html",
+                                    lineterm="",
+                                )
+                            )[:80]
+                        )
+                        fail(
+                            f"committed generated page is stale: {lang}/{page}.html"
+                            + (f"\n{diff}" if diff else "")
+                        )
 
         patterns = (
             "ucl.html",
