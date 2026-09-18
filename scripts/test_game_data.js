@@ -329,6 +329,71 @@ function validateHomepageOnboarding() {
 
 validateHomepageOnboarding();
 
+function validatePrivacyNotice() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const inventory = fs.readFileSync(
+    path.join(ROOT, "PRIVACY_DATA_INVENTORY.md"),
+    "utf8"
+  );
+
+  const staleClaims = [
+    "L'unico dato salvato sul tuo dispositivo è la preferenza tema",
+    "The only data saved on your device is the theme preference",
+    "El único dato guardado en tu dispositivo es la preferencia de tema",
+    "does not collect, store, or transmit any personal data",
+    "non raccoglie, non archivia e non trasmette alcun dato personale",
+    "no recopila, almacena ni transmite ningún dato personal",
+    "localStorage solely to save local preferences",
+    "localStorage del browser esclusivamente per salvare preferenze locali",
+    "localStorage del navegador exclusivamente para guardar preferencias locales"
+  ];
+  for (const claim of staleClaims) {
+    if (homepage.includes(claim)) {
+      error("privacy: stale absolute claim remains: " + claim);
+    }
+  }
+
+  const localizedConcepts = [
+    ["Dati e funzionalità online", "Data and online features", "Datos y funciones en línea"],
+    ["classifiche Daily/Sfide", "Daily/Challenge leaderboards", "clasificaciones Daily/Retos"],
+    ["riferimenti dei Duelli recenti", "recent Duel references", "referencias de Duelos recientes"],
+    ["settembre 2026", "September 2026", "septiembre de 2026"]
+  ];
+  for (const translations of localizedConcepts) {
+    for (const fragment of translations) {
+      if (!homepage.includes(fragment)) {
+        error("privacy: localized notice missing " + fragment);
+      }
+    }
+  }
+
+  const documentedKeys = [
+    "gl-theme", "ucl_lang", "dcz_lang", "dcz_disclaimer", "dcz_tut",
+    "dcz_stats", "dcz_trophies", "dcz_formations_won", "dcz_daily",
+    "dcz_daily_run", "dcz_daily_sent", "dcz_retro_*", "dcz_last_nick",
+    "dcz_duel_nick", "dcz_duels", "dcz_hof_pending"
+  ];
+  for (const key of documentedKeys) {
+    if (!inventory.includes("`" + key + "`")) {
+      error("privacy inventory: missing browser storage key " + key);
+    }
+  }
+  for (const feature of [
+    "Daily and weekly challenge leaderboards",
+    "Hall of Fame submissions",
+    "Draft links",
+    "Duels",
+    "Google Analytics 4",
+    "Microsoft Clarity"
+  ]) {
+    if (!inventory.includes(feature)) {
+      error("privacy inventory: missing data flow " + feature);
+    }
+  }
+}
+
+validatePrivacyNotice();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
