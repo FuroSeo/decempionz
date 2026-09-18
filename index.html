@@ -133,7 +133,9 @@
 .tourn-card.tourn-wc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#ef4444}
 .tourn-tab-bar{display:flex;gap:5px;margin-bottom:14px;background:var(--s2);padding:4px;border-radius:12px}
 .tourn-tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--mut);cursor:pointer;line-height:1.3;transition:background .12s}
+.tourn-tab:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .tourn-tab.tab-active{background:var(--s1);color:var(--text)}.tourn-tab.tab-active-ucl{background:#1e3a6a;color:#93c5fd}.tourn-tab.tab-active-copa{background:#1a4a1a;color:#86efac}.tourn-tab.tab-active-wc{background:#5a1212;color:#fca5a5}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;justify-content:center;padding-bottom:48px}
 .app{width:100%;max-width:580px;padding:0 16px}
@@ -813,15 +815,16 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Tournament tab switcher -->
-  <div class="tourn-tab-bar">
-    <button id="tab-ucl" class="tourn-tab tab-active-ucl" onclick="switchTournTab('ucl')">🏆 UCL</button>
-    <button id="tab-copa" class="tourn-tab" onclick="switchTournTab('copa')">🌎 Copa</button>
-    <button id="tab-wc" class="tourn-tab" onclick="switchTournTab('wc')">🌍 World Cup</button>
-    <button id="tab-dynasty" class="tourn-tab" onclick="switchTournTab('dynasty')">🏰 Dynasty</button>
+  <span id="home-tournament-label" class="sr-only" data-i18n="home.tournament_picker">Scegli il torneo</span>
+  <div class="tourn-tab-bar" id="home-tournament-tabs" role="tablist" aria-labelledby="home-tournament-label" aria-orientation="horizontal" onkeydown="homeTournamentTabKey(event)">
+    <button id="tab-ucl" class="tourn-tab tab-active-ucl" role="tab" aria-selected="true" aria-controls="tourn-ucl" tabindex="0" data-tournament="ucl" onclick="switchTournTab('ucl')">🏆 UCL</button>
+    <button id="tab-copa" class="tourn-tab" role="tab" aria-selected="false" aria-controls="tourn-copa" tabindex="-1" data-tournament="copa" onclick="switchTournTab('copa')">🌎 Copa</button>
+    <button id="tab-wc" class="tourn-tab" role="tab" aria-selected="false" aria-controls="tourn-wc" tabindex="-1" data-tournament="wc" onclick="switchTournTab('wc')">🌍 World Cup</button>
+    <button id="tab-dynasty" class="tourn-tab" role="tab" aria-selected="false" aria-controls="tourn-dynasty" tabindex="-1" data-tournament="dynasty" onclick="switchTournTab('dynasty')">🏰 Dynasty</button>
   </div>
 
   <!-- UCL Legends card -->
-  <div class="tourn-card tourn-ucl" id="tourn-ucl">
+  <div class="tourn-card tourn-ucl" id="tourn-ucl" role="tabpanel" aria-labelledby="tab-ucl">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🏆</div>
       <div>
@@ -852,7 +855,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Copa Libertadores -->
-  <div class="tourn-card tourn-copa" id="tourn-copa" style="display:none">
+  <div class="tourn-card tourn-copa" id="tourn-copa" role="tabpanel" aria-labelledby="tab-copa" hidden style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌎</div>
       <div>
@@ -874,7 +877,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- World Cup Legends -->
-  <div class="tourn-card tourn-wc" id="tourn-wc" style="display:none">
+  <div class="tourn-card tourn-wc" id="tourn-wc" role="tabpanel" aria-labelledby="tab-wc" hidden style="display:none">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🌍</div>
       <div>
@@ -896,7 +899,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   </div>
 
   <!-- Dynasty Mode -->
-  <div class="tourn-card" id="tourn-dynasty" style="display:none;border-color:rgba(251,191,36,.3);background:linear-gradient(135deg,var(--s1),rgba(42,26,0,.25))">
+  <div class="tourn-card" id="tourn-dynasty" role="tabpanel" aria-labelledby="tab-dynasty" hidden style="display:none;border-color:rgba(251,191,36,.3);background:linear-gradient(135deg,var(--s1),rgba(42,26,0,.25))">
     <div class="tourn-card-hdr">
       <div class="tourn-icon">🏰</div>
       <div>
@@ -1586,6 +1589,7 @@ const STRINGS={
     'home.stat_eras':'Ere',
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
+    'home.tournament_picker':'Scegli il torneo',
     'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.onboarding.pick':'1 · Scegli torneo e modulo','home.onboarding.draft':'2 · Drafta 11 leggende','home.onboarding.play':'3 · Gioca il torneo','home.link_ucl':'83 rose →','home.link_copa':'51 rose →','home.link_wc':'87 rose →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.unfinished':'⚠️ Hai iniziato il puzzle di oggi senza completarlo: il risultato si registra solo a fine campagna.','daily.nick':'Il tuo nickname','daily.lb_send':'Invia in classifica','daily.lb_pos':'Sei #{N} su {C} oggi!','daily.lb_show':'🏆 Classifica di oggi →','daily.lb_empty':'Nessun risultato oggi — sii il primo!','daily.lb_sent':'🏆 Inviato alla classifica di oggi ✓','daily.lb_err_dup':'Risultato già ricevuto da questa rete oggi.','daily.lb_err':'Invio non riuscito, riprova.','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
@@ -1888,6 +1892,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
+    'home.tournament_picker':'Choose tournament',
     'home.lobby_sub':'The greatest champions together, just this once.','home.onboarding.pick':'1 · Pick tournament & formation','home.onboarding.draft':'2 · Draft 11 legends','home.onboarding.play':'3 · Play the tournament','home.link_ucl':'83 squads →','home.link_copa':'51 squads →','home.link_wc':'87 squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.unfinished':'⚠️ You started today\'s puzzle without finishing it: the result is recorded only when the campaign ends.','daily.nick':'Your nickname','daily.lb_send':'Submit to leaderboard','daily.lb_pos':'You are #{N} of {C} today!','daily.lb_show':'🏆 Today\'s leaderboard →','daily.lb_empty':'No results yet today — be the first!','daily.lb_sent':'🏆 Submitted to today\'s leaderboard ✓','daily.lb_err_dup':'A result was already received from this network today.','daily.lb_err':'Submission failed, try again.','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
@@ -2193,6 +2198,7 @@ const STRINGS={
     'home.stat_eras':'Eras',
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
+    'home.tournament_picker':'Elige el torneo',
     'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.onboarding.pick':'1 · Elige torneo y formación','home.onboarding.draft':'2 · Haz el draft de tu XI','home.onboarding.play':'3 · Juega el torneo','home.link_ucl':'83 plantillas →','home.link_copa':'51 plantillas →','home.link_wc':'87 plantillas →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.unfinished':'⚠️ Empezaste el puzzle de hoy sin terminarlo: el resultado se registra solo al final de la campaña.','daily.nick':'Tu nickname','daily.lb_send':'Enviar a la clasificación','daily.lb_pos':'¡Eres #{N} de {C} hoy!','daily.lb_show':'🏆 Clasificación de hoy →','daily.lb_empty':'Aún no hay resultados hoy — ¡sé el primero!','daily.lb_sent':'🏆 Enviado a la clasificación de hoy ✓','daily.lb_err_dup':'Ya se recibió un resultado desde esta red hoy.','daily.lb_err':'Envío fallido, inténtalo de nuevo.','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
@@ -4183,16 +4189,40 @@ function startGameWC(){
   _syncFormatCards();
   applyTournamentTheme('wc');
 }
+function _homeTournamentTabTarget(current,key,count){
+  if(key==='Home')return 0;
+  if(key==='End')return count-1;
+  if(key==='ArrowRight')return(current+1)%count;
+  if(key==='ArrowLeft')return(current-1+count)%count;
+  return-1;
+}
+function homeTournamentTabKey(ev){
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('#home-tournament-tabs [role="tab"]'));
+  var current=tabs.indexOf(document.activeElement);
+  if(current<0)return;
+  var next=_homeTournamentTabTarget(current,ev.key,tabs.length);
+  if(next<0)return;
+  ev.preventDefault();
+  var target=tabs[next];
+  target.focus();
+  switchTournTab(target.getAttribute('data-tournament'));
+}
 function switchTournTab(mode){
   if(mode==='dynasty') _ga('dynasty_tab_click',{});
   if(mode!=='dynasty') G.gameMode=mode; // sync gameMode al tab visivo
   ['ucl','copa','wc','dynasty'].forEach(function(m){
     var card=document.getElementById('tourn-'+m);
     var tab=document.getElementById('tab-'+m);
-    if(card) card.style.display=(m===mode)?'':'none';
+    if(card){
+      card.hidden=m!==mode;
+      card.style.display=(m===mode)?'':'none';
+    }
     if(tab){
       tab.classList.remove('tab-active','tab-active-ucl','tab-active-copa','tab-active-wc','tab-active-dynasty');
-      if(m===mode) tab.classList.add('tab-active-'+mode);
+      var selected=m===mode;
+      tab.setAttribute('aria-selected',selected?'true':'false');
+      tab.setAttribute('tabindex',selected?'0':'-1');
+      if(selected) tab.classList.add('tab-active-'+mode);
     }
   });
   applyTournamentTheme(mode==='dynasty'?'ucl':mode);

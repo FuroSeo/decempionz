@@ -240,7 +240,8 @@ function validateHomepageOnboarding() {
   const onboardingKeys = [
     "home.onboarding.pick",
     "home.onboarding.draft",
-    "home.onboarding.play"
+    "home.onboarding.play",
+    "home.tournament_picker"
   ];
   for (const key of onboardingKeys) {
     const translationCount = homepage.split("'" + key + "':").length - 1;
@@ -250,6 +251,66 @@ function validateHomepageOnboarding() {
     if (!homepage.includes('data-i18n="' + key + '"')) {
       error("homepage: primer does not render " + key);
     }
+  }
+
+  if (!homepage.includes(
+    'id="home-tournament-tabs" role="tablist" aria-labelledby="home-tournament-label"'
+  )) {
+    error("homepage: tournament selector must expose a labelled tablist");
+  }
+  const tournamentModes = ["ucl", "copa", "wc", "dynasty"];
+  tournamentModes.forEach(function (mode, index) {
+    const selected = index === 0 ? "true" : "false";
+    const tabIndex = index === 0 ? "0" : "-1";
+    const tabPattern = new RegExp(
+      'id="tab-' + mode + '"[^>]*role="tab"[^>]*aria-selected="' + selected +
+      '"[^>]*aria-controls="tourn-' + mode + '"[^>]*tabindex="' + tabIndex + '"'
+    );
+    if (!tabPattern.test(homepage)) {
+      error("homepage: invalid initial tab semantics for " + mode);
+    }
+    const panelPattern = new RegExp(
+      'id="tourn-' + mode + '"[^>]*role="tabpanel"[^>]*aria-labelledby="tab-' + mode + '"'
+    );
+    if (!panelPattern.test(homepage)) {
+      error("homepage: tournament panel is not associated for " + mode);
+    }
+  });
+
+  const tabTargetMatch = homepage.match(
+    /function _homeTournamentTabTarget\(current,key,count\)\{[\s\S]*?\n\}/
+  );
+  if (!tabTargetMatch) {
+    error("homepage: tournament keyboard navigation helper missing");
+  } else {
+    const tabSandbox = Object.create(null);
+    vm.runInNewContext(
+      tabTargetMatch[0] +
+        "\n;globalThis.__homeTournamentTabTarget=_homeTournamentTabTarget;",
+      tabSandbox,
+      { filename: "index.html#_homeTournamentTabTarget", timeout: 500 }
+    );
+    const keyboardCases = [
+      { current: 0, key: "ArrowRight", expected: 1 },
+      { current: 3, key: "ArrowRight", expected: 0 },
+      { current: 0, key: "ArrowLeft", expected: 3 },
+      { current: 2, key: "Home", expected: 0 },
+      { current: 1, key: "End", expected: 3 },
+      { current: 1, key: "Enter", expected: -1 }
+    ];
+    keyboardCases.forEach(function (testCase) {
+      const actual = tabSandbox.__homeTournamentTabTarget(
+        testCase.current,
+        testCase.key,
+        tournamentModes.length
+      );
+      if (actual !== testCase.expected) {
+        error(
+          "homepage: tournament key " + testCase.key + " from " + testCase.current +
+          " expected " + testCase.expected + ", found " + actual
+        );
+      }
+    });
   }
 
   const detectorMatch = homepage.match(
