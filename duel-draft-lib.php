@@ -7,6 +7,7 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'duel-draft-lib.php') {
 
 const DCZ_DUEL_DRAFT_ENGINE_VERSION = 'server-draft-v1';
 const DCZ_DUEL_DRAFT_TTL = 3600;
+const DCZ_DUEL_DRAFT_MAX_SESSIONS = 1000;
 
 function dcz_draft_session_dir() {
     $duelsDir = __DIR__ . '/duels/';
@@ -32,6 +33,11 @@ function dcz_draft_cleanup_sessions() {
     foreach ($files as $file) {
         if ((int)@filemtime($file) < $cutoff) @unlink($file);
     }
+
+    $files = glob($dir . '*.json');
+    if ($files === false || count($files) <= DCZ_DUEL_DRAFT_MAX_SESSIONS) return;
+    usort($files, fn($a, $b) => ((int)@filemtime($a)) <=> ((int)@filemtime($b)));
+    foreach (array_slice($files, 0, count($files) - DCZ_DUEL_DRAFT_MAX_SESSIONS) as $file) @unlink($file);
 }
 
 function dcz_draft_js_unescape($value) {
