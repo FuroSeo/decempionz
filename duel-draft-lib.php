@@ -69,7 +69,7 @@ function dcz_draft_dataset($path = null) {
     $lines = @file($path, FILE_IGNORE_NEW_LINES);
     if ($lines === false) return $cache[$path] = null;
 
-    $registry = [];
+    $registry = ['ucl'=>[], 'copa'=>[], 'wc'=>[]];
     $mode = null;
     foreach ($lines as $line) {
         if (preg_match('/^const\s+TEAMS\s*=\s*\{/', $line)) { $mode = 'ucl'; continue; }
@@ -96,7 +96,7 @@ function dcz_draft_dataset($path = null) {
         }
         if (!$players) continue;
 
-        $registry[$idm[1]] = [
+        $registry[$mode][$idm[1]] = [
             'id' => $idm[1],
             'mode' => $mode,
             'name' => dcz_draft_js_unescape($nm[1]),
@@ -105,7 +105,8 @@ function dcz_draft_dataset($path = null) {
         ];
     }
 
-    return $cache[$path] = ($registry ?: null);
+    $count = array_sum(array_map('count', $registry));
+    return $cache[$path] = ($count > 0 ? $registry : null);
 }
 
 function dcz_draft_extract_array_block($content, $constName) {
@@ -301,17 +302,19 @@ function dcz_draft_config($raw) {
 function dcz_draft_build_pool($config) {
     $dataset = dcz_draft_dataset();
     if (!is_array($dataset)) return null;
+    $family = $dataset[$config['tournament']] ?? null;
+    if (!is_array($family)) return null;
 
     if ($config['mode'] === 'dynasty') {
         $ids = [];
-        foreach ($dataset as $id => $team) {
-            if ($team['mode'] === $config['tournament'] && $team['club'] === $config['club']) $ids[] = $id;
+        foreach ($family as $id => $team) {
+            if ($team['club'] === $config['club']) $ids[] = $id;
         }
         sort($ids, SORT_STRING);
         if (!$ids) return null;
         $seen = [];
         foreach ($ids as $id) {
-            $team = $dataset[$id];
+            $team = $family[$id];
             foreach ($team['players'] as $p) {
                 $entry = $p + ['club'=>$team['name'], 'teamId'=>$id];
                 if (!isset($seen[$p['n']]) || $entry['r'] > $seen[$p['n']]['r']) $seen[$p['n']] = $entry;
@@ -325,13 +328,13 @@ function dcz_draft_build_pool($config) {
     $era = $tournaments[$config['tournament']][$config['eraId']];
     $teamIds = $era['teams'];
     foreach ($teamIds as $id) {
-        if (!isset($dataset[$id]) || $dataset[$id]['mode'] !== $config['tournament']) return null;
+        if (!isset($family[$id])) return null;
     }
 
     if (!empty($era['allTime'])) {
         $byClub = [];
         foreach ($teamIds as $id) {
-            $team = $dataset[$id];
+            $team = $family[$id];
             $avg = array_sum(array_map(fn($p)=>(int)$p['r'], $team['players'])) / count($team['players']);
             $club = $team['club'] ?: $id;
             if (!isset($byClub[$club])) $byClub[$club] = [];
@@ -346,7 +349,7 @@ function dcz_draft_build_pool($config) {
 
     $buckets = [];
     foreach ($teamIds as $id) {
-        $team = $dataset[$id];
+        $team = $family[$id];
         $sorted = dcz_draft_stable_rating_desc($team['players']);
         $gi = count($sorted) > 1 && dcz_draft_random_float() < 0.35 ? 1 : 0;
         $top = null; $rest = [];
