@@ -18,7 +18,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
 - **5.16.0** — save export/import for all `dcz_*` localStorage keys and Chemistry explanation in How to Play.
-- **Duel integrity 2026-09-17** — newly finalized Duel results are generated server-side atomically when player B commits the second squad; client-reported match scores are no longer authoritative. Squad provenance remains client-submitted and structurally validated.
+- **Duel integrity 2026-09-18** — Duel results are generated server-side when player B commits the second squad. New squad submissions carry source `teamId` values and are checked against canonical `game-data.js` name/position/rating records and tournament/club scope. Exact browser draft-offer history remains client-unverified.
 - **Infrastructure 2026-09-17** — Service Worker cache namespace moved to `decempionz-v5.16.4`; dynamic endpoints bypass cache; navigation timeout and controlled offline fallback added. This did **not** bump the public app version.
 - **Workflow 2026-09-17** — branch/PR/CI workflow introduced; direct legacy `_push.bat` deployment retired; Dataset Editor and Studio recovered and versioned as non-deployed tools.
 
@@ -207,22 +207,21 @@ Production challenge configuration/state is server-maintained and excluded from 
 
 Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php` and the server-side simulation engine in `duel-engine.php`.
 
-The protocol prevents the second player from seeing the first player's hidden squad before committing their own squad. Under the same exclusive server lock that accepts player B's squad, the backend generates fresh server randomness, computes the authoritative best-of-3 and writes the final result. New Duel records therefore move directly from `waiting` to `done` before A's squad is returned to B.
+The protocol prevents player B from seeing player A's hidden squad before committing B's own squad. New Duel player payloads include `teamId` for every selected player. The backend verifies the exact `teamId + name + natural position + rating` tuple against `game-data.js`; Classic sources must belong to the Duel tournament, while Dynasty sources must belong to the selected club/tournament family.
 
-The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the current Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; moving result authority server-side is not intended as a balance change.
+After B's validated squad is accepted, the backend generates a private seed and computes the authoritative best-of-3 under the Duel-file lock. The server stores the official result, seed and engine version before returning the two squads and public result. The browser then uses that official result for the existing in-app match animation. Client-generated scores are not authoritative and legacy result payloads are ignored.
 
-The current browser can still calculate a local series for compatibility, but `duel-result.php` ignores that client result. Its follow-up result request receives the already-finalized state and sends B to the canonical Duel page, so a locally generated outcome cannot overwrite or masquerade as the official result. The redirect also restores B's local Duel history through a short-lived HttpOnly marker.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; the authority change is not intended as a balance change.
 
-Squad provenance is still client-submitted: the backend validates formation, tactic, supported positions and the dataset-compatible 6–10 rating range, but it does not yet prove that every player came from the exact draft offers shown in the browser. Display names are not canonical identities because the same historical label can legitimately occur in multiple squads/eras. The detailed trust model and migration rules live in `COMPETITIVE_INTEGRITY.md`.
+The private seed makes a newly generated result replayable by the server with the stored teams and engine version. Private `_server*` fields are never exposed by `duel-join.php`.
 
-Historical completed duels remain readable as legacy client-reported records. A historical duel left in `simulating` state receives a fresh server-authoritative result when its next finalization request arrives.
+Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can be finalized with a fresh server result, and a stale pre-upgrade client cannot overwrite that result.
 
-With the current monolithic client, player B is redirected to the canonical Duel result page rather than replaying a locally generated series that may differ from the authoritative result. A future client refactor can restore the in-app animation by consuming the server result directly.
+Remaining integrity boundary: the server proves that submitted players are real canonical records from allowed source squads, but it does not yet prove the exact card offers/choices shown during the browser draft. A modified client could still choose a different combination of otherwise valid players within the allowed source scope. The detailed trust model and future server-issued draft-session direction are documented in `COMPETITIVE_INTEGRITY.md`.
 
 Classic and Dynasty duel variants remain supported. Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
 
 ---
-
 ## 14. Hall of Fame, trophies and statistics
 
 Hall of Fame uses PHP submission/status/admin endpoints plus server-side JSON state. Admin secrets/configuration must never be committed to the public repository.
