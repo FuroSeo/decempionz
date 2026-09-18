@@ -85,7 +85,7 @@ Il restore è volutamente CLI-only e richiede `--confirm`:
 php runtime-recovery.php restore hall-of-fame main NOME_SNAPSHOT.json --confirm
 ```
 
-Prima di sostituire il target, lo strumento prova a creare uno snapshot dello stato corrente. Il file ripristinato viene scritto tramite file temporaneo e rename, evitando di lasciare un target parzialmente scritto.
+Prima di sostituire il target, lo strumento prova a creare uno snapshot dello stato corrente. Se il target corrente è JSON corrotto, i byte originali vengono conservati in una quarantena privata `.corrupt` invece di bloccare il recovery. Il file valido viene poi scritto tramite file temporaneo e rename, evitando di lasciare un target parzialmente scritto.
 
 ## Procedura consigliata in caso di corruzione
 
@@ -115,6 +115,7 @@ La CI esegue `scripts/test_runtime_backup.php`, che verifica:
 - rifiuto di JSON invalidi;
 - **restore completo su una copia isolata del runtime**;
 - creazione automatica dello snapshot pre-restore;
-- contenuto finale del target dopo il restore.
+- contenuto finale del target dopo il restore;
+- restore di un target JSON corrotto con conservazione dei byte originali in quarantena privata.
 
 Il test usa `DCZ_BACKUP_DIR` e `DCZ_RUNTIME_ROOT` su directory temporanee e non tocca mai i dati reali. `DCZ_RUNTIME_ROOT` è accettato dal recovery library solo quando PHP gira in modalità CLI.
