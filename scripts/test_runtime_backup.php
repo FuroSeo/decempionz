@@ -94,6 +94,25 @@ foreach ($counterSnapshots as $snapshot) {
 }
 if (!$foundPreRestore) fail_test('pre-restore target state not recoverable');
 
+/* A corrupt current target must still be recoverable, but its raw bytes are quarantined first. */
+$corruptRaw = '{broken-json';
+if (@file_put_contents($target, $corruptRaw, LOCK_EX) === false) {
+    fail_test('cannot create corrupt target fixture');
+}
+$restoredCorrupt = dcz_recovery_restore_snapshot('game-counter', 'main', $restoreFile);
+if (empty($restoredCorrupt['ok'])) {
+    fail_test('restore over corrupt target failed: ' . ($restoredCorrupt['code'] ?? 'unknown'));
+}
+$afterCorruptRaw = @file_get_contents($target);
+$afterCorrupt = is_string($afterCorruptRaw) ? json_decode($afterCorruptRaw, true) : null;
+if (!is_array($afterCorrupt) || (int)($afterCorrupt['total'] ?? -1) !== 321) {
+    fail_test('corrupt target was not restored');
+}
+$quarantine = glob($root . '/game-counter/main/*.corrupt') ?: [];
+if (!$quarantine) fail_test('corrupt target was not quarantined');
+$quarantinedRaw = @file_get_contents($quarantine[0]);
+if ($quarantinedRaw !== $corruptRaw) fail_test('quarantined corrupt bytes mismatch');
+
 rm_tree($runtimeRoot);
 rm_tree($root);
 
