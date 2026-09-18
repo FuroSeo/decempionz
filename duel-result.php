@@ -265,7 +265,7 @@ if ($phase === 'team') {
     if (!dcz_write_and_close($fp, $d)) {
         http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
     }
-    if (!dcz_draft_consume_session($draftSessionId)) {
+    if (!dcz_draft_consume_session($draftSessionId, $id)) {
         error_log('Decempionz Duel: completed B draft session could not be marked consumed.');
     }
 
