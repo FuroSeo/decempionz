@@ -72,3 +72,4 @@ jobs:
             wc_patch.py
             wc_constants.js
             tools/**
+            scripts/**
