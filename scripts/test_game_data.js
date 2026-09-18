@@ -81,7 +81,7 @@ for (const family of families) {
         error(mode + "/" + id + ": missing/invalid " + key);
       }
     }
-    if (typeof team.club === "string" && !/^[a-z0-9_]+$/.test(team.club)) {
+    if (mode !== "wc" && typeof team.club === "string" && !/^[a-z0-9_]+$/.test(team.club)) {
       error(mode + "/" + id + ": invalid club slug " + team.club);
     }
 
@@ -114,7 +114,7 @@ for (const family of families) {
       }
       if (player.nat == null || player.nat === "") {
         missingNat++;
-      } else if (typeof player.nat !== "string" || !/^[A-Z]{2}$/.test(player.nat)) {
+      } else if (typeof player.nat !== "string" || !/^[A-Z]{2,3}$/.test(player.nat)) {
         error(prefix + ": invalid nationality code " + String(player.nat));
       }
 
