@@ -25,8 +25,8 @@ $d = json_decode((string)file_get_contents($file), true);
 if (!is_array($d)) { http_response_code(500); echo json_encode(['error' => 'corrupt duel']); exit; }
 $status = (string)($d['status'] ?? 'waiting');
 
-/* Dopo il commit di B le rose sono pubbliche, ma seed/risultato autoritativo restano privati
-   finché il duello non viene finalizzato. */
+/* 'simulating' esiste solo per compatibilità con record storici interrotti. I nuovi duelli
+   passano da waiting a done nella stessa transazione che accetta la rosa di B. */
 if ($status === 'simulating') {
     echo json_encode([
         'id'         => $d['id'],
@@ -62,7 +62,8 @@ if ($status === 'done') {
         'integrity'  => $d['integrity'] ?? [
             'result' => 'legacy-client-reported',
             'engine' => null,
-            'squad' => 'client-submitted',
+            'squad' => 'legacy-client-submitted',
+            'draftHistory' => 'legacy-unknown',
         ],
     ], JSON_UNESCAPED_UNICODE);
     exit;
