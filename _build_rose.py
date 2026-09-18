@@ -332,8 +332,8 @@ def main():
       ('copa.html','0.8','monthly'),('worldcup.html','0.8','monthly'),
       ('draft.html','0.3','never'),('sfide.html','0.7','weekly'),('rose/','0.7','weekly'),
       ('en/ucl.html','0.8','monthly'),('en/copa.html','0.8','monthly'),('en/worldcup.html','0.8','monthly'),
-      ('en/about.html','0.6','monthly'),('es/ucl.html','0.8','monthly'),('es/about.html','0.6','monthly'),
-      ('en/rose/','0.7','weekly')]
+      ('en/about.html','0.6','monthly'),('es/ucl.html','0.8','monthly'),('es/copa.html','0.8','monthly'),
+      ('es/worldcup.html','0.8','monthly'),('es/about.html','0.6','monthly'),('en/rose/','0.7','weekly')]
     urls=['  <url>\n    <loc>%s/%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>%s</changefreq>\n    <priority>%s</priority>\n  </url>'%(SITE,p,TODAY,cf,pr) for p,pr,cf in fixed]
     for key,slug in sorted(slug_of.items(),key=lambda kv:kv[1]):
         for pre in ['rose','en/rose']:
