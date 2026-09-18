@@ -72,8 +72,8 @@ function dcz_sanitize_team($t) {
 }
 
 /* Indicizza le rose canoniche senza eseguire game-data.js.
-   Ogni team è mantenuto su una singola riga dal dataset editor/build corrente: conserviamo
-   la riga originale e verifichiamo poi la firma JS esatta {n,p,r} del giocatore. */
+   La chiave canonica è torneo + teamId: lo stesso short id può esistere in famiglie
+   diverse (es. atm_1314 in UCL e Copa) senza sovrascrivere la rosa precedente. */
 function dcz_duel_dataset_registry($path = null) {
     $path = $path ?: (__DIR__ . '/game-data.js');
     static $cache = [];
@@ -85,7 +85,7 @@ function dcz_duel_dataset_registry($path = null) {
         return null;
     }
 
-    $registry = [];
+    $registry = ['ucl' => [], 'copa' => [], 'wc' => []];
     $mode = null;
     foreach ($lines as $line) {
         if (preg_match('/^const\s+TEAMS\s*=\s*\{/', $line)) {
@@ -109,15 +109,30 @@ function dcz_duel_dataset_registry($path = null) {
         if (!preg_match('/^\s*([A-Za-z0-9_]+):\{/', $line, $idMatch)) continue;
         if (!preg_match("/\bclub:'([a-z0-9_]+)'/", $line, $clubMatch)) continue;
 
-        $registry[$idMatch[1]] = [
+        $registry[$mode][$idMatch[1]] = [
             'mode' => $mode,
             'club' => $clubMatch[1],
             'raw'  => $line,
         ];
     }
 
-    $cache[$path] = $registry ?: null;
+    $count = array_sum(array_map('count', $registry));
+    $cache[$path] = $count > 0 ? $registry : null;
     return $cache[$path];
+}
+
+function dcz_duel_dataset_source($registry, $teamId, $expectedMode = null) {
+    if (!is_array($registry) || $teamId === '') return null;
+
+    if ($expectedMode !== null) {
+        return $registry[$expectedMode][$teamId] ?? null;
+    }
+
+    $matches = [];
+    foreach (['ucl','copa','wc'] as $mode) {
+        if (isset($registry[$mode][$teamId])) $matches[] = $registry[$mode][$teamId];
+    }
+    return count($matches) === 1 ? $matches[0] : null;
 }
 
 function dcz_duel_player_dataset_marker($player) {
@@ -135,10 +150,9 @@ function dcz_duel_validate_team_dataset($team, $expectedMode = null, $expectedCl
 
     foreach ($team['players'] as $player) {
         $teamId = (string)($player['teamId'] ?? '');
-        if ($teamId === '' || !isset($registry[$teamId])) return false;
-        $source = $registry[$teamId];
+        $source = dcz_duel_dataset_source($registry, $teamId, $expectedMode);
+        if (!is_array($source)) return false;
 
-        if ($expectedMode !== null && $source['mode'] !== $expectedMode) return false;
         if ($expectedClub !== null && $source['club'] !== $expectedClub) return false;
 
         $marker = dcz_duel_player_dataset_marker($player);

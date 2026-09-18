@@ -39,6 +39,10 @@ jobs:
         run: |
           node --check sw.js
           node --check game-data.js
+          node --check scripts/test_game_data.js
+
+      - name: Game data integrity tests
+        run: node scripts/test_game_data.js
 
       - name: PHP syntax
         shell: bash

@@ -43,7 +43,11 @@ function dd_finish_session(array $config, bool $rerollFirst = false): array {
 }
 
 $dataset = dcz_draft_dataset();
-dd_assert(is_array($dataset) && count($dataset) > 200, 'all canonical team families must parse');
+$datasetCount = is_array($dataset) ? array_sum(array_map('count', $dataset)) : 0;
+dd_assert($datasetCount > 200, 'all canonical team families must parse');
+dd_assert(isset($dataset['ucl']['atm_1314'], $dataset['copa']['atm_1314']), 'duplicate short teamId must coexist by tournament family');
+dd_assert(($dataset['ucl']['atm_1314']['club'] ?? '') === 'atletico', 'UCL atm_1314 must stay Atletico Madrid');
+dd_assert(($dataset['copa']['atm_1314']['club'] ?? '') === 'atletico_mineiro', 'Copa atm_1314 must stay Atletico Mineiro');
 
 foreach (['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5-3-2','5-4-1'] as $formation) {
     foreach (['attack','balanced','defend'] as $tactic) {
@@ -53,6 +57,17 @@ foreach (['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5
 
 $tournaments = dcz_draft_tournaments();
 dd_assert(isset($tournaments['ucl']['pioneers'], $tournaments['copa']['copa_pioneros'], $tournaments['wc']['wc_pionieri']), 'canonical era definitions must parse');
+
+$uclCollisionConfig = dcz_draft_config([
+    'role'=>'a', 'mode'=>'classic', 'tournament'=>'ucl', 'eraId'=>'decima',
+    'formation'=>'4-3-3', 'tactic'=>'balanced',
+]);
+$copaCollisionConfig = dcz_draft_config([
+    'role'=>'a', 'mode'=>'classic', 'tournament'=>'copa', 'eraId'=>'copa_moderna',
+    'formation'=>'4-3-3', 'tactic'=>'balanced',
+]);
+dd_assert(is_array(dcz_draft_build_pool($uclCollisionConfig)), 'UCL pool containing atm_1314 must build');
+dd_assert(is_array(dcz_draft_build_pool($copaCollisionConfig)), 'Copa pool containing atm_1314 must build');
 
 $config = dcz_draft_config([
     'role'=>'a',
@@ -140,7 +155,7 @@ $dynConfig = dcz_draft_config([
 dd_assert($dynConfig !== null, 'Dynasty Duel draft config must validate');
 $dynDone = dd_finish_session($dynConfig);
 foreach ($dynDone['finalTeam'] as $player) {
-    $src = $dataset[$player['teamId']] ?? null;
+    $src = $dataset['ucl'][$player['teamId']] ?? null;
     dd_assert(is_array($src) && $src['mode'] === 'ucl' && $src['club'] === 'real_madrid', 'Dynasty offer must stay inside selected club');
 }
 
