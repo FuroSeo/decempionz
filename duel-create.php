@@ -101,6 +101,24 @@ $draftExpect = [
 ];
 $draftVerified = dcz_draft_verify_completed_session($draftSessionId, $team, $draftExpect);
 if (empty($draftVerified['ok'])) {
+    /* Idempotenza: se la sessione e' gia' stata consumata da una precedente richiesta
+       riuscita ma la risposta e' andata persa, restituisci lo stesso Duel. */
+    $existingId = preg_replace('/[^A-Za-z0-9]/', '', (string)($draftVerified['consumedRef'] ?? ''));
+    if (($draftVerified['error'] ?? '') === 'draft session already used'
+        && strlen($existingId) >= 6 && strlen($existingId) <= 12) {
+        $existingFile = $duelsDir . $existingId . '.json';
+        $existing = is_file($existingFile) ? json_decode((string)@file_get_contents($existingFile), true) : null;
+        if (is_array($existing)
+            && (($existing['_draftA']['sessionId'] ?? '') === $draftSessionId)
+            && dcz_draft_team_equals_final($team, $existing['a']['players'] ?? [])) {
+            echo json_encode([
+                'id' => $existingId,
+                'url' => 'https://decempionz.com/duel.php?id=' . $existingId,
+                'reused' => true,
+            ]);
+            exit;
+        }
+    }
     dcz_log_err('draft_proof_failed reason=' . ($draftVerified['error'] ?? 'unknown'));
     http_response_code((int)($draftVerified['code'] ?? 400));
     echo json_encode(['error' => 'draft verification failed']); exit;
@@ -136,7 +154,7 @@ if ($written === false) {
     dcz_log_err('write_failed file=' . $id);
     http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
 }
-if (!dcz_draft_consume_session($draftSessionId)) {
+if (!dcz_draft_consume_session($draftSessionId, $id)) {
     @unlink($file);
     dcz_log_err('draft_consume_failed');
     http_response_code(500); echo json_encode(['error' => 'draft verification commit failed']); exit;
