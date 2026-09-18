@@ -19,6 +19,7 @@ For newly created Duel drafts:
 
 1. The browser starts a short-lived server Draft session after tournament/era, formation, tactic and optional Dynasty club are fixed.
 2. The server builds the candidate pool from canonical `game-data.js` and keeps the full pool/state private.
+   Canonical team lookup is keyed by tournament family + `teamId`; short IDs are not assumed globally unique across UCL/Copa/World Cup.
 3. Only the current offer, filled slots, reroll count and session version are returned to the browser.
 4. Every pick/reroll is applied under an exclusive lock to that server session. A monotonically increasing version prevents a lost/retried request from applying the same action twice.
 5. The server records the exact three-card offer and accepted pick/reroll in the private session history.
