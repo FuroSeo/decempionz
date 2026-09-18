@@ -155,11 +155,19 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
 def validate_runtime_backup() -> None:
     htaccess = read(".htaccess")
     backup_lib = read("runtime-backup-lib.php")
+    recovery_lib = read("runtime-recovery-lib.php")
     recovery = read("runtime-recovery.php")
+    health_endpoint = read("runtime-health.php")
+    backup_test = read("scripts/test_runtime_backup.php")
 
     if "PHP_SAPI !== 'cli'" not in recovery:
         fail("Runtime recovery tool must refuse web execution")
-    for filename in ("runtime-backup-lib.php", "runtime-recovery.php"):
+
+    for filename in (
+        "runtime-backup-lib.php",
+        "runtime-recovery-lib.php",
+        "runtime-recovery.php",
+    ):
         if filename.replace(".", "\\.") not in htaccess and filename not in htaccess:
             fail(f".htaccess must deny direct HTTP access to {filename}")
 
@@ -167,6 +175,43 @@ def validate_runtime_backup() -> None:
         fail("Runtime backups must default outside public_html")
     if "json_decode" not in backup_lib:
         fail("Runtime backup library must validate JSON before snapshotting")
+    if "dcz_backup_status_summary" not in backup_lib:
+        fail("Runtime backup library must expose a coarse status summary")
+
+    recovery_guards = {
+        "CLI-only runtime-root override": "PHP_SAPI === 'cli'",
+        "isolated runtime-root override": "DCZ_RUNTIME_ROOT",
+        "snapshot verification": "dcz_recovery_verify_snapshot",
+        "restore primitive": "dcz_recovery_restore_snapshot",
+        "pre-restore safety snapshot": "dcz_backup_snapshot($category, $logicalName, $currentRaw)",
+        "atomic target replace": "@rename($tmp, $target)",
+    }
+    for label, fragment in recovery_guards.items():
+        if fragment not in recovery_lib:
+            fail(f"Runtime recovery guard missing: {label}")
+
+    health_guards = {
+        "GET-only health endpoint": "$_SERVER['REQUEST_METHOD'] !== 'GET'",
+        "coarse backup summary": "dcz_backup_status_summary",
+        "writable status": "'writable'",
+        "snapshot-seen status": "'snapshotSeen'",
+        "recent status": "'recent'",
+    }
+    for label, fragment in health_guards.items():
+        if fragment not in health_endpoint:
+            fail(f"Runtime health endpoint guard missing: {label}")
+    if "dcz_backup_root(" in health_endpoint or "['root']" in health_endpoint or '"root"' in health_endpoint:
+        fail("Runtime health endpoint must not expose the private backup path")
+
+    restore_test_guards = {
+        "isolated backup root": "DCZ_BACKUP_DIR",
+        "isolated runtime root": "DCZ_RUNTIME_ROOT",
+        "restore-on-copy": "dcz_recovery_restore_snapshot",
+        "pre-restore snapshot assertion": "pre-restore target state not recoverable",
+    }
+    for label, fragment in restore_test_guards.items():
+        if fragment not in backup_test:
+            fail(f"Runtime recovery test guard missing: {label}")
 
     writers = {
         "game-counter.php": "'game-counter', 'main'",
