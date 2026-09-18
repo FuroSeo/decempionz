@@ -252,6 +252,46 @@ function validateHomepageOnboarding() {
     }
   }
 
+  const detectorMatch = homepage.match(
+    /function _detectInitialLang\(stored,browserLang\) \{[\s\S]*?\n\}/
+  );
+  if (!detectorMatch) {
+    error("homepage: first-visit language detector missing");
+  } else {
+    const langSandbox = Object.create(null);
+    vm.runInNewContext(
+      detectorMatch[0] +
+        "\n;globalThis.__detectInitialLang=_detectInitialLang;",
+      langSandbox,
+      { filename: "index.html#_detectInitialLang", timeout: 500 }
+    );
+    const cases = [
+      { stored: "it", browser: "en-US", expected: "it" },
+      { stored: "en", browser: "es-ES", expected: "en" },
+      { stored: "es", browser: "it-IT", expected: "es" },
+      { stored: null, browser: "en-US", expected: "en" },
+      { stored: null, browser: "es-MX", expected: "es" },
+      { stored: null, browser: "ES_ar", expected: "es" },
+      { stored: null, browser: "it-IT", expected: "it" },
+      { stored: null, browser: "fr-FR", expected: "it" },
+      { stored: "de", browser: "en-GB", expected: "en" },
+      { stored: null, browser: "", expected: "it" }
+    ];
+    for (const testCase of cases) {
+      const actual = langSandbox.__detectInitialLang(
+        testCase.stored,
+        testCase.browser
+      );
+      if (actual !== testCase.expected) {
+        error(
+          "homepage: language detection failed for stored=" +
+          String(testCase.stored) + ", browser=" + testCase.browser +
+          " (expected " + testCase.expected + ", found " + actual + ")"
+        );
+      }
+    }
+  }
+
   const guideEntries = Array.from(
     homepage.matchAll(/'howto\.p1':'([^\n]+)',/g),
     function (match) { return match[1]; }
