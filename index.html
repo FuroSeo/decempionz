@@ -4325,6 +4325,9 @@ function _duelDraftApplyState(st){
   G.draftLock=false;
   if(st.status==='done'){
     G.draftFinalized=true;
+    var reveal=document.getElementById('d-reveal');if(reveal)reveal.innerHTML='';
+    var rerollBtn=document.getElementById('btn-pss');if(rerollBtn)rerollBtn.disabled=true;
+    renderSlotChips(null);
     renderDraftPitch(null);
     document.getElementById('d-count').textContent='11/11';
     document.getElementById('d-bar').style.width='100%';
@@ -4373,8 +4376,11 @@ function _duelInitServerDraft(){
     G.draftPool=[];G.draftTiers={10:[],9:[],8:[],7:[]};G.draftDiscarded=[];
     G.draftCurrentTier=null;G.draftIdx=0;G.draftCards=[];
     G.draftLock=false;G.draftFinalized=false;G.slotPlayers=new Array(11).fill(null);G.accepted=[];
+    _ga('game_start',{tournament:DUEL.kind==='dynasty'?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:'normal',formation:G.formation,format:'duel'});
     _dczStatsCampaignStart();
-    document.getElementById('d-title').textContent=G.tournament?G.tournament.name:(DUEL.eraLabel||'Duel');
+    var draftTitle=G.tournament?G.tournament.name:(DUEL.eraLabel||'Duel');
+    if(DUEL.kind==='dynasty'&&DUEL.clubName)draftTitle+=' · '+DUEL.clubName;
+    document.getElementById('d-title').textContent=draftTitle;
     var df=document.getElementById('d-formation');if(df)df.textContent=G.formation||'';
     showScreen('screen-draft');
     _duelDraftApplyState(res.body);
