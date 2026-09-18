@@ -186,6 +186,8 @@ for (const entry of idFamilies.entries()) {
   }
 }
 
+validateVerifiedHistoricFixtures();
+
 console.log("Canonical game-data summary:");
 for (const entry of Object.entries(summary)) {
   const mode = entry[0];
