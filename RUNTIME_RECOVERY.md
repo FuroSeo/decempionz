@@ -55,6 +55,13 @@ php runtime-recovery.php list daily 2026-09-17
 
 `health` deve riportare `Writable: yes`.
 
+È disponibile anche un controllo HTTP **read-only e non sensibile** su `runtime-health.php`. Restituisce soltanto:
+- `writable`: la directory privata può essere usata dal processo PHP;
+- `snapshotSeen`: esiste almeno uno snapshot reale;
+- `recent`: esiste uno snapshot creato negli ultimi 30 giorni.
+
+L'endpoint non espone path, nomi file, categorie o contenuti. Risponde `200` quando la directory è scrivibile e almeno uno snapshot è stato osservato, altrimenti `503`.
+
 ## Verifica snapshot
 
 Prima di qualsiasi restore:
@@ -94,7 +101,8 @@ Prima di sostituire il target, lo strumento prova a creare uno snapshot dello st
 ## Sicurezza
 
 - `runtime-recovery.php` rifiuta l'esecuzione via web e funziona solo con PHP CLI.
-- `runtime-backup-lib.php` e `runtime-recovery.php` sono inoltre bloccati da `.htaccess` per accesso HTTP diretto.
+- `runtime-backup-lib.php`, `runtime-recovery-lib.php` e `runtime-recovery.php` sono inoltre bloccati da `.htaccess` per accesso HTTP diretto.
+- `runtime-health.php` è pubblico ma espone solo stato booleano aggregato; non include il path della directory privata né nomi/contenuti degli snapshot.
 - I backup non contengono `hof-config.php`, `challenge-config.json` o altri segreti/configurazioni.
 - I backup non vengono salvati nel repository GitHub.
 
@@ -103,5 +111,10 @@ Prima di sostituire il target, lo strumento prova a creare uno snapshot dello st
 La CI esegue `scripts/test_runtime_backup.php`, che verifica:
 - creazione snapshot;
 - retention per numero versioni;
-- health della directory;
-- rifiuto di JSON invalidi.
+- health della directory e presenza/freschezza snapshot;
+- rifiuto di JSON invalidi;
+- **restore completo su una copia isolata del runtime**;
+- creazione automatica dello snapshot pre-restore;
+- contenuto finale del target dopo il restore.
+
+Il test usa `DCZ_BACKUP_DIR` e `DCZ_RUNTIME_ROOT` su directory temporanee e non tocca mai i dati reali. `DCZ_RUNTIME_ROOT` è accettato dal recovery library solo quando PHP gira in modalità CLI.
