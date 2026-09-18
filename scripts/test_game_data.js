@@ -532,6 +532,58 @@ function validateFormationAccessibility() {
 
 validateFormationAccessibility();
 
+function validateSetupChoiceAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const formatButtons = homepage.match(
+    /<button type="button" class="format-card[^"]*" aria-pressed="(?:true|false)" id="fc-(?:coppa|classic|nuovo)" onclick="selectFormat/g
+  ) || [];
+  const difficultyButtons = homepage.match(
+    /<button type="button" class="diff-card[^"]*" aria-pressed="(?:true|false)" id="(?:dyn-)?dc-(?:easy|normal|hard|legend)" onclick="select(?:Dyn)?Diff/g
+  ) || [];
+
+  if (formatButtons.length !== 3) {
+    error("setup: all format choices must use native button semantics");
+  }
+  if (difficultyButtons.length !== 8) {
+    error("setup: all standard and Dynasty difficulty choices must use native button semantics");
+  }
+  if (/<div class="(?:format-card|diff-card)/.test(homepage)) {
+    error("setup: non-keyboard clickable format or difficulty choice returned");
+  }
+  if (!homepage.includes(
+    'role="group" aria-labelledby="format-title"'
+  ) || !homepage.includes(
+    'role="group" aria-labelledby="format-difficulty-label"'
+  ) || !homepage.includes(
+    'role="group" aria-labelledby="dynasty-difficulty-label"'
+  )) {
+    error("setup: format or difficulty choice group is missing its accessible label");
+  }
+  if (!homepage.includes(
+    ".format-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}"
+  ) || !homepage.includes(
+    ".diff-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}"
+  )) {
+    error("setup: keyboard focus indicator missing from choices");
+  }
+  if (!homepage.includes("function _setSingleChoice(selector,selectedEl,selectedClass)") ||
+      !homepage.includes("el.setAttribute('aria-pressed','false')") ||
+      !homepage.includes("selectedEl.setAttribute('aria-pressed','true')")) {
+    error("setup: visual and announced selected states are not synchronized");
+  }
+  if (!homepage.includes(
+    "_setSingleChoice('.format-card',el,'fc-sel')"
+  ) || !homepage.includes(
+    "_setSingleChoice('#screen-format .diff-card',el,'diff-sel')"
+  ) || !homepage.includes(
+    "_setSingleChoice('[id^=\"dyn-dc-\"]',el,'diff-sel')"
+  )) {
+    error("setup: choice handlers do not use synchronized selection state");
+  }
+}
+
+validateSetupChoiceAccessibility();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
