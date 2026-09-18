@@ -490,6 +490,48 @@ function validateDraftAccessibility() {
 
 validateDraftAccessibility();
 
+function validateFormationAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf("function renderFormationGrid()");
+  const end = homepage.indexOf("\nfunction selectRandomFormation(", start);
+  if (start < 0 || end < 0) {
+    error("formation: unable to locate formation picker");
+    return;
+  }
+  const picker = homepage.slice(start, end);
+
+  if (!picker.includes(
+    "return '<button type=\"button\" class=\"form-card\" aria-pressed=\"false\""
+  )) {
+    error("formation: choices must use native button semantics");
+  }
+  if (!picker.includes(
+    "+'<button type=\"button\" class=\"form-card\" aria-pressed=\"false\" id=\"fc-formation-random\""
+  )) {
+    error("formation: random choice must use native button semantics");
+  }
+  if (picker.includes("return '<div class=\"form-card\"") ||
+      picker.includes("+'<div class=\"form-card\"")) {
+    error("formation: non-keyboard clickable formation choice returned");
+  }
+  if (!picker.includes("card.setAttribute('aria-pressed','false')") ||
+      !picker.includes("el.setAttribute('aria-pressed','true')")) {
+    error("formation: selected state is not exposed with aria-pressed");
+  }
+  if (!homepage.includes(
+    '.form-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}'
+  )) {
+    error("formation: keyboard focus indicator missing from choices");
+  }
+  if (!homepage.includes(
+    'id="form-grid" role="group" aria-labelledby="formation-title"'
+  )) {
+    error("formation: choice group is missing its accessible label");
+  }
+}
+
+validateFormationAccessibility();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
