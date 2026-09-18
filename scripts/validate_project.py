@@ -339,48 +339,79 @@ def validate_duel_integrity() -> None:
         fail("Competitive integrity documentation must state Duel draft-offer authority")
 
 
-def validate_local_html_tools() -> None:
-    """Syntax-check inline JavaScript in recovered local-only HTML tools."""
-    for filename in ("dataset-editor.html", "_studio.html"):
-        path = ROOT / filename
-        if not path.exists():
+def extract_inline_javascript(html: str) -> list[str]:
+    """Return executable inline JS blocks, excluding src scripts and data script types."""
+    blocks: list[str] = []
+    for match in re.finditer(
+        r"<script\b([^>]*)>(.*?)</script>",
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    ):
+        attrs, body = match.group(1), match.group(2)
+        if re.search(r"\bsrc\s*=", attrs, flags=re.IGNORECASE):
             continue
-
-        html = path.read_text(encoding="utf-8")
-        scripts = re.findall(
-            r"<script(?![^>]*\bsrc\s*=)[^>]*>(.*?)</script>",
-            html,
-            flags=re.IGNORECASE | re.DOTALL,
+        type_match = re.search(
+            r"\btype\s*=\s*(['\"]?)([^\s'\">]+)\1",
+            attrs,
+            flags=re.IGNORECASE,
         )
-        if not scripts:
-            fail(f"No inline JavaScript found in recovered tool: {filename}")
-            continue
+        if type_match:
+            script_type = type_match.group(2).lower()
+            if script_type not in (
+                "text/javascript",
+                "application/javascript",
+                "module",
+            ):
+                continue
+        blocks.append(body)
+    return blocks
 
-        combined = "\n;\n".join(scripts)
-        try:
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".js", encoding="utf-8", delete=False
-            ) as tmp:
-                tmp.write(combined)
-                tmp_path = Path(tmp.name)
 
-            result = subprocess.run(
-                ["node", "--check", str(tmp_path)],
-                cwd=ROOT,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            if result.returncode != 0:
-                detail = (result.stderr or result.stdout).strip()
-                fail(f"Inline JavaScript syntax error in {filename}: {detail}")
-            else:
-                note(f"Recovered tool JavaScript syntax OK: {filename}")
-        except FileNotFoundError:
-            fail("Node.js is required to validate recovered local HTML tools")
-        finally:
-            if "tmp_path" in locals() and tmp_path.exists():
-                tmp_path.unlink()
+def validate_inline_javascript(filename: str, label: str) -> None:
+    path = ROOT / filename
+    if not path.exists():
+        fail(f"Missing HTML file for inline JavaScript validation: {filename}")
+        return
+
+    scripts = extract_inline_javascript(path.read_text(encoding="utf-8"))
+    if not scripts:
+        fail(f"No executable inline JavaScript found in {filename}")
+        return
+
+    combined = "\n;\n".join(scripts)
+    tmp_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".js", encoding="utf-8", delete=False
+        ) as tmp:
+            tmp.write(combined)
+            tmp_path = Path(tmp.name)
+
+        result = subprocess.run(
+            ["node", "--check", str(tmp_path)],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            fail(f"Inline JavaScript syntax error in {filename}: {detail}")
+        else:
+            note(f"{label} inline JavaScript syntax OK: {filename}")
+    except FileNotFoundError:
+        fail("Node.js is required to validate inline JavaScript")
+    finally:
+        if tmp_path is not None and tmp_path.exists():
+            tmp_path.unlink()
+
+
+def validate_html_javascript() -> None:
+    """Syntax-check the production app plus recovered local-only HTML tools."""
+    validate_inline_javascript("index.html", "Production app")
+    for filename in ("dataset-editor.html", "_studio.html"):
+        if (ROOT / filename).exists():
+            validate_inline_javascript(filename, "Recovered tool")
 
 
 def main() -> int:
@@ -396,7 +427,7 @@ def main() -> int:
     validate_runtime_backup()
     validate_draft_storage()
     validate_duel_integrity()
-    validate_local_html_tools()
+    validate_html_javascript()
 
     for message in NOTES:
         print(f"[info] {message}")
