@@ -24,12 +24,6 @@ const ALLOWED_POSITIONS = new Set([
   "RW","LW","ST","CF","SS","FW"
 ]);
 
-const KNOWN_SAME_NAME_COLLISIONS = new Set([
-  "copa:sao_0506:Danilo",
-  "copa:sao_0506:Junior",
-  "copa:arj_8485:Borghi"
-]);
-
 const KNOWN_CROSS_FAMILY_IDS = new Set(["atm_1314"]);
 
 const families = [
@@ -120,21 +114,13 @@ for (const family of families) {
 
       const collisionKey = mode + ":" + id + ":" + player.n;
       if (names.has(player.n)) {
-        if (KNOWN_SAME_NAME_COLLISIONS.has(collisionKey)) {
-          warn(collisionKey + ": known same-name roster collision");
-        } else {
-          error(collisionKey + ": duplicate player name in one roster");
-        }
+        error(collisionKey + ": duplicate player name in one roster");
       }
       names.add(player.n);
 
       const exactKey = [player.n, player.p, player.r, player.nat || ""].join("|");
       if (exact.has(exactKey)) {
-        if (KNOWN_SAME_NAME_COLLISIONS.has(collisionKey)) {
-          warn(collisionKey + ": known exact duplicate player entry");
-        } else {
-          error(collisionKey + ": exact duplicate player entry");
-        }
+        error(collisionKey + ": exact duplicate player entry");
       }
       exact.add(exactKey);
     });
