@@ -184,6 +184,7 @@ def validate_runtime_backup() -> None:
         "snapshot verification": "dcz_recovery_verify_snapshot",
         "restore primitive": "dcz_recovery_restore_snapshot",
         "pre-restore safety snapshot": "dcz_backup_snapshot($category, $logicalName, $currentRaw)",
+        "corrupt-target quarantine": "dcz_recovery_quarantine_current",
         "atomic target replace": "@rename($tmp, $target)",
     }
     for label, fragment in recovery_guards.items():
@@ -208,6 +209,8 @@ def validate_runtime_backup() -> None:
         "isolated runtime root": "DCZ_RUNTIME_ROOT",
         "restore-on-copy": "dcz_recovery_restore_snapshot",
         "pre-restore snapshot assertion": "pre-restore target state not recoverable",
+        "corrupt-target restore": "restore over corrupt target failed",
+        "corrupt-target quarantine": "corrupt target was not quarantined",
     }
     for label, fragment in restore_test_guards.items():
         if fragment not in backup_test:
