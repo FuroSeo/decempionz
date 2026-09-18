@@ -54,6 +54,7 @@ flock($rateFp, LOCK_UN);
 fclose($rateFp);
 
 require_once __DIR__ . '/duel-lib.php';
+require_once __DIR__ . '/duel-draft-lib.php';
 require_once __DIR__ . '/duel-engine.php';
 require_once __DIR__ . '/runtime-backup-lib.php';
 
@@ -111,13 +112,14 @@ function dcz_duel_team_is_dataset_verified($team, $duelMode, $duelTournament) {
     return dcz_duel_validate_team_dataset($team, $duelTournament);
 }
 
-function dcz_duel_integrity_meta($squadTrust) {
+function dcz_duel_integrity_meta($squadTrust, $draftTrust) {
     return [
         'result' => 'server-authoritative',
         'engine' => DCZ_DUEL_ENGINE_VERSION,
         'replay' => 'private-server-seed',
         'squad' => $squadTrust,
-        'draftHistory' => 'client-unverified',
+        'draftHistory' => $draftTrust,
+        'draftEngine' => DCZ_DUEL_DRAFT_ENGINE_VERSION,
     ];
 }
 
@@ -217,25 +219,54 @@ if ($phase === 'team') {
         http_response_code(400); echo json_encode(['error' => 'invalid team source']); exit;
     }
 
+    $draftSessionId = preg_replace('/[^a-f0-9]/', '', strtolower((string)($data['draftSessionId'] ?? '')));
+    if (strlen($draftSessionId) !== 32) {
+        flock($fp, LOCK_UN); fclose($fp);
+        http_response_code(400); echo json_encode(['error' => 'verified draft required']); exit;
+    }
+    $draftTournament = $duelMode === 'dynasty' ? $team['tmode'] : $duelTournament;
+    $draftExpect = [
+        'role' => 'b',
+        'mode' => $duelMode,
+        'tournament' => $draftTournament,
+        'formation' => $team['formation'],
+        'tactic' => $team['tactic'],
+        'eraId' => $duelMode === 'dynasty' ? 'dynasty' : ($d['eraId'] ?? ''),
+        'club' => $duelMode === 'dynasty' ? $team['club'] : null,
+        'duelId' => $id,
+    ];
+    $draftVerified = dcz_draft_verify_completed_session($draftSessionId, $team, $draftExpect);
+    if (empty($draftVerified['ok'])) {
+        flock($fp, LOCK_UN); fclose($fp);
+        http_response_code((int)($draftVerified['code'] ?? 400));
+        echo json_encode(['error' => 'draft verification failed']); exit;
+    }
+
     $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team);
     if ($generated === null) {
         flock($fp, LOCK_UN); fclose($fp);
         http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
     }
 
-    $aVerified = dcz_duel_team_is_dataset_verified($d['a'] ?? null, $duelMode, $duelTournament);
-    $squadTrust = $aVerified ? 'dataset-source-verified' : 'mixed-legacy-a';
+    $aDraftVerified = is_array($d['_draftA'] ?? null)
+        && (($d['_draftA']['engine'] ?? '') === DCZ_DUEL_DRAFT_ENGINE_VERSION);
+    $squadTrust = $aDraftVerified ? 'server-draft-verified' : 'mixed-legacy-a';
+    $draftTrust = $aDraftVerified ? 'server-offers-authoritative' : 'mixed-legacy-a';
 
     /* Commit atomico: appena B è vincolato alla propria rosa, il server decide e salva il Duel. */
     $d['b'] = $team;
     $d['status'] = 'done';
     $d['result'] = $generated['result'];
     $d['doneAt'] = date('c');
-    $d['integrity'] = dcz_duel_integrity_meta($squadTrust);
+    $d['integrity'] = dcz_duel_integrity_meta($squadTrust, $draftTrust);
     $d['_serverSeed'] = $generated['seed'];
     $d['_serverEngine'] = DCZ_DUEL_ENGINE_VERSION;
+    $d['_draftB'] = $draftVerified['proof'];
     if (!dcz_write_and_close($fp, $d)) {
         http_response_code(500); echo json_encode(['error' => 'write failed']); exit;
+    }
+    if (!dcz_draft_consume_session($draftSessionId)) {
+        error_log('Decempionz Duel: completed B draft session could not be marked consumed.');
     }
 
     dcz_bump_games_counter();
@@ -280,7 +311,7 @@ $squadTrust = ($aVerified && $bVerified) ? 'dataset-source-verified' : 'legacy-c
 $d['status'] = 'done';
 $d['result'] = $generated['result'];
 $d['doneAt'] = date('c');
-$d['integrity'] = dcz_duel_integrity_meta($squadTrust);
+$d['integrity'] = dcz_duel_integrity_meta($squadTrust, 'legacy-client-unverified');
 $d['_serverSeed'] = $generated['seed'];
 $d['_serverEngine'] = DCZ_DUEL_ENGINE_VERSION;
 if (!dcz_write_and_close($fp, $d)) {
