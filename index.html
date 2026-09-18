@@ -254,8 +254,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .ct-lbl{font-size:.58rem;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
 
 /* ── ERA PICKER ── */
-.era-card{background:var(--s1);border:2px solid var(--brd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .13s}
+.era-card{background:var(--s1);border:2px solid var(--brd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .13s;appearance:none;-webkit-appearance:none;width:100%;color:inherit;font:inherit;text-align:left}
 .era-card:hover{border-color:var(--blue2);background:var(--s2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.era-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 .era-card.era-sel{border-color:var(--gold);background:#1a1600}
 .era-name{font-size:1rem;font-weight:700;margin-bottom:2px;font-family:'Oswald',sans-serif;letter-spacing:.3px}
 .era-years{font-size:.72rem;color:var(--mut);margin-bottom:6px}
@@ -1265,9 +1266,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <button class="btn" style="width:100%;margin-bottom:14px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-weight:700;border:none;padding:13px;border-radius:10px;font-size:.85rem;letter-spacing:.5px" onclick="selectAllTime()">
     🌍 All Time &nbsp;<span data-i18n="era.alltime_tag" style="font-weight:400;font-size:.72rem;opacity:.85">— 83 squads, all eras, maximum chaos</span>
   </button>
-  <div data-i18n="era.or_pick" style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:8px">Or pick a specific era</div>
-  <div id="era-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
-  <button id="btn-era-confirm" data-i18n="era.use_this" class="btn btn-gold btn-inactive" onclick="confirmEra()">Use this Era →</button>
+  <div id="era-specific-label" data-i18n="era.or_pick" style="font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin-bottom:8px">Or pick a specific era</div>
+  <div id="era-grid" role="group" aria-labelledby="era-specific-label" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+  <button id="btn-era-confirm" data-i18n="era.use_this" class="btn btn-gold btn-inactive" onclick="confirmEra()" disabled>Use this Era →</button>
   <button class="btn btn-ghost" onclick="eraBack()">← Back</button>
 </div>
 
@@ -3780,11 +3781,12 @@ function showEraGrid(){
   var _tourList = G.gameMode==='copa' ? COPA_TOURNAMENTS : G.gameMode==='wc' ? WC_TOURNAMENTS : TOURNAMENTS;
   var _teamDb   = G.gameMode==='copa' ? COPA_TEAMS : G.gameMode==='wc' ? WC_TEAMS : TEAMS;
   var grid = document.getElementById('era-grid');
+  selectedEraIdx=-1;
   grid.innerHTML = _tourList.filter(function(trn){return !trn.allTime;}).map(function(trn){
     var i=_tourList.indexOf(trn);
     var str = trn.teams.map(function(id){return avg(_teamDb[id].players.map(function(p){return p.r;}));});
     var avgStr = (str.reduce(function(a,b){return a+b;},0)/str.length).toFixed(1);
-    return '<div class="era-card" id="ec-'+i+'" onclick="selectEra('+i+',this)">'
+    return '<button type="button" class="era-card" aria-pressed="false" id="ec-'+i+'" onclick="selectEra('+i+',this)">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
       +'<div><div class="era-name">'+trn.emoji+' '+trn.name+'</div>'
       +'<div class="era-years">'+trn.years+'</div></div>'
@@ -3793,18 +3795,21 @@ function showEraGrid(){
       +'<div class="era-desc">'+((STRINGS[G.lang]&&STRINGS[G.lang]['era.'+trn.id+'.desc'])||(STRINGS.en&&STRINGS.en['era.'+trn.id+'.desc'])||(STRINGS.it&&STRINGS.it['era.'+trn.id+'.desc'])||trn.desc)+'</div>'
       +'<div class="era-teams">'+trn.teams.map(function(id){
         var tm=_teamDb[id];return '<span class="era-team-chip">'+tm.country+' '+tm.name+' ('+tm.season+')</span>';
-      }).join('')+'</div></div>';
+      }).join('')+'</div></button>';
   }).join('');
-  document.getElementById('btn-era-confirm').classList.add('btn-inactive');
+  var confirmBtn=document.getElementById('btn-era-confirm');
+  confirmBtn.classList.add('btn-inactive');
+  confirmBtn.disabled=true;
   showScreen('screen-era');
 }
 
 var selectedEraIdx = -1;
 function selectEra(idx, el){
   selectedEraIdx = idx;
-  document.querySelectorAll('.era-card').forEach(function(c){c.classList.remove('era-sel');});
-  el.classList.add('era-sel');
-  document.getElementById('btn-era-confirm').classList.remove('btn-inactive');
+  _setSingleChoice('.era-card',el,'era-sel');
+  var confirmBtn=document.getElementById('btn-era-confirm');
+  confirmBtn.classList.remove('btn-inactive');
+  confirmBtn.disabled=false;
 }
 function selectAllTime(){
   var _tourList=G.gameMode==='copa'?COPA_TOURNAMENTS:G.gameMode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
