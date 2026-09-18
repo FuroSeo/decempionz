@@ -3235,7 +3235,7 @@ function duelTeamPayload(){
     nick:DUEL.nick,
     formation:G.formation,
     tactic:G.draftTactic||G.tactic||'balanced',
-    players:G.slotPlayers.map(function(p){return p?{n:p.n,p:p.p,r:p.r}:null;}).filter(Boolean)
+    players:G.slotPlayers.map(function(p){return p?{n:p.n,p:p.p,r:p.r,teamId:p.teamId||''}:null;}).filter(Boolean)
   };
   if(DUEL.kind==='dynasty'){pl.club=DUEL.club;pl.tmode=DUEL.tourn;pl.clubName=DUEL.clubName;}
   return pl;
@@ -3338,7 +3338,7 @@ function duelOpenJoin(id){
       }
       DUEL.id=d.id;DUEL.duelData=d;
       if(d.status==='simulating'){
-        /* rosa di B già committata: riprendi sim e invio */
+        /* rosa di B già committata: chiedi al server la finalizzazione autoritativa */
         duelResumeAfterCommit(d);
         return;
       }
@@ -3428,10 +3428,8 @@ function _duelJoinAttempt(attempt){
       return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};});
     })
     .then(function(res){
-      if(!res.ok||!res.body||!res.body.a||!res.body.b){var e=new Error('bad');e.status=res.status;throw e;}
-      DUEL.duelData.a=res.body.a;
-      DUEL.duelData.b=res.body.b;
-      duelSimAndSend();
+      if(!res.ok||!res.body||!res.body.a||!res.body.b||!res.body.result){var e=new Error('bad');e.status=res.status;throw e;}
+      duelUseAuthoritativeResult(res.body);
     })
     .catch(function(err){
       if(err&&err.message==='handled')return;
@@ -3444,41 +3442,53 @@ function _duelJoinAttempt(attempt){
       _duelFail(status);
     });
 }
+function duelUseAuthoritativeResult(body){
+  var d=DUEL.duelData||{};
+  if(body.a)d.a=body.a;
+  if(body.b)d.b=body.b;
+  d.status='done';
+  d.result=body.result;
+  if(body.integrity)d.integrity=body.integrity;
+  DUEL.duelData=d;
+  DUEL.series=body.result;
+  duelStoreAdd({id:DUEL.id,role:'b',status:'done',nick:(d.b&&d.b.nick)||DUEL.nick,opp:(d.a&&d.a.nick)||'',tourn:d.tournament||DUEL.tourn,era:d.era||DUEL.eraLabel,ts:Date.now()});
+  _ga('duel_complete',{tournament:d.tournament||DUEL.tourn,winner:DUEL.series.winner,matches:DUEL.series.matches.length,authority:'server'});
+  DUEL.viewRole='b';
+  duelPlayMatch(0);
+}
 function duelResumeAfterCommit(d){
   DUEL.mode='join';
   DUEL.tourn=d.tournament||'ucl';
   DUEL.eraLabel=d.era||'All Time';
   DUEL.nick=(d.b&&d.b.nick)||'';
+  /* Stato storico simulating: il browser non simula più. Chiede al server di finalizzare. */
   duelSimAndSend();
 }
 
-/* Fase 2: simula la serie sul client di B e invia il risultato; SOLO a invio riuscito parte la riproduzione animata */
+/* Compatibilità per duelli storici rimasti in simulating: phase=result non trasmette più punteggi.
+   Il backend ignora comunque qualunque result client e genera il verdetto ufficiale. */
 function duelSimAndSend(){
-  var d=DUEL.duelData;
-  var res=duelSimSeries(d.a,d.b);
-  _duelResultAttempt(res,0);
+  _duelResultAttempt(0);
 }
-function _duelResultAttempt(res,attempt){
-  var d=DUEL.duelData;
+function _duelResultAttempt(attempt){
   _duelWait('duel.sending');
-  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'result',result:res})})
+  fetch('duel-result.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:DUEL.id,phase:'result'})})
     .then(function(r){
-      if(r.status===409){window.location.href='duel.php?id='+encodeURIComponent(DUEL.id);throw new Error('handled');}
       return r.json().then(function(j){return{ok:r.ok,status:r.status,body:j};}).catch(function(){return{ok:r.ok,status:r.status,body:null};});
     })
     .then(function(response){
-      if(!response.ok){var e=new Error('bad');e.status=response.status;throw e;}
-      DUEL.series=res;
-      duelStoreAdd({id:DUEL.id,role:'b',status:'done',nick:(d.b&&d.b.nick)||DUEL.nick,opp:(d.a&&d.a.nick)||'',tourn:d.tournament||DUEL.tourn,era:d.era||DUEL.eraLabel,ts:Date.now()});
-      _ga('duel_complete',{tournament:d.tournament||DUEL.tourn,winner:res.winner,matches:res.matches.length});
-      DUEL.viewRole='b';
-      duelPlayMatch(0);
+      if(response.status===409&&response.body&&response.body.finalized){
+        window.location.href=response.body.url||('duel.php?id='+encodeURIComponent(DUEL.id));
+        throw new Error('handled');
+      }
+      if(!response.ok||!response.body||!response.body.result){var e=new Error('bad');e.status=response.status;throw e;}
+      duelUseAuthoritativeResult(response.body);
     })
     .catch(function(err){
       if(err&&err.message==='handled')return;
       var status=err&&err.status;
       if(attempt<1){
-        setTimeout(function(){_duelResultAttempt(res,attempt+1);},status===429?3500:1200);
+        setTimeout(function(){_duelResultAttempt(attempt+1);},status===429?3500:1200);
         return;
       }
       _duelFail(status);
@@ -3499,7 +3509,7 @@ function duelPlayMatch(idx){
   var roundLabel=t('duel.match_lbl')+' '+(idx+1)+'/'+S.matches.length;
   M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,myName:myName,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
      penResult:null,
-     /* punteggio rigori gia' deciso (server/simulazione di B): l'animazione lo raggiunge, non lo inventa */
+     /* punteggio rigori gia' deciso dal server: l'animazione lo raggiunge, non lo inventa */
      duelPenTarget:(m.pa!==null&&m.pa!==undefined)?{my:meIsB?m.pb:m.pa,opp:meIsB?m.pa:m.pb}:null,
      /* sequenza REALE calcio-per-calcio salvata dal server (duelli nuovi): stessa identica per
         sfidante e sfidato, ciascuno con la propria riga vera e quella dell'avversario vera.
