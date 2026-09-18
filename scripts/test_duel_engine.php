@@ -47,8 +47,13 @@ t_assert($teamA !== null, 'valid canonical team A must pass structural validatio
 t_assert($teamB !== null, 'valid canonical team B must pass structural validation');
 
 $registry = dcz_duel_dataset_registry();
-t_assert(is_array($registry) && count($registry) > 200, 'canonical dataset registry must load all tournament families');
-t_assert(isset($registry['rm_5960'], $registry['bar_1415']), 'known canonical squads must be indexed');
+$registryCount = is_array($registry) ? array_sum(array_map('count', $registry)) : 0;
+t_assert($registryCount > 200, 'canonical dataset registry must load all tournament families');
+t_assert(isset($registry['ucl']['rm_5960'], $registry['ucl']['bar_1415']), 'known canonical UCL squads must be indexed');
+t_assert(isset($registry['ucl']['atm_1314'], $registry['copa']['atm_1314']), 'same short teamId must coexist across tournament families');
+t_assert(($registry['ucl']['atm_1314']['club'] ?? '') === 'atletico', 'UCL atm_1314 must resolve to Atletico Madrid');
+t_assert(($registry['copa']['atm_1314']['club'] ?? '') === 'atletico_mineiro', 'Copa atm_1314 must resolve to Atletico Mineiro');
+t_assert(dcz_duel_dataset_source($registry, 'atm_1314', null) === null, 'ambiguous short teamId must require a tournament family');
 t_assert(dcz_duel_validate_team_dataset($teamA, 'ucl'), 'real Madrid fixture must match canonical UCL data');
 t_assert(dcz_duel_validate_team_dataset($teamB, 'ucl'), 'Barcelona fixture must match canonical UCL data');
 t_assert(!dcz_duel_validate_team_dataset($teamA, 'copa'), 'UCL sources must not validate as Copa sources');
