@@ -2,64 +2,78 @@
 
 Last reviewed: 2026-09-18
 
-This document records what the backend can actually prove for user-submitted competitive/community data. Structural validation, canonical dataset validation and full proof of a gameplay run are deliberately kept separate.
+This document records what the backend can actually prove for user-submitted competitive/community data. Structural validation, authoritative game state and intentionally casual/community surfaces are deliberately kept separate.
 
 ## Trust model
 
 | Surface | Result trust | Squad/run trust | Notes |
 | --- | --- | --- | --- |
-| Duel 1v1 | **server-authoritative** for newly finalized duels | **dataset-source-verified** squad data; exact draft history **client-unverified** | The server verifies every submitted player against `game-data.js`, chooses private randomness and computes the official best-of-3. |
-| Daily leaderboard | client-reported | client-reported | Date/range/rate-limit/storage validation makes abuse harder but does not prove the browser played the exact run. |
-| Weekly Challenge | client-reported | client-reported | Score/config consistency and rate limiting are validation layers, not cryptographic proof of play. |
-| Hall of Fame | client-reported showcase | client-reported | Sanitization, throttling and admin removal protect the service; entries are not an anti-cheat competitive record. |
+| Duel 1v1 | **server-authoritative** for new duels | **server-offers-authoritative** draft + canonical dataset verification | The server generates every Draft offer, records picks/rerolls, verifies the final XI, chooses match randomness and computes the official best-of-3. |
+| Daily leaderboard | client-reported | client-reported | Date/range/rate-limit/storage validation protects the service but does not prove the whole run. This is an intentional casual leaderboard trust level. |
+| Weekly Challenge | client-reported | client-reported | Score/config consistency and rate limiting are validation layers, not proof of play. This remains proportionate while there are no material stakes. |
+| Hall of Fame | client-reported showcase | client-reported | Sanitization, throttling and admin removal protect a community showcase; entries are not presented as an anti-cheat competitive record. |
 
-## Duel 1v1 — authoritative result and canonical squad sources
+## Duel 1v1 — server-authoritative Draft and result
 
-For new Duel submissions:
+For newly created Duel drafts:
 
-1. The browser sends each drafted player as `{n,p,r,teamId}`.
-2. The backend parses the three canonical dataset families in `game-data.js` without executing JavaScript.
-3. For every player it verifies the exact `teamId + name + position + rating` tuple against that historical squad.
-4. Classic Duel sources must belong to the Duel tournament. Dynasty sources must belong to the submitted tournament family and the selected historical club.
-5. Player B commits the second squad without seeing A's full XI.
-6. Under the exclusive Duel-file lock, the backend generates a private random seed and computes the best-of-3 with `duel-engine.php`.
-7. The seed and engine version remain private in the server JSON; the public API exposes only the official result and integrity metadata.
-8. The browser consumes that server result for the normal in-app match animation. It no longer sends locally generated scores as the official result.
-9. Any legacy `phase=result` payload is ignored by the backend.
+1. The browser starts a short-lived server Draft session after tournament/era, formation, tactic and optional Dynasty club are fixed.
+2. The server builds the candidate pool from canonical `game-data.js` and keeps the full pool/state private.
+3. Only the current offer, filled slots, reroll count and session version are returned to the browser.
+4. Every pick/reroll is applied under an exclusive lock to that server session. A monotonically increasing version prevents a lost/retried request from applying the same action twice.
+5. The server records the exact three-card offer and accepted pick/reroll in the private session history.
+6. The normal Duel Draft keeps the existing slot-compatibility, tier weighting, GK safeguards, rerolls and emergency XI completion rules. The randomness itself is now server-generated.
+7. When the XI reaches 11, `duel-create.php` (A) or `duel-result.php` (B) accepts it only if it matches the completed server Draft session exactly.
+8. The completed session is consumed and its compact proof/history is stored privately as `_draftA` / `_draftB` in the Duel record.
+9. Private pool/session/proof fields are never serialized by `duel-join.php`.
 
-The server engine mirrors the current Duel coefficients for positional penalties, tactic/counter interactions, star and rating-10 bonuses, xG, Poisson goals and penalties. Moving authority to the server is intended as an integrity change, not a balance change.
+After player B's verified XI is committed, the backend independently generates a private match seed and computes the authoritative best-of-3 with `duel-engine.php`. The browser consumes the official result for the existing in-app animation; it never supplies the official score.
 
-A stored private seed makes a newly generated Duel replayable by the server: the same teams, engine version and seed reproduce the same series.
+The server engine mirrors the current Duel coefficients for positional penalties, tactic/counter interactions, star/rating-10 bonuses, xG, Poisson goals and penalties. Moving Draft/result authority to the server is an integrity change, not an intentional balance change.
 
-### Remaining Duel limitation
+### What the server can prove for a new Duel
 
-The server now proves that the submitted players are real canonical dataset entries from allowed source squads, but it **does not yet prove the exact browser draft history**.
+For both players in a fully new Duel, the server can establish:
 
-In particular, the current monolithic client does not send a server-issued draft session or signed choice history. A modified client could therefore try to assemble a different combination of otherwise valid players from the allowed tournament (or, in Dynasty, from the selected club) rather than only the cards actually offered during that run. Classic era/card-offer provenance is not yet cryptographically bound.
+- the tournament/era or Dynasty club scope used for the Draft;
+- the exact three cards offered at every step;
+- every reroll and accepted card;
+- the final XI and its slot order;
+- that every player is a canonical `game-data.js` record;
+- the match-engine version and private match seed;
+- the exact official best-of-3 result.
 
-The higher-assurance follow-up for issue #13 is a server-issued draft seed/session with replayable offers and accepted-choice history. That is a larger architecture step and should be introduced without account friction.
+No account or login is required. The proof is tied to the random Draft session rather than to a persistent identity.
 
 ## Backward compatibility
 
-- Already completed historical duels remain readable and are exposed as `legacy-client-reported` when no integrity metadata exists.
-- A historical duel left in `simulating` is finalized on its next request with a fresh server-authoritative result.
-- A historical waiting duel whose A-side predates `teamId` can still finish; its integrity metadata is marked `mixed-legacy-a`.
-- A stale browser tab running the old protocol cannot overwrite the official result; it is redirected to the canonical Duel page when it submits its local series.
+- Already completed historical duels remain readable and are exposed as legacy client-reported records when integrity metadata is absent.
+- A historical Duel left in `simulating` can still receive a fresh server-authoritative match result from its already committed teams.
+- A historical waiting Duel whose A-side predates server Draft sessions can still be completed; its metadata remains `mixed-legacy-a`.
+- Stale pre-upgrade clients cannot overwrite the official result.
 - Public Duel URLs remain unchanged.
 
 ## Daily / Weekly / Hall of Fame
 
-These modes currently use a casual integrity model: strict request validation, payload/range checks, throttling and locked/fail-safe storage. Those controls protect availability and obvious manipulation, but they do not prove the entire gameplay history.
+These modes intentionally remain at a casual integrity level for now.
 
-If these surfaces become materially competitive (prizes, public rankings with stakes, etc.), use server-issued run tokens/deterministic seeds and replayable choice/result history before treating them as verified records.
+The backend validates methods, payload sizes, dates/configuration, numeric ranges, throttling and locked/fail-safe storage. Those controls protect service availability and obvious abuse, but they do not prove the full browser gameplay history.
+
+That trust level is currently proportionate because:
+
+- there are no prizes or financial stakes;
+- Hall of Fame is a community showcase with admin removal rather than a certified ranking;
+- Daily/Weekly rankings are lightweight engagement features.
+
+If any of these surfaces gains material stakes or needs a “verified” badge/ranking, reuse the Duel pattern: server-issued run session, authoritative/randomized offers or deterministic seed, replayable action history and server-computed result.
 
 ## Security boundary
 
-No client-controlled result should be described as verified merely because it passed schema/range validation. When adding a competitive surface, document separately:
+No client-controlled result is described as verified merely because it passed schema/range validation. For each competitive/community surface the project documents:
 
 - who chooses randomness;
 - who computes the result;
-- what the server can replay or verify;
-- whether squad entries are canonical dataset records;
-- whether the exact draft/run history is authoritative or client-unverified;
-- migration behavior for existing records.
+- what the server records/replays;
+- whether card choices or squad entries are authoritative;
+- migration behavior for legacy records;
+- why the selected trust level is proportionate to the stakes.

@@ -145,6 +145,7 @@ def validate_deploy_workflow(deploy_yml: str) -> None:
         "_build_*.py",
         "_sync_version.py",
         "tools/**",
+        "scripts/**",
     )
     for filename in local_only_files:
         if filename not in deploy_yml:
@@ -224,6 +225,8 @@ def validate_draft_storage() -> None:
 def validate_duel_integrity() -> None:
     htaccess = read(".htaccess")
     duel_lib = read("duel-lib.php")
+    draft_lib = read("duel-draft-lib.php")
+    draft_endpoint = read("duel-draft-session.php")
     engine = read("duel-engine.php")
     endpoint = read("duel-result.php")
     create = read("duel-create.php")
@@ -231,8 +234,10 @@ def validate_duel_integrity() -> None:
     index_html = read("index.html")
     integrity_doc = read("COMPETITIVE_INTEGRITY.md")
 
-    if "duel-engine\\.php" not in htaccess and "duel-engine.php" not in htaccess:
-        fail(".htaccess must deny direct HTTP access to duel-engine.php")
+    for filename in ("duel-engine.php", "duel-draft-lib.php"):
+        escaped = filename.replace(".", "\\.")
+        if escaped not in htaccess and filename not in htaccess:
+            fail(f".htaccess must deny direct HTTP access to {filename}")
 
     dataset_guards = {
         "canonical dataset registry": "dcz_duel_dataset_registry",
@@ -243,6 +248,33 @@ def validate_duel_integrity() -> None:
     for label, fragment in dataset_guards.items():
         if fragment not in duel_lib:
             fail(f"Duel squad integrity guard missing: {label}")
+
+    draft_guards = {
+        "draft engine version": "DCZ_DUEL_DRAFT_ENGINE_VERSION",
+        "private runtime directory": ".draft-sessions",
+        "bounded runtime sessions": "DCZ_DUEL_DRAFT_MAX_SESSIONS",
+        "runtime HTTP deny": "Require all denied",
+        "server pool builder": "dcz_draft_build_pool",
+        "server card draw": "dcz_draft_draw_cards",
+        "versioned actions": "dcz_draft_session_action",
+        "offer history": "'history'=>[]",
+        "final team verification": "dcz_draft_verify_completed_session",
+        "single-use session": "consumedAt",
+    }
+    for label, fragment in draft_guards.items():
+        if fragment not in draft_lib:
+            fail(f"Server-authoritative Duel draft guard missing: {label}")
+
+    endpoint_draft_guards = {
+        "start action": "$action === 'start'",
+        "player B Duel binding": "$config['role'] === 'b'",
+        "classic scope binding": "duel scope mismatch",
+        "versioned pick": "dcz_draft_session_action($id, $version, 'pick'",
+        "versioned reroll": "dcz_draft_session_action($id, $version, 'reroll'",
+    }
+    for label, fragment in endpoint_draft_guards.items():
+        if fragment not in draft_endpoint:
+            fail(f"Duel draft endpoint guard missing: {label}")
 
     engine_guards = {
         "engine version": "DCZ_DUEL_ENGINE_VERSION",
@@ -255,8 +287,9 @@ def validate_duel_integrity() -> None:
         if fragment not in engine:
             fail(f"Server-authoritative Duel engine guard missing: {label}")
 
-    if "dcz_duel_validate_team_dataset" not in create:
-        fail("Duel creation must verify player sources against the canonical dataset")
+    for filename, content in (("duel-create.php", create), ("duel-result.php", endpoint)):
+        if "dcz_draft_verify_completed_session" not in content or "draftSessionId" not in content:
+            fail(f"{filename} must require a completed server-authoritative Duel draft")
 
     endpoint_guards = {
         "engine loaded": "duel-engine.php",
@@ -264,6 +297,7 @@ def validate_duel_integrity() -> None:
         "private replay seed": "_serverSeed",
         "server-authoritative marker": "server-authoritative",
         "dataset verification": "dcz_duel_validate_team_dataset",
+        "draft B proof": "_draftB",
         "client result explicitly ignored": "risultato inviato dal client è intenzionalmente ignorato",
         "legacy simulating migration": "Migrazione trasparente",
         "counter snapshot": "dcz_backup_snapshot('game-counter', 'main'",
@@ -272,6 +306,8 @@ def validate_duel_integrity() -> None:
         if fragment not in endpoint:
             fail(f"Duel result authority guard missing: {label}")
 
+    if "_draftA" not in create:
+        fail("Duel creation must persist the private player-A draft proof")
     if "dcz_sanitize_result($data['result']" in endpoint or "$d['result'] = $data['result']" in endpoint:
         fail("Duel endpoint must never trust the client-submitted match result")
     if "echo json_encode($d" in join:
@@ -281,6 +317,12 @@ def validate_duel_integrity() -> None:
 
     client_guards = {
         "player source sent by draft": "teamId:p.teamId||''",
+        "server draft start": "_duelInitServerDraft",
+        "server draft endpoint": "duel-draft-session.php",
+        "versioned draft state": "DUEL.draftVersion",
+        "server pick routing": "_duelDraftAction('pick'",
+        "server reroll routing": "_duelDraftAction('reroll'",
+        "draft proof submission": "draftSessionId:DUEL.draftSessionId",
         "authoritative result consumer": "duelUseAuthoritativeResult",
         "server result required": "res.body.result",
         "server authority analytics marker": "authority:'server'",
@@ -293,52 +335,83 @@ def validate_duel_integrity() -> None:
 
     if "server-authoritative" not in integrity_doc:
         fail("Competitive integrity documentation must state Duel result authority")
-    if "dataset-source-verified" not in integrity_doc or "client-unverified" not in integrity_doc:
-        fail("Competitive integrity documentation must state squad-source and draft-history trust levels")
+    if "server-offers-authoritative" not in integrity_doc:
+        fail("Competitive integrity documentation must state Duel draft-offer authority")
 
 
-def validate_local_html_tools() -> None:
-    """Syntax-check inline JavaScript in recovered local-only HTML tools."""
-    for filename in ("dataset-editor.html", "_studio.html"):
-        path = ROOT / filename
-        if not path.exists():
+def extract_inline_javascript(html: str) -> list[str]:
+    """Return executable inline JS blocks, excluding src scripts and data script types."""
+    blocks: list[str] = []
+    for match in re.finditer(
+        r"<script\b([^>]*)>(.*?)</script>",
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    ):
+        attrs, body = match.group(1), match.group(2)
+        if re.search(r"\bsrc\s*=", attrs, flags=re.IGNORECASE):
             continue
-
-        html = path.read_text(encoding="utf-8")
-        scripts = re.findall(
-            r"<script(?![^>]*\bsrc\s*=)[^>]*>(.*?)</script>",
-            html,
-            flags=re.IGNORECASE | re.DOTALL,
+        type_match = re.search(
+            r"\btype\s*=\s*(['\"]?)([^\s'\">]+)\1",
+            attrs,
+            flags=re.IGNORECASE,
         )
-        if not scripts:
-            fail(f"No inline JavaScript found in recovered tool: {filename}")
-            continue
+        if type_match:
+            script_type = type_match.group(2).lower()
+            if script_type not in (
+                "text/javascript",
+                "application/javascript",
+                "module",
+            ):
+                continue
+        blocks.append(body)
+    return blocks
 
-        combined = "\n;\n".join(scripts)
-        try:
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".js", encoding="utf-8", delete=False
-            ) as tmp:
-                tmp.write(combined)
-                tmp_path = Path(tmp.name)
 
-            result = subprocess.run(
-                ["node", "--check", str(tmp_path)],
-                cwd=ROOT,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            if result.returncode != 0:
-                detail = (result.stderr or result.stdout).strip()
-                fail(f"Inline JavaScript syntax error in {filename}: {detail}")
-            else:
-                note(f"Recovered tool JavaScript syntax OK: {filename}")
-        except FileNotFoundError:
-            fail("Node.js is required to validate recovered local HTML tools")
-        finally:
-            if "tmp_path" in locals() and tmp_path.exists():
-                tmp_path.unlink()
+def validate_inline_javascript(filename: str, label: str) -> None:
+    path = ROOT / filename
+    if not path.exists():
+        fail(f"Missing HTML file for inline JavaScript validation: {filename}")
+        return
+
+    scripts = extract_inline_javascript(path.read_text(encoding="utf-8"))
+    if not scripts:
+        fail(f"No executable inline JavaScript found in {filename}")
+        return
+
+    combined = "\n;\n".join(scripts)
+    tmp_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".js", encoding="utf-8", delete=False
+        ) as tmp:
+            tmp.write(combined)
+            tmp_path = Path(tmp.name)
+
+        result = subprocess.run(
+            ["node", "--check", str(tmp_path)],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            fail(f"Inline JavaScript syntax error in {filename}: {detail}")
+        else:
+            note(f"{label} inline JavaScript syntax OK: {filename}")
+    except FileNotFoundError:
+        fail("Node.js is required to validate inline JavaScript")
+    finally:
+        if tmp_path is not None and tmp_path.exists():
+            tmp_path.unlink()
+
+
+def validate_html_javascript() -> None:
+    """Syntax-check the production app plus recovered local-only HTML tools."""
+    validate_inline_javascript("index.html", "Production app")
+    for filename in ("dataset-editor.html", "_studio.html"):
+        if (ROOT / filename).exists():
+            validate_inline_javascript(filename, "Recovered tool")
 
 
 def main() -> int:
@@ -354,7 +427,7 @@ def main() -> int:
     validate_runtime_backup()
     validate_draft_storage()
     validate_duel_integrity()
-    validate_local_html_tools()
+    validate_html_javascript()
 
     for message in NOTES:
         print(f"[info] {message}")

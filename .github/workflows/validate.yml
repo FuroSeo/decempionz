@@ -51,3 +51,6 @@ jobs:
 
       - name: Duel engine tests
         run: php scripts/test_duel_engine.php
+
+      - name: Duel draft session tests
+        run: php scripts/test_duel_draft.php

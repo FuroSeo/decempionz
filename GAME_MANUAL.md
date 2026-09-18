@@ -18,7 +18,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
 - **5.16.0** — save export/import for all `dcz_*` localStorage keys and Chemistry explanation in How to Play.
-- **Duel integrity 2026-09-18** — Duel results are generated server-side when player B commits the second squad. New squad submissions carry source `teamId` values and are checked against canonical `game-data.js` name/position/rating records and tournament/club scope. Exact browser draft-offer history remains client-unverified.
+- **Duel integrity 2026-09-18** — new Duel drafts are server-authoritative: the backend generates every three-card offer, records picks/rerolls, verifies the final XI against the completed draft session and then computes the official best-of-3 server-side. Historical records remain backward-compatible.
 - **Infrastructure 2026-09-17** — Service Worker cache namespace moved to `decempionz-v5.16.4`; dynamic endpoints bypass cache; navigation timeout and controlled offline fallback added. This did **not** bump the public app version.
 - **Workflow 2026-09-17** — branch/PR/CI workflow introduced; direct legacy `_push.bat` deployment retired; Dataset Editor and Studio recovered and versioned as non-deployed tools.
 
@@ -205,21 +205,21 @@ Production challenge configuration/state is server-maintained and excluded from 
 
 ## 13. Duel 1v1
 
-Duel is asynchronous and uses PHP endpoints for create/join/result plus shared logic in `duel-lib.php` and the server-side simulation engine in `duel-engine.php`.
+Duel is asynchronous and uses PHP endpoints for create/join/result, the server Draft session endpoint `duel-draft-session.php`, shared logic in `duel-lib.php` / `duel-draft-lib.php`, and the match simulation engine in `duel-engine.php`.
 
-The protocol prevents player B from seeing player A's hidden squad before committing B's own squad. New Duel player payloads include `teamId` for every selected player. The backend verifies the exact `teamId + name + natural position + rating` tuple against `game-data.js`; Classic sources must belong to the Duel tournament, while Dynasty sources must belong to the selected club/tournament family.
+For new Duel runs, the Draft itself is server-authoritative. Once tournament/era (or Dynasty club), formation and tactic are fixed, the browser opens a short-lived server Draft session. The backend builds the candidate pool from canonical `game-data.js`, keeps the hidden pool and action history private, and returns only the current three-card offer, occupied slots, reroll count and session version.
 
-After B's validated squad is accepted, the backend generates a private seed and computes the authoritative best-of-3 under the Duel-file lock. The server stores the official result, seed and engine version before returning the two squads and public result. The browser then uses that official result for the existing in-app match animation. Client-generated scores are not authoritative and legacy result payloads are ignored.
+Each pick or reroll is applied under an exclusive server lock. Requests carry the expected session version so retries or duplicated network requests cannot silently apply the same action twice. The backend records the exact offer plus the accepted pick/reroll. If the normal compatibility pool is exhausted, the same emergency XI-completion policy used by the local Draft guarantees an XI of 11.
 
-The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties; the authority change is not intended as a balance change.
+When A creates the Duel, or B commits the responding squad, the submitted slot-ordered XI must match the completed server Draft session exactly. The session is then consumed and its compact private proof is stored as `_draftA` or `_draftB` inside the server-maintained Duel record. Those fields, the hidden pool and the Draft history are never exposed by the public join endpoint.
 
-The private seed makes a newly generated result replayable by the server with the stored teams and engine version. Private `_server*` fields are never exposed by `duel-join.php`.
+The anti-reveal rule remains: player B does not see player A's full XI before committing B's own verified Draft. After B is committed, the backend generates a private match seed and computes the authoritative best-of-3 under the Duel-file lock. The browser receives that official result and uses it for the normal in-app match animation; client-generated scores are never authoritative.
 
-Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can be finalized with a fresh server result, and a stale pre-upgrade client cannot overwrite that result.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties. Moving Draft and result authority server-side is an integrity change, not an intentional balance change.
 
-Remaining integrity boundary: the server proves that submitted players are real canonical records from allowed source squads, but it does not yet prove the exact card offers/choices shown during the browser draft. A modified client could still choose a different combination of otherwise valid players within the allowed source scope. The detailed trust model and future server-issued draft-session direction are documented in `COMPETITIVE_INTEGRITY.md`.
+For a fully new Duel, the backend can therefore establish the exact card offers, rerolls, accepted players, final slot order, canonical player sources and official match result without requiring accounts. Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can still be finalized with a fresh server result, and a historical waiting Duel whose A-side predates server Draft sessions can complete with mixed legacy integrity metadata.
 
-Classic and Dynasty duel variants remain supported. Dynamic Duel pages provide share/invite/result metadata and are noindex where appropriate.
+Classic and Dynasty duel variants remain supported. Public Duel URLs are unchanged. Detailed trust levels and migration behavior are maintained in `COMPETITIVE_INTEGRITY.md`.
 
 ---
 ## 14. Hall of Fame, trophies and statistics
