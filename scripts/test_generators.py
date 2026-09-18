@@ -7,6 +7,7 @@ work without mutating the checked-out repository.
 
 from __future__ import annotations
 
+import difflib
 import hashlib
 import re
 import shutil
@@ -80,22 +81,15 @@ def test_i18n_generator() -> None:
             fail("_build_i18n.py did not report hreflang handling")
 
         pages = ("ucl", "copa", "worldcup", "about")
-        available: dict[str, set[str]] = {}
         for page in pages:
             source = (work / f"{page}.html").read_text(encoding="utf-8")
-            available[page] = {
-                lang for lang in ("en", "es") if f'data-lang="{lang}"' in source
-            }
-            if "en" not in available[page]:
-                fail(f"{page}.html must retain at least the recovered EN content block")
+            for lang in ("en", "es"):
+                if f'data-lang="{lang}"' not in source:
+                    fail(f"{page}.html is missing required {lang.upper()} content block")
 
         for lang in ("en", "es"):
             for page in pages:
                 path = work / lang / f"{page}.html"
-                if lang not in available[page]:
-                    if path.exists():
-                        fail(f"_build_i18n.py generated unsupported locale: {lang}/{page}.html")
-                    continue
                 if not path.exists() or path.stat().st_size < 500:
                     fail(f"_build_i18n.py missing/empty output: {lang}/{page}.html")
                 html = path.read_text(encoding="utf-8")
@@ -106,9 +100,27 @@ def test_i18n_generator() -> None:
                 if f"https://decempionz.com/{lang}/{page}.html" not in html:
                     fail(f"missing localized canonical URL in {lang}/{page}.html")
 
-        es_pages = sorted(page for page in pages if "es" in available[page])
-        if es_pages != ["about", "ucl"]:
-            fail(f"unexpected recovered ES coverage: {es_pages}")
+                if lang == "es" and page in {"copa", "worldcup"}:
+                    committed = ROOT / lang / f"{page}.html"
+                    if not committed.exists():
+                        fail(f"missing committed generated page: {lang}/{page}.html")
+                    committed_text = committed.read_text(encoding="utf-8")
+                    if committed_text != html:
+                        diff = "\n".join(
+                            list(
+                                difflib.unified_diff(
+                                    committed_text.splitlines(),
+                                    html.splitlines(),
+                                    fromfile=f"committed/{lang}/{page}.html",
+                                    tofile=f"generated/{lang}/{page}.html",
+                                    lineterm="",
+                                )
+                            )[:80]
+                        )
+                        fail(
+                            f"committed generated page is stale: {lang}/{page}.html"
+                            + (f"\n{diff}" if diff else "")
+                        )
 
         patterns = (
             "ucl.html",
@@ -179,6 +191,11 @@ def test_rose_generator() -> None:
             fail(f"sitemap URL count mismatch: xml={len(url_nodes)}, log={sitemap_count}")
         if sitemap_count < (count_it * 2):
             fail("sitemap does not contain both IT and EN squad pages")
+
+        sitemap_text = sitemap.read_text(encoding="utf-8")
+        for localized in ("es/ucl.html", "es/copa.html", "es/worldcup.html", "es/about.html"):
+            if f"https://decempionz.com/{localized}" not in sitemap_text:
+                fail(f"generated sitemap missing localized page: {localized}")
 
         patterns = ("rose/*.html", "en/rose/*.html", "sitemap.xml")
         digest1 = digest_tree(work, patterns)
