@@ -570,8 +570,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 /* ── Difficulty cards ── */
 .diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.diff-card{padding:10px 8px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s;text-align:center}
+.diff-card{padding:10px 8px;border-radius:10px;border:2px solid var(--brd);background:var(--card);cursor:pointer;transition:.15s;text-align:center;appearance:none;-webkit-appearance:none;width:100%;color:inherit;font:inherit}
 .diff-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.diff-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 .diff-card.diff-sel{border-color:var(--gold);background:rgba(234,179,8,.08)}
 .diff-title{font-size:.9rem;font-weight:700;margin-bottom:3px}
 .diff-easy .diff-title{color:#4ade80}
@@ -619,8 +620,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tact-desc{font-size:.62rem;color:var(--mut);line-height:1.35}
 .tact-mod{font-size:.62rem;margin-top:6px;font-weight:600}
 
-  .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s}
+  .format-card{background:var(--s2);border:2px solid var(--brd);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s,background .15s;appearance:none;-webkit-appearance:none;width:100%;color:inherit;font:inherit;text-align:left}
   .format-card:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+  .format-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
   .format-card.fc-sel{border-color:var(--gold);background:rgba(234,179,8,.07)}
   #fc-coppa{border-left:3px solid var(--gold);padding-left:11px}
   #fc-classic{border-left:3px solid var(--blue2);padding-left:11px}
@@ -1037,24 +1039,24 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <!-- Difficoltà -->
   <div style="margin-bottom:14px">
-    <div style="font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin-bottom:8px" data-i18n="fmt.difficulty">Difficoltà</div>
-    <div class="diff-grid">
-      <div class="diff-card diff-easy" id="dyn-dc-easy" onclick="selectDynDiff('easy',this)">
+    <div id="dynasty-difficulty-label" style="font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin-bottom:8px" data-i18n="fmt.difficulty">Difficoltà</div>
+    <div class="diff-grid" role="group" aria-labelledby="dynasty-difficulty-label">
+      <button type="button" class="diff-card diff-easy" aria-pressed="false" id="dyn-dc-easy" onclick="selectDynDiff('easy',this)">
         <div data-i18n="diff.easy" class="diff-title">🟢 Facile</div>
         <div data-i18n="diff.easy_desc" class="diff-desc">5 reroll · Avversari più deboli</div>
-      </div>
-      <div class="diff-card diff-normal diff-sel" id="dyn-dc-normal" onclick="selectDynDiff('normal',this)">
+      </button>
+      <button type="button" class="diff-card diff-normal diff-sel" aria-pressed="true" id="dyn-dc-normal" onclick="selectDynDiff('normal',this)">
         <div data-i18n="diff.normal" class="diff-title">🟡 Normale</div>
         <div data-i18n="diff.normal_desc" class="diff-desc">3 reroll · Forza standard</div>
-      </div>
-      <div class="diff-card diff-hard" id="dyn-dc-hard" onclick="selectDynDiff('hard',this)">
+      </button>
+      <button type="button" class="diff-card diff-hard" aria-pressed="false" id="dyn-dc-hard" onclick="selectDynDiff('hard',this)">
         <div data-i18n="diff.hard" class="diff-title">🔴 Difficile</div>
         <div data-i18n="diff.hard_desc" class="diff-desc">2 reroll · Avversari più forti</div>
-      </div>
-      <div class="diff-card diff-legend" id="dyn-dc-legend" onclick="selectDynDiff('legend',this)">
+      </button>
+      <button type="button" class="diff-card diff-legend" aria-pressed="false" id="dyn-dc-legend" onclick="selectDynDiff('legend',this)">
         <div data-i18n="diff.legend" class="diff-title">⚫ Leggenda</div>
         <div data-i18n="diff.legend_desc" class="diff-desc">0 reroll · Avversari al massimo</div>
-      </div>
+      </button>
     </div>
   </div>
 
@@ -1086,31 +1088,31 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <div class="screen" id="screen-format">
   <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
 
-  <h2 data-i18n="fmt.title" style="margin-bottom:6px">Choose Tournament Format</h2>
+  <h2 id="format-title" data-i18n="fmt.title" style="margin-bottom:6px">Choose Tournament Format</h2>
   <div id="fmt-tourn-badge" class="tourn-badge" style="display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.6px;padding:3px 10px;border-radius:20px;margin-bottom:8px"></div>
   <p data-i18n="fmt.subtitle" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Each format has a different structure, era pool and number of matches.</p>
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
-    <div class="format-card" id="fc-coppa" onclick="selectFormat('coppa',this)">
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px" role="group" aria-labelledby="format-title">
+    <button type="button" class="format-card" aria-pressed="false" id="fc-coppa" onclick="selectFormat('coppa',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">🏆 Old Cup</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">1956 – 1992</div></div>
         <div id="fc-coppa-meta" data-i18n-html="fmt.coppa.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">5 matches<br>pure knockout</div>
       </div>
       <div data-i18n="fmt.coppa.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">Pure knockout from round one — no group stage. Every match is do-or-die.</div>
-    </div>
-    <div class="format-card fc-sel" id="fc-classic" onclick="selectFormat('classic',this)">
+    </button>
+    <button type="button" class="format-card fc-sel" aria-pressed="true" id="fc-classic" onclick="selectFormat('classic',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">⭐ Classic</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">1992 – 2024</div></div>
         <div data-i18n-html="fmt.classic.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">7 matches<br>group + knockout</div>
       </div>
       <div data-i18n="fmt.classic.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">3 group stage matches to qualify, then R16 → QF → SF → Final. The classic format.</div>
-    </div>
-    <div class="format-card" id="fc-nuovo" onclick="selectFormat('nuovo',this)">
+    </button>
+    <button type="button" class="format-card" aria-pressed="false" id="fc-nuovo" onclick="selectFormat('nuovo',this)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div style="font-size:1rem;font-weight:800">🔮 New Wave</div><div style="font-size:.72rem;color:var(--mut);margin-top:2px">2024 +</div></div>
         <div data-i18n-html="fmt.nuovo.meta" style="text-align:right;font-size:.7rem;color:var(--mut)">up to 10 matches<br>league + knockout</div>
       </div>
       <div data-i18n="fmt.nuovo.desc" style="font-size:.75rem;color:var(--acc);margin-top:8px">6 league phase matches vs opponents from the full draft pool. Earn ≥ 8 pts to qualify, then R16 → QF → SF → Final.</div>
-    </div>
+    </button>
   </div>
   <div style="background:var(--s2);border:1px solid var(--brd);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
     <div style="min-width:0;flex:1">
@@ -1119,24 +1121,24 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <button class="btn btn-ghost" style="padding:7px 13px;font-size:.75rem;white-space:nowrap;flex-shrink:0;width:auto;border-color:var(--acc);color:var(--acc)" onclick="browseEraFromFormat()" data-i18n="fmt.browse_era">Browse Era →</button>
   </div>
-  <div data-i18n="fmt.difficulty" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Difficulty</div>
-  <div class="diff-grid" style="margin-bottom:14px">
-    <div class="diff-card diff-easy" id="dc-easy" onclick="selectDiff('easy',this)">
+  <div id="format-difficulty-label" data-i18n="fmt.difficulty" style="font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:7px">Difficulty</div>
+  <div class="diff-grid" style="margin-bottom:14px" role="group" aria-labelledby="format-difficulty-label">
+    <button type="button" class="diff-card diff-easy" aria-pressed="false" id="dc-easy" onclick="selectDiff('easy',this)">
       <div data-i18n="diff.easy" class="diff-title">🟢 Easy</div>
       <div data-i18n="diff.easy_desc" class="diff-desc">5 rerolls · Opponents weaker</div>
-    </div>
-    <div class="diff-card diff-normal diff-sel" id="dc-normal" onclick="selectDiff('normal',this)">
+    </button>
+    <button type="button" class="diff-card diff-normal diff-sel" aria-pressed="true" id="dc-normal" onclick="selectDiff('normal',this)">
       <div data-i18n="diff.normal" class="diff-title">🟡 Normal</div>
       <div data-i18n="diff.normal_desc" class="diff-desc">3 rerolls · Standard strength</div>
-    </div>
-    <div class="diff-card diff-hard" id="dc-hard" onclick="selectDiff('hard',this)">
+    </button>
+    <button type="button" class="diff-card diff-hard" aria-pressed="false" id="dc-hard" onclick="selectDiff('hard',this)">
       <div data-i18n="diff.hard" class="diff-title">🔴 Hard</div>
       <div data-i18n="diff.hard_desc" class="diff-desc">2 rerolls · Opponents stronger</div>
-    </div>
-    <div class="diff-card diff-legend" id="dc-legend" onclick="selectDiff('legend',this)">
+    </button>
+    <button type="button" class="diff-card diff-legend" aria-pressed="false" id="dc-legend" onclick="selectDiff('legend',this)">
       <div data-i18n="diff.legend" class="diff-title">⚫ Leggenda</div>
       <div data-i18n="diff.legend_desc" class="diff-desc">0 reroll · Avversari al massimo</div>
-    </div>
+    </button>
   </div>
   <div style="margin-bottom:14px">
     <label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:11px 14px;background:var(--s2);border:1px solid var(--brd);border-radius:10px">
@@ -3842,6 +3844,16 @@ function confirmEra(){
     applyTournament(_tourList[selectedEraIdx]);
   }
 }
+function _setSingleChoice(selector,selectedEl,selectedClass){
+  document.querySelectorAll(selector).forEach(function(el){
+    el.classList.remove(selectedClass);
+    el.setAttribute('aria-pressed','false');
+  });
+  if(selectedEl){
+    selectedEl.classList.add(selectedClass);
+    selectedEl.setAttribute('aria-pressed','true');
+  }
+}
 function applyTournament(t){
   G.tournament = t;
   if(typeof DUEL!=='undefined')DUEL.mode=null; /* ogni avvio campagna esce dalla modalità duello */
@@ -3853,8 +3865,7 @@ function applyTournament(t){
   G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   selectedDiff='normal';
-  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
-  const dc=document.getElementById('dc-normal');if(dc)dc.classList.add('diff-sel');
+  _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
 }
 
 var selectedFormat='classic';
@@ -3893,8 +3904,7 @@ function _syncFormatCards(){
     nuovoCard.style.display='none';
     if(selectedFormat==='nuovo'){
       selectedFormat='classic';
-      document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
-      var cl=document.getElementById('fc-classic');if(cl)cl.classList.add('fc-sel');
+      _setSingleChoice('.format-card',document.getElementById('fc-classic'),'fc-sel');
     }
   } else {
     nuovoCard.style.display='';
@@ -3997,10 +4007,7 @@ function startGameDynasty(){
   _dynastyDiff='normal';
   _dynastyMode='ucl';
   G.dynasty=false;
-  ['easy','normal','hard'].forEach(function(d){
-    var el=document.getElementById('dyn-dc-'+d);
-    if(el){el.classList.remove('diff-sel');if(d==='normal')el.classList.add('diff-sel');}
-  });
+  _setSingleChoice('[id^="dyn-dc-"]',document.getElementById('dyn-dc-normal'),'diff-sel');
   var btn=document.getElementById('btn-dynasty-launch');
   if(btn)btn.classList.add('btn-inactive');
   var selDiv=document.getElementById('dynasty-club-selected');
@@ -4043,8 +4050,7 @@ function selectDynastyClub(clubKey,mode){
 
 function selectDynDiff(level,el){
   _dynastyDiff=level;
-  document.querySelectorAll('[id^="dyn-dc-"]').forEach(function(c){c.classList.remove('diff-sel');});
-  el.classList.add('diff-sel');
+  _setSingleChoice('[id^="dyn-dc-"]',el,'diff-sel');
 }
 
 function launchDynasty(){
@@ -4075,10 +4081,8 @@ function startGame(){
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
-  document.querySelectorAll('.format-card').forEach(c=>c.classList.remove('fc-sel'));
-  const def=document.getElementById('fc-classic');if(def)def.classList.add('fc-sel');
-  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
-  const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
+  _setSingleChoice('.format-card',document.getElementById('fc-classic'),'fc-sel');
+  _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
   _syncFormatCards();
@@ -4149,10 +4153,8 @@ function startGameCopa(){
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
-  document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
-  const def=document.getElementById('fc-classic');if(def)def.classList.add('fc-sel');
-  document.querySelectorAll('.diff-card').forEach(function(c){c.classList.remove('diff-sel');});
-  const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
+  _setSingleChoice('.format-card',document.getElementById('fc-classic'),'fc-sel');
+  _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
   _syncFormatCards();
@@ -4183,10 +4185,8 @@ function startGameWC(){
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
-  document.querySelectorAll('.format-card').forEach(function(c){c.classList.remove('fc-sel');});
-  const def=document.getElementById('fc-classic');if(def)def.classList.add('fc-sel');
-  document.querySelectorAll('.diff-card').forEach(function(c){c.classList.remove('diff-sel');});
-  const dn=document.getElementById('dc-normal');if(dn)dn.classList.add('diff-sel');
+  _setSingleChoice('.format-card',document.getElementById('fc-classic'),'fc-sel');
+  _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
   showScreen('screen-format');
   updateEraDisplay();
   _syncFormatCards();
@@ -4232,8 +4232,7 @@ function switchTournTab(mode){
 }
 function selectFormat(f,el){
   selectedFormat=f;
-  document.querySelectorAll('.format-card').forEach(c=>c.classList.remove('fc-sel'));
-  el.classList.add('fc-sel');
+  _setSingleChoice('.format-card',el,'fc-sel');
 }
 function confirmFormat(){
   G.format=selectedFormat;
@@ -4305,8 +4304,7 @@ var selectedDiff='normal';
 const DIFF_CFG={easy:{passes:5,oppMod:-.20},normal:{passes:3,oppMod:.15},hard:{passes:2,oppMod:.40},legend:{passes:0,oppMod:.60}};
 function selectDiff(level,el){
   selectedDiff=level;
-  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('diff-sel'));
-  el.classList.add('diff-sel');
+  _setSingleChoice('#screen-format .diff-card',el,'diff-sel');
 }
 function confirmSetup(){
   G.difficulty=selectedDiff||'normal';
