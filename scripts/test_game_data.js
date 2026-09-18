@@ -455,6 +455,41 @@ function validatePrivacyNotice() {
 
 validatePrivacyNotice();
 
+function validateDraftAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf("function renderThreeCards()");
+  const end = homepage.indexOf("\nfunction draftPick(", start);
+  if (start < 0 || end < 0) {
+    error("draft: unable to locate player-offer renderer");
+    return;
+  }
+  const renderer = homepage.slice(start, end);
+
+  if (!renderer.includes(
+    "return'<button type=\"button\" onclick=\"draftTap('"
+  )) {
+    error("draft: player offers must use native button semantics");
+  }
+  if (renderer.includes("return'<div onclick=\"draftTap(")) {
+    error("draft: non-keyboard clickable player offer returned");
+  }
+  if (!renderer.includes("+'</button>';")) {
+    error("draft: player-offer button is not closed correctly");
+  }
+  if (!renderer.includes(
+    "document.activeElement.classList.contains('draft-pick-card')"
+  ) || !renderer.includes("if(firstCard)firstCard.focus();")) {
+    error("draft: focus is not restored after replacing a selected offer");
+  }
+  if (!homepage.includes(
+    ".draft-pick-card:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}"
+  )) {
+    error("draft: keyboard focus indicator missing from player offers");
+  }
+}
+
+validateDraftAccessibility();
+
 function validateVerifiedHistoricFixtures() {
   const argentinos = data.COPA_TEAMS && data.COPA_TEAMS.arj_8485;
   if (!argentinos || !Array.isArray(argentinos.players)) {
