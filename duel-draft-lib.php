@@ -9,7 +9,11 @@ const DCZ_DUEL_DRAFT_ENGINE_VERSION = 'server-draft-v1';
 const DCZ_DUEL_DRAFT_TTL = 3600;
 
 function dcz_draft_session_dir() {
-    $dir = __DIR__ . '/duels/.draft-sessions/';
+    $duelsDir = __DIR__ . '/duels/';
+    if (!is_dir($duelsDir)) @mkdir($duelsDir, 0755, true);
+    $deny = $duelsDir . '.htaccess';
+    if (!is_file($deny)) @file_put_contents($deny, "Require all denied\n", LOCK_EX);
+    $dir = $duelsDir . '.draft-sessions/';
     if (!is_dir($dir)) @mkdir($dir, 0755, true);
     return $dir;
 }
