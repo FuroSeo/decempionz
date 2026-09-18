@@ -83,3 +83,32 @@ function dcz_backup_health(): array {
     $parent = dirname($root);
     return ['root' => $root, 'writable' => is_dir($parent) && is_writable($parent)];
 }
+function dcz_backup_status_summary(int $recentHours = 720): array {
+    $health = dcz_backup_health();
+    $root = (string)$health['root'];
+    $snapshotSeen = false;
+    $newest = null;
+
+    if (is_dir($root)) {
+        try {
+            $it = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)
+            );
+            foreach ($it as $file) {
+                if (!$file->isFile() || strtolower($file->getExtension()) !== 'json') continue;
+                $snapshotSeen = true;
+                $mtime = $file->getMTime();
+                if ($newest === null || $mtime > $newest) $newest = $mtime;
+            }
+        } catch (Throwable $e) {
+            error_log('Decempionz backup health scan failed: ' . $e->getMessage());
+        }
+    }
+
+    $recent = $newest !== null && $newest >= (time() - max(1, $recentHours) * 3600);
+    return [
+        'writable' => !empty($health['writable']),
+        'snapshotSeen' => $snapshotSeen,
+        'recent' => $recent,
+    ];
+}
