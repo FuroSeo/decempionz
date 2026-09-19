@@ -584,6 +584,49 @@ function validateFooterActionAccessibility() {
 
 validateFooterActionAccessibility();
 
+function validateLegalModalAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const dialogs = [
+    ["fanproject", "closeFanProject"],
+    ["contatti", "closeContatti"],
+    ["privacy", "closePrivacy"]
+  ];
+
+  for (const [id, closeFunction] of dialogs) {
+    const openingTag = '<div id="modal-' + id + '" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-' + id + '-title" onclick="' + closeFunction + '()">';
+    if (!homepage.includes(openingTag)) {
+      error("legal modal: accessible dialog semantics missing for " + id);
+    }
+    if (!homepage.includes('<div class="modal-title" id="modal-' + id + '-title">')) {
+      error("legal modal: labelled title missing for " + id);
+    }
+  }
+  if (!homepage.includes("var _legalModalReturnFocus=null;") ||
+      !homepage.includes("_legalModalReturnFocus=document.activeElement;")) {
+    error("legal modal: opening trigger is not preserved");
+  }
+  if (!homepage.includes("var closeBtn=modal.querySelector('.modal-legal-close');") ||
+      !homepage.includes("if(closeBtn)closeBtn.focus();")) {
+    error("legal modal: focus is not moved into the opened dialog");
+  }
+  if (!homepage.includes("if(trigger&&document.contains(trigger)&&typeof trigger.focus==='function')trigger.focus();")) {
+    error("legal modal: focus is not restored after closing");
+  }
+  if (!homepage.includes("if(e.key!=='Escape')return;") ||
+      !homepage.includes("closeFanProject();}") ||
+      !homepage.includes("closeContatti();return;") ||
+      !homepage.includes("closePrivacy();return;")) {
+    error("legal modal: Escape dismissal is incomplete");
+  }
+  if (!homepage.includes(
+    ".modal-legal-close:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}"
+  )) {
+    error("legal modal: close button focus indicator missing");
+  }
+}
+
+validateLegalModalAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
