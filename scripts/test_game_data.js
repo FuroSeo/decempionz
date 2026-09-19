@@ -753,6 +753,101 @@ function validateShareFlowLocalization() {
 
 validateShareFlowLocalization();
 
+function validateMatchSpeedAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const translationKeys = [
+    "match.speed_group", "match.speed_slow", "match.speed_normal",
+    "match.speed_fast", "match.speed_skip"
+  ];
+  for (const key of translationKeys) {
+    const occurrences = homepage.split("'" + key + "':").length - 1;
+    if (occurrences !== 3) {
+      error("match speed: expected IT/EN/ES values for " + key + ", found " + occurrences);
+    }
+  }
+  if (!homepage.includes(
+    'id="m-speed-icons" role="group" aria-label="Velocità partita" data-i18n-aria-label="match.speed_group"'
+  )) {
+    error("match speed: localized accessible group label missing");
+  }
+  for (const speed of ["slow", "normal", "fast"]) {
+    const pattern = new RegExp(
+      'id="spd-' + speed + '" aria-pressed="(?:true|false)" aria-label="[^"]+" ' +
+      'data-i18n-aria-label="match\\.speed_' + speed + '" title="[^"]+" ' +
+      'data-i18n-title="match\\.speed_' + speed + '"'
+    );
+    if (!pattern.test(homepage)) {
+      error("match speed: accessible localized toggle missing for " + speed);
+    }
+  }
+  if (!homepage.includes(
+    'id="spd-skip" aria-label="Salta al risultato" data-i18n-aria-label="match.speed_skip" title="Salta al risultato" data-i18n-title="match.speed_skip"'
+  )) {
+    error("match speed: localized skip action missing");
+  }
+  const skipTag = homepage.match(/<button[^>]+id="spd-skip"[^>]*>/);
+  if (!skipTag || skipTag[0].includes("aria-pressed")) {
+    error("match speed: skip action must not expose toggle state");
+  }
+  if (!homepage.includes("document.querySelectorAll('[data-i18n-title]').forEach(function(el){") ||
+      !homepage.includes("if(v)el.setAttribute('title',v);")) {
+    error("match speed: localized tooltips are not refreshed on language changes");
+  }
+  if (!homepage.includes("document.querySelectorAll('.spd-ico[aria-pressed]').forEach(function(b){") ||
+      !homepage.includes("b.setAttribute('aria-pressed','false');") ||
+      !homepage.includes("selected.setAttribute('aria-pressed','true');")) {
+    error("match speed: selected state is not synchronized with aria-pressed");
+  }
+  if (!homepage.includes(
+    ".spd-ico:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}"
+  )) {
+    error("match speed: keyboard focus indicator missing");
+  }
+
+  const functionStart = homepage.indexOf("function setMatchSpeed(s){");
+  const functionEnd = homepage.indexOf("\nfunction skipToResult()", functionStart);
+  if (functionStart < 0 || functionEnd < 0) {
+    error("match speed: unable to locate speed-selection behavior");
+    return;
+  }
+  const speedButtons = {};
+  for (const speed of ["slow", "normal", "fast"]) {
+    const classes = new Set(speed === "normal" ? ["spd-ico-active"] : []);
+    speedButtons["spd-" + speed] = {
+      attrs: { "aria-pressed": speed === "normal" ? "true" : "false" },
+      classList: {
+        add(value) { classes.add(value); },
+        remove(value) { classes.delete(value); },
+        contains(value) { return classes.has(value); }
+      },
+      setAttribute(name, value) { this.attrs[name] = value; }
+    };
+  }
+  const behaviorSandbox = {
+    M: {},
+    document: {
+      querySelectorAll(selector) {
+        return selector === ".spd-ico[aria-pressed]" ? Object.values(speedButtons) : [];
+      },
+      getElementById(id) { return speedButtons[id] || null; }
+    }
+  };
+  vm.runInNewContext(
+    homepage.slice(functionStart, functionEnd) + "\nsetMatchSpeed('fast');",
+    behaviorSandbox,
+    { filename: "index.html#setMatchSpeed", timeout: 500 }
+  );
+  const activeSpeeds = Object.entries(speedButtons).filter(([, button]) =>
+    button.attrs["aria-pressed"] === "true" && button.classList.contains("spd-ico-active")
+  );
+  if (behaviorSandbox.M.speedKey !== "fast" ||
+      activeSpeeds.length !== 1 || activeSpeeds[0][0] !== "spd-fast") {
+    error("match speed: runtime selection does not expose exactly one active speed");
+  }
+}
+
+validateMatchSpeedAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
