@@ -666,8 +666,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   text-transform:uppercase;cursor:pointer;margin-bottom:16px;
   background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  opacity:.9;transition:opacity .18s;font-family:'Oswald',sans-serif}
+  opacity:.9;transition:opacity .18s;font-family:'Oswald',sans-serif;
+  border:0;padding:0;appearance:none;-webkit-appearance:none;text-align:left}
 .screen-logo:hover{opacity:1}
+.screen-logo:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
 
 
 /* ── Modals ── */
@@ -1014,7 +1016,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- DYNASTY SCREEN -->
 <div class="screen" id="screen-dynasty">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <!-- Hero dynasty -->
   <div style="background:linear-gradient(135deg,rgba(99,102,241,.12) 0%,rgba(251,191,36,.06) 100%);border:1px solid rgba(99,102,241,.2);border-radius:14px;padding:14px 16px;margin-bottom:14px;position:relative;overflow:hidden">
@@ -1070,7 +1072,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 <!-- STATS SCREEN -->
 <div class="screen" id="screen-stats">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
   <div style="text-align:center;margin-bottom:14px">
     <div style="font-size:1.1rem;font-weight:800;color:var(--acc)" data-i18n="stats.title">📊 Le tue Statistiche</div>
   </div>
@@ -1089,7 +1091,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- FORMAT PICKER -->
 <div class="screen" id="screen-format">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <h2 id="format-title" data-i18n="fmt.title" style="margin-bottom:6px">Choose Tournament Format</h2>
   <div id="fmt-tourn-badge" class="tourn-badge" style="display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.6px;padding:3px 10px;border-radius:20px;margin-bottom:8px"></div>
@@ -1159,7 +1161,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- ERA PICKER -->
 <!-- DUEL ACCEPT (lato B, arrivo da ?duel=ID) -->
 <div class="screen" id="screen-duel-accept">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <div id="duel-acc-load" style="text-align:center;padding:50px 0">
     <div style="font-size:2rem;margin-bottom:10px">⚔️</div>
@@ -1196,7 +1198,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- DUEL SETUP -->
 <div class="screen" id="screen-duel-setup">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <h2 data-i18n="duel.setup_title" style="margin-bottom:6px">⚔️ Duello 1v1</h2>
   <p data-i18n="duel.setup_sub" style="color:var(--mut);font-size:.82rem;margin-bottom:14px">Scegli torneo ed era: il tuo avversario drafterà con gli stessi vincoli. Formazione e tattica libere.</p>
@@ -1232,7 +1234,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- DUEL SHARE (post-draft lato A) -->
 <div class="screen" id="screen-duel-share">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <div id="duel-share-wait" style="display:none;text-align:center;padding:50px 0">
     <div style="font-size:2rem;margin-bottom:10px">⚔️</div>
@@ -1261,7 +1263,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 
 <div class="screen" id="screen-era">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <h2 data-i18n="era.title" style="margin-bottom:6px">Choose an Era</h2>
   <p data-i18n="era.subtitle" style="color:var(--mut);font-size:.82rem;margin-bottom:10px">Pick a specific era or go All Time for the widest possible draft pool.</p>
@@ -1276,7 +1278,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- FORMATION PICK -->
 <div class="screen" id="screen-formation">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <div id="formation-title" data-i18n="form.title" style="font-size:1.05rem;font-weight:900;margin-bottom:2px">Formation</div>
   <div class="tourn-badge" style="display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.6px;padding:3px 10px;border-radius:20px;margin-bottom:6px"></div>
@@ -1297,7 +1299,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- BLIND DRAFT -->
 <div class="screen" id="screen-draft">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <div class="draft-hdr">
     <div>
@@ -1336,7 +1338,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- CAMPAIGN -->
 <!-- MATCH -->
 <div class="screen" id="screen-match">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <!-- Top bar: tag + speed icons + timer -->
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1450,7 +1452,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 <!-- GAME OVER -->
 <div class="screen" id="screen-gameover">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
   <div class="end-hero">
     <div style="font-size:2.2rem;line-height:1;margin-bottom:3px">💔</div>
     <div class="end-grade-pill elim">ELIMINATI</div>
@@ -1482,7 +1484,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 <!-- TROPHY -->
 <div class="screen" id="screen-trophy" style="position:relative">
   <div class="confetti-wrap" id="t-confetti"></div>
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
   <div class="end-hero">
     <div style="font-size:2.2rem;line-height:1;margin-bottom:3px">🏆</div>
     <div class="end-grade-pill win" id="t-grade"></div>
@@ -1526,7 +1528,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </div>
 <!-- HALL OF FAME -->
 <div class="screen" id="screen-hof">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
   <div style="text-align:center;margin-bottom:14px">
     <div style="font-size:1.1rem;font-weight:800;color:var(--gold)">Hall of Fame</div>
     <div data-i18n="hof.subtitle" style="font-size:.72rem;color:var(--mut);margin-top:4px">I migliori risultati della community</div>
@@ -1548,7 +1550,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- TROFEI PERSONALI -->
 <div class="screen" id="screen-trophies">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
   <div style="text-align:center;margin-bottom:12px">
     <div style="font-size:1.1rem;font-weight:800;color:var(--gold)" data-i18n="trophies.title">🏅 I tuoi Trofei</div>
     <div id="trophies-count" style="font-size:.72rem;color:var(--mut);margin-top:4px"></div>
@@ -1562,7 +1564,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <!-- HOW TO PLAY -->
 <div class="screen" id="screen-howto">
-  <span class="screen-logo" onclick="showScreen('screen-home')">Decempionz</span>
+  <button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen('screen-home')">Decempionz</button>
 
   <h2 data-i18n="howto.title" style="margin-bottom:14px">How to Play</h2>
   <div style="color:var(--mut);line-height:1.75;font-size:.88rem">

@@ -528,6 +528,27 @@ function validateCoachAccessibility() {
 
 validateCoachAccessibility();
 
+function validateScreenLogoAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const logoButtons = homepage.match(
+    /<button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen\('screen-home'\)">Decempionz<\/button>/g
+  ) || [];
+
+  if (logoButtons.length !== 15) {
+    error("screen navigation: expected 15 native logo buttons, found " + logoButtons.length);
+  }
+  if (/<span class="screen-logo"/.test(homepage)) {
+    error("screen navigation: non-keyboard clickable logo returned");
+  }
+  if (!homepage.includes(
+    ".screen-logo:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}"
+  )) {
+    error("screen navigation: keyboard focus indicator missing from logo buttons");
+  }
+}
+
+validateScreenLogoAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
