@@ -1629,6 +1629,16 @@ const STRINGS={
     'modal.close':'Chiudi',
     'share.modal_title':'📤 Condividi il risultato',
     'share.close':'Chiudi la finestra di condivisione',
+    'share.download':'⬇️ Scarica',
+    'share.native':'📤 Condividi',
+    'share.copy':'📋 Copia',
+    'share.save_link':'🔗 Salva link condivisibile',
+    'share.saving':'⏳ Salvataggio...',
+    'share.retry':'🔗 Riprova',
+    'share.link_hint':'Condividi questa rosa con chiunque',
+    'share.link_input':'Link condivisibile della rosa',
+    'share.copy_link':'Copia il link condivisibile',
+    'share.copied':'📋 Copiato!',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz è un progetto fan indipendente creato esclusivamente a scopo di intrattenimento. Non è affiliato, approvato né connesso a UEFA, FIFA, alcun club calcistico, giocatore o agente. I nomi dei giocatori, delle squadre e i riferimenti storici sono usati a puro scopo ricreativo ed educativo nel rispetto dei principi della fan creativity. Tutti i marchi registrati rimangono di proprietà dei rispettivi titolari.',
     'fp.h_copyright':'Copyright',
@@ -1934,6 +1944,16 @@ const STRINGS={
     'modal.close':'Close',
     'share.modal_title':'📤 Share the result',
     'share.close':'Close share dialog',
+    'share.download':'⬇️ Download',
+    'share.native':'📤 Share',
+    'share.copy':'📋 Copy',
+    'share.save_link':'🔗 Save shareable link',
+    'share.saving':'⏳ Saving...',
+    'share.retry':'🔗 Retry',
+    'share.link_hint':'Share this squad with anyone',
+    'share.link_input':'Shareable squad link',
+    'share.copy_link':'Copy shareable link',
+    'share.copied':'📋 Copied!',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.',
     'fp.h_copyright':'Copyright',
@@ -2242,6 +2262,16 @@ const STRINGS={
     'modal.close':'Cerrar',
     'share.modal_title':'📤 Compartir el resultado',
     'share.close':'Cerrar diálogo de compartir',
+    'share.download':'⬇️ Descargar',
+    'share.native':'📤 Compartir',
+    'share.copy':'📋 Copiar',
+    'share.save_link':'🔗 Guardar enlace para compartir',
+    'share.saving':'⏳ Guardando...',
+    'share.retry':'🔗 Reintentar',
+    'share.link_hint':'Comparte esta plantilla con cualquiera',
+    'share.link_input':'Enlace compartible de la plantilla',
+    'share.copy_link':'Copiar enlace compartible',
+    'share.copied':'📋 ¡Copiado!',
     'fp.h_disclaimer':'Aviso Legal',
     'fp.p_disclaimer':'Decempionz es un proyecto de fans independiente creado únicamente con fines de entretenimiento. No está afiliado, respaldado ni conectado con la UEFA, FIFA, ningún club de fútbol, jugador ni agente. Los nombres de jugadores, equipos y referencias históricas se utilizan con fines recreativos y educativos bajo los principios de la creatividad de fans. Todas las marcas registradas son propiedad de sus respectivos dueños.',
     'fp.h_copyright':'Copyright',
@@ -7394,6 +7424,14 @@ function openHallOfFame(){
 }
 
 // ── Share result ──────────────────────────────────────────────────────────────
+function _shareGeneratedCopy(lang){
+  return{
+    it:{champion:'Campione',eliminated:'Eliminato',won:'Vinto!',easy:'Facile',normal:'Normale',hard:'Difficile',legend:'Leggenda',winCode:'V',drawCode:'P',lossCode:'S',goals:'gol',topScorer:'Capocannoniere: ',challengeWinCanvas:'Riesci a fare meglio? Sfidami su',challengeLossCanvas:'Puoi fare meglio di me? Prova su',challengeWinText:'Riesci a fare meglio? Sfidami → ',challengeLossText:'Puoi fare meglio di me? → '},
+    en:{champion:'Champion',eliminated:'Eliminated',won:'Won!',easy:'Easy',normal:'Normal',hard:'Hard',legend:'Legend',winCode:'W',drawCode:'D',lossCode:'L',goals:'goals',topScorer:'Top scorer: ',challengeWinCanvas:'Can you beat this? Try at',challengeLossCanvas:'Can you do better? Try at',challengeWinText:'Can you beat this? Try → ',challengeLossText:'Can you do better? → '},
+    es:{champion:'Campeón',eliminated:'Eliminado',won:'¡Victoria!',easy:'Fácil',normal:'Normal',hard:'Difícil',legend:'Leyenda',winCode:'V',drawCode:'E',lossCode:'D',goals:'goles',topScorer:'Máximo goleador: ',challengeWinCanvas:'¿Puedes superarlo? Inténtalo en',challengeLossCanvas:'¿Puedes hacerlo mejor? Inténtalo en',challengeWinText:'¿Puedes superarlo? Inténtalo → ',challengeLossText:'¿Puedes hacerlo mejor? → '}
+  }[lang]||_shareGeneratedCopy('en');
+}
+
 function _shareData(){
   const all=[...G.groupUserResults,...G.knockResults];
   const campW=all.filter(r=>r.myG>r.oppG).length;
@@ -7406,18 +7444,18 @@ function _shareData(){
   const formatLabel=G.gameMode==='copa'?({'coppa':'Copa Old Cup','classic':'Copa Classic','nuovo':'Copa Classic'}[G.format]||'Copa Libertadores'):G.gameMode==='wc'?({'coppa':'WC Old Cup','classic':'WC Classic','nuovo':'WC Classic'}[G.format]||'World Cup Legends'):({'coppa':'Old Cup','classic':'Classic CL','nuovo':'New Wave'}[G.format]||'Champions League');
   const topScorer=Object.entries(G.campaignScorers||{}).sort((a,b)=>b[1]-a[1])[0];
   const topScorerStr=topScorer?topScorer[0].split(' ').pop()+' ('+topScorer[1]+'g)':'—';
-  const isIt=(G.lang||'it')==='it';
+  const lang=G.lang||'it';
   const sq=G.squad&&G.squad.length?G.squad:G.slotPlayers.filter(Boolean);
   const grpMap={GK:[],DEF:[],MID:[],FWD:[]};
   sq.forEach(function(p){grpMap[posGroup(p.p)].push(p.n);});
-  return {campW,campD,campL,grade,isWinner,formatLabel,topScorerStr,isIt,grpMap,sq};
+  return {campW,campD,campL,grade,isWinner,formatLabel,topScorerStr,lang,grpMap,sq};
 }
 
 var _shareModalReturnFocus=null;
 function shareResult(){
   buildShareCanvas();
   var _la=document.getElementById('draft-link-area');if(_la)_la.style.display='none';
-  var _lb=document.getElementById('draft-link-btn');if(_lb){_lb.style.display='';_lb.disabled=false;_lb.textContent='🔗 Salva link condivisibile';}
+  var _lb=document.getElementById('draft-link-btn');if(_lb){_lb.style.display='';_lb.disabled=false;_lb.textContent=t('share.save_link');}
   var _li=document.getElementById('draft-link-input');if(_li)_li.value='';
   _shareModalReturnFocus=document.activeElement;
   var modal=document.getElementById('share-modal');
@@ -7436,7 +7474,7 @@ function closeShareModal(){
 function saveDraftLink(){
   var lb=document.getElementById('draft-link-btn');
   var la=document.getElementById('draft-link-area');
-  if(lb){lb.disabled=true;lb.textContent='⏳ Salvataggio...';}
+  if(lb){lb.disabled=true;lb.textContent=t('share.saving');}
   var d=_shareData();
   var isCopa=G.gameMode==='copa',isWC=G.gameMode==='wc';
   var KNAMES=G.format==='coppa'?(isCopa||isWC?['R1','QF','SF','Finale']:['R1','R2','QF','SF','Finale']):['R16','QF','SF','Finale'];
@@ -7474,11 +7512,11 @@ function saveDraftLink(){
           if(_du.length<600000)fetch('/draft-img.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:res.id,img:_du})}).catch(function(){});
         }catch(e){}
       } else {
-        if(lb){lb.disabled=false;lb.textContent='🔗 Riprova';}
+        if(lb){lb.disabled=false;lb.textContent=t('share.retry');}
       }
     })
     .catch(function(){
-      if(lb){lb.disabled=false;lb.textContent='🔗 Riprova';}
+      if(lb){lb.disabled=false;lb.textContent=t('share.retry');}
     });
 }
 
@@ -7924,6 +7962,7 @@ function buildShareCanvas(){
   canvas.width=W; canvas.height=H;
   const c=canvas.getContext('2d');
   const d=_shareData();
+  const copy=_shareGeneratedCopy(d.lang);
 
   // Background
   c.fillStyle='#07090f'; c.fillRect(0,0,W,H);
@@ -7961,12 +8000,12 @@ function buildShareCanvas(){
 
   // Status line
   const statusEmoji=d.isWinner?'🏆':'💔';
-  const statusVerb=d.isWinner?(d.isIt?'Campione':'Champion'):(d.isIt?'Eliminato':'Eliminated');
+  const statusVerb=d.isWinner?copy.champion:copy.eliminated;
   c.font='bold 34px Arial,sans-serif'; c.fillStyle='#e8edf5';
   c.fillText(statusEmoji+'  '+statusVerb+' · '+d.formatLabel,W/2,300);
 
   // Formation
-  const diffMap={'easy':d.isIt?'🟢 Facile':'🟢 Easy','normal':d.isIt?'🟡 Normale':'🟡 Normal','hard':d.isIt?'🔴 Difficile':'🔴 Hard'};
+  const diffMap={easy:'🟢 '+copy.easy,normal:'🟡 '+copy.normal,hard:'🔴 '+copy.hard,legend:'⚫ '+copy.legend};
   const diffLbl=(diffMap[G.difficulty||'normal'])||'🟡';
   const coachStr=G.coach?'  ·  👔 '+G.coach.name:'';
   c.font='24px Arial,sans-serif'; c.fillStyle='#6b7e95';
@@ -7994,9 +8033,9 @@ function buildShareCanvas(){
   c.strokeStyle='#1e2d42'; c.lineWidth=1;
   c.beginPath(); c.moveTo(80,ly); c.lineTo(W-80,ly); c.stroke(); ly+=48;
 
-  const wdlLabel=d.isIt?(d.campW+'V  '+d.campD+'P  '+d.campL+'S'):(d.campW+'W  '+d.campD+'D  '+d.campL+'L');
-  const goalLabel=d.isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
-  const scorerLabel=d.isIt?'Capocannoniere: ':'Top scorer: ';
+  const wdlLabel=d.campW+copy.winCode+'  '+d.campD+copy.drawCode+'  '+d.campL+copy.lossCode;
+  const goalLabel=G.campaignGF+'-'+G.campaignGA+' '+copy.goals;
+  const scorerLabel=copy.topScorer;
 
   c.font='bold 30px Arial,sans-serif'; c.fillStyle='#e8edf5';
   c.fillText('⚽  '+wdlLabel+'  ·  '+goalLabel,W/2,ly); ly+=50;
@@ -8008,9 +8047,7 @@ function buildShareCanvas(){
   c.strokeStyle='#1e2d42'; c.lineWidth=1;
   c.beginPath(); c.moveTo(0,bottomY-16); c.lineTo(W,bottomY-16); c.stroke();
 
-  const challengeVerb=d.isWinner
-    ?(d.isIt?'Riesci a fare meglio? Sfidami su':'Can you beat this? Try at')
-    :(d.isIt?'Puoi fare meglio di me? Prova su':'Can you do better? Try at');
+  const challengeVerb=d.isWinner?copy.challengeWinCanvas:copy.challengeLossCanvas;
   c.font='24px Arial,sans-serif'; c.fillStyle='#6b7e95';
   c.fillText(challengeVerb,W/2,bottomY+18);
   c.font='bold 34px Arial,sans-serif'; c.fillStyle='#c9a227';
@@ -8118,12 +8155,13 @@ function acceptChallenge(){
 
 function _buildShareText(){
   const d=_shareData();
+  const copy=_shareGeneratedCopy(d.lang);
   const gradeEmoji={S:'🌟',A:'⭐',B:'✅',C:'🏳️'}[d.grade]||'🏆';
   const formatLabel=d.formatLabel;
   const statusLine=d.isWinner
-    ?(gradeEmoji+' Grade '+d.grade+' — '+formatLabel+(d.isIt?' Vinto!':' Won!'))
-    :('💔 '+(d.isIt?'Eliminato':'Eliminated')+' · '+formatLabel+' ('+d.campW+(d.isIt?'V ':' W ')+d.campD+(d.isIt?'P ':' D ')+d.campL+(d.isIt?'S':'L')+')');
-  const diffLbl={easy:d.isIt?'🟢 Facile':'🟢 Easy',normal:d.isIt?'🟡 Normale':'🟡 Normal',hard:d.isIt?'🔴 Difficile':'🔴 Hard',legend:d.isIt?'⚫ Leggenda':'⚫ Legend'}[G.difficulty||'normal']||'🟡';
+    ?(gradeEmoji+' Grade '+d.grade+' — '+formatLabel+' '+copy.won)
+    :('💔 '+copy.eliminated+' · '+formatLabel+' ('+d.campW+copy.winCode+' '+d.campD+copy.drawCode+' '+d.campL+copy.lossCode+')');
+  const diffLbl={easy:'🟢 '+copy.easy,normal:'🟡 '+copy.normal,hard:'🔴 '+copy.hard,legend:'⚫ '+copy.legend}[G.difficulty||'normal']||'🟡';
   const coachStr=G.coach?(' · 👔 '+G.coach.name):'';
   const lineupLines=[
     d.grpMap.GK.length?'🧤 '+d.grpMap.GK.join(' · '):'',
@@ -8131,15 +8169,13 @@ function _buildShareText(){
     d.grpMap.MID.length?'⚙️ '+d.grpMap.MID.join(' · '):'',
     d.grpMap.FWD.length?'⚡ '+d.grpMap.FWD.join(' · '):'',
   ].filter(Boolean).join('\n');
-  const wdlLabel=d.isIt?(d.campW+'V '+d.campD+'P '+d.campL+'S'):(d.campW+'W '+d.campD+'D '+d.campL+'L');
-  const goalLabel=d.isIt?(G.campaignGF+'-'+G.campaignGA+' gol'):(G.campaignGF+'-'+G.campaignGA+' goals');
-  const scorerLabel=d.isIt?'Capocannoniere: ':'Top scorer: ';
+  const wdlLabel=d.campW+copy.winCode+' '+d.campD+copy.drawCode+' '+d.campL+copy.lossCode;
+  const goalLabel=G.campaignGF+'-'+G.campaignGA+' '+copy.goals;
+  const scorerLabel=copy.topScorer;
   const eraStr=G.tournament?(G.tournament.emoji||'🌍')+' '+G.tournament.name:'🌍 All Time';
   var _hofNick='';try{var _el=document.getElementById('hof-nickname');if(_el)_hofNick=_el.value||'';}catch(e){}
   const _chUrl=buildChallengeUrl(_hofNick);
-  const challengeLine=d.isWinner
-    ?(d.isIt?'Riesci a fare meglio? Sfidami → '+_chUrl:'Can you beat this? Try → '+_chUrl)
-    :(d.isIt?'Puoi fare meglio di me? → '+_chUrl:'Can you do better? → '+_chUrl);
+  const challengeLine=(d.isWinner?copy.challengeWinText:copy.challengeLossText)+_chUrl;
   return [
     statusLine,
     eraStr+' · '+G.formation+coachStr+' · '+diffLbl,
@@ -8188,13 +8224,13 @@ function copyShareText(){
 
 function _copyText(txt){
   try{
-    navigator.clipboard.writeText(txt).then(function(){showShareToast('📋 Copiato!');});
+    navigator.clipboard.writeText(txt).then(function(){showShareToast(t('share.copied'));});
   }catch(e){
     const ta=document.createElement('textarea');
     ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
     document.body.appendChild(ta); ta.focus(); ta.select();
     document.execCommand('copy'); document.body.removeChild(ta);
-    showShareToast('📋 Copiato!');
+    showShareToast(t('share.copied'));
   }
 }
 
@@ -9082,17 +9118,17 @@ if('serviceWorker' in navigator){
     </div>
     <canvas id="share-canvas"></canvas>
     <div class="share-modal-btns">
-      <button class="btn" onclick="downloadShareCard()">⬇️ Scarica</button>
-      <button class="btn btn-gold" onclick="nativeShare()">📤 Condividi</button>
-      <button class="btn" onclick="copyShareText()">📋 Copia</button>
+      <button class="btn" data-i18n="share.download" onclick="downloadShareCard()">⬇️ Scarica</button>
+      <button class="btn btn-gold" data-i18n="share.native" onclick="nativeShare()">📤 Condividi</button>
+      <button class="btn" data-i18n="share.copy" onclick="copyShareText()">📋 Copia</button>
     </div>
-    <button class="btn" id="draft-link-btn" onclick="saveDraftLink()" style="width:100%;margin-top:8px;font-size:.78rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.4);color:#818cf8">🔗 Salva link condivisibile</button>
+    <button class="btn" id="draft-link-btn" data-i18n="share.save_link" onclick="saveDraftLink()" style="width:100%;margin-top:8px;font-size:.78rem;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.4);color:#818cf8">🔗 Salva link condivisibile</button>
     <div id="draft-link-area" style="display:none;margin-top:8px">
       <div style="display:flex;gap:6px;align-items:center">
-        <input id="draft-link-input" type="text" readonly style="flex:1;padding:8px 10px;font-size:.7rem;background:#0a0f1e;border:1px solid #1e2d42;border-radius:8px;color:#e8edf5;cursor:pointer;min-width:0" onclick="this.select()" />
-        <button class="btn btn-gold" onclick="copyDraftLink()" style="font-size:.72rem;padding:8px 12px;white-space:nowrap;flex-shrink:0">📋</button>
+        <input id="draft-link-input" type="text" readonly aria-label="Link condivisibile della rosa" data-i18n-aria-label="share.link_input" style="flex:1;padding:8px 10px;font-size:.7rem;background:#0a0f1e;border:1px solid #1e2d42;border-radius:8px;color:#e8edf5;cursor:pointer;min-width:0" onclick="this.select()" />
+        <button type="button" class="btn btn-gold" aria-label="Copia il link condivisibile" data-i18n-aria-label="share.copy_link" onclick="copyDraftLink()" style="font-size:.72rem;padding:8px 12px;white-space:nowrap;flex-shrink:0">📋</button>
       </div>
-      <div style="font-size:.62rem;color:#6b7a8d;margin-top:5px;text-align:center">Condividi questa rosa con chiunque</div>
+      <div data-i18n="share.link_hint" style="font-size:.62rem;color:#6b7a8d;margin-top:5px;text-align:center">Condividi questa rosa con chiunque</div>
     </div>
   </div>
 </div>
