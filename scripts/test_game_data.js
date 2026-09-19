@@ -549,6 +549,41 @@ function validateScreenLogoAccessibility() {
 
 validateScreenLogoAccessibility();
 
+function validateFooterActionAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf('<div class="legal-footer">');
+  const end = homepage.indexOf("</div>", start);
+  if (start < 0 || end < 0) {
+    error("footer: unable to locate legal footer");
+    return;
+  }
+  const footer = homepage.slice(start, end);
+  const expectedActions = [
+    "showScreen('screen-howto')",
+    "openFanProject()",
+    "openPrivacy()",
+    "openContatti()"
+  ];
+
+  for (const action of expectedActions) {
+    if (!footer.includes(
+      '<button type="button" class="legal-action" onclick="' + action + '"'
+    )) {
+      error("footer: native button missing for " + action);
+    }
+  }
+  if (/<a\s+onclick=/.test(footer)) {
+    error("footer: non-keyboard anchor action returned");
+  }
+  if (!homepage.includes(
+    ".legal-footer a:focus-visible,.legal-footer .legal-action:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}"
+  )) {
+    error("footer: keyboard focus indicator missing from actions");
+  }
+}
+
+validateFooterActionAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
