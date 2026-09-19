@@ -627,6 +627,62 @@ function validateLegalModalAccessibility() {
 
 validateLegalModalAccessibility();
 
+function validateShareModalAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+
+  if (!homepage.includes(
+    '<div id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" onclick="closeShareModal()">'
+  )) {
+    error("share modal: accessible dialog semantics missing");
+  }
+  if (!homepage.includes(
+    '<span class="share-modal-title" id="share-modal-title" data-i18n="share.modal_title">'
+  )) {
+    error("share modal: labelled localized title missing");
+  }
+  if (!homepage.includes(
+    '<button type="button" class="share-modal-close" aria-label="Chiudi la finestra di condivisione" data-i18n-aria-label="share.close"'
+  )) {
+    error("share modal: close button lacks localized accessible name");
+  }
+  for (const translation of [
+    "'share.modal_title':'📤 Condividi il risultato'",
+    "'share.modal_title':'📤 Share the result'",
+    "'share.modal_title':'📤 Compartir el resultado'",
+    "'share.close':'Chiudi la finestra di condivisione'",
+    "'share.close':'Close share dialog'",
+    "'share.close':'Cerrar diálogo de compartir'"
+  ]) {
+    if (!homepage.includes(translation)) {
+      error("share modal: missing translation " + translation);
+    }
+  }
+  if (!homepage.includes("document.querySelectorAll('[data-i18n-aria-label]').forEach(function(el){") ||
+      !homepage.includes("if(v)el.setAttribute('aria-label',v);")) {
+    error("share modal: accessible name is not refreshed on language changes");
+  }
+  if (!homepage.includes("_shareModalReturnFocus=document.activeElement;") ||
+      !homepage.includes("var closeBtn=modal.querySelector('.share-modal-close');") ||
+      !homepage.includes("if(closeBtn)closeBtn.focus();")) {
+    error("share modal: opening focus management is incomplete");
+  }
+  if (!homepage.includes("var trigger=_shareModalReturnFocus;") ||
+      !homepage.includes("_shareModalReturnFocus=null;")) {
+    error("share modal: closing focus management is incomplete");
+  }
+  if (!homepage.includes("shareModal.classList.contains('open')") ||
+      !homepage.includes("closeShareModal();return;")) {
+    error("share modal: Escape dismissal missing");
+  }
+  if (!homepage.includes(
+    ".share-modal-close:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}"
+  )) {
+    error("share modal: close button focus indicator missing");
+  }
+}
+
+validateShareModalAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");

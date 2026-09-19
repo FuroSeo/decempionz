@@ -713,6 +713,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .share-modal-title{font-weight:700;color:#e8edf5;font-size:.95rem}
 .share-modal-close{background:none;border:none;color:#6b7e95;font-size:1.3rem;cursor:pointer;line-height:1;padding:0}
 .share-modal-close:hover{color:#e8edf5}
+.share-modal-close:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
 .share-modal-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .share-modal-btns .btn{font-size:.75rem;padding:10px 6px;letter-spacing:.1px}
 .hof-submit-area{margin-top:12px;border-top:1px solid #1e2d42;padding-top:12px}
@@ -1626,6 +1627,8 @@ const STRINGS={
     'trophies.title':'🏅 I tuoi Trofei',
     'trophies.btn':'🏅 Trofei',
     'modal.close':'Chiudi',
+    'share.modal_title':'📤 Condividi il risultato',
+    'share.close':'Chiudi la finestra di condivisione',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz è un progetto fan indipendente creato esclusivamente a scopo di intrattenimento. Non è affiliato, approvato né connesso a UEFA, FIFA, alcun club calcistico, giocatore o agente. I nomi dei giocatori, delle squadre e i riferimenti storici sono usati a puro scopo ricreativo ed educativo nel rispetto dei principi della fan creativity. Tutti i marchi registrati rimangono di proprietà dei rispettivi titolari.',
     'fp.h_copyright':'Copyright',
@@ -1929,6 +1932,8 @@ const STRINGS={
     'trophies.title':'🏅 Your Trophies',
     'trophies.btn':'🏅 Trophies',
     'modal.close':'Close',
+    'share.modal_title':'📤 Share the result',
+    'share.close':'Close share dialog',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.',
     'fp.h_copyright':'Copyright',
@@ -2235,6 +2240,8 @@ const STRINGS={
     'trophies.title':'🏅 Tus Trofeos',
     'trophies.btn':'🏅 Trofeos',
     'modal.close':'Cerrar',
+    'share.modal_title':'📤 Compartir el resultado',
+    'share.close':'Cerrar diálogo de compartir',
     'fp.h_disclaimer':'Aviso Legal',
     'fp.p_disclaimer':'Decempionz es un proyecto de fans independiente creado únicamente con fines de entretenimiento. No está afiliado, respaldado ni conectado con la UEFA, FIFA, ningún club de fútbol, jugador ni agente. Los nombres de jugadores, equipos y referencias históricas se utilizan con fines recreativos y educativos bajo los principios de la creatividad de fans. Todas las marcas registradas son propiedad de sus respectivos dueños.',
     'fp.h_copyright':'Copyright',
@@ -2560,6 +2567,11 @@ function applyLang(){
     var k=el.getAttribute('data-i18n-placeholder');
     var v=t(k);
     if(v)el.placeholder=v;
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-aria-label');
+    var v=t(k);
+    if(v)el.setAttribute('aria-label',v);
   });
   // Re-render dynamic screens if active
   var _shof=document.getElementById('screen-hof');
@@ -7247,9 +7259,11 @@ function openPrivacy(){
 function closePrivacy(){_closeLegalModal('modal-privacy');}
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
+  var shareModal=document.getElementById('share-modal');
   var privacy=document.getElementById('modal-privacy');
   var contatti=document.getElementById('modal-contatti');
   var fanProject=document.getElementById('modal-fanproject');
+  if(shareModal&&shareModal.classList.contains('open')){e.preventDefault();closeShareModal();return;}
   if(privacy&&privacy.style.display==='flex'){e.preventDefault();closePrivacy();return;}
   if(contatti&&contatti.style.display==='flex'){e.preventDefault();closeContatti();return;}
   if(fanProject&&fanProject.style.display==='flex'){e.preventDefault();closeFanProject();}
@@ -7399,16 +7413,24 @@ function _shareData(){
   return {campW,campD,campL,grade,isWinner,formatLabel,topScorerStr,isIt,grpMap,sq};
 }
 
+var _shareModalReturnFocus=null;
 function shareResult(){
   buildShareCanvas();
   var _la=document.getElementById('draft-link-area');if(_la)_la.style.display='none';
   var _lb=document.getElementById('draft-link-btn');if(_lb){_lb.style.display='';_lb.disabled=false;_lb.textContent='🔗 Salva link condivisibile';}
   var _li=document.getElementById('draft-link-input');if(_li)_li.value='';
-  document.getElementById('share-modal').classList.add('open');
+  _shareModalReturnFocus=document.activeElement;
+  var modal=document.getElementById('share-modal');
+  modal.classList.add('open');
+  var closeBtn=modal.querySelector('.share-modal-close');
+  if(closeBtn)closeBtn.focus();
 }
 
 function closeShareModal(){
   document.getElementById('share-modal').classList.remove('open');
+  var trigger=_shareModalReturnFocus;
+  _shareModalReturnFocus=null;
+  if(trigger&&document.contains(trigger)&&typeof trigger.focus==='function')trigger.focus();
 }
 
 function saveDraftLink(){
@@ -9052,11 +9074,11 @@ if('serviceWorker' in navigator){
 
 <!-- Modal: Fan Project -->
 <div id="trophy-toast"></div>
-<div id="share-modal" onclick="closeShareModal()">
+<div id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" onclick="closeShareModal()">
   <div id="share-modal-box" onclick="event.stopPropagation()">
     <div class="share-modal-header">
-      <span class="share-modal-title">📤 Condividi il risultato</span>
-      <button class="share-modal-close" onclick="closeShareModal()">✕</button>
+      <span class="share-modal-title" id="share-modal-title" data-i18n="share.modal_title">📤 Condividi il risultato</span>
+      <button type="button" class="share-modal-close" aria-label="Chiudi la finestra di condivisione" data-i18n-aria-label="share.close" onclick="closeShareModal()">✕</button>
     </div>
     <canvas id="share-canvas"></canvas>
     <div class="share-modal-btns">
