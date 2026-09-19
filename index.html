@@ -584,6 +584,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .diff-hard .diff-title{color:#f97316}
 .diff-legend .diff-title{color:#c084fc}
 /* Chemistry UI (mockup approvato 2026-07-05) */
+.team-score-panel{grid-template-columns:1.2fr repeat(3,1fr);gap:5px;margin:4px 0 7px}
+.team-score-cell{background:var(--s1);border:1px solid var(--brd);border-radius:9px;padding:7px 6px;text-align:center}
+.team-score-cell.main{border-color:rgba(201,162,39,.55);background:linear-gradient(135deg,rgba(201,162,39,.13),var(--s1))}
+.team-score-value{font-family:'Oswald','Segoe UI',sans-serif;font-size:1.12rem;font-weight:800;color:var(--text);line-height:1}
+.team-score-cell.main .team-score-value{color:var(--gold2);font-size:1.3rem}
+.team-score-label{font-size:.5rem;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--mut);margin-top:3px}
 .chem-panel{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:9px 12px;margin:4px 0 10px}
 .chem-top{display:flex;align-items:center;gap:10px}
 .chem-lbl{font-family:'Oswald','Segoe UI',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mut);white-space:nowrap}
@@ -1321,6 +1327,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div class="pbar-wrap"><div class="pbar-fill" id="d-bar" style="width:100%"></div></div>
   <div id="d-slot-chips"></div>
   <div id="d-chem-bar" class="chem-panel" style="display:none"></div>
+  <div id="d-team-score" class="team-score-panel" style="display:none"></div>
   <div class="draft-pitch" id="draft-pitch"></div>
   </div>
   <div class="d-col-r">
@@ -1592,7 +1599,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.16.3';
+const GAME_VERSION='5.17.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1645,6 +1652,10 @@ const STRINGS={
     'match.speed_normal':'Velocità normale',
     'match.speed_fast':'Velocità veloce',
     'match.speed_skip':'Salta al risultato',
+    'team.score':'Team Score',
+    'team.fit':'Adattamento',
+    'team.attack':'Attacco',
+    'team.defence':'Difesa',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz è un progetto fan indipendente creato esclusivamente a scopo di intrattenimento. Non è affiliato, approvato né connesso a UEFA, FIFA, alcun club calcistico, giocatore o agente. I nomi dei giocatori, delle squadre e i riferimenti storici sono usati a puro scopo ricreativo ed educativo nel rispetto dei principi della fan creativity. Tutti i marchi registrati rimangono di proprietà dei rispettivi titolari.',
     'fp.h_copyright':'Copyright',
@@ -1965,6 +1976,10 @@ const STRINGS={
     'match.speed_normal':'Normal speed',
     'match.speed_fast':'Fast speed',
     'match.speed_skip':'Skip to result',
+    'team.score':'Team Score',
+    'team.fit':'Position Fit',
+    'team.attack':'Attack',
+    'team.defence':'Defence',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.',
     'fp.h_copyright':'Copyright',
@@ -2288,6 +2303,10 @@ const STRINGS={
     'match.speed_normal':'Velocidad normal',
     'match.speed_fast':'Velocidad rápida',
     'match.speed_skip':'Saltar al resultado',
+    'team.score':'Team Score',
+    'team.fit':'Adaptación',
+    'team.attack':'Ataque',
+    'team.defence':'Defensa',
     'fp.h_disclaimer':'Aviso Legal',
     'fp.p_disclaimer':'Decempionz es un proyecto de fans independiente creado únicamente con fines de entretenimiento. No está afiliado, respaldado ni conectado con la UEFA, FIFA, ningún club de fútbol, jugador ni agente. Los nombres de jugadores, equipos y referencias históricas se utilizan con fines recreativos y educativos bajo los principios de la creatividad de fans. Todas las marcas registradas son propiedad de sus respectivos dueños.',
     'fp.h_copyright':'Copyright',
@@ -2660,22 +2679,29 @@ const SLOT_COMPAT = {
   SS:  ['SS','ST','CF','CAM','RW','LW'],    // second striker: forward + wide attacking
 };
 
-// Returns positional penalty coefficient for a player out of position
-function slotPenalty(slotPos, playerPos){
+/* Match Engine v2 positional-fit matrix. Every supported off-role assignment has a
+   non-zero cost; an emergency incompatible fill pays the maximum 25% penalty. */
+const SLOT_PENALTIES={
+  CB:{LB:.12,RB:.12,LWB:.12,RWB:.12},
+  RB:{RWB:.04,LB:.08,LWB:.08,CB:.18},
+  LB:{LWB:.04,RB:.08,RWB:.08,CB:.18},
+  RWB:{RB:.04,LWB:.08},
+  LWB:{LB:.04,RWB:.08},
+  CDM:{CM:.06,CB:.10},
+  CM:{CDM:.06},
+  CAM:{SS:.06,RW:.10,LW:.10},
+  RM:{LM:.08,RW:.06,LW:.12},
+  LM:{RM:.08,LW:.06,RW:.12},
+  RW:{LW:.08,RM:.06,LM:.12,CAM:.08,SS:.06},
+  LW:{RW:.08,LM:.06,RM:.12,CAM:.08,SS:.06},
+  ST:{CF:.04,SS:.06},
+  CF:{ST:.04,SS:.04},
+  SS:{ST:.06,CF:.06,CAM:.06,RW:.08,LW:.08}
+};
+function slotPenalty(slotPos,playerPos){
   if(slotPos===playerPos)return 0;
-  var leftSide=['LB','LWB'],rightSide=['RB','RWB'],centerDef=['CB','SW','DC'];
-  var isLeftSlot=leftSide.indexOf(slotPos)>=0, isRightSlot=rightSide.indexOf(slotPos)>=0;
-  var isCBSlot=centerDef.indexOf(slotPos)>=0;
-  var isLeftP=leftSide.indexOf(playerPos)>=0, isRightP=rightSide.indexOf(playerPos)>=0;
-  var isCBP=centerDef.indexOf(playerPos)>=0;
-  var isFullbackP=isLeftP||isRightP;
-  // Wrong side (LB↔RB family)
-  if((isLeftSlot&&isRightP)||(isRightSlot&&isLeftP))return 0.08;
-  // Fullback in CB slot
-  if(isCBSlot&&isFullbackP)return 0.12;
-  // CB in fullback slot
-  if((isLeftSlot||isRightSlot)&&isCBP)return 0.18;
-  return 0;
+  var slotMap=SLOT_PENALTIES[slotPos]||{};
+  return Object.prototype.hasOwnProperty.call(slotMap,playerPos)?slotMap[playerPos]:.25;
 }
 
 /* Each formation defines positions and rows per tactic variant */
@@ -3198,9 +3224,58 @@ function poisson(l){let L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random()}while(p>L
 function sh(n){let h='';for(let i=0;i<3;i++)h+=i<n?'<span class="star">★</span>':'<span class="star-e">★</span>';return h}
 function posGroup(pos){
   if(pos==='GK')return'GK';
-  if(['CB','RB','LB'].includes(pos))return'DEF';
-  if(['CM','CDM','CAM','RM','LM'].includes(pos))return'MID';
+  if(['CB','RB','LB','LWB','RWB','SW','DC','DF'].includes(pos))return'DEF';
+  if(['CM','CDM','CAM','AM','RM','LM','DM','MF'].includes(pos))return'MID';
   return'FWD';
+}
+
+const MATCH_OFFENSIVE_FORMATIONS={'4-2-3-1':1,'3-4-3':1};
+const MATCH_DEFENSIVE_FORMATIONS={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
+
+/* Pure lineup evaluation shared by campaign and browser Duel. Ratings belong to the
+   occupied slot department: positional adaptation changes both fit and tactical output. */
+function evaluateLineup(players,positions,formation,tactic){
+  var groups={GK:[],DEF:[],MID:[],FWD:[]};
+  var effective={GK:[],DEF:[],MID:[],FWD:[]};
+  var allEffective=[],penaltyTotal=0,filled=0;
+  var r10={gk:0,def:0,midAtk:0,midDef:0,fwd:0};
+  var starRating=0;
+  (players||[]).forEach(function(p,i){
+    if(!p)return;
+    var slotP=(positions&&positions[i])||p.p;
+    var penalty=slotPenalty(slotP,p.p);
+    var group=posGroup(slotP);
+    var effectiveRating=p.r*(1-penalty);
+    groups[group].push(p);
+    effective[group].push(effectiveRating);
+    allEffective.push(effectiveRating);
+    penaltyTotal+=penalty;filled++;
+    if(p.r>starRating)starRating=p.r;
+    if(p.r>=10){
+      if(group==='GK')r10.gk+=.04;
+      else if(group==='DEF')r10.def+=.03;
+      else if(group==='MID'){r10.midAtk+=.03;r10.midDef+=.02;}
+      else r10.fwd+=.04;
+    }
+  });
+  var gkR=avg(effective.GK)||6;
+  var defR=avg(effective.DEF)||6;
+  var midR=avg(effective.MID)||6;
+  var fwdR=avg(effective.FWD)||6;
+  var fmtT=MATCH_OFFENSIVE_FORMATIONS[formation]?'off':MATCH_DEFENSIVE_FORMATIONS[formation]?'def':'mid';
+  return{
+    atk:fwdR*.65+midR*.35,
+    def:defR*.70+gkR*.30,
+    starBonus:Math.max(0,(starRating-8.5)*.06),
+    r10:r10,
+    tactic:['attack','balanced','defend'].includes(tactic)?tactic:'balanced',
+    fmtT:fmtT,
+    score:filled?Math.round(avg(allEffective)*10):0,
+    fit:filled?Math.round((1-penaltyTotal/filled)*100):100,
+    lines:{GK:gkR,DEF:defR,MID:midR,FWD:fwdR},
+    groups:groups,
+    filled:filled
+  };
 }
 function pgClass(pg){return{GK:'pg-gk',DEF:'pg-def',MID:'pg-mid',FWD:'pg-fwd'}[pg]}
 function teamStrength(teamId){const t=(_activeTeams()[teamId]||TEAMS[teamId]);return avg(t.players.map(p=>p.r))}
@@ -4992,9 +5067,23 @@ function updateDraftScreen(){
 
 
   document.getElementById('d-count').textContent=filled+'/11';
+  var _draftPositions=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
+  var _teamEval=evaluateLineup(G.slotPlayers,_draftPositions,G.formation,G.draftTactic||G.tactic||'balanced');
+  G.teamEval=_teamEval;
+  var _teamScoreEl=document.getElementById('d-team-score');
+  if(_teamScoreEl){
+    if(filled>0){
+      _teamScoreEl.style.display='grid';
+      _teamScoreEl.innerHTML=
+        '<div class="team-score-cell main"><div class="team-score-value">'+_teamEval.score+'</div><div class="team-score-label">'+t('team.score')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.atk*10)+'</div><div class="team-score-label">'+t('team.attack')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.def*10)+'</div><div class="team-score-label">'+t('team.defence')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+_teamEval.fit+'%</div><div class="team-score-label">'+t('team.fit')+'</div></div>';
+    }else{_teamScoreEl.style.display='none';}
+  }
   var _chemEl=document.getElementById('d-chem-bar');
   if(_chemEl){
-    G.chem=calcChemistry(G.slotPlayers,fmtPositions(G.formation,G.tactic),G.gameMode);
+    G.chem=calcChemistry(G.slotPlayers,_draftPositions,G.gameMode);
     if(filled>0){
       _chemEl.style.display='block';
       var _cp=G.chem.pct,_cap=CHEM_CFG.cap,_segs='';
@@ -5550,38 +5639,9 @@ function playRound(){
    Restano fuori i concetti da campagna: DIFF_CFG, momentum, coach, roundBonus. */
 function duelTeamEval(team){
   var pos=fmtPositions(team.formation,team.tactic||'balanced');
-  var grp={GK:[],DEF:[],MID:[],FWD:[]};
-  var effR={GK:[],DEF:[],MID:[],FWD:[]};
-  (team.players||[]).forEach(function(p,i){
-    if(!p)return;
-    var slotP=pos[i]||p.p;
-    var pen=slotPenalty(slotP,p.p);
-    var pg=posGroup(p.p);
-    grp[pg].push(p);
-    effR[pg].push(p.r*(1-pen));
-  });
-  var gkR=avg(effR.GK)||6,defR=avg(effR.DEF)||6,midR=avg(effR.MID)||6,fwdR=avg(effR.FWD)||6;
-  var pl=(team.players||[]).filter(Boolean);
-  var star=pl.reduce(function(b,p){return p.r>(b?b.r:0)?p:b;},null);
-  var r10={gk:0,def:0,midAtk:0,midDef:0,fwd:0};
-  pl.forEach(function(p){
-    if(p.r<10)return;
-    var pg=posGroup(p.p);
-    if(pg==='GK')r10.gk+=0.04;
-    else if(pg==='DEF')r10.def+=0.03;
-    else if(pg==='MID'){r10.midAtk+=0.03;r10.midDef+=0.02;}
-    else if(pg==='FWD')r10.fwd+=0.04;
-  });
-  var _FMT_OFF={'4-2-3-1':1,'3-4-3':1},_FMT_DEF={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
-  return {
-    atk:fwdR*.65+midR*.35,
-    def:defR*.70+gkR*.30,
-    starBonus:star?Math.max(0,(star.r-8.5)*0.06):0,
-    r10:r10,
-    tactic:TACT_MOD[team.tactic]?team.tactic:'balanced',
-    fmtT:_FMT_OFF[team.formation]?'off':_FMT_DEF[team.formation]?'def':'mid',
-    scorers:grp.FWD.concat(grp.MID)
-  };
+  var evaluated=evaluateLineup(team.players||[],pos,team.formation,team.tactic||'balanced');
+  evaluated.scorers=evaluated.groups.FWD.concat(evaluated.groups.MID);
+  return evaluated;
 }
 
 /* Una partita secca tra due squadre valutate (ea, eb = output di duelTeamEval).
@@ -5681,22 +5741,9 @@ function _runMatch(){
 
   // Calculate my team strength from slot-aware squad (with positional penalties)
   const _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
-  const grp={GK:[],DEF:[],MID:[],FWD:[]};
-  const _effR={GK:[],DEF:[],MID:[],FWD:[]};
-  G.slotPlayers.forEach(function(p,i){
-    if(!p)return;
-    var slotP=_formPos[i]||p.p;
-    var pen=slotPenalty(slotP,p.p);
-    var pg=posGroup(p.p);
-    grp[pg].push(p);
-    _effR[pg].push(p.r*(1-pen));
-  });
-  const pl=G.slotPlayers.filter(Boolean);
-  const gkR=avg(_effR.GK)||6;
-  const defR=avg(_effR.DEF)||6;
-  const midR=avg(_effR.MID)||6;
-  const fwdR=avg(_effR.FWD)||6;
-  const atk=fwdR*.65+midR*.35, def=defR*.70+gkR*.30;
+  const teamEval=evaluateLineup(G.slotPlayers,_formPos,G.formation,G.tactic||'balanced');
+  const grp=teamEval.groups;
+  const atk=teamEval.atk,def=teamEval.def;
 
   const tm=TACT_MOD[G.tactic||'balanced']||TACT_MOD.balanced;
   const oppTactic=_pendingMatch.oppTactic||'balanced';
@@ -5708,9 +5755,7 @@ function _runMatch(){
   let oppXG=Math.max(.10,((oppStr-def*.80)*.42+0.32)*tm.oppXG*ct[1]);
 
   // Star player bonus
-  const starP=pl.reduce((b,p)=>p.r>(b?.r||0)?p:b,null);
-  const starBonus=starP?Math.max(0,(starP.r-8.5)*0.06):0;
-  myXG=Math.min(myXG+starBonus,2.6);
+  myXG=Math.min(myXG+teamEval.starBonus,2.6);
 
   // Momentum modifier
   const momMod=(G.momentum||0)*0.03;
@@ -5718,9 +5763,7 @@ function _runMatch(){
   oppXG=Math.max(.08,Math.min(oppXG-momMod*.35,2.6));
 
   // Formation type vs opponent tactic (±4% max)
-  var _FMT_OFF={'4-2-3-1':1,'3-4-3':1};
-  var _FMT_DEF={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
-  var _fmtT=_FMT_OFF[G.formation]?'off':_FMT_DEF[G.formation]?'def':'mid';
+  var _fmtT=teamEval.fmtT;
   if(_fmtT==='off'&&oppTactic==='defend'){myXG=Math.min(myXG*1.04,2.6);oppXG=Math.max(oppXG*0.97,0.08);}
   else if(_fmtT==='off'&&oppTactic==='attack'){myXG=Math.min(myXG*1.02,2.6);oppXG=Math.min(oppXG*1.02,2.6);}
   else if(_fmtT==='def'&&oppTactic==='attack'){oppXG=Math.max(oppXG*0.96,0.08);myXG=Math.min(myXG*1.02,2.6);}
@@ -5733,15 +5776,8 @@ function _runMatch(){
 
   // r=10 positional bonus — small per-player xG modifier
   (function(){
-    var gkBonus=0,defBonus=0,midAtkBonus=0,midDefBonus=0,fwdBonus=0;
-    pl.forEach(function(p){
-      if(p.r<10)return;
-      var pg=posGroup(p.p);
-      if(pg==='GK'){gkBonus+=0.04;}
-      else if(pg==='DEF'){defBonus+=0.03;}
-      else if(pg==='MID'){midAtkBonus+=0.03;midDefBonus+=0.02;}
-      else if(pg==='FWD'){fwdBonus+=0.04;}
-    });
+    var gkBonus=teamEval.r10.gk,defBonus=teamEval.r10.def;
+    var midAtkBonus=teamEval.r10.midAtk,midDefBonus=teamEval.r10.midDef,fwdBonus=teamEval.r10.fwd;
     if(gkBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(gkBonus,0.08)));
     if(defBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(defBonus,0.09)));
     if(midAtkBonus){myXG=Math.min(myXG*(1+Math.min(midAtkBonus,0.06)),2.6);}
@@ -5773,7 +5809,7 @@ function _runMatch(){
   }
   const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
-  M={myG,oppG,myXG,oppXG,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
+  M={myG,oppG,myXG,oppXG,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
 
   // Build home XI from slot players with positions
   const _dTac=G.draftTactic||G.tactic||'balanced';

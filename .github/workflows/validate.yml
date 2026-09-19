@@ -40,9 +40,13 @@ jobs:
           node --check sw.js
           node --check game-data.js
           node --check scripts/test_game_data.js
+          node --check scripts/test_match_engine.js
 
       - name: Game data integrity tests
         run: node scripts/test_game_data.js
+
+      - name: Match engine balance tests
+        run: node scripts/test_match_engine.js
 
       - name: PHP syntax
         shell: bash

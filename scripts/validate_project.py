@@ -461,10 +461,13 @@ def validate_duel_integrity() -> None:
 
     engine_guards = {
         "engine version": "DCZ_DUEL_ENGINE_VERSION",
+        "Match Engine v2 marker": "server-v2",
         "server series simulation": "dcz_duel_simulate_series",
         "deterministic RNG": "dcz_duel_rng_float",
         "Poisson goals": "dcz_duel_poisson",
         "server penalties": "dcz_duel_penalties",
+        "occupied-slot departments": "$group = dcz_duel_pos_group($slot);",
+        "server Team Score": "'score' => (int)round(dcz_duel_avg($allEffective) * 10)",
     }
     for label, fragment in engine_guards.items():
         if fragment not in engine:
@@ -509,6 +512,8 @@ def validate_duel_integrity() -> None:
         "authoritative result consumer": "duelUseAuthoritativeResult",
         "server result required": "res.body.result",
         "server authority analytics marker": "authority:'server'",
+        "shared lineup evaluator": "evaluateLineup(team.players||[],pos",
+        "campaign Team Score": "teamScore:teamEval.score",
     }
     for label, fragment in client_guards.items():
         if fragment not in index_html:

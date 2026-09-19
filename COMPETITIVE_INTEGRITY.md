@@ -30,7 +30,7 @@ For newly created Duel drafts:
 
 After player B's verified XI is committed, the backend independently generates a private match seed and computes the authoritative best-of-3 with `duel-engine.php`. The browser consumes the official result for the existing in-app animation; it never supplies the official score.
 
-The server engine mirrors the current Duel coefficients for positional penalties, tactic/counter interactions, star/rating-10 bonuses, xG, Poisson goals and penalties. Moving Draft/result authority to the server is an integrity change, not an intentional balance change.
+The `server-v2` engine mirrors the browser Match Engine v2 rules for complete positional-fit penalties, occupied-slot departments, Team Score/fit, tactic/counter interactions, star/rating-10 bonuses, xG, Poisson goals and penalties. Deterministic parity fixtures and statistical balance guardrails protect this contract. Moving Draft/result authority to the server remains the integrity boundary.
 
 ### What the server can prove for a new Duel
 
