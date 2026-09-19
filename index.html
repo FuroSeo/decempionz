@@ -417,6 +417,8 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .draft-pick-card{background:transparent;appearance:none;-webkit-appearance:none}
 .draft-pick-card:active{transform:scale(.96);opacity:.88}
 .draft-pick-card:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
+.coach-card{appearance:none;-webkit-appearance:none;font:inherit;color:inherit}
+.coach-card:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
 .prc{background:#0e1828;border:1px solid #1e2d42;border-radius:16px;padding:28px 22px;text-align:center;width:100%;max-width:300px;animation:cardIn .28s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 14px 34px rgba(0,0,0,.38),0 2px 8px rgba(0,0,0,.22)}
 .prc::before{content:'';position:absolute;top:0;left:-15%;right:-15%;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);pointer-events:none}
 .prc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tier-c,var(--gold))}
@@ -5250,13 +5252,13 @@ function renderCoachCards(pool){
   var container=document.getElementById('d-reveal');
   if(!container)return;
   var light=document.body.getAttribute('data-theme')==='light';
-  container.innerHTML='<div class="coach-row" style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
+  container.innerHTML='<div class="coach-row" role="group" aria-labelledby="d-title" style="display:flex;gap:8px;justify-content:center;padding:4px 0">'
     +pool.map(function(coach,i){
       var compat=coachCompat(coach.pref,G.formation);
       var boostPct=[0,2,5,8][compat];
       var compatColor=compat===3?'var(--grn2)':compat===2?'#f59e0b':compat===1?'var(--mut)':'var(--red2)';
       var compatEmoji=compat===3?'🟢':compat===2?'🟡':compat===1?'🟠':'🔴';
-      return '<div class="coach-card" onclick="pickCoach('+i+')" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;'
+      return '<button type="button" class="coach-card" onclick="pickCoach('+i+')" style="background:var(--s2);border:2px solid var(--brd);border-radius:10px;'
         +'padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;'
         +'min-width:90px;flex:1;max-width:160px;text-align:center;-webkit-tap-highlight-color:transparent;transition:border-color .15s"'
         +' onmouseover="this.style.borderColor=\''+compatColor+'\'" onmouseout="this.style.borderColor=\'var(--brd)\'">'
@@ -5265,9 +5267,11 @@ function renderCoachCards(pool){
         +'<div style="font-size:.62rem;color:var(--mut);margin-top:1px">'+t('coach.pref_form')+' <strong style="color:var(--text)">'+coach.pref+'</strong></div>'
         +'<div style="font-size:.68rem;font-weight:700;color:'+compatColor+';margin-top:5px;padding:3px 9px;border-radius:20px;border:1.5px solid '+compatColor+'">'
         +compatEmoji+' +'+boostPct+'% xG</div>'
-        +'</div>';
+        +'</button>';
     }).join('')
     +'</div>';
+  var firstCoach=container.querySelector('.coach-card');
+  if(firstCoach)firstCoach.focus();
 }
 
 function pickCoach(i){

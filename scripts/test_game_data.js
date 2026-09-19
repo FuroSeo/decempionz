@@ -490,6 +490,44 @@ function validateDraftAccessibility() {
 
 validateDraftAccessibility();
 
+function validateCoachAccessibility() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf("function renderCoachCards(pool)");
+  const end = homepage.indexOf("\nfunction pickCoach(", start);
+  if (start < 0 || end < 0) {
+    error("coach: unable to locate coach-choice renderer");
+    return;
+  }
+  const renderer = homepage.slice(start, end);
+
+  if (!renderer.includes(
+    "return '<button type=\"button\" class=\"coach-card\" onclick=\"pickCoach('"
+  )) {
+    error("coach: choices must use native button semantics");
+  }
+  if (renderer.includes("return '<div class=\"coach-card\"")) {
+    error("coach: non-keyboard clickable choice returned");
+  }
+  if (!renderer.includes("+'</button>';")) {
+    error("coach: choice button is not closed correctly");
+  }
+  if (!renderer.includes(
+    "class=\"coach-row\" role=\"group\" aria-labelledby=\"d-title\""
+  )) {
+    error("coach: choice group is missing its localized accessible label");
+  }
+  if (!renderer.includes("if(firstCoach)firstCoach.focus();")) {
+    error("coach: focus is not moved to the choices after the Draft transition");
+  }
+  if (!homepage.includes(
+    ".coach-card:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}"
+  )) {
+    error("coach: keyboard focus indicator missing from choices");
+  }
+}
+
+validateCoachAccessibility();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
