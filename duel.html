@@ -47,6 +47,7 @@ a{color:inherit;text-decoration:none}
 .series-score{font-size:2.2rem;font-weight:800;letter-spacing:.05em;margin:4px 0}
 .series-score .sep{color:#6b7a8d}
 .crown{font-size:.75rem;color:#f7c23e;font-weight:600;margin-bottom:4px}
+.engine-badge{display:inline-flex;align-items:center;gap:5px;margin:2px 0 8px;padding:4px 9px;border-radius:20px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.28);color:#86efac;font-size:.62rem;font-weight:700}
 .match-list{display:flex;flex-direction:column;gap:6px;margin-top:16px}
 .match-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;background:#0d1829;border:1px solid #1e2d42;border-radius:8px;font-size:.82rem}
 .match-lbl{font-size:.62rem;font-weight:700;color:#6b7a8d;text-transform:uppercase;min-width:60px;text-align:left}
@@ -62,6 +63,12 @@ a{color:inherit;text-decoration:none}
 .squad-card.winner{border-color:rgba(247,194,62,.45)}
 .squad-nick{font-size:.9rem;font-weight:700;margin-bottom:2px}
 .squad-meta{font-size:.68rem;color:#6b7a8d;margin-bottom:10px}
+.squad-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:0 0 11px}
+.squad-metric{background:#09111e;border:1px solid #1e2d42;border-radius:7px;padding:6px 3px;text-align:center}
+.squad-metric.primary{border-color:rgba(212,175,55,.38)}
+.metric-value{display:block;font-size:.82rem;font-weight:800;color:#e8edf5;line-height:1}
+.squad-metric.primary .metric-value{color:#f7c23e}
+.metric-label{display:block;margin-top:3px;font-size:.46rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#6b7a8d}
 .squad-list{display:flex;flex-direction:column;gap:4px}
 .sq-p{display:flex;align-items:center;gap:6px;font-size:.76rem;padding:3px 0}
 .sq-p .pos-tag{font-size:.56rem;font-weight:700;padding:1px 5px;border-radius:4px;background:#1e2d42;color:#9ca3af;flex-shrink:0;min-width:30px;text-align:center}
@@ -139,9 +146,9 @@ a{color:inherit;text-decoration:none}
 <script>
 (function(){
   var L={
-    it:{sub:'Duello 1v1',load:'Caricamento duello...',err:'Duello non trovato',errBody:'Il link potrebbe essere scaduto o non valido.',challenge:'ti sfida a duello!',challengeClub:'Il {club} di {nick} ti sfida a duello!',dyn:'🏰 Dynasty',inviteBody:'Drafta la tua rosa con gli stessi vincoli e scopri chi ha costruito la squadra migliore. Serie al meglio delle 3 partite.',accept:'⚔️ Accetta il duello',waitTitle:'In attesa dello sfidante',simTitle:'Serie in corso',simBody:'Entrambe le rose sono pronte: la serie si sta giocando. Ricontrolla tra poco per il verdetto!',resume:'⚽ Riprendi la serie',waitBody:'Il tuo avversario non ha ancora giocato. Ricontrolla più tardi o rimanda il link!',copy:'📋 Copia link invito',copied:'✅ Copiato!',winner:'vince il duello',match:'Match',pens:'dcr',squads:'Le formazioni',rematch:'🔄 Rivincita',ctaTitle:'Sfida anche tu i tuoi amici',ctaBody:'Blind draft delle leggende del calcio: drafta il tuo XI, sfida un amico e scopri chi ha costruito la squadra migliore.'},
-    en:{sub:'1v1 Duel',load:'Loading duel...',err:'Duel not found',errBody:'The link may be expired or invalid.',challenge:'challenges you to a duel!',challengeClub:'{nick}’s {club} challenges you to a duel!',dyn:'🏰 Dynasty',inviteBody:'Draft your squad with the same constraints and find out who built the better team. Best-of-3 series.',accept:'⚔️ Accept the duel',waitTitle:'Waiting for the challenger',simTitle:'Series in progress',simBody:'Both squads are in: the series is being played. Check back soon for the verdict!',resume:'⚽ Resume the series',waitBody:'Your opponent has not played yet. Check back later or resend the link!',copy:'📋 Copy invite link',copied:'✅ Copied!',winner:'wins the duel',match:'Match',pens:'pens',squads:'The line-ups',rematch:'🔄 Rematch',ctaTitle:'Challenge your friends too',ctaBody:'Blind draft of football legends: draft your XI, challenge a friend and find out who built the better squad.'},
-    es:{sub:'Duelo 1v1',load:'Cargando duelo...',err:'Duelo no encontrado',errBody:'El enlace puede haber caducado o no ser válido.',challenge:'¡te reta a un duelo!',challengeClub:'¡El {club} de {nick} te reta a duelo!',dyn:'🏰 Dynasty',inviteBody:'Draftea tu plantilla con las mismas condiciones y descubre quién armó el mejor equipo. Serie al mejor de 3.',accept:'⚔️ Aceptar el duelo',waitTitle:'Esperando al retador',simTitle:'Serie en curso',simBody:'Ambas plantillas están listas: la serie se está jugando. ¡Vuelve pronto para el veredicto!',resume:'⚽ Reanudar la serie',waitBody:'Tu rival aún no ha jugado. ¡Vuelve más tarde o reenvía el enlace!',copy:'📋 Copiar enlace',copied:'✅ ¡Copiado!',winner:'gana el duelo',match:'Partido',pens:'pen',squads:'Las alineaciones',rematch:'🔄 Revancha',ctaTitle:'Reta también a tus amigos',ctaBody:'Draft ciego de leyendas del fútbol: arma tu XI, reta a un amigo y descubre quién construyó la mejor plantilla.'}
+    it:{sub:'Duello 1v1',load:'Caricamento duello...',err:'Duello non trovato',errBody:'Il link potrebbe essere scaduto o non valido.',challenge:'ti sfida a duello!',challengeClub:'Il {club} di {nick} ti sfida a duello!',dyn:'🏰 Dynasty',inviteBody:'Drafta la tua rosa con gli stessi vincoli e scopri chi ha costruito la squadra migliore. Serie al meglio delle 3 partite.',accept:'⚔️ Accetta il duello',waitTitle:'In attesa dello sfidante',simTitle:'Serie in corso',simBody:'Entrambe le rose sono pronte: la serie si sta giocando. Ricontrolla tra poco per il verdetto!',resume:'⚽ Riprendi la serie',waitBody:'Il tuo avversario non ha ancora giocato. Ricontrolla più tardi o rimanda il link!',copy:'📋 Copia link invito',copied:'✅ Copiato!',winner:'vince il duello',match:'Match',pens:'dcr',squads:'Le formazioni',rematch:'🔄 Rivincita',verified:'Risultato verificato',score:'Team Score',chem:'Intesa',fit:'Fit',attack:'Attacco',defence:'Difesa',ctaTitle:'Sfida anche tu i tuoi amici',ctaBody:'Blind draft delle leggende del calcio: drafta il tuo XI, sfida un amico e scopri chi ha costruito la squadra migliore.'},
+    en:{sub:'1v1 Duel',load:'Loading duel...',err:'Duel not found',errBody:'The link may be expired or invalid.',challenge:'challenges you to a duel!',challengeClub:'{nick}’s {club} challenges you to a duel!',dyn:'🏰 Dynasty',inviteBody:'Draft your squad with the same constraints and find out who built the better team. Best-of-3 series.',accept:'⚔️ Accept the duel',waitTitle:'Waiting for the challenger',simTitle:'Series in progress',simBody:'Both squads are in: the series is being played. Check back soon for the verdict!',resume:'⚽ Resume the series',waitBody:'Your opponent has not played yet. Check back later or resend the link!',copy:'📋 Copy invite link',copied:'✅ Copied!',winner:'wins the duel',match:'Match',pens:'pens',squads:'The line-ups',rematch:'🔄 Rematch',verified:'Verified result',score:'Team Score',chem:'Chemistry',fit:'Fit',attack:'Attack',defence:'Defence',ctaTitle:'Challenge your friends too',ctaBody:'Blind draft of football legends: draft your XI, challenge a friend and find out who built the better squad.'},
+    es:{sub:'Duelo 1v1',load:'Cargando duelo...',err:'Duelo no encontrado',errBody:'El enlace puede haber caducado o no ser válido.',challenge:'¡te reta a un duelo!',challengeClub:'¡El {club} de {nick} te reta a duelo!',dyn:'🏰 Dynasty',inviteBody:'Draftea tu plantilla con las mismas condiciones y descubre quién armó el mejor equipo. Serie al mejor de 3.',accept:'⚔️ Aceptar el duelo',waitTitle:'Esperando al retador',simTitle:'Serie en curso',simBody:'Ambas plantillas están listas: la serie se está jugando. ¡Vuelve pronto para el veredicto!',resume:'⚽ Reanudar la serie',waitBody:'Tu rival aún no ha jugado. ¡Vuelve más tarde o reenvía el enlace!',copy:'📋 Copiar enlace',copied:'✅ ¡Copiado!',winner:'gana el duelo',match:'Partido',pens:'pen',squads:'Las alineaciones',rematch:'🔄 Revancha',verified:'Resultado verificado',score:'Team Score',chem:'Química',fit:'Ajuste',attack:'Ataque',defence:'Defensa',ctaTitle:'Reta también a tus amigos',ctaBody:'Draft ciego de leyendas del fútbol: arma tu XI, reta a un amigo y descubre quién construyó la mejor plantilla.'}
   };
   var TOURN_LABELS={ucl:'🏆 Champions League',copa:'🌿 Copa Libertadores',wc:'🌍 World Cup'};
   var id=new URLSearchParams(location.search).get('id');
@@ -238,7 +245,9 @@ a{color:inherit;text-decoration:none}
         +'<span class="vs-nick'+(aWin?' winner':'')+'">'+escH(sideName(d.a))+'</span>'
         +'<span class="series-score">'+r.winsA+'<span class="sep"> – </span>'+r.winsB+'</span>'
         +'<span class="vs-nick'+(!aWin?' winner':'')+'">'+escH(sideName(d.b))+'</span>'
-        +'</div><div class="match-list">';
+        +'</div>'
+        +((d.integrity&&d.integrity.engine==='server-v3')?'<div class="engine-badge">✓ '+escH(t.verified)+' · Match Engine v3</div>':'')
+        +'<div class="match-list">';
       (r.matches||[]).forEach(function(m,i){
         var aWon=m.ga>m.gb||(m.ga===m.gb&&m.pa!==null&&m.pa>m.pb);
         var pen=(m.pa!==null&&m.pa!==undefined)?' <span class="match-pen">('+m.pa+'–'+m.pb+' '+escH(t.pens)+')</span>':'';
@@ -254,10 +263,20 @@ a{color:inherit;text-decoration:none}
       var cards='';
       [['a',d.a,aWin],['b',d.b,!aWin]].forEach(function(x){
         var team=x[1]||{};
+        var metrics=r.teams&&r.teams[x[0]]?r.teams[x[0]]:null;
         cards+='<div class="squad-card'+(x[2]?' winner':'')+'">'
           +'<div class="squad-nick">'+(x[2]?'👑 ':'')+escH(team.nick||'?')+'</div>'
-          +'<div class="squad-meta">'+(team.clubName?escH(team.clubName)+' · ':'')+escH(team.formation||'')+' · '+escH(team.tactic||'')+'</div>'
-          +'<div class="squad-list">';
+          +'<div class="squad-meta">'+(team.clubName?escH(team.clubName)+' · ':'')+escH(team.formation||'')+' · '+escH(team.tactic||'')+'</div>';
+        if(metrics){
+          cards+='<div class="squad-metrics">'
+            +'<div class="squad-metric primary"><span class="metric-value">'+metrics.score+'</span><span class="metric-label">'+escH(t.score)+'</span></div>'
+            +'<div class="squad-metric"><span class="metric-value">+'+metrics.chemistry+'%</span><span class="metric-label">'+escH(t.chem)+'</span></div>'
+            +'<div class="squad-metric"><span class="metric-value">'+metrics.fit+'%</span><span class="metric-label">'+escH(t.fit)+'</span></div>'
+            +'<div class="squad-metric"><span class="metric-value">'+Number(metrics.attack).toFixed(1)+'</span><span class="metric-label">'+escH(t.attack)+'</span></div>'
+            +'<div class="squad-metric"><span class="metric-value">'+Number(metrics.defence).toFixed(1)+'</span><span class="metric-label">'+escH(t.defence)+'</span></div>'
+            +'</div>';
+        }
+        cards+='<div class="squad-list">';
         (team.players||[]).forEach(function(p){
           cards+='<div class="sq-p"><span class="pos-tag">'+escH(p.p||'?')+'</span><span class="p-name">'+escH(p.n)+'</span><span class="p-rating">'+p.r+'</span></div>';
         });

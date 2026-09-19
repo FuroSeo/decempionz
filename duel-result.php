@@ -89,10 +89,21 @@ function dcz_bump_games_counter() {
     fclose($fp);
 }
 
-function dcz_duel_generate_authoritative_result($teamA, $teamB) {
+function dcz_duel_engine_context($team, $duelMode, $duelTournament, $strict) {
+    $mode = $duelMode === 'dynasty' ? ($team['tmode'] ?? null) : $duelTournament;
+    return [
+        'mode' => $mode,
+        'dynasty' => $duelMode === 'dynasty',
+        'strict' => (bool)$strict,
+    ];
+}
+
+function dcz_duel_generate_authoritative_result($teamA, $teamB, $duelMode, $duelTournament, $strictChemistry = true) {
+    $contextA = dcz_duel_engine_context($teamA, $duelMode, $duelTournament, $strictChemistry);
+    $contextB = dcz_duel_engine_context($teamB, $duelMode, $duelTournament, $strictChemistry);
     for ($attempt = 0; $attempt < 3; $attempt++) {
         $seed = random_int(1, 0x7ffffffe);
-        $result = dcz_duel_simulate_series($teamA, $teamB, $seed);
+        $result = dcz_duel_simulate_series($teamA, $teamB, $seed, $contextA, $contextB);
         $clean = dcz_sanitize_result($result);
         if ($clean !== null) {
             return ['result' => $clean, 'seed' => $seed];
@@ -242,7 +253,7 @@ if ($phase === 'team') {
         echo json_encode(['error' => 'draft verification failed']); exit;
     }
 
-    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team);
+    $generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $team, $duelMode, $duelTournament, true);
     if ($generated === null) {
         flock($fp, LOCK_UN); fclose($fp);
         http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;
@@ -299,7 +310,7 @@ if ($status !== 'simulating' || !is_array($d['b'] ?? null)) {
     http_response_code(409); echo json_encode(['error' => 'duel not simulating', 'status' => $status ?: '?']); exit;
 }
 
-$generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $d['b']);
+$generated = dcz_duel_generate_authoritative_result($d['a'] ?? null, $d['b'], $duelMode, $duelTournament, false);
 if ($generated === null) {
     flock($fp, LOCK_UN); fclose($fp);
     http_response_code(500); echo json_encode(['error' => 'simulation failed']); exit;

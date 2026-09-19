@@ -10,6 +10,10 @@ function dcz_plain_label($value, $maxLen) {
     return str_replace(['<', '>'], '', $s);
 }
 
+function dcz_duel_js_unescape($value) {
+    return str_replace(["\\\\", "\\'"], ["\\", "'"], (string)$value);
+}
+
 /* Sanitizza un blocco squadra {nick, formation, tactic, players[11]}.
    Ogni giocatore nuovo deve portare anche teamId: serve al backend per verificare
    nome/posizione/rating contro la rosa storica canonica in game-data.js. */
@@ -108,10 +112,29 @@ function dcz_duel_dataset_registry($path = null) {
 
         if (!preg_match('/^\s*([A-Za-z0-9_]+):\{/', $line, $idMatch)) continue;
         if (!preg_match("/\bclub:'([a-z0-9_]+)'/", $line, $clubMatch)) continue;
+        if (!preg_match('/\bname:\'((?:\\\\.|[^\'\\\\])*)\'/', $line, $nameMatch)) continue;
+        if (!preg_match('/\bcountry:\'((?:\\\\.|[^\'\\\\])*)\'/', $line, $countryMatch)) continue;
+        if (!preg_match('/players:\[(.*)\]\},?\s*$/u', $line, $playersMatch)) continue;
+
+        $players = [];
+        preg_match_all('/\{n:\'((?:\\\\.|[^\'\\\\])*)\',p:\'([A-Z]+)\',r:(\d+)(?:,nat:\'((?:\\\\.|[^\'\\\\])*)\')?\}/u', $playersMatch[1], $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $player = [
+                'n' => dcz_duel_js_unescape($match[1]),
+                'p' => $match[2],
+                'r' => (int)$match[3],
+            ];
+            if (isset($match[4]) && $match[4] !== '') $player['nat'] = dcz_duel_js_unescape($match[4]);
+            $players[] = $player;
+        }
+        if (!$players) continue;
 
         $registry[$mode][$idMatch[1]] = [
             'mode' => $mode,
+            'name' => dcz_duel_js_unescape($nameMatch[1]),
+            'country' => dcz_duel_js_unescape($countryMatch[1]),
             'club' => $clubMatch[1],
+            'players' => $players,
             'raw'  => $line,
         ];
     }
@@ -140,6 +163,27 @@ function dcz_duel_player_dataset_marker($player) {
     return "{n:'" . $name . "',p:'" . $player['p'] . "',r:" . (int)$player['r'];
 }
 
+/* Restituisce solo metadati ricostruiti dalla sorgente canonica. I campi nat/club
+   eventualmente inviati dal browser non partecipano mai al calcolo ufficiale. */
+function dcz_duel_canonical_player_meta($registry, $player, $expectedMode = null) {
+    if (!is_array($player)) return null;
+    $source = dcz_duel_dataset_source($registry, (string)($player['teamId'] ?? ''), $expectedMode);
+    if (!is_array($source)) return null;
+
+    foreach (($source['players'] ?? []) as $canonical) {
+        if (($canonical['n'] ?? null) !== ($player['n'] ?? null)) continue;
+        if (($canonical['p'] ?? null) !== ($player['p'] ?? null)) continue;
+        if ((int)($canonical['r'] ?? 0) !== (int)($player['r'] ?? 0)) continue;
+        return [
+            'nat' => (string)($canonical['nat'] ?? ($source['country'] ?? '')),
+            'club' => (string)($source['club'] ?? ''),
+            'clubName' => (string)($source['name'] ?? ($source['club'] ?? '')),
+            'mode' => (string)($source['mode'] ?? ''),
+        ];
+    }
+    return null;
+}
+
 /* Verifica che ogni giocatore esista davvero nella teamId dichiarata e che la sorgente
    appartenga al torneo/club consentito. Non prova ancora la sequenza di carte mostrate
    dal browser: quella resta una limitazione documentata del draft client-side. */
@@ -155,8 +199,7 @@ function dcz_duel_validate_team_dataset($team, $expectedMode = null, $expectedCl
 
         if ($expectedClub !== null && $source['club'] !== $expectedClub) return false;
 
-        $marker = dcz_duel_player_dataset_marker($player);
-        if (strpos($source['raw'], $marker) === false) return false;
+        if (dcz_duel_canonical_player_meta($registry, $player, $expectedMode) === null) return false;
     }
     return true;
 }
@@ -173,6 +216,21 @@ function dcz_sanitize_pen_seq($seq, $expectedSum) {
     }
     if ($sum !== $expectedSum) return null;
     return $clean;
+}
+
+function dcz_sanitize_duel_team_metrics($metrics) {
+    if (!is_array($metrics)) return null;
+    foreach (['score','fit','chemistry','attack','defence'] as $key) {
+        if (!isset($metrics[$key]) || !is_numeric($metrics[$key])) return null;
+    }
+    $score = (int)$metrics['score'];
+    $fit = (int)$metrics['fit'];
+    $chemistry = (int)$metrics['chemistry'];
+    $attack = round((float)$metrics['attack'], 2);
+    $defence = round((float)$metrics['defence'], 2);
+    if ($score < 0 || $score > 100 || $fit < 0 || $fit > 100 || $chemistry < 0 || $chemistry > 6) return null;
+    if ($attack < 0 || $attack > 15 || $defence < 0 || $defence > 15) return null;
+    return ['score'=>$score, 'fit'=>$fit, 'chemistry'=>$chemistry, 'attack'=>$attack, 'defence'=>$defence];
 }
 
 /* Valida/canonicalizza una serie best-of-3. Usato sui risultati prodotti dal motore server
@@ -219,12 +277,19 @@ function dcz_sanitize_result($r) {
     $winner = $winsA > $winsB ? 'a' : 'b';
     if (($r['winner'] ?? '') !== $winner) return null;
 
-    return [
+    $out = [
         'matches' => $clean,
         'winsA'   => $winsA,
         'winsB'   => $winsB,
         'winner'  => $winner,
     ];
+    if (isset($r['teams'])) {
+        $metricsA = dcz_sanitize_duel_team_metrics($r['teams']['a'] ?? null);
+        $metricsB = dcz_sanitize_duel_team_metrics($r['teams']['b'] ?? null);
+        if ($metricsA === null || $metricsB === null) return null;
+        $out['teams'] = ['a'=>$metricsA, 'b'=>$metricsB];
+    }
+    return $out;
 }
 
 /* Mantiene al massimo $max file duello sul server. */

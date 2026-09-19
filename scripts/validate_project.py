@@ -414,6 +414,7 @@ def validate_duel_integrity() -> None:
     endpoint = read("duel-result.php")
     create = read("duel-create.php")
     join = read("duel-join.php")
+    duel_page = read("duel.html")
     index_html = read("index.html")
     integrity_doc = read("COMPETITIVE_INTEGRITY.md")
 
@@ -461,13 +462,16 @@ def validate_duel_integrity() -> None:
 
     engine_guards = {
         "engine version": "DCZ_DUEL_ENGINE_VERSION",
-        "Match Engine v2 marker": "server-v2",
+        "Match Engine v3 marker": "server-v3",
         "server series simulation": "dcz_duel_simulate_series",
         "deterministic RNG": "dcz_duel_rng_float",
         "Poisson goals": "dcz_duel_poisson",
         "server penalties": "dcz_duel_penalties",
         "occupied-slot departments": "$group = dcz_duel_pos_group($slot);",
         "server Team Score": "'score' => (int)round(dcz_duel_avg($allEffective) * 10)",
+        "canonical Chemistry": "dcz_duel_team_chemistry",
+        "symmetric Chemistry multiplier": "$xa *= (float)($a['chemistry']['mul'] ?? 1.0)",
+        "official public metrics": "dcz_duel_public_team_metrics",
     }
     for label, fragment in engine_guards.items():
         if fragment not in engine:
@@ -500,6 +504,11 @@ def validate_duel_integrity() -> None:
         fail("Duel public state endpoint must not serialize raw server state")
     if "'result'     => null" not in join:
         fail("Simulating Duel response must hide server-internal finalization state")
+    if "'teams'" in join.split("/* waiting: esporre solo i vincoli", 1)[-1]:
+        fail("Waiting Duel response must not reveal official team metrics")
+    for marker in ("Match Engine v3", "r.teams", "metrics.chemistry", "engine-badge"):
+        if marker not in duel_page:
+            fail(f"Public Duel verdict metrics missing: {marker}")
 
     client_guards = {
         "player source sent by draft": "teamId:p.teamId||''",
@@ -597,6 +606,7 @@ def validate_inline_javascript(filename: str, label: str) -> None:
 def validate_html_javascript() -> None:
     """Syntax-check the production app plus recovered local-only HTML tools."""
     validate_inline_javascript("index.html", "Production app")
+    validate_inline_javascript("duel.html", "Public Duel page")
     for filename in ("dataset-editor.html", "_studio.html"):
         if (ROOT / filename).exists():
             validate_inline_javascript(filename, "Recovered tool")
