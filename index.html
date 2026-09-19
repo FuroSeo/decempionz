@@ -653,6 +653,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   background:var(--s2);border:1px solid var(--brd);border-radius:8px;
   color:var(--text);font-size:.72rem;font-weight:700;cursor:pointer;text-align:center}
 .modal-legal-close:hover{background:var(--gold);color:#000}
+.modal-legal-close:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 /* ── First-visit banner ── */
 #banner-disclaimer{position:fixed;bottom:0;left:0;right:0;background:var(--s1);
   border-top:1px solid var(--brd);padding:10px 16px;z-index:9998;
@@ -7150,6 +7151,22 @@ document.addEventListener('DOMContentLoaded',function(){
 // ── Legal / Disclaimer ──────────────────────────────────────────────────────
 function openLegal(){document.getElementById('modal-legal').classList.add('open');}
 function closeLegal(){document.getElementById('modal-legal').classList.remove('open');}
+var _legalModalReturnFocus=null;
+function _openLegalModal(id){
+  var modal=document.getElementById(id);
+  if(!modal)return;
+  _legalModalReturnFocus=document.activeElement;
+  modal.style.display='flex';
+  var closeBtn=modal.querySelector('.modal-legal-close');
+  if(closeBtn)closeBtn.focus();
+}
+function _closeLegalModal(id){
+  var modal=document.getElementById(id);
+  if(modal)modal.style.display='none';
+  var trigger=_legalModalReturnFocus;
+  _legalModalReturnFocus=null;
+  if(trigger&&document.contains(trigger)&&typeof trigger.focus==='function')trigger.focus();
+}
 function openFanProject(){
   var lang=G.lang||'it';
   var c={
@@ -7158,15 +7175,15 @@ function openFanProject(){
     es:{title:'⚽ Fan Project',s1h:'¿Qué es Decempionz?',s1p:"Decempionz es un proyecto fan gratuito y no oficial, nacido de la pasión por la historia del fútbol internacional. Celebra décadas de Champions League, Copa Libertadores y Mundiales a través de un juego de draft estratégico. No está afiliado, patrocinado ni avalado por la UEFA, la FIFA, la CONMEBOL ni ningún club de fútbol.",s2h:'Uso de nombres',s2p:"Los nombres de jugadores, entrenadores y equipos se utilizan exclusivamente con fines de entretenimiento cultural e histórico, sin propósito comercial. No se reproduce ningún dato oficial protegido por derechos de autor.",s3h:'Contacto',s3p:'Para reportes, sugerencias o colaboraciones:',s3btn:'📬 Abrir Contactos',close:'Cerrar'}
   }[lang];
   document.getElementById('modal-fanproject').querySelector('.modal-sheet').innerHTML=
-    '<div class="modal-title">'+c.title+'</div>'
+    '<div class="modal-title" id="modal-fanproject-title">'+c.title+'</div>'
     +'<div class="modal-section"><h3>'+c.s1h+'</h3><p>'+c.s1p+'</p></div>'
     +'<div class="modal-section"><h3>'+c.s2h+'</h3><p>'+c.s2p+'</p></div>'
     +'<div class="modal-section"><h3>'+c.s3h+'</h3><p style="margin-bottom:8px">'+c.s3p+'</p>'
     +'<button class="btn btn-ghost" style="font-size:.8rem;width:100%" onclick="closeFanProject();setTimeout(openContatti,150)">'+c.s3btn+'</button></div>'
     +'<button class="modal-legal-close" onclick="closeFanProject()">'+c.close+'</button>';
-  document.getElementById('modal-fanproject').style.display='flex';
+  _openLegalModal('modal-fanproject');
 }
-function closeFanProject(){document.getElementById('modal-fanproject').style.display='none';}
+function closeFanProject(){_closeLegalModal('modal-fanproject');}
 function openContatti(){
   var lang=G.lang||'it';
   var c={
@@ -7175,14 +7192,14 @@ function openContatti(){
     es:{title:'📬 Contactos',close:'Cerrar'}
   }[lang];
   document.getElementById('modal-contatti').querySelector('.modal-sheet').innerHTML=
-    '<div class="modal-title">'+c.title+'</div>'
+    '<div class="modal-title" id="modal-contatti-title">'+c.title+'</div>'
     +'<div class="modal-section"><h3>Email</h3><p><a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p></div>'
     +'<div class="modal-section"><h3>Reddit</h3><p><a href="https://www.reddit.com/user/CurrencyPlane2186/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">u/CurrencyPlane2186</a></p></div>'
     +'<div class="modal-section"><h3>TikTok</h3><p><a href="https://www.tiktok.com/@decempionzdraftgame" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">@decempionzdraftgame</a></p></div>'
     +'<button class="modal-legal-close" onclick="closeContatti()">'+c.close+'</button>';
-  document.getElementById('modal-contatti').style.display='flex';
+  _openLegalModal('modal-contatti');
 }
-function closeContatti(){document.getElementById('modal-contatti').style.display='none';}
+function closeContatti(){_closeLegalModal('modal-contatti');}
 function openPrivacy(){
   var lang=G.lang||'it';
   var ga_link='<a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:none">'+(lang==='it'?'Privacy Policy':lang==='es'?'Política de Privacidad':'Privacy Policy')+'</a>';
@@ -7216,7 +7233,7 @@ function openPrivacy(){
       s7h:'Actualizaciones',s7p:'Esta política puede actualizarse ante cambios en el juego o en la normativa aplicable. Última actualización: septiembre de 2026.',close:'Cerrar'}
   }[lang];
   document.getElementById('modal-privacy').querySelector('.modal-sheet').innerHTML=
-    '<div class="modal-title">'+c.title+'</div>'
+    '<div class="modal-title" id="modal-privacy-title">'+c.title+'</div>'
     +'<div class="modal-section"><h3>'+c.s1h+'</h3><p>'+c.s1p+'</p></div>'
     +'<div class="modal-section"><h3>'+c.s2h+'</h3><p>'+c.s2p+'</p></div>'
     +'<div class="modal-section"><h3>'+c.s3h+'</h3><p>'+c.s3p+'</p></div>'
@@ -7225,9 +7242,18 @@ function openPrivacy(){
     +'<div class="modal-section"><h3>'+c.s6h+'</h3><p>'+c.s6p+'</p></div>'
     +'<div class="modal-section"><h3>'+c.s7h+'</h3><p>'+c.s7p+'</p></div>'
     +'<button class="modal-legal-close" onclick="closePrivacy()">'+c.close+'</button>';
-  document.getElementById('modal-privacy').style.display='flex';
+  _openLegalModal('modal-privacy');
 }
-function closePrivacy(){document.getElementById('modal-privacy').style.display='none';}
+function closePrivacy(){_closeLegalModal('modal-privacy');}
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  var privacy=document.getElementById('modal-privacy');
+  var contatti=document.getElementById('modal-contatti');
+  var fanProject=document.getElementById('modal-fanproject');
+  if(privacy&&privacy.style.display==='flex'){e.preventDefault();closePrivacy();return;}
+  if(contatti&&contatti.style.display==='flex'){e.preventDefault();closeContatti();return;}
+  if(fanProject&&fanProject.style.display==='flex'){e.preventDefault();closeFanProject();}
+});
 function closeBanner(){
   document.getElementById('banner-disclaimer').style.display='none';
   try{localStorage.setItem('dcz_disclaimer','1');}catch(e){}
@@ -9048,9 +9074,9 @@ if('serviceWorker' in navigator){
     </div>
   </div>
 </div>
-<div id="modal-fanproject" class="modal-overlay" onclick="closeFanProject()">
+<div id="modal-fanproject" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-fanproject-title" onclick="closeFanProject()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-title">⚽ Fan Project</div>
+    <div class="modal-title" id="modal-fanproject-title">⚽ Fan Project</div>
     <div class="modal-section">
       <h3>Cos'è Decempionz?</h3>
       <p>Decempionz è un progetto fan non ufficiale e gratuito, nato dalla passione per la storia del calcio internazionale. Celebra decenni di Champions League, Copa Libertadores e Mondiali attraverso un gioco di draft strategico. Non è affiliato, sponsorizzato né approvato da UEFA, FIFA, CONMEBOL o da alcun club calcistico.</p>
@@ -9069,9 +9095,9 @@ if('serviceWorker' in navigator){
 </div>
 
 <!-- Modal: Contatti -->
-<div id="modal-contatti" class="modal-overlay" onclick="closeContatti()">
+<div id="modal-contatti" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-contatti-title" onclick="closeContatti()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-title">📬 Contatti</div>
+    <div class="modal-title" id="modal-contatti-title">📬 Contatti</div>
     <div class="modal-section">
       <h3>Email</h3>
       <p><a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
@@ -9089,9 +9115,9 @@ if('serviceWorker' in navigator){
 </div>
 
 <!-- Modal: Privacy -->
-<div id="modal-privacy" class="modal-overlay" onclick="closePrivacy()">
+<div id="modal-privacy" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-privacy-title" onclick="closePrivacy()">
   <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-title">🔒 Privacy Policy</div>
+    <div class="modal-title" id="modal-privacy-title">🔒 Privacy Policy</div>
     <div class="modal-section">
       <h3>Titolare del trattamento</h3>
       <p>Il titolare del trattamento è il creatore del progetto fan Decempionz, contattabile all'indirizzo: <a href="mailto:copyfuro@gmail.com" style="color:var(--gold);text-decoration:none">copyfuro@gmail.com</a></p>
