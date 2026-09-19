@@ -634,8 +634,10 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 /* ── Legal footer ── */
 .legal-footer{text-align:center;padding:12px 16px 18px;font-size:.58rem;color:var(--mut);
   border-top:1px solid var(--brd);margin-top:16px;line-height:1.8}
-.legal-footer a{color:var(--mut);text-decoration:underline;cursor:pointer}
-.legal-footer a:hover{color:var(--gold)}
+.legal-footer a,.legal-footer .legal-action{color:var(--mut);text-decoration:underline;cursor:pointer}
+.legal-footer .legal-action{border:0;padding:0;background:none;font:inherit}
+.legal-footer a:hover,.legal-footer .legal-action:hover{color:var(--gold)}
+.legal-footer a:focus-visible,.legal-footer .legal-action:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 /* ── Legal modal ── */
 #modal-legal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;
   display:none;align-items:center;justify-content:center;padding:16px}
@@ -1002,9 +1004,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
   <div class="legal-footer">
     © 2026 Decempionz &nbsp;·&nbsp; <span onclick="_devClick()" title="" style="color:var(--mut);font-size:.58rem;cursor:default">v<span id="game-version"></span></span> &nbsp;·&nbsp;
-    <a onclick="showScreen('screen-howto')" data-i18n="home.howtoplay_btn">Come si gioca</a> &nbsp;·&nbsp; <a onclick="openFanProject()">Fan Project</a> &nbsp;·&nbsp;
-    <a onclick="openPrivacy()">Privacy</a> &nbsp;·&nbsp;
-    <a onclick="openContatti()">Contatti</a> &nbsp;·&nbsp;
+    <button type="button" class="legal-action" onclick="showScreen('screen-howto')" data-i18n="home.howtoplay_btn">Come si gioca</button> &nbsp;·&nbsp; <button type="button" class="legal-action" onclick="openFanProject()">Fan Project</button> &nbsp;·&nbsp;
+    <button type="button" class="legal-action" onclick="openPrivacy()">Privacy</button> &nbsp;·&nbsp;
+    <button type="button" class="legal-action" onclick="openContatti()">Contatti</button> &nbsp;·&nbsp;
     <a href="about.html" target="_blank">About</a> &nbsp;·&nbsp;
     <a href="rose/" target="_blank">Rose</a> &nbsp;·&nbsp;
     <a href="ucl.html" target="_blank">UCL</a> &nbsp;·&nbsp;
