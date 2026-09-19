@@ -6,7 +6,7 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'duel-engine.php') {
     http_response_code(403); exit;
 }
 
-const DCZ_DUEL_ENGINE_VERSION = 'server-v1';
+const DCZ_DUEL_ENGINE_VERSION = 'server-v2';
 
 function dcz_duel_form_positions($formation, $tactic) {
     static $formations = [
@@ -68,27 +68,31 @@ function dcz_duel_form_positions($formation, $tactic) {
 function dcz_duel_pos_group($pos) {
     /* Parità intenzionale con posGroup() nel client corrente. */
     if ($pos === 'GK') return 'GK';
-    if (in_array($pos, ['CB','RB','LB'], true)) return 'DEF';
-    if (in_array($pos, ['CM','CDM','CAM','RM','LM'], true)) return 'MID';
+    if (in_array($pos, ['CB','RB','LB','LWB','RWB','SW','DC','DF'], true)) return 'DEF';
+    if (in_array($pos, ['CM','CDM','CAM','AM','RM','LM','DM','MF'], true)) return 'MID';
     return 'FWD';
 }
 
 function dcz_duel_slot_penalty($slotPos, $playerPos) {
     if ($slotPos === $playerPos) return 0.0;
-    $left = ['LB','LWB'];
-    $right = ['RB','RWB'];
-    $center = ['CB','SW','DC'];
-    $isLeftSlot = in_array($slotPos, $left, true);
-    $isRightSlot = in_array($slotPos, $right, true);
-    $isCBSlot = in_array($slotPos, $center, true);
-    $isLeftP = in_array($playerPos, $left, true);
-    $isRightP = in_array($playerPos, $right, true);
-    $isCBP = in_array($playerPos, $center, true);
-    $isFullbackP = $isLeftP || $isRightP;
-    if (($isLeftSlot && $isRightP) || ($isRightSlot && $isLeftP)) return 0.08;
-    if ($isCBSlot && $isFullbackP) return 0.12;
-    if (($isLeftSlot || $isRightSlot) && $isCBP) return 0.18;
-    return 0.0;
+    static $penalties = [
+        'CB'=>['LB'=>0.12,'RB'=>0.12,'LWB'=>0.12,'RWB'=>0.12],
+        'RB'=>['RWB'=>0.04,'LB'=>0.08,'LWB'=>0.08,'CB'=>0.18],
+        'LB'=>['LWB'=>0.04,'RB'=>0.08,'RWB'=>0.08,'CB'=>0.18],
+        'RWB'=>['RB'=>0.04,'LWB'=>0.08],
+        'LWB'=>['LB'=>0.04,'RWB'=>0.08],
+        'CDM'=>['CM'=>0.06,'CB'=>0.10],
+        'CM'=>['CDM'=>0.06],
+        'CAM'=>['SS'=>0.06,'RW'=>0.10,'LW'=>0.10],
+        'RM'=>['LM'=>0.08,'RW'=>0.06,'LW'=>0.12],
+        'LM'=>['RM'=>0.08,'LW'=>0.06,'RW'=>0.12],
+        'RW'=>['LW'=>0.08,'RM'=>0.06,'LM'=>0.12,'CAM'=>0.08,'SS'=>0.06],
+        'LW'=>['RW'=>0.08,'LM'=>0.06,'RM'=>0.12,'CAM'=>0.08,'SS'=>0.06],
+        'ST'=>['CF'=>0.04,'SS'=>0.06],
+        'CF'=>['ST'=>0.04,'SS'=>0.04],
+        'SS'=>['ST'=>0.06,'CF'=>0.06,'CAM'=>0.06,'RW'=>0.08,'LW'=>0.08],
+    ];
+    return $penalties[$slotPos][$playerPos] ?? 0.25;
 }
 
 function dcz_duel_avg($values) {
@@ -100,15 +104,29 @@ function dcz_duel_team_eval($team) {
     if (count($positions) !== 11) return null;
     $groups = ['GK'=>[], 'DEF'=>[], 'MID'=>[], 'FWD'=>[]];
     $effective = ['GK'=>[], 'DEF'=>[], 'MID'=>[], 'FWD'=>[]];
+    $allEffective = [];
+    $penaltyTotal = 0.0;
+    $starRating = 0.0;
+    $r10 = ['gk'=>0.0, 'def'=>0.0, 'midAtk'=>0.0, 'midDef'=>0.0, 'fwd'=>0.0];
     foreach (($team['players'] ?? []) as $i => $p) {
         if (!is_array($p)) return null;
         $slot = $positions[$i] ?? ($p['p'] ?? '');
         $natural = (string)($p['p'] ?? '');
         $rating = (float)($p['r'] ?? 0);
         $penalty = dcz_duel_slot_penalty($slot, $natural);
-        $group = dcz_duel_pos_group($natural);
+        $group = dcz_duel_pos_group($slot);
+        $effectiveRating = $rating * (1.0 - $penalty);
         $groups[$group][] = $p;
-        $effective[$group][] = $rating * (1.0 - $penalty);
+        $effective[$group][] = $effectiveRating;
+        $allEffective[] = $effectiveRating;
+        $penaltyTotal += $penalty;
+        if ($rating > $starRating) $starRating = $rating;
+        if ($rating >= 10) {
+            if ($group === 'GK') $r10['gk'] += 0.04;
+            elseif ($group === 'DEF') $r10['def'] += 0.03;
+            elseif ($group === 'MID') { $r10['midAtk'] += 0.03; $r10['midDef'] += 0.02; }
+            else $r10['fwd'] += 0.04;
+        }
     }
     if (array_sum(array_map('count', $effective)) !== 11) return null;
 
@@ -116,19 +134,6 @@ function dcz_duel_team_eval($team) {
     $defR = dcz_duel_avg($effective['DEF']) ?: 6.0;
     $midR = dcz_duel_avg($effective['MID']) ?: 6.0;
     $fwdR = dcz_duel_avg($effective['FWD']) ?: 6.0;
-
-    $starRating = 0.0;
-    $r10 = ['gk'=>0.0, 'def'=>0.0, 'midAtk'=>0.0, 'midDef'=>0.0, 'fwd'=>0.0];
-    foreach ($team['players'] as $p) {
-        $rating = (float)$p['r'];
-        if ($rating > $starRating) $starRating = $rating;
-        if ($rating < 10) continue;
-        $group = dcz_duel_pos_group($p['p']);
-        if ($group === 'GK') $r10['gk'] += 0.04;
-        elseif ($group === 'DEF') $r10['def'] += 0.03;
-        elseif ($group === 'MID') { $r10['midAtk'] += 0.03; $r10['midDef'] += 0.02; }
-        else $r10['fwd'] += 0.04;
-    }
 
     $offensiveForms = ['4-2-3-1'=>true, '3-4-3'=>true];
     $defensiveForms = ['5-3-2'=>true, '5-4-1'=>true, '4-5-1'=>true, '3-6-1'=>true];
@@ -142,6 +147,9 @@ function dcz_duel_team_eval($team) {
         'r10' => $r10,
         'tactic' => in_array($team['tactic'] ?? '', ['attack','balanced','defend'], true) ? $team['tactic'] : 'balanced',
         'fmtT' => $fmtType,
+        'score' => (int)round(dcz_duel_avg($allEffective) * 10),
+        'fit' => (int)round((1.0 - $penaltyTotal / 11.0) * 100),
+        'lines' => ['GK'=>$gkR, 'DEF'=>$defR, 'MID'=>$midR, 'FWD'=>$fwdR],
     ];
 }
 
@@ -228,7 +236,7 @@ function dcz_duel_sim_match($a, $b, &$state) {
     $xb = max($floor, min($xb, $cap));
     $ga = dcz_duel_poisson($xa, $state);
     $gb = dcz_duel_poisson($xb, $state);
-    $match = ['ga'=>$ga, 'gb'=>$gb, 'pa'=>null, 'pb'=>null];
+    $match = ['ga'=>$ga, 'gb'=>$gb, 'pa'=>null, 'pb'=>null, 'xa'=>$xa, 'xb'=>$xb];
     if ($ga === $gb) {
         $pen = dcz_duel_penalties($state);
         $match['pa'] = $pen['a']; $match['pb'] = $pen['b'];

@@ -1,9 +1,9 @@
 # Decempionz — Game Manual
 
-**App version:** 5.16.3  
-**Last updated:** 2026-09-18  
-**Production:** `https://decempionz.com/`  
-**Repository:** `FuroSeo/decempionz` (public)  
+**App version:** 5.17.0
+**Last updated:** 2026-09-19
+**Production:** `https://decempionz.com/`
+**Repository:** `FuroSeo/decempionz` (public)
 **Production branch:** `main`
 
 This is the canonical functional record of the current Decempionz project. Update it in the same PR whenever gameplay, rules, modes, scoring, datasets, Daily/Weekly, Duel, Dynasty, progression or significant UX changes. Purely technical changes must state `No manual impact` in the PR.
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.17.0 — Match Engine v2** — positional fit now covers every supported adaptation, ratings and elite bonuses belong to the occupied slot department, campaign and browser Duel share one lineup evaluator, and the Draft exposes Team Score / attack / defence / fit. The authoritative PHP Duel engine uses the same v2 rules and is protected by deterministic and statistical balance tests.
 - **5.16.3** — emergency draft fill guarantees an XI of 11 even when slot-compatible players are exhausted; positional penalties still apply to emergency fills.
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
 - **5.16.1** — Dev Panel extended with Daily/Chemistry/tutorial/trophy/duel utilities; local `_studio.html` asset generator introduced.
@@ -93,11 +94,18 @@ The standard draft builds an XI around formation slots. Cards are generated from
 Key rules:
 
 - natural-position/slot compatibility is defined centrally (`SLOT_COMPAT` / related helpers);
-- off-role use is allowed where supported but applies a positional penalty through `slotPenalty`;
+- off-role use is allowed where supported but applies a positional penalty through `slotPenalty`; every compatible adaptation has a non-zero cost from 4% to 18%, while emergency incompatible fills pay 25%;
 - rerolls depend on difficulty;
 - discarded draft options do not automatically return to the pool;
 - GK selection has reserve/cap safeguards so the draft does not become blocked;
 - `finalizeDraft` contains an emergency second pass so a campaign always starts with 11 players even when strict compatibility is exhausted.
+
+The live Draft panel exposes four engine-derived values:
+
+- **Team Score** — average effective rating after positional penalties, scaled to 0–100;
+- **Attack** — weighted forward/midfield rating;
+- **Defence** — weighted defence/goalkeeper rating;
+- **Position Fit** — average retained rating after all adaptations, expressed as a percentage.
 
 Blind Draft intentionally hides information according to the mode and must not accidentally reveal information added by normal Draft UX improvements.
 
@@ -136,6 +144,10 @@ TACT_MOD = {
 A counter matrix (`COUNTER_MOD`) provides rock-paper-scissors interactions between tactical choices.
 
 Other match inputs include positional penalties, coach boost, Chemistry, difficulty/opponent modifiers and Momentum where applicable.
+
+Match Engine v2 evaluates a player inside the department of the occupied formation slot, not the natural-position department. A winger adapted to RM therefore contributes to midfield; a fullback adapted to CB contributes to defence. Rating-10 positional bonuses follow the same slot-based rule. Browser campaign and browser Duel both use `evaluateLineup(...)`; the server-authoritative Duel mirrors the same matrix in `dcz_duel_team_eval(...)`.
+
+Supported off-role penalties are configured centrally: light adjacent moves (for example RB→RWB or ST→CF) cost 4%; common line adaptations generally cost 6–12%; fullback/centre-back structural mismatches cost up to 18%. Any emergency assignment outside `SLOT_COMPAT` costs 25%.
 
 Drawn knockout matches can proceed to penalties. Penalty-shootout labels are localized.
 
@@ -215,7 +227,7 @@ When A creates the Duel, or B commits the responding squad, the submitted slot-o
 
 The anti-reveal rule remains: player B does not see player A's full XI before committing B's own verified Draft. After B is committed, the backend generates a private match seed and computes the authoritative best-of-3 under the Duel-file lock. The browser receives that official result and uses it for the normal in-app match animation; client-generated scores are never authoritative.
 
-The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties. Moving Draft and result authority server-side is an integrity change, not an intentional balance change.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, occupied-slot departments, Team Score/fit, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties. Engine version `server-v2` marks the Match Engine v2 positional-fit rules. Moving Draft/result authority server-side remains an integrity boundary; balance changes require deterministic fixtures and statistical guardrails.
 
 For a fully new Duel, the backend can therefore establish the exact card offers, rerolls, accepted players, final slot order, canonical player sources and official match result without requiring accounts. Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can still be finalized with a fresh server result, and a historical waiting Duel whose A-side predates server Draft sessions can complete with mixed legacy integrity metadata.
 
@@ -318,7 +330,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.16.4`.
+Current cache namespace: `decempionz-v5.17.0`.
 
 Rules:
 
@@ -337,8 +349,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.16.3**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.16.4**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.17.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.17.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
