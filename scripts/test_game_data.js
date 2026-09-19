@@ -683,6 +683,76 @@ function validateShareModalAccessibility() {
 
 validateShareModalAccessibility();
 
+function validateShareFlowLocalization() {
+  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const start = homepage.indexOf("function _shareGeneratedCopy(lang)");
+  const end = homepage.indexOf("\nfunction submitToHoF()", start);
+  if (start < 0 || end < 0) {
+    error("share localization: unable to locate share flow");
+    return;
+  }
+  const shareFlow = homepage.slice(start, end);
+  const translationKeys = [
+    "share.download", "share.native", "share.copy", "share.save_link",
+    "share.saving", "share.retry", "share.link_hint", "share.link_input",
+    "share.copy_link", "share.copied"
+  ];
+  for (const key of translationKeys) {
+    const occurrences = homepage.split("'" + key + "':").length - 1;
+    if (occurrences !== 3) {
+      error("share localization: expected IT/EN/ES values for " + key + ", found " + occurrences);
+    }
+  }
+  for (const binding of [
+    'data-i18n="share.download"',
+    'data-i18n="share.native"',
+    'data-i18n="share.copy"',
+    'data-i18n="share.save_link"',
+    'data-i18n="share.link_hint"',
+    'data-i18n-aria-label="share.link_input"',
+    'data-i18n-aria-label="share.copy_link"'
+  ]) {
+    if (!homepage.includes(binding)) {
+      error("share localization: missing markup binding " + binding);
+    }
+  }
+  for (const dynamicUse of [
+    "t('share.save_link')",
+    "t('share.saving')",
+    "t('share.retry')",
+    "t('share.copied')"
+  ]) {
+    if (!shareFlow.includes(dynamicUse)) {
+      error("share localization: missing dynamic localized state " + dynamicUse);
+    }
+  }
+  for (const spanishCopy of [
+    "champion:'Campeón'",
+    "won:'¡Victoria!'",
+    "drawCode:'E'",
+    "lossCode:'D'",
+    "goals:'goles'",
+    "topScorer:'Máximo goleador: '",
+    "challengeWinText:'¿Puedes superarlo? Inténtalo → '"
+  ]) {
+    if (!shareFlow.includes(spanishCopy)) {
+      error("share localization: missing Spanish generated copy " + spanishCopy);
+    }
+  }
+  const helperUses = shareFlow.match(/const copy=_shareGeneratedCopy\(d\.lang\);/g) || [];
+  if (helperUses.length !== 2) {
+    error("share localization: canvas and text must both use localized generated copy");
+  }
+  if (shareFlow.includes("d.isIt")) {
+    error("share localization: binary Italian/English fallback returned");
+  }
+  if (!shareFlow.includes("topScorerStr,lang,grpMap,sq")) {
+    error("share localization: selected language is missing from share data");
+  }
+}
+
+validateShareFlowLocalization();
+
 function validateFormationAccessibility() {
   const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const start = homepage.indexOf("function renderFormationGrid()");
