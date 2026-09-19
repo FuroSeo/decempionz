@@ -499,6 +499,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .m-ev-opp{color:var(--red2)!important}
 .spd-ico{width:26px;height:26px;border-radius:20px;border:none;background:transparent;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;padding:0;color:var(--mut);flex-shrink:0;transition:all .13s}
 .spd-ico.spd-ico-active{background:rgba(201,162,39,.2);color:var(--gold)}
+.spd-ico:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 #m-speed-icons{background:var(--s1);border:1px solid var(--brd);border-radius:20px;padding:3px;gap:2px!important}
 [data-theme="light"] #m-timer{color:var(--red)}
 .m-squads{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mut);margin-bottom:12px;gap:8px}
@@ -1348,11 +1349,11 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div id="m-tag"></div>
     <div style="display:flex;align-items:center;gap:5px">
-      <div id="m-speed-icons" style="display:flex;gap:3px">
-        <button class="spd-ico" id="spd-slow" onclick="setMatchSpeed('slow')" title="Lento">🐢</button>
-        <button class="spd-ico spd-ico-active" id="spd-normal" onclick="setMatchSpeed('normal')" title="Normale">▶</button>
-        <button class="spd-ico" id="spd-fast" onclick="setMatchSpeed('fast')" title="Veloce">⚡</button>
-        <button class="spd-ico" id="spd-skip" onclick="skipToResult()" title="Salta al risultato">⏭</button>
+      <div id="m-speed-icons" role="group" aria-label="Velocità partita" data-i18n-aria-label="match.speed_group" style="display:flex;gap:3px">
+        <button type="button" class="spd-ico" id="spd-slow" aria-pressed="false" aria-label="Velocità lenta" data-i18n-aria-label="match.speed_slow" title="Velocità lenta" data-i18n-title="match.speed_slow" onclick="setMatchSpeed('slow')">🐢</button>
+        <button type="button" class="spd-ico spd-ico-active" id="spd-normal" aria-pressed="true" aria-label="Velocità normale" data-i18n-aria-label="match.speed_normal" title="Velocità normale" data-i18n-title="match.speed_normal" onclick="setMatchSpeed('normal')">▶</button>
+        <button type="button" class="spd-ico" id="spd-fast" aria-pressed="false" aria-label="Velocità veloce" data-i18n-aria-label="match.speed_fast" title="Velocità veloce" data-i18n-title="match.speed_fast" onclick="setMatchSpeed('fast')">⚡</button>
+        <button type="button" class="spd-ico" id="spd-skip" aria-label="Salta al risultato" data-i18n-aria-label="match.speed_skip" title="Salta al risultato" data-i18n-title="match.speed_skip" onclick="skipToResult()">⏭</button>
       </div>
       <div id="m-timer" style="font-size:.88rem;font-weight:800;color:var(--gold);letter-spacing:.5px;min-width:28px;text-align:right">—</div>
     </div>
@@ -1639,6 +1640,11 @@ const STRINGS={
     'share.link_input':'Link condivisibile della rosa',
     'share.copy_link':'Copia il link condivisibile',
     'share.copied':'📋 Copiato!',
+    'match.speed_group':'Velocità partita',
+    'match.speed_slow':'Velocità lenta',
+    'match.speed_normal':'Velocità normale',
+    'match.speed_fast':'Velocità veloce',
+    'match.speed_skip':'Salta al risultato',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz è un progetto fan indipendente creato esclusivamente a scopo di intrattenimento. Non è affiliato, approvato né connesso a UEFA, FIFA, alcun club calcistico, giocatore o agente. I nomi dei giocatori, delle squadre e i riferimenti storici sono usati a puro scopo ricreativo ed educativo nel rispetto dei principi della fan creativity. Tutti i marchi registrati rimangono di proprietà dei rispettivi titolari.',
     'fp.h_copyright':'Copyright',
@@ -1954,6 +1960,11 @@ const STRINGS={
     'share.link_input':'Shareable squad link',
     'share.copy_link':'Copy shareable link',
     'share.copied':'📋 Copied!',
+    'match.speed_group':'Match speed',
+    'match.speed_slow':'Slow speed',
+    'match.speed_normal':'Normal speed',
+    'match.speed_fast':'Fast speed',
+    'match.speed_skip':'Skip to result',
     'fp.h_disclaimer':'Disclaimer',
     'fp.p_disclaimer':'Decempionz is an independent fan project created for entertainment purposes only. It is not affiliated with, endorsed by, or connected to UEFA, FIFA, or any football club, player, or agent. Player names, team names, and historical references are used purely for recreational and educational purposes under fan creativity principles. All trademarks remain the property of their respective owners.',
     'fp.h_copyright':'Copyright',
@@ -2272,6 +2283,11 @@ const STRINGS={
     'share.link_input':'Enlace compartible de la plantilla',
     'share.copy_link':'Copiar enlace compartible',
     'share.copied':'📋 ¡Copiado!',
+    'match.speed_group':'Velocidad del partido',
+    'match.speed_slow':'Velocidad lenta',
+    'match.speed_normal':'Velocidad normal',
+    'match.speed_fast':'Velocidad rápida',
+    'match.speed_skip':'Saltar al resultado',
     'fp.h_disclaimer':'Aviso Legal',
     'fp.p_disclaimer':'Decempionz es un proyecto de fans independiente creado únicamente con fines de entretenimiento. No está afiliado, respaldado ni conectado con la UEFA, FIFA, ningún club de fútbol, jugador ni agente. Los nombres de jugadores, equipos y referencias históricas se utilizan con fines recreativos y educativos bajo los principios de la creatividad de fans. Todas las marcas registradas son propiedad de sus respectivos dueños.',
     'fp.h_copyright':'Copyright',
@@ -2602,6 +2618,11 @@ function applyLang(){
     var k=el.getAttribute('data-i18n-aria-label');
     var v=t(k);
     if(v)el.setAttribute('aria-label',v);
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(function(el){
+    var k=el.getAttribute('data-i18n-title');
+    var v=t(k);
+    if(v)el.setAttribute('title',v);
   });
   // Re-render dynamic screens if active
   var _shof=document.getElementById('screen-hof');
@@ -6104,9 +6125,16 @@ function renderMatchLineups(){
 
 function setMatchSpeed(s){
   M.speedKey=s;
-  document.querySelectorAll('.spd-ico').forEach(function(b){b.classList.remove('spd-ico-active');});
+  document.querySelectorAll('.spd-ico[aria-pressed]').forEach(function(b){
+    b.classList.remove('spd-ico-active');
+    b.setAttribute('aria-pressed','false');
+  });
   var id={slow:'spd-slow',normal:'spd-normal',fast:'spd-fast'}[s];
-  if(id)document.getElementById(id).classList.add('spd-ico-active');
+  var selected=id?document.getElementById(id):null;
+  if(selected){
+    selected.classList.add('spd-ico-active');
+    selected.setAttribute('aria-pressed','true');
+  }
 }
 
 function skipToResult(){
