@@ -1599,7 +1599,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.19.0';
+const GAME_VERSION='5.20.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -5694,30 +5694,34 @@ function duelTeamEval(team,mode,isDynasty){
   return evaluated;
 }
 
-/* Una partita secca tra due squadre valutate (ea, eb = output di duelTeamEval).
-   Ritorna {ga,gb,pa,pb,xa,xb}; pa/pb valorizzati solo se serve la lotteria dei rigori. */
-function duelSimMatch(ea,eb){
-  var FLOOR=.13,CAP=2.6;
-  /* xG base simmetrico — stessa forma calibrata della campagna */
-  var xa=(ea.atk-eb.def*.82)*.38+.46;
-  var xb=(eb.atk-ea.def*.82)*.38+.46;
+/* Match Engine v5: unico kernel xG puro per campagna e browser Duel.
+   lineBoost modifica attacco/difesa prima del confronto; xgMul/xgAdd applicano
+   esclusivamente modificatori di modalità espliciti (coach e momentum). */
+function computeMatchXG(ea,eb,options){
+  var o=options||{},FLOOR=o.floor==null?.13:o.floor,CAP=o.cap==null?2.6:o.cap;
+  var ta=ea.tactic||'balanced',tb=eb.tactic||'balanced';
+  var ma=TACT_MOD[ta]||TACT_MOD.balanced,mb=TACT_MOD[tb]||TACT_MOD.balanced;
+  var atkA=ea.atk+(o.lineBoostA||0),defA=ea.def+(o.lineBoostA||0);
+  var atkB=eb.atk+(o.lineBoostB||0),defB=eb.def+(o.lineBoostB||0);
+  var xa=(atkA-defB*.82)*.38+.46;
+  var xb=(atkB-defA*.82)*.38+.46;
   /* tattica propria spinge, tattica avversaria decide cosa si concede */
-  xa*=TACT_MOD[ea.tactic].myXG*TACT_MOD[eb.tactic].oppXG;
-  xb*=TACT_MOD[eb.tactic].myXG*TACT_MOD[ea.tactic].oppXG;
+  xa*=ma.myXG*mb.oppXG;
+  xb*=mb.myXG*ma.oppXG;
   /* contro-tattica: un solo lookup copre entrambi i lati */
-  var ct=COUNTER_MOD[ea.tactic+'-'+eb.tactic]||[1,1];
+  var ct=COUNTER_MOD[ta+'-'+tb]||[1,1];
   xa*=ct[0];xb*=ct[1];
   /* star player */
   xa+=ea.starBonus;xb+=eb.starBonus;
   /* tipo formazione vs tattica avversaria (±4% come campagna), per entrambi */
-  if(ea.fmtT==='off'&&eb.tactic==='defend'){xa*=1.04;xb*=0.97;}
-  else if(ea.fmtT==='off'&&eb.tactic==='attack'){xa*=1.02;xb*=1.02;}
-  else if(ea.fmtT==='def'&&eb.tactic==='attack'){xb*=0.96;xa*=1.02;}
-  else if(ea.fmtT==='def'&&eb.tactic==='defend'){xa*=0.97;}
-  if(eb.fmtT==='off'&&ea.tactic==='defend'){xb*=1.04;xa*=0.97;}
-  else if(eb.fmtT==='off'&&ea.tactic==='attack'){xb*=1.02;xa*=1.02;}
-  else if(eb.fmtT==='def'&&ea.tactic==='attack'){xa*=0.96;xb*=1.02;}
-  else if(eb.fmtT==='def'&&ea.tactic==='defend'){xb*=0.97;}
+  if(ea.fmtT==='off'&&tb==='defend'){xa*=1.04;xb*=0.97;}
+  else if(ea.fmtT==='off'&&tb==='attack'){xa*=1.02;xb*=1.02;}
+  else if(ea.fmtT==='def'&&tb==='attack'){xb*=0.96;xa*=1.02;}
+  else if(ea.fmtT==='def'&&tb==='defend'){xa*=0.97;}
+  if(eb.fmtT==='off'&&ta==='defend'){xb*=1.04;xa*=0.97;}
+  else if(eb.fmtT==='off'&&ta==='attack'){xb*=1.02;xa*=1.02;}
+  else if(eb.fmtT==='def'&&ta==='attack'){xa*=0.96;xb*=1.02;}
+  else if(eb.fmtT==='def'&&ta==='defend'){xb*=0.97;}
   /* Chemistry: stessa regola simmetrica del motore PHP autoritativo. */
   xa*=ea.chemistry&&ea.chemistry.mul?ea.chemistry.mul:1;
   xb*=eb.chemistry&&eb.chemistry.mul?eb.chemistry.mul:1;
@@ -5732,11 +5736,20 @@ function duelSimMatch(ea,eb){
   if(eb.r10.midAtk)xb*=1+Math.min(eb.r10.midAtk,0.06);
   if(eb.r10.midDef)xa*=1-Math.min(eb.r10.midDef,0.04);
   if(eb.r10.fwd)xb*=1+Math.min(eb.r10.fwd,0.10);
+  xa=xa*(o.xgMulA||1)+(o.xgAddA||0);
+  xb=xb*(o.xgMulB||1)+(o.xgAddB||0);
   /* draw-pull per match equilibrati */
   var d=Math.abs(xa-xb);
   if(d<0.35){var pull=0.05*(0.35-d)/0.35;xa-=pull;xb-=pull;}
   xa=Math.max(FLOOR,Math.min(xa,CAP));
   xb=Math.max(FLOOR,Math.min(xb,CAP));
+  return {xa:xa,xb:xb,counter:ct};
+}
+
+/* Una partita secca tra due squadre valutate (ea, eb = output di duelTeamEval).
+   Ritorna {ga,gb,pa,pb,xa,xb}; pa/pb valorizzati solo se serve la lotteria dei rigori. */
+function duelSimMatch(ea,eb){
+  var xg=computeMatchXG(ea,eb),xa=xg.xa,xb=xg.xb;
   var ga=poisson(xa),gb=poisson(xb),pa=null,pb=null,pSeqA=null,pSeqB=null;
   if(ga===gb){var pen=duelPenalties();pa=pen.a;pb=pen.b;pSeqA=pen.seqA;pSeqB=pen.seqB;}
   return {ga:ga,gb:gb,pa:pa,pb:pb,pSeqA:pSeqA,pSeqB:pSeqB,xa:xa,xb:xb};
@@ -5797,77 +5810,29 @@ function _runMatch(){
   const teamEval=evaluateLineup(G.slotPlayers,_formPos,G.formation,G.tactic||'balanced');
   teamEval.chemistry=G.chem||{mul:1,pct:0,bonds:[]};
   const grp=teamEval.groups;
-  const atk=teamEval.atk,def=teamEval.def;
 
-  const tm=TACT_MOD[G.tactic||'balanced']||TACT_MOD.balanced;
   const oppTactic=_pendingMatch.oppTactic||'balanced';
-  const ctKey=(G.tactic||'balanced')+'-'+oppTactic;
-  const ct=COUNTER_MOD[ctKey]||[1,1];
 
   /* Canonical opponent: the same historical XI powers simulation, scorers and
      the lineup view. Scalar strength remains only as a legacy fallback. */
   const oppXI=_pendingMatch.oppId?buildCanonicalOpponent(_pendingMatch.oppId,oppTactic):null;
-  const oppEval=oppXI?oppXI.evaluation:null;
-  const oppAtk=oppEval?oppEval.atk+diffCfg.oppMod+roundBonus:oppStr;
-  const oppDef=oppEval?oppEval.def+diffCfg.oppMod+roundBonus:oppStr;
-  const oppTM=TACT_MOD[oppTactic]||TACT_MOD.balanced;
-
-  // Calibrated xG — tighter formula to limit high-scoring outliers
-  let myXG=Math.max(.13,((atk-oppDef*.82)*.38+0.46)*tm.myXG*oppTM.oppXG*ct[0]);
-  let oppXG=Math.max(.10,((oppAtk-def*.82)*.38+0.46)*oppTM.myXG*tm.oppXG*ct[1]);
-
-  // Star player bonus
-  myXG=Math.min(myXG+teamEval.starBonus,2.6);
-  if(oppEval)oppXG=Math.min(oppXG+oppEval.starBonus,2.6);
-
-  // Momentum modifier
+  const oppEval=oppXI?oppXI.evaluation:{
+    atk:oppStr,def:oppStr,starBonus:0,r10:{gk:0,def:0,midAtk:0,midDef:0,fwd:0},
+    tactic:oppTactic,fmtT:'mid',chemistry:{mul:1,pct:0,bonds:[]},score:Math.round(oppStr*10),fit:100,lines:null
+  };
   const momMod=(G.momentum||0)*0.03;
-  myXG=Math.max(.10,Math.min(myXG+momMod,2.6));
-  oppXG=Math.max(.08,Math.min(oppXG-momMod*.35,2.6));
-
-  // Formation type vs opponent tactic (±4% max)
-  var _fmtT=teamEval.fmtT;
-  if(_fmtT==='off'&&oppTactic==='defend'){myXG=Math.min(myXG*1.04,2.6);oppXG=Math.max(oppXG*0.97,0.08);}
-  else if(_fmtT==='off'&&oppTactic==='attack'){myXG=Math.min(myXG*1.02,2.6);oppXG=Math.min(oppXG*1.02,2.6);}
-  else if(_fmtT==='def'&&oppTactic==='attack'){oppXG=Math.max(oppXG*0.96,0.08);myXG=Math.min(myXG*1.02,2.6);}
-  else if(_fmtT==='def'&&oppTactic==='defend'){myXG=Math.max(myXG*0.97,0.10);}
-  if(oppEval){
-    if(oppEval.fmtT==='off'&&(G.tactic||'balanced')==='defend'){oppXG=Math.min(oppXG*1.04,2.6);myXG=Math.max(myXG*.97,.10);}
-    else if(oppEval.fmtT==='off'&&(G.tactic||'balanced')==='attack'){oppXG=Math.min(oppXG*1.02,2.6);myXG=Math.min(myXG*1.02,2.6);}
-    else if(oppEval.fmtT==='def'&&(G.tactic||'balanced')==='attack'){myXG=Math.max(myXG*.96,.10);oppXG=Math.min(oppXG*1.02,2.6);}
-    else if(oppEval.fmtT==='def'&&(G.tactic||'balanced')==='defend'){oppXG=Math.max(oppXG*.97,.08);}
-  }
-
-  // Coach boost
-  if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
-  // Chemistry boost (intesa di squadra)
-  if(G.chem&&G.chem.mul>1)myXG=Math.min(myXG*G.chem.mul,2.6);
-  if(oppEval&&oppEval.chemistry&&oppEval.chemistry.mul>1)oppXG=Math.min(oppXG*oppEval.chemistry.mul,2.6);
-
-  // r=10 positional bonus — small per-player xG modifier
-  (function(){
-    var gkBonus=teamEval.r10.gk,defBonus=teamEval.r10.def;
-    var midAtkBonus=teamEval.r10.midAtk,midDefBonus=teamEval.r10.midDef,fwdBonus=teamEval.r10.fwd;
-    if(gkBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(gkBonus,0.08)));
-    if(defBonus)oppXG=Math.max(.08,oppXG*(1-Math.min(defBonus,0.09)));
-    if(midAtkBonus){myXG=Math.min(myXG*(1+Math.min(midAtkBonus,0.06)),2.6);}
-    if(midDefBonus){oppXG=Math.max(.08,oppXG*(1-Math.min(midDefBonus,0.04)));}
-    if(fwdBonus){myXG=Math.min(myXG*(1+Math.min(fwdBonus,0.10)),2.6);}
-    if(oppEval){
-      if(oppEval.r10.gk)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.gk,.08)));
-      if(oppEval.r10.def)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.def,.09)));
-      if(oppEval.r10.midAtk)oppXG=Math.min(oppXG*(1+Math.min(oppEval.r10.midAtk,.06)),2.6);
-      if(oppEval.r10.midDef)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.midDef,.04)));
-      if(oppEval.r10.fwd)oppXG=Math.min(oppXG*(1+Math.min(oppEval.r10.fwd,.10)),2.6);
-    }
-  })();
-
-  // Draw-pull for evenly matched games
-  const xgDiff=Math.abs(myXG-oppXG);
-  if(xgDiff<0.35){const pull=0.05*(0.35-xgDiff)/0.35;myXG-=pull;oppXG-=pull;}
+  const xg=computeMatchXG(teamEval,oppEval,{
+    lineBoostB:oppXI?diffCfg.oppMod+roundBonus:0,
+    xgMulA:G.coach&&G.coach.boost>1?G.coach.boost:1,
+    xgAddA:momMod,
+    xgAddB:-momMod*.35,
+    floor:.10,
+    cap:2.6
+  });
+  let myXG=xg.xa,oppXG=xg.xb;
 
   // Store tactic matchup result for match log
-  const tacAdv=ct[0]>1.05?'advantage':ct[0]<0.95?'disadvantage':'neutral';
+  const tacAdv=xg.counter[0]>1.05?'advantage':xg.counter[0]<0.95?'disadvantage':'neutral';
   _pendingMatch.tacAdv=tacAdv;_pendingMatch.oppTacticLabel=tacLabel(oppTactic);
 
   let myG=poisson(myXG), oppG=poisson(oppXG);
@@ -6541,6 +6506,9 @@ function showResult(){
     +[
       [shots+' / '+shotsOT,t('match.shots_ot'),oppShots+' / '+oppShotsOT],
       [myXG.toFixed(2),t('match.xg'),oppXG.toFixed(2)],
+      [M.teamScore||'—',t('team.score'),M.oppTeamScore||'—'],
+      [(M.teamFit!=null?M.teamFit+'%':'—'),t('team.fit'),(M.oppTeamFit!=null?M.oppTeamFit+'%':'—')],
+      [G.formation||'—',t('camp.formation'),M.oppFormation||'—'],
       [corners,t('match.corners'),oppCorners],
       [myG,t('match.goals'),oppG],
       [yellowCards,t('match.yellows'),'—']].map(([h,l,a])=>'<tr><td class="tcs-home">'+h+'</td><td class="tcs-lbl">'+l+'</td><td class="tcs-away">'+a+'</td></tr>')
