@@ -165,6 +165,19 @@ foreach ($dynDone['finalTeam'] as $player) {
     dd_assert(is_array($src) && $src['mode'] === 'ucl' && $src['club'] === 'real_madrid', 'Dynasty offer must stay inside selected club');
 }
 
+/* Every dataset team must be known to the server-side Duel registry, otherwise
+   its players can never be offered or verified (a club slug with a space once
+   dropped ussr_1966 silently). */
+$dataLines = file(__DIR__ . '/../game-data.js', FILE_IGNORE_NEW_LINES) ?: [];
+$datasetTeams = 0;
+foreach ($dataLines as $line) {
+    if (preg_match("/^\s*[A-Za-z0-9_]+:\{name:'/", $line)) $datasetTeams++;
+}
+$registryTeams = 0;
+foreach (dcz_duel_dataset_registry() as $teams) $registryTeams += count($teams);
+dd_assert($datasetTeams > 200, 'dataset team count sanity check');
+dd_assert($registryTeams === $datasetTeams, "Duel registry has {$registryTeams} teams but game-data.js has {$datasetTeams}");
+
 foreach (glob(dcz_draft_session_dir() . '*.json') ?: [] as $file) @unlink($file);
 
 echo "Duel draft session tests passed.\n";
