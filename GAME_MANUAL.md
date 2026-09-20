@@ -1,6 +1,6 @@
 # Decempionz — Game Manual
 
-**App version:** 5.23.0
+**App version:** 5.24.0
 **Last updated:** 2026-09-20
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.24.0 — Manager Progression v1** — every completed campaign now awards deterministic XP for matches, wins, stars, difficulty and trophies. The persistent, balance-neutral Manager profile tracks level, campaigns and victories, appears on Home and reports rewards on both end screens; it is included in existing backups.
 - **5.23.0 — One-tap Quick Draft** — the primary UCL, Copa and World Cup CTAs now apply safe Classic / All Time / Normal / Balanced presets and open a playable Draft immediately. Tournament-specific formations are deterministic, stale Dynasty/Duel/Blind state is cleared, analytics records the funnel and the full Customize path remains available.
 - **5.22.0 — Draft 2.0 impact preview** — every visible card previews the deterministic target slot plus projected Team Score, positional fit and Chemistry deltas. The committed placement uses the same lowest-penalty selection on the browser and authoritative Duel server; Blind Draft keeps rating-derived previews hidden.
 - **5.21.0 — Match Engine v6** — match events now select scorers and assists from the actual displayed XI using occupied role, effective rating, positional adaptation and elite attacking profile. Goalkeepers are excluded, self-assists are impossible, and both campaign and Duel playback share the contributor model without altering authoritative scores.
@@ -338,7 +339,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.23.0`.
+Current cache namespace: `decempionz-v5.24.0`.
 
 Rules:
 
@@ -357,8 +358,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.23.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.23.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.24.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.24.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
