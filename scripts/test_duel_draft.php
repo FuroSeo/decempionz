@@ -55,6 +55,12 @@ foreach (['3-4-3','3-5-2','3-6-1','4-1-4-1','4-2-3-1','4-3-3','4-4-2','4-5-1','5
     }
 }
 
+dd_assert(dcz_draft_slot_penalty('ST', 'CF') === .04, 'server preview parity must use canonical ST/CF penalty');
+dd_assert(dcz_draft_slot_penalty('CDM', 'CB') === .10, 'server preview parity must use canonical CB/CDM penalty');
+$slotFixture = ['positions'=>['CDM','CB'], 'slots'=>[null,null]];
+$slotChoice = dcz_draft_best_slot($slotFixture, ['n'=>'Defender','p'=>'CB','r'=>8]);
+dd_assert(($slotChoice['i'] ?? null) === 1, 'server must choose the lowest-penalty target slot shown by Draft 2.0');
+
 $tournaments = dcz_draft_tournaments();
 dd_assert(isset($tournaments['ucl']['pioneers'], $tournaments['copa']['copa_pioneros'], $tournaments['wc']['wc_pionieri']), 'canonical era definitions must parse');
 
