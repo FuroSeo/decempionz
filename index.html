@@ -1612,7 +1612,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.24.0';
+const GAME_VERSION='5.25.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1833,6 +1833,7 @@ const STRINGS={
     'match.possession':'Possesso',
     'match.shots_ot':'Tiri / In porta',
     'match.xg':'xG',
+    'match.adaptation':'Adattamento rivale',
     'match.corners':'Calci d\'angolo',
     'match.goals':'Gol',
     'match.yellows':'Cartellini gialli',
@@ -2159,6 +2160,7 @@ const STRINGS={
     'match.possession':'Possession',
     'match.shots_ot':'Shots / OT',
     'match.xg':'xG',
+    'match.adaptation':'Opponent adaptation',
     'match.corners':'Corners',
     'match.goals':'Goals',
     'match.yellows':'Yellow cards',
@@ -2488,6 +2490,7 @@ const STRINGS={
     'match.possession':'Posesión',
     'match.shots_ot':'Tiros / A puerta',
     'match.xg':'xG',
+    'match.adaptation':'Adaptación rival',
     'match.corners':'Córners',
     'match.goals':'Goles',
     'match.yellows':'Tarjetas amarillas',
@@ -3255,6 +3258,7 @@ const G = {
   campaignScorers: {}, campaignMatchRatings: {},
   campaignGF: 0, campaignGA: 0, campaignCleanSheets: 0,
   campaignBestWin: null,
+  tacticHistory: [],
   progressAwarded: false,
   // coach
   coach: null, _coachPool: [],
@@ -4078,6 +4082,7 @@ function applyTournament(t){
   G.groupUserResults = []; G.knockResults = [];
   G.campaignScorers = {}; G.campaignMatchRatings = {};
   G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
+  G.tacticHistory = [];
   G.progressAwarded = false;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   selectedDiff='normal';
@@ -5650,6 +5655,13 @@ const COUNTER_MOD={
 };
 function tacLabel(k){return t('tac.'+k)||k;}
 const TACTIC_WINS={attack:'defend',balanced:'attack',defend:'balanced'};
+function tacticAdaptation(history,current){
+  var h=Array.isArray(history)?history:[],streak=0;
+  for(var i=h.length-1;i>=0&&h[i]===current;i--)streak++;
+  var exposed=Math.max(0,streak-1); /* penalty starts before the third consecutive use */
+  var steps=Math.min(3,exposed);
+  return{streak:streak+1,active:steps>0,myAdd:-.04*steps,oppAdd:.02*steps};
+}
 function selectFormTactic(t,el){
   G.tactic=t;
   document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
@@ -5842,11 +5854,12 @@ function _runMatch(){
     tactic:oppTactic,fmtT:'mid',chemistry:{mul:1,pct:0,bonds:[]},score:Math.round(oppStr*10),fit:100,lines:null
   };
   const momMod=(G.momentum||0)*0.03;
+  const adaptation=tacticAdaptation(G.tacticHistory,G.tactic||'balanced');
   const xg=computeMatchXG(teamEval,oppEval,{
     lineBoostB:oppXI?diffCfg.oppMod+roundBonus:0,
     xgMulA:G.coach&&G.coach.boost>1?G.coach.boost:1,
-    xgAddA:momMod,
-    xgAddB:-momMod*.35,
+    xgAddA:momMod+adaptation.myAdd,
+    xgAddB:-momMod*.35+adaptation.oppAdd,
     floor:.10,
     cap:2.6
   });
@@ -5872,7 +5885,7 @@ function _runMatch(){
   }
   const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
-  M={myG,oppG,myXG,oppXG,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppTeamScore:oppEval?oppEval.score:null,oppTeamFit:oppEval?oppEval.fit:null,oppFormation:oppXI?oppXI.formation:null,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
+  M={myG,oppG,myXG,oppXG,adaptation:adaptation,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppTeamScore:oppEval?oppEval.score:null,oppTeamFit:oppEval?oppEval.fit:null,oppFormation:oppXI?oppXI.formation:null,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
 
   // Build home XI from slot players with positions
   const _dTac=G.draftTactic||G.tactic||'balanced';
@@ -6470,6 +6483,7 @@ function showResult(){
   const elim=stars===0&&isKnockout;
   if(G.phase==='group') G.groupUserResults.push({myG,oppG,stars,opp:oppName});
   else G.knockResults.push({myG,oppG,stars,opp:oppName});
+  G.tacticHistory=(G.tacticHistory||[]).concat([G.tactic||'balanced']).slice(-6);
   _ga('match_played',{tournament:G.gameMode||'ucl',phase:G.phase,outcome:myG>oppG?'win':myG<oppG?'loss':'draw',goal_diff:myG-oppG});
   // Update momentum — scala con differenza reti
   var _gd=myG-oppG;
@@ -6553,6 +6567,7 @@ function showResult(){
       [M.teamScore||'—',t('team.score'),M.oppTeamScore||'—'],
       [(M.teamFit!=null?M.teamFit+'%':'—'),t('team.fit'),(M.oppTeamFit!=null?M.oppTeamFit+'%':'—')],
       [G.formation||'—',t('camp.formation'),M.oppFormation||'—'],
+      [M.adaptation&&M.adaptation.active?(M.adaptation.myAdd.toFixed(2)+' xG'):'—',t('match.adaptation'),M.adaptation&&M.adaptation.active?('+'+M.adaptation.oppAdd.toFixed(2)+' xG'):'—'],
       [corners,t('match.corners'),oppCorners],
       [myG,t('match.goals'),oppG],
       [yellowCards,t('match.yellows'),'—']].map(([h,l,a])=>'<tr><td class="tcs-home">'+h+'</td><td class="tcs-lbl">'+l+'</td><td class="tcs-away">'+a+'</td></tr>')
