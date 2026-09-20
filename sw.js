@@ -1,4 +1,4 @@
-const CACHE = 'decempionz-v5.25.0';
+const CACHE = 'decempionz-v5.26.0';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
