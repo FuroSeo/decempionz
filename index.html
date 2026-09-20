@@ -1690,6 +1690,7 @@ const STRINGS={
     'diff.hard':'🔴 Difficile',
     'draft.pool_exhausted':'⚠️ Pool esaurito — accetta solo i giocatori disponibili',
     'draft.reroll_locked':'⚠️ Ultimi 3 slot rimasti',
+    'draft.rerolls':'Reroll:',
     'draft.impact_score':'Score','draft.impact_fit':'Fit',
     'diff.easy_desc':'5 reroll · Avversari più deboli',
     'diff.normal_desc':'3 reroll · Forza standard',
@@ -1931,6 +1932,9 @@ const STRINGS={
     'pen.shootout_title':'⚽ Rigori','pen.win':'Vinci ai rigori! 🎉',
     'pen.loss':'Eliminati ai rigori. 💔',
     'stats.duels':'⚔️ Duelli 1v1',
+    'stats.title':'📊 Le tue Statistiche',
+    'blind.label':'🕵️ Blind Draft',
+    'blind.desc':'Nessun rating visibile — scegli per nome e ruolo.',
     'stats.btn':'📊 Statistiche',
     'stats.matches':'Partite',
     'stats.record':'Record',
@@ -2017,6 +2021,7 @@ const STRINGS={
     'diff.hard':'🔴 Hard',
     'draft.pool_exhausted':'⚠️ Pool exhausted — you must accept the available players',
     'draft.reroll_locked':'⚠️ Last 3 slots remaining',
+    'draft.rerolls':'Rerolls:',
     'draft.impact_score':'Score','draft.impact_fit':'Fit',
     'diff.easy_desc':'5 rerolls · Opponents weaker',
     'diff.normal_desc':'3 rerolls · Standard strength',
@@ -2347,6 +2352,7 @@ const STRINGS={
     'diff.hard':'🔴 Difícil',
     'draft.pool_exhausted':'⚠️ Pool agotado — acepta solo los jugadores disponibles',
     'draft.reroll_locked':'⚠️ Últimos 3 huecos restantes',
+    'draft.rerolls':'Rerolls:',
     'draft.impact_score':'Score','draft.impact_fit':'Encaje',
     'diff.easy_desc':'5 rerolls · Rivales más débiles',
     'diff.normal_desc':'3 rerolls · Fuerza estándar',
@@ -5174,7 +5180,7 @@ function updateDraftScreen(){
   document.getElementById('d-count').textContent=filled+'/11';
   renderDraftMetrics(filled);
   document.getElementById('d-passes').innerHTML=
-    'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
+    t('draft.rerolls')+' <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
   var _dfEl=document.getElementById('d-force');
   var _cardsAvail=(G.draftCards||[]).filter(Boolean).length;
