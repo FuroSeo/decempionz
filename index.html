@@ -1599,7 +1599,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.18.0';
+const GAME_VERSION='5.19.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -2847,6 +2847,51 @@ function fmtRows(formation, tactic){
   var f=FORMATIONS[formation]; if(!f)return[];
   var t=tactic||'balanced';
   return f.rows[t]||f.rows.balanced;
+}
+
+/* Match Engine v4 opponent selector. It never invents players: every XI is a
+   deterministic assignment of the selected historical roster to real formation
+   slots. Scarce roles are filled first, then the best effective rating wins. */
+function selectCanonicalXI(players,positions){
+  var roster=(players||[]).map(function(p,i){return{player:p,index:i};});
+  var assigned=new Array((positions||[]).length).fill(null),used=new Set();
+  var slotOrder=(positions||[]).map(function(pos,i){
+    var natural=roster.filter(function(x){return x.player.p===pos;}).length;
+    var compatible=roster.filter(function(x){return slotPenalty(pos,x.player.p)<.25;}).length;
+    return{pos:pos,index:i,natural:natural,compatible:compatible};
+  }).sort(function(a,b){
+    if(a.pos==='GK'&&b.pos!=='GK')return-1;if(b.pos==='GK'&&a.pos!=='GK')return 1;
+    return a.natural-b.natural||a.compatible-b.compatible||a.index-b.index;
+  });
+  slotOrder.forEach(function(slot){
+    var available=roster.filter(function(x){return!used.has(x.index);});
+    var natural=available.filter(function(x){return x.player.p===slot.pos;});
+    var compatible=available.filter(function(x){return slotPenalty(slot.pos,x.player.p)<.25;});
+    var candidates=(natural.length?natural:(compatible.length?compatible:available)).sort(function(a,b){
+      var ae=a.player.r*(1-slotPenalty(slot.pos,a.player.p));
+      var be=b.player.r*(1-slotPenalty(slot.pos,b.player.p));
+      return be-ae||slotPenalty(slot.pos,a.player.p)-slotPenalty(slot.pos,b.player.p)||
+        b.player.r-a.player.r||String(a.player.n).localeCompare(String(b.player.n))||a.index-b.index;
+    });
+    if(candidates.length){assigned[slot.index]=candidates[0].player;used.add(candidates[0].index);}
+  });
+  return assigned;
+}
+function buildCanonicalOpponent(teamId,tactic){
+  var db=_activeTeams(),team=db[teamId]||TEAMS[teamId];
+  if(!team||!Array.isArray(team.players)||!team.players.length)return null;
+  var best=null;
+  FKEYS.forEach(function(formation){
+    var positions=fmtPositions(formation,tactic||'balanced');
+    var players=selectCanonicalXI(team.players,positions);
+    var evaluated=evaluateLineup(players,positions,formation,tactic||'balanced');
+    var candidate={teamId:teamId,team:team,formation:formation,tactic:tactic||'balanced',positions:positions,players:players,evaluation:evaluated};
+    if(!best||evaluated.filled>best.evaluation.filled||
+       (evaluated.filled===best.evaluation.filled&&evaluated.score>best.evaluation.score)||
+       (evaluated.filled===best.evaluation.filled&&evaluated.score===best.evaluation.score&&evaluated.fit>best.evaluation.fit))best=candidate;
+  });
+  if(best)best.evaluation.chemistry=calcChemistry(best.players,best.positions,G.gameMode,{dynasty:false});
+  return best;
 }
 
 function draftNameSz(name,isElite){
@@ -5603,10 +5648,11 @@ function selectFormTactic(t,el){
 }
 function playRound(){
   // Compute opponent info first so we can show the tactic screen
-  let oppName, oppStr, roundLabel, roundTag, isKnockout=false;
+  let oppName, oppStr, oppId=null, roundLabel, roundTag, isKnockout=false;
   if(G.phase==='group'){
     const opp=G.groupTeams[G.groupRound];
     oppName=opp.team.name+" '"+opp.team.season.slice(-2);
+    oppId=opp.id;
     oppStr=teamStrength(opp.id);
     roundLabel=t('round.group_stage')+' — Match '+(G.groupRound+1);
     roundTag='group';
@@ -5618,6 +5664,7 @@ function playRound(){
     const opp=G.knockOpps[G.knockRound];
     var _aDB3=_activeTeams();var _koTeam=opp.id?(_aDB3[opp.id]||null):null;
     oppName=_koTeam?(_koTeam.name+" '"+_koTeam.season.slice(-2)):opp.name;
+    oppId=opp.id||null;
     oppStr=opp.str;
     roundLabel=KNAMES[G.knockRound];
     roundTag=KTAGS[G.knockRound];
@@ -5625,10 +5672,12 @@ function playRound(){
   }
   // Assign opponent tactic (reuse if already set via result-screen next-match preview)
   const storedOT=_pendingMatch&&_pendingMatch.oppTactic?_pendingMatch.oppTactic:null;
-  const oppTacWeights=oppStr>=8.5?[0.50,0.35,0.15]:oppStr<7?[0.20,0.40,0.40]:[0.33,0.34,0.33];
+  const _oppProfile=oppId?buildCanonicalOpponent(oppId,'balanced'):null;
+  const _oppBias=_oppProfile?_oppProfile.evaluation.atk-_oppProfile.evaluation.def:oppStr-8;
+  const oppTacWeights=_oppBias>.35?[0.50,0.35,0.15]:_oppBias<-.35?[0.20,0.40,0.40]:[0.33,0.34,0.33];
   const oppTacRoll=Math.random();
   const oppTactic=storedOT||(oppTacRoll<oppTacWeights[0]?'attack':oppTacRoll<oppTacWeights[0]+oppTacWeights[1]?'balanced':'defend');
-  _pendingMatch={oppName,oppStr,roundLabel,roundTag,isKnockout,oppTactic};
+  _pendingMatch={oppName,oppStr,oppId,roundLabel,roundTag,isKnockout,oppTactic};
   _runMatch();
 }
 
@@ -5746,6 +5795,7 @@ function _runMatch(){
   // Calculate my team strength from slot-aware squad (with positional penalties)
   const _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
   const teamEval=evaluateLineup(G.slotPlayers,_formPos,G.formation,G.tactic||'balanced');
+  teamEval.chemistry=G.chem||{mul:1,pct:0,bonds:[]};
   const grp=teamEval.groups;
   const atk=teamEval.atk,def=teamEval.def;
 
@@ -5754,12 +5804,21 @@ function _runMatch(){
   const ctKey=(G.tactic||'balanced')+'-'+oppTactic;
   const ct=COUNTER_MOD[ctKey]||[1,1];
 
+  /* Canonical opponent: the same historical XI powers simulation, scorers and
+     the lineup view. Scalar strength remains only as a legacy fallback. */
+  const oppXI=_pendingMatch.oppId?buildCanonicalOpponent(_pendingMatch.oppId,oppTactic):null;
+  const oppEval=oppXI?oppXI.evaluation:null;
+  const oppAtk=oppEval?oppEval.atk+diffCfg.oppMod+roundBonus:oppStr;
+  const oppDef=oppEval?oppEval.def+diffCfg.oppMod+roundBonus:oppStr;
+  const oppTM=TACT_MOD[oppTactic]||TACT_MOD.balanced;
+
   // Calibrated xG — tighter formula to limit high-scoring outliers
-  let myXG=Math.max(.13,((atk-oppStr*.84)*.36+0.56)*tm.myXG*ct[0]);
-  let oppXG=Math.max(.10,((oppStr-def*.80)*.42+0.32)*tm.oppXG*ct[1]);
+  let myXG=Math.max(.13,((atk-oppDef*.82)*.38+0.46)*tm.myXG*oppTM.oppXG*ct[0]);
+  let oppXG=Math.max(.10,((oppAtk-def*.82)*.38+0.46)*oppTM.myXG*tm.oppXG*ct[1]);
 
   // Star player bonus
   myXG=Math.min(myXG+teamEval.starBonus,2.6);
+  if(oppEval)oppXG=Math.min(oppXG+oppEval.starBonus,2.6);
 
   // Momentum modifier
   const momMod=(G.momentum||0)*0.03;
@@ -5772,11 +5831,18 @@ function _runMatch(){
   else if(_fmtT==='off'&&oppTactic==='attack'){myXG=Math.min(myXG*1.02,2.6);oppXG=Math.min(oppXG*1.02,2.6);}
   else if(_fmtT==='def'&&oppTactic==='attack'){oppXG=Math.max(oppXG*0.96,0.08);myXG=Math.min(myXG*1.02,2.6);}
   else if(_fmtT==='def'&&oppTactic==='defend'){myXG=Math.max(myXG*0.97,0.10);}
+  if(oppEval){
+    if(oppEval.fmtT==='off'&&(G.tactic||'balanced')==='defend'){oppXG=Math.min(oppXG*1.04,2.6);myXG=Math.max(myXG*.97,.10);}
+    else if(oppEval.fmtT==='off'&&(G.tactic||'balanced')==='attack'){oppXG=Math.min(oppXG*1.02,2.6);myXG=Math.min(myXG*1.02,2.6);}
+    else if(oppEval.fmtT==='def'&&(G.tactic||'balanced')==='attack'){myXG=Math.max(myXG*.96,.10);oppXG=Math.min(oppXG*1.02,2.6);}
+    else if(oppEval.fmtT==='def'&&(G.tactic||'balanced')==='defend'){oppXG=Math.max(oppXG*.97,.08);}
+  }
 
   // Coach boost
   if(G.coach&&G.coach.boost>1)myXG=Math.min(myXG*G.coach.boost,2.6);
   // Chemistry boost (intesa di squadra)
   if(G.chem&&G.chem.mul>1)myXG=Math.min(myXG*G.chem.mul,2.6);
+  if(oppEval&&oppEval.chemistry&&oppEval.chemistry.mul>1)oppXG=Math.min(oppXG*oppEval.chemistry.mul,2.6);
 
   // r=10 positional bonus — small per-player xG modifier
   (function(){
@@ -5787,6 +5853,13 @@ function _runMatch(){
     if(midAtkBonus){myXG=Math.min(myXG*(1+Math.min(midAtkBonus,0.06)),2.6);}
     if(midDefBonus){oppXG=Math.max(.08,oppXG*(1-Math.min(midDefBonus,0.04)));}
     if(fwdBonus){myXG=Math.min(myXG*(1+Math.min(fwdBonus,0.10)),2.6);}
+    if(oppEval){
+      if(oppEval.r10.gk)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.gk,.08)));
+      if(oppEval.r10.def)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.def,.09)));
+      if(oppEval.r10.midAtk)oppXG=Math.min(oppXG*(1+Math.min(oppEval.r10.midAtk,.06)),2.6);
+      if(oppEval.r10.midDef)myXG=Math.max(.10,myXG*(1-Math.min(oppEval.r10.midDef,.04)));
+      if(oppEval.r10.fwd)oppXG=Math.min(oppXG*(1+Math.min(oppEval.r10.fwd,.10)),2.6);
+    }
   })();
 
   // Draw-pull for evenly matched games
@@ -5802,18 +5875,18 @@ function _runMatch(){
 
   const scorers=[...grp.FWD,...grp.MID].filter(Boolean);
   // Opponent players for scorer names
-  let oppPlayerPool=[];
-  if(G.phase==='group'){
+  let oppPlayerPool=oppXI?oppXI.players.filter(function(p,i){return p&&oppXI.positions[i]!=='GK';}):[];
+  if(!oppPlayerPool.length&&G.phase==='group'){
     const oppId=G.groupTeams[G.groupRound].id;
     oppPlayerPool=[...(_aDB[oppId]||TEAMS[oppId]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
-  } else {
+  } else if(!oppPlayerPool.length) {
     const koOpp=G.knockOpps[G.knockRound];
     if(koOpp&&koOpp.id&&(_aDB[koOpp.id]||TEAMS[koOpp.id]))
       oppPlayerPool=[...(_aDB[koOpp.id]||TEAMS[koOpp.id]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
   }
   const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
-  M={myG,oppG,myXG,oppXG,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
+  M={myG,oppG,myXG,oppXG,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppTeamScore:oppEval?oppEval.score:null,oppTeamFit:oppEval?oppEval.fit:null,oppFormation:oppXI?oppXI.formation:null,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
 
   // Build home XI from slot players with positions
   const _dTac=G.draftTactic||G.tactic||'balanced';
@@ -5823,7 +5896,9 @@ function _runMatch(){
   // Build away XI: prefer full team roster, fall back to oppPlayerPool
   var _awayXI=[];
   var _oppTid=G.phase==='group'?G.groupTeams[G.groupRound].id:(G.knockOpps[G.knockRound]?.id||null);
-  if(_oppTid&&(_aDB[_oppTid]||TEAMS[_oppTid])){
+  if(oppXI){
+    _awayXI=oppXI.players.map(function(p,i){return p?{n:p.n,p:oppXI.positions[i]||p.p}:null;}).filter(Boolean);
+  } else if(_oppTid&&(_aDB[_oppTid]||TEAMS[_oppTid])){
     const _posW={GK:0,CB:1,LB:1,RB:1,DM:2,CM:2,AM:2,RM:2,LM:2,RW:3,LW:3,ST:4,CF:4,SS:4};
     var _dupNames=new Set();
     (G.slotPlayers||[]).forEach(function(pp){if(pp&&pp.teamId===_oppTid)_dupNames.add(pp.n);});
