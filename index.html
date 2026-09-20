@@ -4072,6 +4072,16 @@ function _setSingleChoice(selector,selectedEl,selectedClass){
     selectedEl.setAttribute('aria-pressed','true');
   }
 }
+/* Contatori per-campagna. Devono ripartire da zero a OGNI nuovo draft: Daily, Sfide
+   settimanali e Retro non passano da applyTournament, quindi senza reset in initDraft
+   ereditavano marcatori, statistiche, tacticHistory e soprattutto progressAwarded=true
+   (nessun XP / mastery per la campagna successiva). */
+function resetCampaignAccumulators(){
+  G.campaignScorers = {}; G.campaignMatchRatings = {};
+  G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null;
+  G.tacticHistory = [];
+  G.progressAwarded = false;
+}
 function applyTournament(t){
   G.tournament = t;
   if(typeof DUEL!=='undefined')DUEL.mode=null; /* ogni avvio campagna esce dalla modalità duello */
@@ -4079,10 +4089,11 @@ function applyTournament(t){
   // G.format is preserved (set before applyTournament is called)
   G.phase = (G.format==='coppa')?'knockout':'group'; G.groupRound = 0; G.knockRound = 0;
   G.groupUserResults = []; G.knockResults = [];
-  G.campaignScorers = {}; G.campaignMatchRatings = {};
-  G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
-  G.tacticHistory = [];
-  G.progressAwarded = false;
+  resetCampaignAccumulators(); G.coach = null;
+  /* Una campagna normale non è mai un Daily: senza questo reset il flag del Daily
+     giocato/abbandonato prima restava attivo e _dailyFinish registrava come Daily
+     (streak compresa) il risultato di una campagna normale. */
+  G.dailyPuzzle = null; G.dailyNum = null; G.dailyReplay = false;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   selectedDiff='normal';
   _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
@@ -4641,6 +4652,7 @@ function _duelInitServerDraft(){
 function initDraft(){
   if(!G.formation) return;
   if(typeof DUEL!=='undefined'&&DUEL.mode){_duelInitServerDraft();return;}
+  resetCampaignAccumulators();
   _ga('game_start',{tournament:G.dynasty?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:selectedDiff||'normal',formation:G.formation,format:G.format||'classic'});
   const f = FORMATIONS[G.formation];
   G.draftTactic = G.tactic || 'balanced';
