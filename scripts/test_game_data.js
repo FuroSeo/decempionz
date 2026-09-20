@@ -75,7 +75,7 @@ for (const family of families) {
         error(mode + "/" + id + ": missing/invalid " + key);
       }
     }
-    if (mode !== "wc" && typeof team.club === "string" && !/^[a-z0-9_]+$/.test(team.club)) {
+    if (typeof team.club === "string" && !/^[a-z0-9_]+$/.test(team.club)) {
       error(mode + "/" + id + ": invalid club slug " + team.club);
     }
 
