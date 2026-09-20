@@ -26,13 +26,14 @@ function section(startMarker, endMarker) {
 const engineSource =
   section("const SLOT_COMPAT =", "/* Each formation defines positions") + "\n" +
   section("const FORMATIONS =", "function draftNameSz") + "\n" +
+  section("function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slotIndex)", "function filledCount()") + "\n" +
   section("function avg(arr)", "function pgClass(pg)") + "\n" +
   section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
   section("function computeMatchXG(ea,eb,options)", "/* Rigori equi") + "\n" +
   section("function duelPenalties()", "/* Serie al meglio") + "\n" +
   section("function attackContributors(players,positions)", "/* ═══════════════════════════════════════\n   PENALTY SHOOTOUT") + "\n" +
   section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,computeMatchXG,duelSimMatch,attackContributors,weightedContributor,calcChemistry};";
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,evaluateDraftImpact,bestDraftPlacement,computeMatchXG,duelSimMatch,attackContributors,weightedContributor,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -256,6 +257,21 @@ for(let i=0;i<100;i++){
   if(!assist||assist.n==="Elite striker")fail("assist selection must exclude the scorer");
 }
 
+const draftPositions=["GK","LB","CB","CB","RB","LM","CM","CM","RM","ST","ST"];
+const draftSlots=new Array(11).fill(null);
+draftSlots[0]={n:"Keeper",p:"GK",r:8,nat:"IT",club:"Draft FC"};
+draftSlots[1]={n:"Back",p:"LB",r:8,nat:"IT",club:"Draft FC"};
+const draftCandidate={n:"Forward",p:"CF",r:9,nat:"IT",club:"Draft FC"};
+const beforeDraft=JSON.stringify(draftSlots);
+const placement=engine.bestDraftPlacement(draftCandidate,[{i:9,pos:"ST"},{i:10,pos:"ST"}],draftSlots,draftPositions,"4-4-2","balanced","ucl");
+if (!placement || placement.slotIndex!==9 || placement.slot!=="ST") fail("Draft 2.0 target selection must be deterministic");
+if (JSON.stringify(draftSlots)!==beforeDraft) fail("Draft impact preview must not mutate the current XI");
+const committed=draftSlots.slice();committed[placement.slotIndex]=draftCandidate;
+const committedEval=engine.evaluateLineup(committed,draftPositions,"4-4-2","balanced");
+if (placement.after.score!==committedEval.score || placement.after.fit!==committedEval.fit) fail("Draft preview must match post-pick Team Score and fit");
+const adaptedPlacement=engine.bestDraftPlacement({n:"Centre back",p:"CB",r:8,nat:"IT",club:"Draft FC"},[{i:5,pos:"CDM"},{i:2,pos:"CB"}],new Array(11).fill(null),["GK","LB","CB","CB","RB","CDM","CM","CM","RM","ST","ST"],"4-4-2","balanced","ucl");
+if (!adaptedPlacement || adaptedPlacement.slot!=="CB") fail("Draft target must prefer the lower positional penalty");
+
 for (const key of ["team.score", "team.fit", "team.attack", "team.defence"]) {
   const count = homepage.split("'" + key + "':").length - 1;
   if (count !== 3) fail("Team Score translation missing for " + key);
@@ -293,6 +309,12 @@ if (!homepage.includes("function attackContributors(players,positions)") ||
     !homepage.includes("weightedContributor(scorers,'goalWeight')") ||
     !homepage.includes("weightedContributor(scorers,'assistWeight',s)")) {
   fail("Match Engine v6 rating-aware scorer and assist pipeline is missing");
+}
+if (!homepage.includes("function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slotIndex)") ||
+    !homepage.includes("const impact=currentDraftPlacement(p)") ||
+    !homepage.includes("'draft.impact_score':'Score'") ||
+    homepage.includes("if(blind&&impact)")) {
+  fail("Draft 2.0 impact preview or Blind Draft protection is missing");
 }
 
 if (errors.length) {
