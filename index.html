@@ -826,6 +826,15 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <p data-i18n-html="home.lobby_sub" style="color:var(--mut);margin-top:5px;font-size:.78rem;line-height:1.4;font-style:italic">I grandi Campioni tutti insieme, per una volta sola.</p>
   </div>
 
+  <div id="manager-progress" style="margin:0 0 12px;padding:10px 12px;background:var(--s1);border:1px solid var(--brd);border-radius:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div><span style="font-size:.55rem;color:var(--mut);font-weight:800;letter-spacing:.12em" data-i18n="progress.manager">MANAGER</span> <strong id="manager-level" style="color:var(--gold2)">LV 1</strong></div>
+      <div id="manager-record" style="font-size:.58rem;color:var(--mut)"></div>
+    </div>
+    <div style="height:6px;background:var(--s2);border-radius:10px;overflow:hidden;margin-top:7px"><div id="manager-progress-bar" style="height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .35s"></div></div>
+    <div id="manager-xp" style="font-size:.52rem;color:var(--mut);text-align:right;margin-top:3px"></div>
+  </div>
+
   <div class="home-onboarding" data-home-onboarding>
     <div class="home-onboarding-steps">
       <span class="home-onboarding-step" data-i18n="home.onboarding.pick">1 · Scegli torneo e modulo</span>
@@ -1478,6 +1487,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="draft-pitch" id="go-pitch"></div>
   </div>
   <div class="end-stats" id="go-stats"></div>
+  <div id="go-progress" style="display:none"></div>
   <div class="end-journey">
     <div class="end-j-lbl" data-i18n="end.journey">Percorso</div>
     <div id="go-journey"></div>
@@ -1510,6 +1520,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <div class="draft-pitch" id="t-pitch"></div>
   </div>
   <div class="end-stats" id="t-stats"></div>
+  <div id="t-progress" style="display:none"></div>
   <div class="end-journey">
     <div class="end-j-lbl" data-i18n="end.journey">Percorso</div>
     <div id="t-journey"></div>
@@ -1601,13 +1612,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.23.0';
+const GAME_VERSION='5.24.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
 const STRINGS={
   it:{
     'home.tagline':'Il Draft di Calcio Definitivo',
+    'progress.manager':'MANAGER','progress.campaigns':'campagne','progress.wins':'vittorie','progress.level_up':'NUOVO LIVELLO','progress.reward':'Progresso Manager',
     'home.stat_squads':'Rose',
     'home.stat_players':'Giocatori',
     'home.stat_eras':'Ere',
@@ -1933,6 +1945,7 @@ const STRINGS={
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
+    'progress.manager':'MANAGER','progress.campaigns':'campaigns','progress.wins':'wins','progress.level_up':'LEVEL UP','progress.reward':'Manager Progress',
     'home.stat_squads':'Squads',
     'home.stat_players':'Players',
     'home.stat_eras':'Eras',
@@ -2261,6 +2274,7 @@ const STRINGS={
   },
   es:{
     'home.tagline':'El Draft de Fútbol Definitivo',
+    'progress.manager':'MANAGER','progress.campaigns':'campañas','progress.wins':'victorias','progress.level_up':'NUEVO NIVEL','progress.reward':'Progreso Manager',
     'home.stat_squads':'Plantillas',
     'home.stat_players':'Jugadores',
     'home.stat_eras':'Eras',
@@ -3241,6 +3255,7 @@ const G = {
   campaignScorers: {}, campaignMatchRatings: {},
   campaignGF: 0, campaignGA: 0, campaignCleanSheets: 0,
   campaignBestWin: null,
+  progressAwarded: false,
   // coach
   coach: null, _coachPool: [],
   // i18n
@@ -4063,6 +4078,7 @@ function applyTournament(t){
   G.groupUserResults = []; G.knockResults = [];
   G.campaignScorers = {}; G.campaignMatchRatings = {};
   G.campaignGF = 0; G.campaignGA = 0; G.campaignCleanSheets = 0; G.campaignBestWin = null; G.coach = null;
+  G.progressAwarded = false;
   G.slotPlayers = new Array(11).fill(null); G.accepted = []; G.draftCards = [];
   selectedDiff='normal';
   _setSingleChoice('#screen-format .diff-card',document.getElementById('dc-normal'),'diff-sel');
@@ -6967,6 +6983,7 @@ function showGroupElimination(pos,pts){
   }).join('');
   _animateJourney('go-journey');
   _incGamesTotal();
+  managerAwardCampaign(false,'go-progress');
   renderGameOverPitch();
   var _goDoc=generateDocumentary(false);
   var _goDocEl=document.getElementById('go-documentary');
@@ -7031,6 +7048,7 @@ function showGameOver(){
   _animateJourney('go-journey');
 
   _incGamesTotal();
+  managerAwardCampaign(false,'go-progress');
   renderGameOverPitch();
   var _goDoc=generateDocumentary(false);
   var _goDocEl=document.getElementById('go-documentary');
@@ -7240,6 +7258,7 @@ function showTrophy(){
   }
   checkTrophies(G);
   _incGamesTotal();
+  managerAwardCampaign(true,'t-progress');
   var _doc=generateDocumentary(true);
   var _docEl=document.getElementById('t-documentary');
   var _docLbl=document.getElementById('t-documentary-lbl');
@@ -7322,6 +7341,7 @@ document.addEventListener('DOMContentLoaded',function(){
   checkChallengeURL();
   checkDuelURL();
   _renderGamesCounter();
+  renderManagerProgress();
   _loadChallengeBanner();
   _loadDailyBanner();
   /* home v2: al primo caricamento showScreen('screen-home') non viene chiamata */
@@ -7704,6 +7724,59 @@ function _tutMaybe(){
   ov.onclick=function(){idx++;show();};
   show();
   _ga('tutorial_start',{});
+}
+
+/* ══════════════════════════════════════
+   MANAGER PROGRESSION — persistent, cosmetic and balance-neutral
+══════════════════════════════════════ */
+const MANAGER_PROGRESS_KEY='dcz_manager_progress';
+function managerXPForLevel(level){return 100+Math.max(0,level-1)*50;}
+function managerCampaignReward(results,won,difficulty){
+  var rows=Array.isArray(results)?results:[];
+  var wins=rows.filter(function(r){return Number(r.myG)>Number(r.oppG);}).length;
+  var stars=rows.reduce(function(sum,r){return sum+Math.max(0,Number(r.stars)||0);},0);
+  var difficultyBonus={easy:0,normal:20,hard:50,legend:100}[difficulty]||0;
+  return{matches:rows.length,wins:wins,stars:stars,won:!!won,difficulty:difficulty||'normal',
+    base:rows.length*10,winXP:wins*15,starXP:stars*2,trophyXP:won?100:0,difficultyXP:difficultyBonus,
+    total:rows.length*10+wins*15+stars*2+(won?100:0)+difficultyBonus};
+}
+function managerApplyXP(profile,amount){
+  var p=Object.assign({level:1,xp:0,totalXP:0,campaigns:0,wins:0},profile||{});
+  var from=p.level;
+  p.xp=Math.max(0,p.xp)+(Math.max(0,Number(amount))||0);
+  p.totalXP=Math.max(0,p.totalXP)+(Math.max(0,Number(amount))||0);
+  while(p.xp>=managerXPForLevel(p.level)){p.xp-=managerXPForLevel(p.level);p.level++;}
+  return{profile:p,fromLevel:from,levelsGained:p.level-from};
+}
+function managerLoad(){
+  try{return managerApplyXP(JSON.parse(localStorage.getItem(MANAGER_PROGRESS_KEY)||'{}'),0).profile;}
+  catch(e){return managerApplyXP({},0).profile;}
+}
+function managerSave(profile){try{localStorage.setItem(MANAGER_PROGRESS_KEY,JSON.stringify(profile));}catch(e){}}
+function renderManagerProgress(){
+  var p=managerLoad(),need=managerXPForLevel(p.level),pct=need?Math.min(100,Math.round(p.xp/need*100)):0;
+  var level=document.getElementById('manager-level'),bar=document.getElementById('manager-progress-bar');
+  var xp=document.getElementById('manager-xp'),record=document.getElementById('manager-record');
+  if(level)level.textContent='LV '+p.level;if(bar)bar.style.width=pct+'%';if(xp)xp.textContent=p.xp+' / '+need+' XP';
+  if(record)record.textContent=p.campaigns+' '+t('progress.campaigns')+' · '+p.wins+' '+t('progress.wins');
+}
+function managerAwardCampaign(won,targetId){
+  if(G.progressAwarded)return null;
+  G.progressAwarded=true;
+  var results=[].concat(G.groupUserResults||[]).concat(G.knockResults||[]);
+  var reward=managerCampaignReward(results,won,G.difficulty||'normal');
+  var before=managerLoad(),applied=managerApplyXP(before,reward.total),p=applied.profile;
+  p.campaigns=(before.campaigns||0)+1;p.wins=(before.wins||0)+(won?1:0);managerSave(p);
+  var el=document.getElementById(targetId);
+  if(el){
+    el.style.cssText='display:block;margin:10px 0;padding:10px 12px;border:1px solid rgba(201,162,39,.45);border-radius:10px;background:rgba(201,162,39,.08);text-align:center;font-size:.7rem;color:var(--mut)';
+    el.innerHTML='<strong style="color:var(--gold2)">'+t('progress.reward')+': +'+reward.total+' XP</strong>'
+      +(applied.levelsGained?'<div style="font-size:.82rem;font-weight:900;color:var(--gold);margin-top:3px">'+t('progress.level_up')+' · LV '+p.level+'</div>':'')
+      +'<div style="margin-top:3px">LV '+p.level+' · '+p.xp+' / '+managerXPForLevel(p.level)+' XP</div>';
+  }
+  _ga('manager_xp',{xp:reward.total,level:p.level,level_up:applied.levelsGained,won:won?1:0,difficulty:reward.difficulty});
+  renderManagerProgress();
+  return{reward:reward,profile:p,levelsGained:applied.levelsGained};
 }
 
 /* ══════════════════════════════════════

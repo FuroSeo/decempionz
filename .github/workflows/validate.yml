@@ -42,6 +42,7 @@ jobs:
           node --check scripts/test_game_data.js
           node --check scripts/test_match_engine.js
           node --check scripts/test_onboarding.js
+          node --check scripts/test_progression.js
 
       - name: Game data integrity tests
         run: node scripts/test_game_data.js
@@ -51,6 +52,9 @@ jobs:
 
       - name: Onboarding funnel tests
         run: node scripts/test_onboarding.js
+
+      - name: Manager progression tests
+        run: node scripts/test_progression.js
 
       - name: PHP syntax
         shell: bash
