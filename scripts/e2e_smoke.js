@@ -69,6 +69,20 @@ function serve() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// Click like a real pointer: dispatch at the element's current center and let
+// the browser hit-test. Playwright's own click() waits for the element to be
+// "stable", which never happens for cards with a continuous CSS animation
+// (eliteGlow moves the card a few pixels forever), while a user clicks fine.
+// Hit-testing is preserved: an overlay covering the card still swallows the
+// click and is caught by the stuck detector.
+async function pointerClick(page, locator, timeout = 4000) {
+  await locator.waitFor({ state: 'visible', timeout });
+  await locator.evaluate(el => el.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+  const box = await locator.boundingBox();
+  if (!box) throw new Error('element has no bounding box');
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+}
+
 async function snapshot(page) {
   return page.evaluate(() => {
     const vis = e => e && e.offsetParent !== null;
@@ -140,8 +154,8 @@ async function playCampaign(browser, base, sc) {
     if (s.screen === 'screen-gameover' || s.screen === 'screen-trophy') { finished = true; break; }
 
     try {
-      if (s.cards) await page.locator('.screen.active button.draft-pick-card').first().click({ timeout: 4000 });
-      else if (s.coaches) await page.locator('.screen.active button.coach-card').first().click({ timeout: 4000 });
+      if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
+      else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
       else if (s.screen === 'screen-match' && s.rcont) await page.click('#btn-rcont', { timeout: 4000 });
       else if (s.screen === 'screen-match' && s.skip) await page.click('#spd-skip', { timeout: 4000 });
       else if (s.screen !== 'screen-match') {
