@@ -1615,7 +1615,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.26.0';
+const GAME_VERSION='5.27.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -4966,6 +4966,13 @@ function renderDraftPitch(currentPlayer){
   injectPitchLines(pitchEl);
 }
 
+function selectDiverseDraftTargets(shuffledTypes,limit){
+  var pool=(shuffledTypes||[]).slice(),out=[],groups=new Set(),max=limit||3;
+  pool.forEach(function(type){var group=posGroup(type);if(out.length<max&&!groups.has(group)){out.push(type);groups.add(group);}});
+  pool.forEach(function(type){if(out.length<max&&!out.includes(type))out.push(type);});
+  return out;
+}
+
 function drawDraftCards(){
   G.draftCards=[];
   G.draftCurrentTier=null;
@@ -5018,7 +5025,7 @@ function drawDraftCards(){
   var _anyNonGKSlotLeft=_positions.some(function(pos,i){return G.slotPlayers[i]===null&&pos!=='GK';});
   var _nonGKFeasible=_feasible.filter(function(t){return t!=='GK';});
   var _targetPool=_anyNonGKSlotLeft?_nonGKFeasible:_feasible;
-  var _targets=_targetPool.slice().sort(function(){return Math.random()-0.5;}).slice(0,3);
+  var _targets=selectDiverseDraftTargets(_targetPool.slice().sort(function(){return Math.random()-0.5;}),3);
 
   // 4. Tier fallback order: primary tier first, then adjacent by distance
   var _tierOrder=[tier].concat([10,9,8,7].filter(function(t){return t!==tier&&G.draftTiers[t].length>0;}));
