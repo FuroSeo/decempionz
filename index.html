@@ -6462,6 +6462,27 @@ function generateMatchComment(myG,oppG,myScorers,oppScorers,oppName,roundLabel,i
   else{el.style.display='none';}
 }
 
+// Scorers of a match log. Goal events carry the scorer name explicitly; the
+// text line also contains "· assist X", so never parse the name from the text
+// unless an old event has no scorer field (then cut at the assist separator).
+function extractMatchScorers(log,oppName){
+  const myScorers=[], oppScorers=[];
+  (log||[]).forEach(ev=>{
+    if(!ev||!ev.goal) return;
+    if(ev.cls==='lg'){
+      let name=ev.scorer;
+      if(!name){
+        const m=String(ev.text||'').match(/^(\d+)' ⚽ (.+?)(?: · assist .+?)? —/);
+        name=m&&m[2];
+      }
+      if(name) myScorers.push({min:ev.min!=null?ev.min:parseInt(ev.text,10),name});
+    } else if(ev.cls==='lc'){
+      oppScorers.push({min:ev.min,name:ev.scorer||oppName});
+    }
+  });
+  return {myScorers,oppScorers};
+}
+
 function showResult(){
   if(M&&M.duel){if(M.duelPenTarget&&!M.penResult){duelStartPenalties();return;}duelShowMatchResult();return;}
   const {myG,oppG,myXG,oppXG,isKnockout,roundLabel,oppName}=M;
@@ -6498,14 +6519,7 @@ function showResult(){
     G.campaignBestWin={diff:myG-oppG,myG,oppG,opp:oppName};
 
   // Extract scorers
-  const myScorers=[], oppScorers=[];
-  M.log.forEach(ev=>{
-    if(ev.cls==='lg'&&ev.goal){
-      const m=ev.text.match(/^(\d+)' ⚽ (.+?) —/);
-      if(m) myScorers.push({min:m[1],name:m[2]});
-    }
-    if(ev.cls==='lc'&&ev.goal) oppScorers.push({min:ev.min,name:ev.scorer||oppName});
-  });
+  const {myScorers,oppScorers}=extractMatchScorers(M.log,oppName);
   myScorers.forEach(s=>{ G.campaignScorers[s.name]=(G.campaignScorers[s.name]||0)+1; });
 
   // Match stats
