@@ -5341,8 +5341,13 @@ function clearPreview(){
   renderDraftPitch(null);
 }
 var _draftPreviewIdx=-1;
+/* Il doppio tap (anteprima poi conferma) serve solo con input touch. 'ontouchstart' in window è vero
+   anche sui desktop con schermo touch, dove un normale click del mouse restava in anteprima:
+   si usa il tipo dell'ultimo puntatore, con il puntatore primario come valore iniziale. */
+var _lastPointerType=(function(){try{return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches?'touch':'mouse';}catch(e){return 'mouse';}})();
+document.addEventListener('pointerdown',function(e){if(e&&e.pointerType)_lastPointerType=e.pointerType;},true);
 function draftTap(i){
-  if(!('ontouchstart' in window)){draftPick(i);return;}
+  if(_lastPointerType!=='touch'){draftPick(i);return;}
   if(_draftPreviewIdx===i){
     _draftPreviewIdx=-1;
     var cards=document.querySelectorAll('.draft-pick-card');
@@ -5370,12 +5375,16 @@ document.addEventListener('touchstart',function(e){
   }
 },{passive:true});
 
+var _rerollBusy=false;
 function draftReroll(){
   if(typeof DUEL!=='undefined'&&DUEL.mode&&DUEL.draftSessionId){_duelDraftAction('reroll');return;}
+  /* Il cambio carte dura ~130 ms: un secondo click in quella finestra consumava un altro reroll. */
+  if(_rerollBusy)return;
   if(G.passes<=0)return;
   var _emptySlots=G.slotPlayers.filter(function(p){return p===null;}).length;
   if((G.difficulty||'normal')!=='easy'&&_emptySlots<=2)return;
   G.passes--;
+  _rerollBusy=true;
   // Salva le carte attuali nel pool riciclo prima di sostituirle
   if(!G.draftDiscarded)G.draftDiscarded=[];
   G.draftCards.forEach(function(c){if(c)G.draftDiscarded.push(c);});
@@ -5384,6 +5393,7 @@ function draftReroll(){
   var _rev=document.getElementById('d-reveal');
   if(_rev){_rev.style.transition='opacity .13s';_rev.style.opacity='0';}
   setTimeout(function(){
+   try{
     drawDraftCards();
     // Tier flash
     var _tf=document.getElementById('d-tier-flash');
@@ -5407,6 +5417,7 @@ function draftReroll(){
     if(_rev){_rev.style.opacity='0';}
     updateDraftScreen();
     if(_rev){requestAnimationFrame(function(){requestAnimationFrame(function(){_rev.style.transition='opacity .18s';_rev.style.opacity='1';});});}
+   }finally{_rerollBusy=false;}
   },130);
 }
 

@@ -94,4 +94,68 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   for (const lang of langs) if (!box.S[lang]["draft.rerolls"]) throw new Error("draft.rerolls missing in "+lang);
   if (/'Rerolls: <strong/.test(homepage)) throw new Error("Draft header Rerolls label must use t('draft.rerolls')");
 }
+/* Reroll: un doppio click nella finestra di 130 ms consumava due reroll. */
+{
+  const rStart = homepage.indexOf("var _rerollBusy=false;");
+  const rEnd = homepage.indexOf("function finalizeDraft(){", rStart);
+  if (rStart < 0 || rEnd < 0) throw new Error("draftReroll not found");
+  const timers = [];
+  const rbox = {
+    G:{passes:3,difficulty:"easy",slotPlayers:[null,null,null],draftCards:[{n:"a"},{n:"b"},{n:"c"}],draftDiscarded:[]},
+    DUEL:{mode:false},
+    document:{getElementById:()=>null},
+    setTimeout:(fn)=>{timers.push(fn);},
+    requestAnimationFrame(fn){fn();},
+    drawDraftCards(){rbox.drawn=(rbox.drawn||0)+1;rbox.G.draftCards=[{n:"x"},{n:"y"},{n:"z"}];},
+    updateDraftScreen(){}
+  };
+  vm.createContext(rbox);
+  vm.runInContext(homepage.slice(rStart, rEnd), rbox, {filename:"index.html#reroll"});
+  rbox.draftReroll(); rbox.draftReroll(); rbox.draftReroll();
+  if (rbox.G.passes !== 2) throw new Error("Rapid reroll clicks must consume one reroll, got "+(3-rbox.G.passes));
+  if (rbox.G.draftDiscarded.length !== 3) throw new Error("Discarded pool must hold the replaced cards once");
+  timers.shift()();
+  if (rbox.drawn !== 1) throw new Error("Cards must be redrawn exactly once");
+  rbox.draftReroll();
+  if (rbox.G.passes !== 1) throw new Error("A new reroll must work after the transition ends");
+  timers.shift()();
+  rbox.drawDraftCards = function(){throw new Error("boom");};
+  rbox.draftReroll();
+  try { timers.shift()(); } catch (e) { /* atteso */ }
+  rbox.G.passes = 3;
+  rbox.draftReroll();
+  if (rbox.G.passes !== 2) throw new Error("A failed redraw must not leave reroll locked");
+}
+
+/* Anteprima con doppio tap solo per input touch, non per il mouse su schermi touch. */
+{
+  const dStart = homepage.indexOf("var _draftPreviewIdx=-1;");
+  const dEnd = homepage.indexOf("document.addEventListener('touchstart'", dStart);
+  if (dStart < 0 || dEnd < 0) throw new Error("draftTap not found");
+  const handlers = {};
+  const picks = [], previews = [];
+  const dbox = {
+    window:{matchMedia:()=>({matches:false}),ontouchstart:null},
+    document:{addEventListener:(ev,fn)=>{handlers[ev]=fn;},querySelectorAll:()=>[]},
+    draftPick:i=>picks.push(i),previewCard:i=>previews.push(i)
+  };
+  vm.createContext(dbox);
+  vm.runInContext(homepage.slice(dStart, dEnd), dbox, {filename:"index.html#draft-tap"});
+  handlers.pointerdown({pointerType:"mouse"});
+  dbox.draftTap(1);
+  if (picks.join() !== "1" || previews.length) throw new Error("Mouse click must pick immediately even on touch-capable desktops");
+  handlers.pointerdown({pointerType:"touch"});
+  dbox.draftTap(2);
+  if (picks.length !== 1 || previews.join() !== "2") throw new Error("First touch tap must only preview");
+  dbox.draftTap(2);
+  if (picks.join() !== "1,2") throw new Error("Second touch tap must confirm the pick");
+  handlers.pointerdown({pointerType:"mouse"});
+  dbox.draftTap(0);
+  if (picks.join() !== "1,2,0") throw new Error("Switching back to mouse must pick immediately");
+  const coarse = {window:{matchMedia:()=>({matches:true})},document:{addEventListener(){},querySelectorAll:()=>[]},draftPick(){},previewCard:i=>coarse.p=i};
+  vm.createContext(coarse);
+  vm.runInContext(homepage.slice(dStart, dEnd), coarse, {filename:"index.html#draft-tap-coarse"});
+  coarse.draftTap(1);
+  if (coarse.p !== 1) throw new Error("A coarse primary pointer must start in preview mode");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");
