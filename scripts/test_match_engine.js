@@ -28,12 +28,12 @@ const engineSource =
   section("const FORMATIONS =", "function draftNameSz") + "\n" +
   section("function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slotIndex)", "function filledCount()") + "\n" +
   section("function avg(arr)", "function pgClass(pg)") + "\n" +
-  section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
+  section("const TACT_MOD=", "function selectFormTactic") + "\n" +
   section("function computeMatchXG(ea,eb,options)", "/* Rigori equi") + "\n" +
   section("function duelPenalties()", "/* Serie al meglio") + "\n" +
   section("function attackContributors(players,positions)", "/* ═══════════════════════════════════════\n   PENALTY SHOOTOUT") + "\n" +
   section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,evaluateDraftImpact,bestDraftPlacement,computeMatchXG,duelSimMatch,attackContributors,weightedContributor,calcChemistry};";
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,evaluateDraftImpact,bestDraftPlacement,tacticAdaptation,computeMatchXG,duelSimMatch,attackContributors,weightedContributor,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -231,6 +231,15 @@ const momentumXG = engine.computeMatchXG(equalA,equalB,{xgAddA:.12,xgAddB:-.042}
 if (!(momentumXG.xa>neutralXG.xa && momentumXG.xb<neutralXG.xb)) fail("campaign momentum inputs must help only the intended side");
 const coachXG = engine.computeMatchXG(equalA,equalB,{xgMulA:1.08});
 if (!(coachXG.xa>neutralXG.xa && Math.abs(coachXG.xb-neutralXG.xb)<.02)) fail("coach multiplier must remain a campaign-only side A modifier");
+const freshTactic=engine.tacticAdaptation([],"attack");
+const secondTactic=engine.tacticAdaptation(["attack"],"attack");
+const learnedTactic=engine.tacticAdaptation(["attack","attack"],"attack");
+const cappedTactic=engine.tacticAdaptation(["attack","attack","attack","attack","attack"],"attack");
+const switchedTactic=engine.tacticAdaptation(["attack","attack","attack"],"balanced");
+if(freshTactic.active||secondTactic.active||learnedTactic.myAdd!==-.04||learnedTactic.oppAdd!==.02) fail("adaptation must begin exactly on the third consecutive tactic");
+if(cappedTactic.myAdd!==-.12||cappedTactic.oppAdd!==.06||switchedTactic.active) fail("adaptation must cap and reset on a tactical switch");
+const adaptedXG=engine.computeMatchXG(equalA,equalB,{xgAddA:learnedTactic.myAdd,xgAddB:learnedTactic.oppAdd});
+if(!(adaptedXG.xa<neutralXG.xa&&adaptedXG.xb>neutralXG.xb)) fail("opponent adaptation must affect campaign xG in both intended directions");
 const boundedXG = engine.computeMatchXG(strong,weak,{lineBoostA:20,lineBoostB:-20,xgMulA:4,xgAddB:-5});
 if (boundedXG.xa!==2.6 || boundedXG.xb!==.13) fail("shared xG kernel must enforce Duel bounds");
 
@@ -310,6 +319,12 @@ if (!homepage.includes("function attackContributors(players,positions)") ||
     !homepage.includes("weightedContributor(scorers,'assistWeight',s)")) {
   fail("Match Engine v6 rating-aware scorer and assist pipeline is missing");
 }
+if (!homepage.includes("const adaptation=tacticAdaptation(G.tacticHistory") ||
+    !homepage.includes("G.tacticHistory=(G.tacticHistory||[]).concat") ||
+    !homepage.includes("G.tacticHistory = []") ||
+    !homepage.includes("'match.adaptation':'Opponent adaptation'")) {
+  fail("Match Engine v7 campaign adaptation lifecycle or diagnostics are missing");
+}
 if (!homepage.includes("function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slotIndex)") ||
     !homepage.includes("const impact=currentDraftPlacement(p)") ||
     !homepage.includes("'draft.impact_score':'Score'") ||
@@ -318,7 +333,7 @@ if (!homepage.includes("function evaluateDraftImpact(players,positions,formation
 }
 
 if (errors.length) {
-  console.error("Match Engine v6 failures:");
+  console.error("Match Engine v7 failures:");
   for (const message of errors) console.error("  - " + message);
   process.exit(1);
 }
@@ -327,4 +342,4 @@ console.log(
   "Balance samples: equal-side A " + (equalRate * 100).toFixed(1) +
   "%, strong XI " + (strongRate * 100).toFixed(1) + "%"
 );
-console.log("Match Engine v6 client/parity tests passed.");
+console.log("Match Engine v7 client/parity tests passed.");
