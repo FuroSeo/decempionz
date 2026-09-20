@@ -332,6 +332,26 @@ if (!homepage.includes("function evaluateDraftImpact(players,positions,formation
   fail("Draft 2.0 impact preview or Blind Draft protection is missing");
 }
 
+// Scorer attribution must use the event's scorer, never the log text that also
+// carries "· assist X" (otherwise top scorers and the +rating bonus split).
+{
+  const sb = {}; vm.createContext(sb);
+  vm.runInContext(section("function extractMatchScorers", "function showResult") + "\nthis.f=extractMatchScorers;", sb);
+  const log = [
+    { cls: "lg", goal: true, min: 12, scorer: "Canario", assist: "Zarraga", text: "12' \u26bd Canario \u00b7 assist Zarraga \u2014 x 1\u20130" },
+    { cls: "lg", goal: true, min: 40, scorer: "Canario", assist: null, text: "40' \u26bd Canario \u2014 x 2\u20130" },
+    { cls: "lg", goal: true, min: 55, text: "55' \u26bd Pele \u00b7 assist Garrincha \u2014 x 3\u20130" },
+    { cls: "lc", goal: true, min: 70, scorer: "Rival", text: "70' \u26bd Rival (Opp) \u2014 x 3\u20131" },
+    { cls: "lc", goal: true, min: 80, text: "80' \u26bd (Opp) \u2014 x 3\u20132" },
+    { cls: "ln", text: "yellow" }
+  ];
+  const r = sb.f(log, "Opp");
+  const mine = r.myScorers.map(x => x.name).join("|");
+  if (mine !== "Canario|Canario|Pele") fail("scorer attribution wrong: " + mine);
+  if (r.oppScorers.map(x => x.name).join("|") !== "Rival|Opp") fail("opponent scorers wrong");
+  if (sb.f(null, "Opp").myScorers.length !== 0) fail("null log must yield no scorers");
+}
+
 if (errors.length) {
   console.error("Match Engine v7 failures:");
   for (const message of errors) console.error("  - " + message);
