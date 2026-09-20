@@ -7940,10 +7940,14 @@ function _chemNat(p,mode){
   }
   return '';
 }
+/* Identità di club per la Chimica: lo slug `club` del dataset (come fa il server Duel),
+   non il nome visualizzato. Dortmund/Borussia Dortmund e Atletico/Atlético Madrid hanno
+   nomi diversi ma sono lo stesso club: raggruppare per nome dava un bonus diverso dal
+   server. Il nome resta solo come etichetta. */
 function _chemClub(p,mode){
-  if(p.club)return p.club;
   var team=_chemTeam(p,mode);
-  return team?(team.name||team.club||''):'';
+  if(team&&(team.club||team.name))return{key:String(team.club||team.name),label:team.name||team.club};
+  return p.club?{key:String(p.club),label:String(p.club)}:null;
 }
 function calcChemistry(players,positions,mode,options){
   var m0=mode||((typeof G!=='undefined'&&G.gameMode)||'ucl');
@@ -7956,7 +7960,7 @@ function calcChemistry(players,positions,mode,options){
     var pn=_chemNat(p,m0);
     if(pn)nats[pn]=(nats[pn]||0)+1;
     var pc=_chemClub(p,m0);
-    if(pc)clubs[pc]=(clubs[pc]||0)+1;
+    if(pc){if(!clubs[pc.key])clubs[pc.key]={n:0,label:pc.label};clubs[pc.key].n++;}
     var sp=(positions&&positions[i])||p.p;
     var g=posGroup(sp);
     if(dept[g]!==undefined){deptSize[g]++;if(pn)dept[g][pn]=(dept[g][pn]||0)+1;}
@@ -7969,9 +7973,9 @@ function calcChemistry(players,positions,mode,options){
   var m=m0;
   if((m==='ucl'||m==='copa')&&!isDynasty){
     Object.keys(clubs).forEach(function(k){
-      var c=clubs[k];
-      if(c>=cfg.clubBig)bonds.push({label:'🏟️ '+k+' ×'+c,pct:cfg.clubBigPct});
-      else if(c>=cfg.clubMin)bonds.push({label:'🏟️ '+k+' ×'+c,pct:cfg.clubPct});
+      var c=clubs[k].n,lb=clubs[k].label;
+      if(c>=cfg.clubBig)bonds.push({label:'🏟️ '+lb+' ×'+c,pct:cfg.clubBigPct});
+      else if(c>=cfg.clubMin)bonds.push({label:'🏟️ '+lb+' ×'+c,pct:cfg.clubPct});
     });
   }
   ['DEF','MID','FWD'].forEach(function(g){

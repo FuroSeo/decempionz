@@ -352,6 +352,27 @@ if (!homepage.includes("function evaluateDraftImpact(players,positions,formation
   if (sb.f(null, "Opp").myScorers.length !== 0) fail("null log must yield no scorers");
 }
 
+// Club Chemistry must group by the dataset club slug (as the PHP Duel engine does),
+// not by the display name: 'Dortmund' and 'Borussia Dortmund' are the same club.
+{
+  const sb = { console };
+  vm.createContext(sb);
+  const data = fs.readFileSync(path.join(ROOT, "game-data.js"), "utf8");
+  vm.runInContext(data + "\n" + section("const CHEM_CFG=", "/* \u2550") +
+    "\nfunction posGroup(p){return p==='GK'?'GK':/B$/.test(p)?'DEF':/M$|^CM$|^CAM$|^CDM$/.test(p)?'MID':'FWD';}" +
+    "\nfunction natFlag(n){return n||'';}\nfunction t(k){return k;}\nvar G={gameMode:'ucl',dynasty:false};" +
+    "\nthis.calc=calcChemistry;", sb);
+  const clubBonds = (ids) => {
+    const players = ids.map((id, i) => ({ n: "P" + i, p: "CM", r: 9, teamId: id }));
+    return sb.calc(players, players.map(() => "CM"), "ucl", { dynasty: false }).bonds.filter(b => b.label.indexOf("\ud83c\udfdf") === 0);
+  };
+  const bvb = clubBonds(["bvb_9697", "bvb_9697", "bvb_1213", "bvb_1213"]);
+  if (bvb.length !== 1 || bvb[0].label.indexOf("\u00d74") < 0) fail("Dortmund squads must form ONE club bond of 4: " + JSON.stringify(bvb));
+  const atm = clubBonds(["atm_1314", "atm_1314", "atm_1516", "atm_1516"]);
+  if (atm.length !== 1 || atm[0].label.indexOf("\u00d74") < 0) fail("Atletico squads must form ONE club bond of 4: " + JSON.stringify(atm));
+  if (clubBonds(["bvb_9697", "bvb_1213", "atm_1314", "atm_1516"]).length !== 0) fail("two players per club must not form a club bond");
+}
+
 if (errors.length) {
   console.error("Match Engine v7 failures:");
   for (const message of errors) console.error("  - " + message);
