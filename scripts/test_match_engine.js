@@ -28,10 +28,10 @@ const engineSource =
   section("const FORMATIONS =", "function draftNameSz") + "\n" +
   section("function avg(arr)", "function pgClass(pg)") + "\n" +
   section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
-  section("function duelSimMatch(ea,eb)", "/* Rigori equi") + "\n" +
+  section("function computeMatchXG(ea,eb,options)", "/* Rigori equi") + "\n" +
   section("function duelPenalties()", "/* Serie al meglio") + "\n" +
   section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,duelSimMatch,calcChemistry};";
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,computeMatchXG,duelSimMatch,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -217,6 +217,21 @@ if (!(chemMatch.xa > chemMatch.xb)) {
   fail("a 6% Chemistry edge must create an xG advantage between equal teams");
 }
 
+const neutralXG = engine.computeMatchXG(equalA, equalB);
+const reversedXG = engine.computeMatchXG(equalB, equalA);
+approx(neutralXG.xa, reversedXG.xb, 1e-12, "shared xG side symmetry A");
+approx(neutralXG.xb, reversedXG.xa, 1e-12, "shared xG side symmetry B");
+const difficultyXG = [-0.20,0.15,0.40,0.60].map(boost => engine.computeMatchXG(equalA,equalB,{lineBoostB:boost}).xb);
+if (!difficultyXG.every((value,index) => index===0 || value>difficultyXG[index-1])) {
+  fail("campaign difficulty must increase opponent xG monotonically: " + difficultyXG.join(","));
+}
+const momentumXG = engine.computeMatchXG(equalA,equalB,{xgAddA:.12,xgAddB:-.042});
+if (!(momentumXG.xa>neutralXG.xa && momentumXG.xb<neutralXG.xb)) fail("campaign momentum inputs must help only the intended side");
+const coachXG = engine.computeMatchXG(equalA,equalB,{xgMulA:1.08});
+if (!(coachXG.xa>neutralXG.xa && Math.abs(coachXG.xb-neutralXG.xb)<.02)) fail("coach multiplier must remain a campaign-only side A modifier");
+const boundedXG = engine.computeMatchXG(strong,weak,{lineBoostA:20,lineBoostB:-20,xgMulA:4,xgAddB:-5});
+if (boundedXG.xa!==2.6 || boundedXG.xb!==.13) fail("shared xG kernel must enforce Duel bounds");
+
 for (const key of ["team.score", "team.fit", "team.attack", "team.defence"]) {
   const count = homepage.split("'" + key + "':").length - 1;
   if (count !== 3) fail("Team Score translation missing for " + key);
@@ -240,10 +255,15 @@ if (!homepage.includes("evaluated.chemistry=calcChemistry") ||
   fail("browser Duel Chemistry parity hooks are missing");
 }
 if (!homepage.includes("const oppXI=_pendingMatch.oppId?buildCanonicalOpponent") ||
-    !homepage.includes("const oppAtk=oppEval?oppEval.atk+diffCfg.oppMod+roundBonus") ||
+    !homepage.includes("const xg=computeMatchXG(teamEval,oppEval") ||
+    !homepage.includes("lineBoostB:oppXI?diffCfg.oppMod+roundBonus:0") ||
     !homepage.includes("let oppPlayerPool=oppXI?oppXI.players.filter") ||
     !homepage.includes("if(oppXI){\n    _awayXI=oppXI.players.map")) {
   fail("campaign simulation, scorers and lineup must share the canonical opponent XI");
+}
+if (!homepage.includes("function computeMatchXG(ea,eb,options)") ||
+    !homepage.includes("var xg=computeMatchXG(ea,eb),xa=xg.xa,xb=xg.xb")) {
+  fail("campaign and browser Duel must call the shared Match Engine v5 xG kernel");
 }
 
 if (errors.length) {
@@ -256,4 +276,4 @@ console.log(
   "Balance samples: equal-side A " + (equalRate * 100).toFixed(1) +
   "%, strong XI " + (strongRate * 100).toFixed(1) + "%"
 );
-console.log("Match Engine v4 client/parity tests passed.");
+console.log("Match Engine v5 client/parity tests passed.");
