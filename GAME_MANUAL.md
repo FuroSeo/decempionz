@@ -1,6 +1,6 @@
 # Decempionz — Game Manual
 
-**App version:** 5.24.0
+**App version:** 5.25.0
 **Last updated:** 2026-09-20
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.25.0 — Match Engine v7 opponent adaptation** — campaign opponents now learn repeated tactics. A third consecutive use starts a capped, deterministic xG penalty while helping the opponent; changing approach resets it immediately. The modifier is visible in match diagnostics, resets per campaign and does not affect symmetric Duel simulation.
 - **5.24.0 — Manager Progression v1** — every completed campaign now awards deterministic XP for matches, wins, stars, difficulty and trophies. The persistent, balance-neutral Manager profile tracks level, campaigns and victories, appears on Home and reports rewards on both end screens; it is included in existing backups.
 - **5.23.0 — One-tap Quick Draft** — the primary UCL, Copa and World Cup CTAs now apply safe Classic / All Time / Normal / Balanced presets and open a playable Draft immediately. Tournament-specific formations are deterministic, stale Dynasty/Duel/Blind state is cleared, analytics records the funnel and the full Customize path remains available.
 - **5.22.0 — Draft 2.0 impact preview** — every visible card previews the deterministic target slot plus projected Team Score, positional fit and Chemistry deltas. The committed placement uses the same lowest-penalty selection on the browser and authoritative Duel server; Blind Draft keeps rating-derived previews hidden.
@@ -149,6 +150,8 @@ TACT_MOD = {
 ```
 
 A counter matrix (`COUNTER_MOD`) provides rock-paper-scissors interactions between tactical choices.
+
+Campaign opponents also adapt to repetition. The first two consecutive uses of a tactic are neutral; before the third, `tacticAdaptation(...)` applies `-0.04` user xG and `+0.02` opponent xG per exposed step, capped after three steps at `-0.12/+0.06`. Any tactical switch resets the modifier. History is reset for every new campaign and is intentionally excluded from Duel, whose engine remains symmetric.
 
 Other match inputs include positional penalties, coach boost, Chemistry, difficulty/opponent modifiers and Momentum where applicable. Match Engine v4 replaces the campaign's roster-average opponent with a deterministic canonical XI. The engine selects a formation that fits the historical roster, fills scarce roles first without duplicating or inventing players, and evaluates separate attack and defence lines. The selected XI is also used for opponent scorers and the match lineup. Difficulty and knockout progression adjust those canonical line ratings rather than replacing them with one scalar strength.
 
@@ -339,7 +342,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.24.0`.
+Current cache namespace: `decempionz-v5.25.0`.
 
 Rules:
 
@@ -358,8 +361,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.24.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.24.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.25.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.25.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
