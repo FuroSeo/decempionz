@@ -399,6 +399,24 @@ function dcz_draft_compatible_slots($state, $player) {
     return $out;
 }
 
+function dcz_draft_slot_penalty($slot, $playerPos) {
+    if ($slot === $playerPos) return 0.0;
+    $matrix = [
+        'CB'=>['LB'=>.12,'RB'=>.12,'LWB'=>.12,'RWB'=>.12],
+        'RB'=>['RWB'=>.04,'LB'=>.08,'LWB'=>.08,'CB'=>.18],
+        'LB'=>['LWB'=>.04,'RB'=>.08,'RWB'=>.08,'CB'=>.18],
+        'RWB'=>['RB'=>.04,'LWB'=>.08], 'LWB'=>['LB'=>.04,'RWB'=>.08],
+        'CDM'=>['CM'=>.06,'CB'=>.10], 'CM'=>['CDM'=>.06],
+        'CAM'=>['SS'=>.06,'RW'=>.10,'LW'=>.10],
+        'RM'=>['LM'=>.08,'RW'=>.06,'LW'=>.12], 'LM'=>['RM'=>.08,'LW'=>.06,'RW'=>.12],
+        'RW'=>['LW'=>.08,'RM'=>.06,'LM'=>.12,'CAM'=>.08,'SS'=>.06],
+        'LW'=>['RW'=>.08,'LM'=>.06,'RM'=>.12,'CAM'=>.08,'SS'=>.06],
+        'ST'=>['CF'=>.04,'SS'=>.06], 'CF'=>['ST'=>.04,'SS'=>.04],
+        'SS'=>['ST'=>.06,'CF'=>.06,'CAM'=>.06,'RW'=>.08,'LW'=>.08],
+    ];
+    return isset($matrix[$slot]) && array_key_exists($playerPos, $matrix[$slot]) ? (float)$matrix[$slot][$playerPos] : .25;
+}
+
 function dcz_draft_best_slot($state, $player) {
     $slots = dcz_draft_compatible_slots($state, $player);
     if (!$slots) return null;
@@ -408,6 +426,8 @@ function dcz_draft_best_slot($state, $player) {
             if (dcz_draft_pos_group($s['pos']) === dcz_draft_pos_group($player['p'])) return 1;
             return 2;
         };
+        $penalty = dcz_draft_slot_penalty($a['pos'], $player['p']) <=> dcz_draft_slot_penalty($b['pos'], $player['p']);
+        if ($penalty !== 0) return $penalty;
         $cmp = $pref($a) <=> $pref($b);
         return $cmp !== 0 ? $cmp : ($a['i'] <=> $b['i']);
     });
