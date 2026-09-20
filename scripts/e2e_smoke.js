@@ -133,6 +133,7 @@ async function playCampaign(browser, base, sc) {
   let lastChange = Date.now();
   let steps = 0;
   let finished = false;
+  let coachChecked = false;
 
   while (Date.now() - started < CAMPAIGN_MS) {
     const s = await snapshot(page);
@@ -152,6 +153,24 @@ async function playCampaign(browser, base, sc) {
     }
 
     if (s.screen === 'screen-gameover' || s.screen === 'screen-trophy') { finished = true; break; }
+
+    // Once per campaign, on the coach screen (XI complete): the Team Score panel
+    // and G.chem, which feed every match, must describe the FINAL eleven.
+    if (s.coaches && !coachChecked) {
+      coachChecked = true;
+      const c = await page.evaluate(() => {
+        const tac = G.draftTactic || G.tactic || 'balanced';
+        const pos = fmtPositions(G.formation, tac);
+        const ev = evaluateLineup(G.slotPlayers, pos, G.formation, tac);
+        const ch = calcChemistry(G.slotPlayers, pos, G.gameMode);
+        const el = document.querySelector('#d-team-score .team-score-value');
+        return { filled: G.slotPlayers.filter(Boolean).length, score: ev.score, shown: el ? Number(el.textContent) : null,
+                 chem: ch.pct, gchem: G.chem ? G.chem.pct : null };
+      });
+      if (c.filled !== 11) problems.push(`coach screen with ${c.filled}/11 players`);
+      if (c.shown !== c.score) problems.push(`stale Team Score on coach screen: shown ${c.shown}, real ${c.score}`);
+      if (c.gchem !== c.chem) problems.push(`stale chemistry for matches: G.chem ${c.gchem}%, real ${c.chem}%`);
+    }
 
     try {
       if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());

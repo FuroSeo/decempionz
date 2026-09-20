@@ -5093,6 +5093,37 @@ function drawDraftCards(){
   G.draftCards=drawn.map(function(d){return d.p;});
 }
 
+/* Team Score panel + Chemistry bar of the draft. G.chem and G.teamEval feed every
+   campaign match, so this must also run after the last pick and the emergency fill. */
+function renderDraftMetrics(filled){
+  var _draftPositions=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
+  var _teamEval=evaluateLineup(G.slotPlayers,_draftPositions,G.formation,G.draftTactic||G.tactic||'balanced');
+  G.teamEval=_teamEval;
+  var _teamScoreEl=document.getElementById('d-team-score');
+  if(_teamScoreEl){
+    if(filled>0){
+      _teamScoreEl.style.display='grid';
+      _teamScoreEl.innerHTML=
+        '<div class="team-score-cell main"><div class="team-score-value">'+_teamEval.score+'</div><div class="team-score-label">'+t('team.score')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.atk*10)+'</div><div class="team-score-label">'+t('team.attack')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.def*10)+'</div><div class="team-score-label">'+t('team.defence')+'</div></div>'+
+        '<div class="team-score-cell"><div class="team-score-value">'+_teamEval.fit+'%</div><div class="team-score-label">'+t('team.fit')+'</div></div>';
+    }else{_teamScoreEl.style.display='none';}
+  }
+  var _chemEl=document.getElementById('d-chem-bar');
+  if(_chemEl){
+    G.chem=calcChemistry(G.slotPlayers,_draftPositions,G.gameMode);
+    if(filled>0){
+      _chemEl.style.display='block';
+      var _cp=G.chem.pct,_cap=CHEM_CFG.cap,_segs='';
+      for(var _si=0;_si<_cap;_si++)_segs+='<div class="chem-seg'+(_si<_cp?(_cp>=_cap?' fx':' f'):'')+'"></div>';
+      var _chips=G.chem.bonds.map(function(b){return '<span class="chem-bond'+(b.dept?' dept':'')+'">'+b.label+' <b>+'+b.pct+'%</b></span>';}).join('');
+      _chemEl.innerHTML='<div class="chem-top"><span class="chem-lbl">🔗 '+t('chem.label')+'</span><div class="chem-segs">'+_segs+'</div><span class="chem-val'+(_cp<=0?' zero':(_cp>=_cap?' max':''))+'">'+(_cp>=_cap?'MAX':'+'+_cp+'%')+'</span></div>'
+        +(_chips?'<div class="chem-bonds">'+_chips+'</div>':'');
+    }else{_chemEl.style.display='none';}
+  }
+}
+
 function updateDraftScreen(){
   if(filledCount()>=11){finalizeDraft();return;}
   if(!G.draftCards||G.draftCards.length===0){
@@ -5129,32 +5160,7 @@ function updateDraftScreen(){
 
 
   document.getElementById('d-count').textContent=filled+'/11';
-  var _draftPositions=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
-  var _teamEval=evaluateLineup(G.slotPlayers,_draftPositions,G.formation,G.draftTactic||G.tactic||'balanced');
-  G.teamEval=_teamEval;
-  var _teamScoreEl=document.getElementById('d-team-score');
-  if(_teamScoreEl){
-    if(filled>0){
-      _teamScoreEl.style.display='grid';
-      _teamScoreEl.innerHTML=
-        '<div class="team-score-cell main"><div class="team-score-value">'+_teamEval.score+'</div><div class="team-score-label">'+t('team.score')+'</div></div>'+
-        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.atk*10)+'</div><div class="team-score-label">'+t('team.attack')+'</div></div>'+
-        '<div class="team-score-cell"><div class="team-score-value">'+Math.round(_teamEval.def*10)+'</div><div class="team-score-label">'+t('team.defence')+'</div></div>'+
-        '<div class="team-score-cell"><div class="team-score-value">'+_teamEval.fit+'%</div><div class="team-score-label">'+t('team.fit')+'</div></div>';
-    }else{_teamScoreEl.style.display='none';}
-  }
-  var _chemEl=document.getElementById('d-chem-bar');
-  if(_chemEl){
-    G.chem=calcChemistry(G.slotPlayers,_draftPositions,G.gameMode);
-    if(filled>0){
-      _chemEl.style.display='block';
-      var _cp=G.chem.pct,_cap=CHEM_CFG.cap,_segs='';
-      for(var _si=0;_si<_cap;_si++)_segs+='<div class="chem-seg'+(_si<_cp?(_cp>=_cap?' fx':' f'):'')+'"></div>';
-      var _chips=G.chem.bonds.map(function(b){return '<span class="chem-bond'+(b.dept?' dept':'')+'">'+b.label+' <b>+'+b.pct+'%</b></span>';}).join('');
-      _chemEl.innerHTML='<div class="chem-top"><span class="chem-lbl">🔗 '+t('chem.label')+'</span><div class="chem-segs">'+_segs+'</div><span class="chem-val'+(_cp<=0?' zero':(_cp>=_cap?' max':''))+'">'+(_cp>=_cap?'MAX':'+'+_cp+'%')+'</span></div>'
-        +(_chips?'<div class="chem-bonds">'+_chips+'</div>':'');
-    }else{_chemEl.style.display='none';}
-  }
+  renderDraftMetrics(filled);
   document.getElementById('d-passes').innerHTML=
     'Rerolls: <strong style="color:'+(G.passes<=1?'#f97316':'var(--text)')+'">'+G.passes+'</strong>';
   document.getElementById('d-bar').style.width=Math.round(filled/11*100)+'%';
@@ -5439,7 +5445,14 @@ function finalizeDraft(){
   }
   // Update pitch one last time so user sees the completed squad
   renderDraftPitch(null);
+  // The 11th pick and the emergency fill happen after the last updateDraftScreen:
+  // refresh Team Score / Chemistry so G.chem matches the final XI.
+  try{renderDraftMetrics(G.squad.length);}catch(e){console.error('final draft metrics:',e);}
+  var _finalSquad=G.squad;
   setTimeout(function(){
+    // The player may have left (Home / New Game) during the pause: never let this
+    // stale timer replace a newer draft with coach cards.
+    if(G.squad!==_finalSquad||!G.draftFinalized)return;
     if(DUEL.mode){duelAfterDraft();return;}
     showCoachDraft();
   },1500);
