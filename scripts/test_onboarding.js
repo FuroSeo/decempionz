@@ -41,4 +41,39 @@ for (const [mode,formation,era] of [["ucl","4-3-3","alltime"],["copa","4-4-2","c
 for (const marker of ["function quickStart(){quickStartPreset('ucl');}","function quickStartCopa(){quickStartPreset('copa');}","function quickStartWC(){quickStartPreset('wc');}"]) {
   if (!homepage.includes(marker)) throw new Error("Home CTA wrapper missing: "+marker);
 }
+/* Tema con localStorage bloccato (modalità privata, cookie disattivati): non deve lanciare
+   e deve comunque applicare tema e icona. */
+{
+  const boot = homepage.match(/<body><script>\n(\(function\(\)\{var t=[^\n]*gl-theme[^\n]*\}\)\(\);)\n<\/script>/);
+  if (!boot) throw new Error("Theme boot script not found");
+  const tStart = homepage.indexOf("function toggleTheme(){");
+  const tEnd = homepage.indexOf("// Aggiorna icona al caricamento", tStart);
+  if (tStart < 0 || tEnd < 0) throw new Error("Theme toggle not found");
+  const attrs = {};
+  const icon = {textContent:""};
+  const blocked = {getItem(){throw new Error("SecurityError");},setItem(){throw new Error("SecurityError");}};
+  const themeBox = {
+    localStorage:blocked,
+    document:{
+      body:{getAttribute:k=>attrs[k]||null,setAttribute:(k,v)=>{attrs[k]=v;}},
+      getElementById:id=>id==="theme-icon"?icon:{classList:{contains:()=>false}},
+      querySelectorAll:()=>[]
+    },
+    renderGameOverPitch(){},renderTrophyPitch(){},injectPitchLines(){}
+  };
+  vm.createContext(themeBox);
+  vm.runInContext(boot[1], themeBox, {filename:"index.html#theme-boot"});
+  vm.runInContext(homepage.slice(tStart,tEnd), themeBox, {filename:"index.html#theme"});
+  themeBox.toggleTheme();
+  if (attrs["data-theme"]!=="light" || icon.textContent!=="\u{1F319}") throw new Error("toggleTheme must apply theme and icon with blocked storage");
+  themeBox.toggleTheme();
+  if (attrs["data-theme"]!=="" || icon.textContent!=="\u2600\uFE0F") throw new Error("toggleTheme back to dark failed with blocked storage");
+  const ok = {store:{"gl-theme":"light"}};
+  ok.localStorage = {getItem:k=>ok.store[k]||null,setItem:(k,v)=>{ok.store[k]=v;}};
+  ok.document = themeBox.document;
+  for (const k of Object.keys(attrs)) delete attrs[k];
+  vm.createContext(ok);
+  vm.runInContext(boot[1], ok, {filename:"index.html#theme-boot"});
+  if (attrs["data-theme"]!=="light") throw new Error("Stored light theme not restored");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");

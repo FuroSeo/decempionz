@@ -806,7 +806,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 </script>
 </head>
 <body><script>
-(function(){var t=localStorage.getItem('gl-theme');if(t==='light')document.body.setAttribute('data-theme','light');})();
+(function(){var t=null;try{t=localStorage.getItem('gl-theme');}catch(e){}if(t==='light')document.body.setAttribute('data-theme','light');})();
 </script>
 <button id="theme-icon" onclick="toggleTheme()" aria-label="Toggle theme" style="position:fixed;top:10px;right:10px;z-index:9999;width:30px;height:30px;border-radius:50%;border:1px solid var(--brd);background:var(--s2);color:var(--mut);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">☀️</button>
 <button id="lang-btn" onclick="toggleLang()" aria-label="Toggle language" style="position:fixed;top:10px;right:48px;z-index:9999;height:30px;padding:0 10px;border-radius:15px;border:1px solid var(--brd);background:var(--s2);font-size:.7rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;line-height:1;color:var(--text)">🌐 <span id="lb-lang">IT</span></button>
@@ -6893,7 +6893,7 @@ function openStatsScreen(){
 }
 function _dczReset(){
   if(!confirm('Azzerare tutte le statistiche?'))return;
-  localStorage.removeItem('dcz_stats');
+  try{localStorage.removeItem('dcz_stats');}catch(e){}
   openStatsScreen();
 }
 
@@ -7365,7 +7365,7 @@ function renderTrophyPitch(){
 function toggleTheme(){
   const isLight=document.body.getAttribute('data-theme')==='light';
   document.body.setAttribute('data-theme',isLight?'':'light');
-  localStorage.setItem('gl-theme',isLight?'dark':'light');
+  try{localStorage.setItem('gl-theme',isLight?'dark':'light');}catch(e){}
   const icon=document.getElementById('theme-icon');
   if(icon)icon.textContent=isLight?'☀️':'🌙';
   // Re-render pitch slots so slotTierCss picks up new theme
