@@ -30,4 +30,35 @@ if(managerCampaignGrade(rows)!=="C")throw new Error("campaign grade mismatch");
 if(!homepage.includes("if(G.progressAwarded)return null")||!homepage.includes("G.progressAwarded = false"))throw new Error("single-award guard missing");
 for(const id of ["manager-progress","go-progress","t-progress"])if(!homepage.includes('id="'+id+'"'))throw new Error("progress UI missing: "+id);
 for(const mode of ["ucl","copa","wc"])if(!homepage.includes('data-mastery="'+mode+'"'))throw new Error("mastery UI missing: "+mode);
+// Hostile / corrupted saved profiles (localStorage or importSave) must normalise to
+// bounded integers, keep bestGrade inside its whitelist and never hang the level loop.
+{
+  const bad=[
+    {level:"abc",xp:"5",totalXP:null,campaigns:"x",wins:-4,mastery:{ucl:{level:null,xp:1e300,bestGrade:"<img src=x onerror=alert(1)>"}}},
+    {level:1e300,xp:1e300,totalXP:Infinity,mastery:{copa:{level:"9",xp:"55",totalXP:{},campaigns:NaN,wins:[],bestGrade:"S"}}},
+    {level:-3,xp:-100,mastery:"nope"},
+    "string",[],null,42
+  ];
+  const t0=Date.now();
+  for(const raw of bad){
+    const p=managerNormalizeProfile(raw);
+    for(const k of ["level","xp","totalXP","campaigns","wins"]){
+      if(!Number.isInteger(p[k])||p[k]<0)throw new Error("profile."+k+" not a safe integer for "+JSON.stringify(raw)+": "+p[k]);
+    }
+    if(p.level<1||p.level>9999)throw new Error("profile level out of range: "+p.level);
+    for(const mode of ["ucl","copa","wc"]){
+      const m=p.mastery[mode];
+      for(const k of ["level","xp","totalXP","campaigns","wins"]){
+        if(!Number.isInteger(m[k])||m[k]<0)throw new Error("mastery."+mode+"."+k+" not a safe integer: "+m[k]);
+      }
+      if(m.level<1||m.level>9999)throw new Error("mastery level out of range: "+m.level);
+      if(m.bestGrade!==null&&!["S","A","B","C"].includes(m.bestGrade))throw new Error("bestGrade escaped whitelist: "+m.bestGrade);
+    }
+  }
+  if(managerNormalizeProfile(bad[1]).mastery.copa.bestGrade!=="S")throw new Error("valid bestGrade must survive normalisation");
+  if(managerNormalizeProfile({xp:"5"}).xp!==5)throw new Error("numeric strings must be coerced, not concatenated");
+  const hostile=managerApplyMastery({mastery:{ucl:{level:"1",xp:"5",bestGrade:"<b>"}}},"ucl",54,true,"<i>");
+  if(hostile.mastery.xp!==59||hostile.mastery.bestGrade!==null)throw new Error("mastery update on hostile data wrong");
+  if(Date.now()-t0>1500)throw new Error("hostile profile normalisation is too slow (level loop unbounded?)");
+}
 console.log("Manager progression tests passed.");
