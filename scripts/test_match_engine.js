@@ -30,8 +30,9 @@ const engineSource =
   section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
   section("function computeMatchXG(ea,eb,options)", "/* Rigori equi") + "\n" +
   section("function duelPenalties()", "/* Serie al meglio") + "\n" +
+  section("function attackContributors(players,positions)", "/* ═══════════════════════════════════════\n   PENALTY SHOOTOUT") + "\n" +
   section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,computeMatchXG,duelSimMatch,calcChemistry};";
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,computeMatchXG,duelSimMatch,attackContributors,weightedContributor,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -232,6 +233,29 @@ if (!(coachXG.xa>neutralXG.xa && Math.abs(coachXG.xb-neutralXG.xb)<.02)) fail("c
 const boundedXG = engine.computeMatchXG(strong,weak,{lineBoostA:20,lineBoostB:-20,xgMulA:4,xgAddB:-5});
 if (boundedXG.xa!==2.6 || boundedXG.xb!==.13) fail("shared xG kernel must enforce Duel bounds");
 
+const eventPlayers=[
+  {n:"Keeper",p:"GK",r:10},
+  {n:"Elite striker",p:"ST",r:10},
+  {n:"Adapted midfielder",p:"CM",r:7},
+  {n:"Creator",p:"CAM",r:9}
+];
+const eventContributors=engine.attackContributors(eventPlayers,["GK","ST","ST","CAM"]);
+if (eventContributors.some(p=>p.n==="Keeper")) fail("goalkeepers must not enter the attacking contributor pool");
+const elite=eventContributors.find(p=>p.n==="Elite striker");
+const adapted=eventContributors.find(p=>p.n==="Adapted midfielder");
+if (!(elite.goalWeight>adapted.goalWeight*3)) fail("rating, role and positional fit must materially weight scorer probability");
+let eliteGoals=0,adaptedGoals=0;
+rngState=98765;
+for(let i=0;i<5000;i++){
+  const scorer=engine.weightedContributor([elite,adapted],"goalWeight");
+  if(scorer.n===elite.n)eliteGoals++;else adaptedGoals++;
+}
+if (!(eliteGoals>adaptedGoals*3)) fail("weighted scorer sampling must favour the elite natural striker");
+for(let i=0;i<100;i++){
+  const assist=engine.weightedContributor(eventContributors,"assistWeight","Elite striker");
+  if(!assist||assist.n==="Elite striker")fail("assist selection must exclude the scorer");
+}
+
 for (const key of ["team.score", "team.fit", "team.attack", "team.defence"]) {
   const count = homepage.split("'" + key + "':").length - 1;
   if (count !== 3) fail("Team Score translation missing for " + key);
@@ -257,7 +281,7 @@ if (!homepage.includes("evaluated.chemistry=calcChemistry") ||
 if (!homepage.includes("const oppXI=_pendingMatch.oppId?buildCanonicalOpponent") ||
     !homepage.includes("const xg=computeMatchXG(teamEval,oppEval") ||
     !homepage.includes("lineBoostB:oppXI?diffCfg.oppMod+roundBonus:0") ||
-    !homepage.includes("let oppPlayerPool=oppXI?oppXI.players.filter") ||
+    !homepage.includes("let oppPlayerPool=oppXI?attackContributors(oppXI.players,oppXI.positions)") ||
     !homepage.includes("if(oppXI){\n    _awayXI=oppXI.players.map")) {
   fail("campaign simulation, scorers and lineup must share the canonical opponent XI");
 }
@@ -265,9 +289,14 @@ if (!homepage.includes("function computeMatchXG(ea,eb,options)") ||
     !homepage.includes("var xg=computeMatchXG(ea,eb),xa=xg.xa,xb=xg.xb")) {
   fail("campaign and browser Duel must call the shared Match Engine v5 xG kernel");
 }
+if (!homepage.includes("function attackContributors(players,positions)") ||
+    !homepage.includes("weightedContributor(scorers,'goalWeight')") ||
+    !homepage.includes("weightedContributor(scorers,'assistWeight',s)")) {
+  fail("Match Engine v6 rating-aware scorer and assist pipeline is missing");
+}
 
 if (errors.length) {
-  console.error("Match Engine v4 failures:");
+  console.error("Match Engine v6 failures:");
   for (const message of errors) console.error("  - " + message);
   process.exit(1);
 }
@@ -276,4 +305,4 @@ console.log(
   "Balance samples: equal-side A " + (equalRate * 100).toFixed(1) +
   "%, strong XI " + (strongRate * 100).toFixed(1) + "%"
 );
-console.log("Match Engine v5 client/parity tests passed.");
+console.log("Match Engine v6 client/parity tests passed.");

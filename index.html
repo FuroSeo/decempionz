@@ -1599,7 +1599,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.20.0';
+const GAME_VERSION='5.21.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -3731,8 +3731,10 @@ function duelPlayMatch(idx){
   var me=meIsB?d.b:d.a,opp=meIsB?d.a:d.b;
   var myName=(me&&(me.clubName||me.nick))||'?',oppName=(opp&&(opp.clubName||opp.nick))||'?';
   var myG=meIsB?m.gb:m.ga,oppG=meIsB?m.ga:m.gb;
-  var scorers=(me.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
-  var oppPool=(opp.players||[]).filter(function(p){return p.p!=='GK';}).sort(function(a,b){return b.r-a.r;}).slice(0,8);
+  var posMe=fmtPositions(me.formation,me.tactic||'balanced');
+  var posOpp=fmtPositions(opp.formation,opp.tactic||'balanced');
+  var scorers=attackContributors(me.players||[],posMe);
+  var oppPool=attackContributors(opp.players||[],posOpp);
   var log=buildMatchLog(myG,oppG,myName,oppName,scorers,oppPool);
   var roundLabel=t('duel.match_lbl')+' '+(idx+1)+'/'+S.matches.length;
   M={duel:true,duelIdx:idx,myG:myG,oppG:oppG,myXG:0,oppXG:0,myName:myName,oppName:oppName,roundLabel:roundLabel,roundTag:'ko',isKnockout:true,myS:0,oppS:0,log:log,idx:0,eliminated:false,won:false,
@@ -3744,9 +3746,7 @@ function duelPlayMatch(idx){
         Duelli creati prima di questo fix non hanno pSeqA/pSeqB: si ricade sulla ricostruzione
         plausibile di duelBuildPenSeq(). */
      duelPenSeq:(Array.isArray(m.pSeqA)&&Array.isArray(m.pSeqB))?{mine:meIsB?m.pSeqB:m.pSeqA,opp:meIsB?m.pSeqA:m.pSeqB}:null};
-  var posMe=fmtPositions(me.formation,me.tactic||'balanced');
   M.homeXI=(me.players||[]).map(function(p,i){return{n:p.n,p:posMe[i]||p.p};});
-  var posOpp=fmtPositions(opp.formation,opp.tactic||'balanced');
   M.awayXI=(opp.players||[]).map(function(p,i){return{n:p.n,p:posOpp[i]||p.p};});
   M.homeGoals={};M.awayGoals={};
   document.getElementById('m-tag').innerHTML='<span class="tag tag-ko">⚔️ '+_duelEsc(roundLabel).toUpperCase()+'</span>';
@@ -5809,7 +5809,6 @@ function _runMatch(){
   const _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
   const teamEval=evaluateLineup(G.slotPlayers,_formPos,G.formation,G.tactic||'balanced');
   teamEval.chemistry=G.chem||{mul:1,pct:0,bonds:[]};
-  const grp=teamEval.groups;
 
   const oppTactic=_pendingMatch.oppTactic||'balanced';
 
@@ -5838,16 +5837,16 @@ function _runMatch(){
   let myG=poisson(myXG), oppG=poisson(oppXG);
   if(_DEV_FORCE_SCORE){myG=_DEV_FORCE_SCORE[0];oppG=_DEV_FORCE_SCORE[1];_DEV_FORCE_SCORE=null;document.getElementById('dv-force-status').textContent='';}
 
-  const scorers=[...grp.FWD,...grp.MID].filter(Boolean);
+  const scorers=attackContributors(G.slotPlayers,_formPos);
   // Opponent players for scorer names
-  let oppPlayerPool=oppXI?oppXI.players.filter(function(p,i){return p&&oppXI.positions[i]!=='GK';}):[];
+  let oppPlayerPool=oppXI?attackContributors(oppXI.players,oppXI.positions):[];
   if(!oppPlayerPool.length&&G.phase==='group'){
     const oppId=G.groupTeams[G.groupRound].id;
-    oppPlayerPool=[...(_aDB[oppId]||TEAMS[oppId]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
+    var _gp=(_aDB[oppId]||TEAMS[oppId]).players;oppPlayerPool=attackContributors(_gp,_gp.map(function(p){return p.p;}));
   } else if(!oppPlayerPool.length) {
     const koOpp=G.knockOpps[G.knockRound];
     if(koOpp&&koOpp.id&&(_aDB[koOpp.id]||TEAMS[koOpp.id]))
-      oppPlayerPool=[...(_aDB[koOpp.id]||TEAMS[koOpp.id]).players].filter(p=>p.p!=='GK').sort((a,b)=>b.r-a.r).slice(0,8);
+      {var _kp=(_aDB[koOpp.id]||TEAMS[koOpp.id]).players;oppPlayerPool=attackContributors(_kp,_kp.map(function(p){return p.p;}));}
   }
   const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
 
@@ -5909,6 +5908,27 @@ function _runMatch(){
   setTimeout(runLog,800);
 }
 
+function attackContributors(players,positions){
+  return (players||[]).map(function(p,i){
+    if(!p)return null;
+    var slot=(positions&&positions[i])||p.p,group=posGroup(slot);
+    if(group==='GK')return null;
+    var effective=p.r*(1-slotPenalty(slot,p.p));
+    var goalRole=group==='FWD'?1.75:group==='MID'?1:.28;
+    var assistRole=group==='MID'?1.45:group==='FWD'?1:.55;
+    return{n:p.n,p:p.p,slot:slot,r:p.r,effective:effective,
+      goalWeight:Math.pow(effective,2)*goalRole*(p.r>=10?1.12:1),
+      assistWeight:Math.pow(effective,1.7)*assistRole};
+  }).filter(Boolean);
+}
+function weightedContributor(pool,weightKey,excludeName){
+  var eligible=(pool||[]).filter(function(p){return p&&p.n!==excludeName;});
+  if(!eligible.length)return null;
+  var total=eligible.reduce(function(sum,p){return sum+Math.max(0,Number(p[weightKey])||1);},0);
+  var roll=Math.random()*total;
+  for(var i=0;i<eligible.length;i++){roll-=Math.max(0,Number(eligible[i][weightKey])||1);if(roll<=0)return eligible[i];}
+  return eligible[eligible.length-1];
+}
 function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   const evs=[];
   const myMins=[],oppMins=[];
@@ -5918,8 +5938,8 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   const _lang=G.lang||'it';
   const _isIt=_lang==='it';
   const _isEs=_lang==='es';
-  const _plr=function(){return scorers&&scorers.length?pick(scorers).n:'';};
-  const _opl=function(){return oppPlayers&&oppPlayers.length?pick(oppPlayers).n:'';};
+  const _plr=function(){var p=weightedContributor(scorers,'goalWeight');return p?p.n:'';};
+  const _opl=function(){var p=weightedContributor(oppPlayers,'goalWeight');return p?p.n:'';};
   // Neutral event templates — trilingua, player-aware, 16 varianti
   const nTpls=(_isIt?[
     function(m){var p=_plr();return m+"' 🟡 Cartellino giallo"+(p?" — "+p:"");},
@@ -5995,15 +6015,17 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
   allEvs.forEach(ev=>{
     if(ev.t==='my'){
       ms++;
-      const _sp=pick(scorers);const s=(_sp&&_sp.n)||String(_sp||'Unknown');
+      const _sp=weightedContributor(scorers,'goalWeight');const s=(_sp&&_sp.n)||'Unknown';
+      const _as=weightedContributor(scorers,'assistWeight',s);const _assist=_as?' · assist '+_as.n:'';
       const _ctx=Math.random()<0.45?_myGoalCtx(ms,os):pick(_myGoalPhrases);
-      evs.push({min:ev.m,scorer:s,text:`${ev.m}' ⚽ ${s} — `+_ctx+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
+      evs.push({min:ev.m,scorer:s,assist:_as?_as.n:null,text:`${ev.m}' ⚽ ${s}`+_assist+` — `+_ctx+` ${ms}–${os}`,cls:'lg',goal:true,mine:true});
     } else if(ev.t==='opp'){
       os++;
-      const oppSc=oppPlayers&&oppPlayers.length?pick(oppPlayers):null;
+      const oppSc=weightedContributor(oppPlayers,'goalWeight');
       const scName=oppSc?(oppSc.n||oppSc):oppName;
+      const oppAs=weightedContributor(oppPlayers,'assistWeight',scName);const oppAssist=oppAs?' · assist '+oppAs.n:'';
       const _oppPhrase=ms===os?_oppGoalPhraseEqual:pick(_oppGoalPhrasesGeneral);
-      evs.push({min:ev.m,scorer:scName,text:`${ev.m}' ⚽ ${scName} (${oppName}) — `+_oppPhrase+` ${ms}–${os}`,cls:'lc',goal:true,mine:false});
+      evs.push({min:ev.m,scorer:scName,assist:oppAs?oppAs.n:null,text:`${ev.m}' ⚽ ${scName}`+oppAssist+` (${oppName}) — `+_oppPhrase+` ${ms}–${os}`,cls:'lc',goal:true,mine:false});
     } else {
       evs.push({min:ev.m,text:ev.tpl(ev.m),cls:'ln',goal:false});
     }
