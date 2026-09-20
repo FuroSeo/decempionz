@@ -25,12 +25,13 @@ function section(startMarker, endMarker) {
 
 const engineSource =
   section("const SLOT_COMPAT =", "/* Each formation defines positions") + "\n" +
+  section("const FORMATIONS =", "function draftNameSz") + "\n" +
   section("function avg(arr)", "function pgClass(pg)") + "\n" +
   section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
   section("function duelSimMatch(ea,eb)", "/* Rigori equi") + "\n" +
   section("function duelPenalties()", "/* Serie al meglio") + "\n" +
   section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,duelSimMatch,calcChemistry};";
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,selectCanonicalXI,buildCanonicalOpponent,duelSimMatch,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -43,12 +44,42 @@ sandbox.G = { gameMode: "ucl", dynasty: false };
 sandbox.TEAMS = {};
 sandbox.COPA_TEAMS = {};
 sandbox.WC_TEAMS = {};
+sandbox._activeTeams = () => sandbox.TEAMS;
 sandbox.natFlag = code => code;
 sandbox.t = key => key;
 vm.runInNewContext(engineSource, sandbox, { filename: "index.html#match-engine", timeout: 1000 });
 const engine = sandbox.__ENGINE__;
 
-if (!engine) throw new Error("Match Engine v3 helpers did not load");
+if (!engine) throw new Error("Match Engine v4 helpers did not load");
+
+const canonicalRoster = [
+  {n:"GK One",p:"GK",r:9,nat:"IT",club:"Fixture"},
+  {n:"LB One",p:"LB",r:8,nat:"IT",club:"Fixture"},
+  {n:"CB One",p:"CB",r:9,nat:"IT",club:"Fixture"},
+  {n:"CB Two",p:"CB",r:8,nat:"IT",club:"Fixture"},
+  {n:"RB One",p:"RB",r:8,nat:"IT",club:"Fixture"},
+  {n:"DM One",p:"CDM",r:8,nat:"IT",club:"Fixture"},
+  {n:"CM One",p:"CM",r:9,nat:"IT",club:"Fixture"},
+  {n:"AM One",p:"CAM",r:9,nat:"IT",club:"Fixture"},
+  {n:"LW One",p:"LW",r:9,nat:"IT",club:"Fixture"},
+  {n:"ST One",p:"ST",r:10,nat:"IT",club:"Fixture"},
+  {n:"RW One",p:"RW",r:9,nat:"IT",club:"Fixture"},
+  {n:"Utility",p:"RM",r:7,nat:"IT",club:"Fixture"}
+];
+sandbox.TEAMS.fixture = {name:"Fixture",season:"2000-01",players:canonicalRoster};
+const canonicalA = engine.buildCanonicalOpponent("fixture", "balanced");
+const canonicalB = engine.buildCanonicalOpponent("fixture", "balanced");
+if (!canonicalA || canonicalA.players.filter(Boolean).length !== 11 || canonicalA.evaluation.filled !== 11) {
+  fail("canonical opponent builder must produce a complete XI");
+} else {
+  if (canonicalA.players[canonicalA.positions.indexOf("GK")].p !== "GK") fail("canonical XI must protect its goalkeeper slot");
+  if (new Set(canonicalA.players.map(p => p.n)).size !== 11) fail("canonical XI must not reuse players");
+  if (canonicalA.formation !== canonicalB.formation || canonicalA.players.map(p=>p.n).join("|") !== canonicalB.players.map(p=>p.n).join("|")) {
+    fail("canonical opponent selection must be deterministic");
+  }
+}
+const sparse = engine.selectCanonicalXI(canonicalRoster.slice(0,8), ["GK","LB","CB","CB","RB","LM","CM","CM","RM","ST","ST"]);
+if (sparse.filter(Boolean).length !== 8) fail("sparse historical rosters must degrade without invented players");
 
 for (const [slot, compatible] of Object.entries(engine.SLOT_COMPAT)) {
   for (const playerPos of compatible) {
@@ -208,9 +239,15 @@ if (!homepage.includes("evaluated.chemistry=calcChemistry") ||
     !homepage.includes("xa*=ea.chemistry&&ea.chemistry.mul?ea.chemistry.mul:1")) {
   fail("browser Duel Chemistry parity hooks are missing");
 }
+if (!homepage.includes("const oppXI=_pendingMatch.oppId?buildCanonicalOpponent") ||
+    !homepage.includes("const oppAtk=oppEval?oppEval.atk+diffCfg.oppMod+roundBonus") ||
+    !homepage.includes("let oppPlayerPool=oppXI?oppXI.players.filter") ||
+    !homepage.includes("if(oppXI){\n    _awayXI=oppXI.players.map")) {
+  fail("campaign simulation, scorers and lineup must share the canonical opponent XI");
+}
 
 if (errors.length) {
-  console.error("Match Engine v3 failures:");
+  console.error("Match Engine v4 failures:");
   for (const message of errors) console.error("  - " + message);
   process.exit(1);
 }
@@ -219,4 +256,4 @@ console.log(
   "Balance samples: equal-side A " + (equalRate * 100).toFixed(1) +
   "%, strong XI " + (strongRate * 100).toFixed(1) + "%"
 );
-console.log("Match Engine v3 client/parity tests passed.");
+console.log("Match Engine v4 client/parity tests passed.");
