@@ -466,6 +466,19 @@ function dcz_draft_init_state($config) {
     ];
 }
 
+function dcz_draft_diverse_targets($shuffledTypes, $limit = 3) {
+    $out = []; $groups = [];
+    foreach ((array)$shuffledTypes as $type) {
+        $group = dcz_draft_pos_group($type);
+        if (count($out) < $limit && !isset($groups[$group])) { $out[] = $type; $groups[$group] = true; }
+    }
+    foreach ((array)$shuffledTypes as $type) {
+        if (count($out) >= $limit) break;
+        if (!in_array($type, $out, true)) $out[] = $type;
+    }
+    return $out;
+}
+
 function dcz_draft_draw_cards(&$state) {
     $state['cards'] = [];
     $weights = [10=>3,9=>2,8=>2,7=>1];
@@ -518,7 +531,7 @@ function dcz_draft_draw_cards(&$state) {
     $anyNonGk = false;
     foreach ($state['positions'] as $i => $pos) if ($state['slots'][$i] === null && $pos !== 'GK') { $anyNonGk = true; break; }
     $targetPool = $anyNonGk ? array_values(array_filter($feasible, fn($x)=>$x !== 'GK')) : $feasible;
-    $targets = array_slice(dcz_draft_shuffle($targetPool), 0, 3);
+    $targets = dcz_draft_diverse_targets(dcz_draft_shuffle($targetPool), 3);
     $tierOrder = [$tier];
     foreach ([10,9,8,7] as $t) if ($t !== $tier && count($state['tiers'][$t]) > 0) $tierOrder[] = $t;
 
