@@ -49,6 +49,9 @@ const SCENARIOS = [
   { id: 'copa', tab: '#tab-copa', quick: 'copa.btn_quick', viewport: { width: 430, height: 900 } },
   { id: 'wc', tab: '#tab-wc', quick: 'wc.btn_quick', viewport: { width: 430, height: 900 } },
   { id: 'ucl-desktop', tab: null, quick: 'home.btn_quick', viewport: { width: 1280, height: 800 }, lang: 'en-US' },
+  // State isolation between runs in the same page session (Daily / normal campaign).
+  { id: 'daily-after-campaign', tab: null, quick: 'home.btn_quick', viewport: { width: 430, height: 900 }, then: 'daily' },
+  { id: 'campaign-after-abandoned-daily', tab: null, quick: 'home.btn_quick', viewport: { width: 430, height: 900 }, before: 'abandoned-daily' },
 ];
 
 function serve() {
@@ -125,69 +128,112 @@ async function playCampaign(browser, base, sc) {
   await page.reload({ waitUntil: 'load' });
   await page.waitForSelector('#screen-home.active', { timeout: 10000 });
 
+  if (sc.before === 'abandoned-daily') {
+    // Start today's Daily and walk away without finishing it.
+    await page.evaluate(() => { startDailyPuzzle(false); });
+    await page.waitForSelector('#screen-draft.active', { timeout: 5000 });
+    await page.evaluate(() => { showScreen('screen-home'); });
+    await page.waitForSelector('#screen-home.active', { timeout: 5000 });
+  }
+
   if (sc.tab) await page.click(sc.tab);
   await page.click(`[data-i18n="${sc.quick}"]`);
 
   const started = Date.now();
-  let lastSig = '';
-  let lastChange = Date.now();
   let steps = 0;
-  let finished = false;
-  let coachChecked = false;
 
-  while (Date.now() - started < CAMPAIGN_MS) {
-    const s = await snapshot(page);
-    if (!s) { await sleep(200); continue; }
-    steps++;
+  // Plays whatever is on screen until a campaign end screen (or a problem).
+  async function drive() {
+    const t0 = Date.now();
+    let lastSig = '';
+    let lastChange = Date.now();
+    let coachChecked = false;
+    while (Date.now() - t0 < CAMPAIGN_MS) {
+      const s = await snapshot(page);
+      if (!s) { await sleep(200); continue; }
+      steps++;
 
-    const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.buttons.map(b => b.text).join(',')].join('|');
-    if (sig !== lastSig) {
-      lastSig = sig; lastChange = Date.now();
-      if (!visited.includes(s.screen)) visited.push(s.screen);
-      const bad = s.text.match(BAD_TEXT);
-      if (bad) problems.push(`bad text "${bad[0]}" on ${s.screen}`);
-    } else if (Date.now() - lastChange > STUCK_MS) {
-      problems.push(`stuck on ${s.screen} for ${STUCK_MS / 1000}s`);
-      await page.screenshot({ path: path.join(os.tmpdir(), `e2e-stuck-${sc.id}.png`) }).catch(() => {});
-      break;
-    }
-
-    if (s.screen === 'screen-gameover' || s.screen === 'screen-trophy') { finished = true; break; }
-
-    // Once per campaign, on the coach screen (XI complete): the Team Score panel
-    // and G.chem, which feed every match, must describe the FINAL eleven.
-    if (s.coaches && !coachChecked) {
-      coachChecked = true;
-      const c = await page.evaluate(() => {
-        const tac = G.draftTactic || G.tactic || 'balanced';
-        const pos = fmtPositions(G.formation, tac);
-        const ev = evaluateLineup(G.slotPlayers, pos, G.formation, tac);
-        const ch = calcChemistry(G.slotPlayers, pos, G.gameMode);
-        const el = document.querySelector('#d-team-score .team-score-value');
-        return { filled: G.slotPlayers.filter(Boolean).length, score: ev.score, shown: el ? Number(el.textContent) : null,
-                 chem: ch.pct, gchem: G.chem ? G.chem.pct : null };
-      });
-      if (c.filled !== 11) problems.push(`coach screen with ${c.filled}/11 players`);
-      if (c.shown !== c.score) problems.push(`stale Team Score on coach screen: shown ${c.shown}, real ${c.score}`);
-      if (c.gchem !== c.chem) problems.push(`stale chemistry for matches: G.chem ${c.gchem}%, real ${c.chem}%`);
-    }
-
-    try {
-      if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
-      else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
-      else if (s.screen === 'screen-match' && s.rcont) await page.click('#btn-rcont', { timeout: 4000 });
-      else if (s.screen === 'screen-match' && s.skip) await page.click('#spd-skip', { timeout: 4000 });
-      else if (s.screen !== 'screen-match') {
-        const next = s.buttons.find(b => !b.disabled && !/ghost|screen-logo/.test(b.cls) &&
-          !/New Game|Nuova Partita|Reroll|Home|Menu|DECEMPIONZ/i.test(b.text));
-        if (!next) { problems.push(`no actionable button on ${s.screen}`); break; }
-        if (next.id) await page.click('#' + next.id, { timeout: 4000 });
-        else await page.locator('.screen.active button', { hasText: next.text.slice(0, 24) }).first().click({ timeout: 4000 });
+      const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.buttons.map(b => b.text).join(',')].join('|');
+      if (sig !== lastSig) {
+        lastSig = sig; lastChange = Date.now();
+        if (!visited.includes(s.screen)) visited.push(s.screen);
+        const bad = s.text.match(BAD_TEXT);
+        if (bad) problems.push(`bad text "${bad[0]}" on ${s.screen}`);
+      } else if (Date.now() - lastChange > STUCK_MS) {
+        problems.push(`stuck on ${s.screen} for ${STUCK_MS / 1000}s`);
+        await page.screenshot({ path: path.join(os.tmpdir(), `e2e-stuck-${sc.id}.png`) }).catch(() => {});
+        return false;
       }
-    } catch (e) {
-      // A transient re-render can invalidate a click; the stuck detector catches real dead ends.
+
+      if (s.screen === 'screen-gameover' || s.screen === 'screen-trophy') { return true; }
+
+      // Once per campaign, on the coach screen (XI complete): the Team Score panel
+      // and G.chem, which feed every match, must describe the FINAL eleven.
+      if (s.coaches && !coachChecked) {
+        coachChecked = true;
+        const c = await page.evaluate(() => {
+          const tac = G.draftTactic || G.tactic || 'balanced';
+          const pos = fmtPositions(G.formation, tac);
+          const ev = evaluateLineup(G.slotPlayers, pos, G.formation, tac);
+          const ch = calcChemistry(G.slotPlayers, pos, G.gameMode);
+          const el = document.querySelector('#d-team-score .team-score-value');
+          return { filled: G.slotPlayers.filter(Boolean).length, score: ev.score, shown: el ? Number(el.textContent) : null,
+                   chem: ch.pct, gchem: G.chem ? G.chem.pct : null };
+        });
+        if (c.filled !== 11) problems.push(`coach screen with ${c.filled}/11 players`);
+        if (c.shown !== c.score) problems.push(`stale Team Score on coach screen: shown ${c.shown}, real ${c.score}`);
+        if (c.gchem !== c.chem) problems.push(`stale chemistry for matches: G.chem ${c.gchem}%, real ${c.chem}%`);
+      }
+
+      try {
+        if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
+        else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
+        else if (s.screen === 'screen-match' && s.rcont) await page.click('#btn-rcont', { timeout: 4000 });
+        else if (s.screen === 'screen-match' && s.skip) await page.click('#spd-skip', { timeout: 4000 });
+        else if (s.screen !== 'screen-match') {
+          const next = s.buttons.find(b => !b.disabled && !/ghost|screen-logo/.test(b.cls) &&
+            !/New Game|Nuova Partita|Reroll|Home|Menu|DECEMPIONZ/i.test(b.text));
+          if (!next) { problems.push(`no actionable button on ${s.screen}`); return false; }
+          if (next.id) await page.click('#' + next.id, { timeout: 4000 });
+          else await page.locator('.screen.active button', { hasText: next.text.slice(0, 24) }).first().click({ timeout: 4000 });
+        }
+      } catch (e) {
+        // A transient re-render can invalidate a click; the stuck detector catches real dead ends.
+      }
+      await sleep(180);
     }
-    await sleep(180);
+    return false;
+  }
+  let finished = await drive();
+  const dailyHist = () => page.evaluate(() => {
+    try { return Object.keys((JSON.parse(localStorage.getItem('dcz_daily') || '{}').hist) || {}).length; } catch (e) { return -1; }
+  });
+  const campaigns = () => page.evaluate(() => {
+    try { return JSON.parse(localStorage.getItem('dcz_manager_progress') || '{}').campaigns || 0; } catch (e) { return -1; }
+  });
+
+  if (finished && sc.before === 'abandoned-daily') {
+    // A normal campaign must never be recorded as the abandoned Daily.
+    if (await dailyHist() !== 0) problems.push('a normal campaign was recorded as the Daily result');
+    if (await page.locator('#daily-share-box').count()) problems.push('Daily share box shown after a normal campaign');
+  }
+
+  if (finished && sc.then === 'daily') {
+    // A Daily started after a finished campaign, in the same page session, must start
+    // from clean per-campaign state and must award progression like any campaign.
+    const before = await campaigns();
+    await page.evaluate(() => { showScreen('screen-home'); startDailyPuzzle(true); });
+    await page.waitForSelector('#screen-draft.active', { timeout: 5000 });
+    const iso = await page.evaluate(() => ({
+      scorers: Object.keys(G.campaignScorers || {}).length, gf: G.campaignGF || 0,
+      awarded: !!G.progressAwarded, tactics: (G.tacticHistory || []).length,
+    }));
+    if (iso.scorers || iso.gf || iso.awarded || iso.tactics) {
+      problems.push('Daily inherited campaign state: ' + JSON.stringify(iso));
+    }
+    finished = await drive();
+    const after = await campaigns();
+    if (finished && after !== before + 1) problems.push(`Daily run did not award progression: campaigns ${before} -> ${after}`);
   }
 
   if (!finished && !problems.some(p => p.startsWith('stuck') || p.startsWith('no actionable'))) {
