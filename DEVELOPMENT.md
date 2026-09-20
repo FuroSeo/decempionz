@@ -86,6 +86,12 @@ Before a large change is considered complete, verify at minimum:
 
 Feature-specific changes require additional checks for the affected feature.
 
+### Automated browser smoke test
+
+`scripts/e2e_smoke.js` runs in CI on every pull request. It serves the repository as a static site, opens it in headless Chromium and plays complete UCL, Copa Libertadores and World Cup campaigns on a mobile viewport plus a desktop UCL campaign (Quick Draft, coach, group and knockout matches, end screen). PHP endpoints answer 404 and third-party hosts are blocked, so it never touches production data. It fails on uncaught JavaScript errors, unexpected console errors, a stuck UI, a campaign that never finishes, or visible `NaN` / `undefined` / `[object` text.
+
+Run it locally with `npm install --no-save playwright`, `npx playwright install chromium` and `node scripts/e2e_smoke.js` (`E2E_ONLY=ucl` runs a single scenario; `PW_CHROMIUM=/path/to/chrome` reuses an installed browser). It does not replace the manual smoke test above: Daily, Duel, Hall of Fame and visual checks still need a human pass on the live site.
+
 ## Dynamic data safety
 
 The Service Worker must never cache PHP endpoints or community/runtime data such as Daily scores, Hall of Fame, Challenge or Duel state.
