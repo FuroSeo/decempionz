@@ -4639,7 +4639,7 @@ function _duelInitServerDraft(){
     G.draftCurrentTier=null;G.draftIdx=0;G.draftCards=[];
     G.draftLock=false;G.draftFinalized=false;G.slotPlayers=new Array(11).fill(null);G.accepted=[];
     _ga('game_start',{tournament:DUEL.kind==='dynasty'?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:'normal',formation:G.formation,format:'duel'});
-    _dczStatsCampaignStart();
+    /* Il Duel non e' una campagna: niente campaignsStarted/byTournament/campaign_start globale, altrimenti la % di campagne vinte cala a ogni duello. Le statistiche Duel sono in _dczStatsDuelPlayed. */
     var draftTitle=G.tournament?G.tournament.name:(DUEL.eraLabel||'Duel');
     if(DUEL.kind==='dynasty'&&DUEL.clubName)draftTitle+=' · '+DUEL.clubName;
     document.getElementById('d-title').textContent=draftTitle;

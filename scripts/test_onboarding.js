@@ -158,4 +158,16 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   coarse.draftTap(1);
   if (coarse.p !== 1) throw new Error("A coarse primary pointer must start in preview mode");
 }
+/* Il Duel non e' una campagna: il suo draft non deve contare come campagna iniziata (statistiche
+   personali e globali), altrimenti la percentuale di campagne vinte cala a ogni duello. */
+{
+  const dStart = homepage.indexOf("function _duelInitServerDraft(){");
+  const dEnd = homepage.indexOf("\nfunction ", dStart + 10);
+  if (dStart < 0 || dEnd < 0) throw new Error("_duelInitServerDraft not found");
+  if (homepage.slice(dStart, dEnd).includes("_dczStatsCampaignStart(")) throw new Error("Duel draft must not count as a campaign start");
+  const cStart = homepage.indexOf("function initDraft(){");
+  const cEnd = homepage.indexOf("\nfunction ", cStart + 10);
+  const initSrc = homepage.slice(cStart, cEnd);
+  if (!initSrc.includes("_dczStatsCampaignStart();")) throw new Error("Campaign draft must still count as a campaign start");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");
