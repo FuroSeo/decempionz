@@ -43,6 +43,7 @@ jobs:
           node --check scripts/test_match_engine.js
           node --check scripts/test_onboarding.js
           node --check scripts/test_progression.js
+          node --check scripts/e2e_smoke.js
 
       - name: Game data integrity tests
         run: node scripts/test_game_data.js
@@ -81,3 +82,8 @@ jobs:
 
       - name: HTTP smoke test
         run: python3 scripts/smoke_test.py
+      - name: Browser smoke test (full campaigns)
+        run: |
+          npm install --no-save playwright@1.56.0
+          npx playwright install --with-deps chromium
+          node scripts/e2e_smoke.js
