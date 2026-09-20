@@ -171,6 +171,14 @@ class LocalReferenceParser(HTMLParser):
             self.refs.append((tag, values["src"]))
         elif tag == "link" and values.get("href"):
             self.refs.append((tag, values["href"]))
+        elif tag == "meta" and values.get("content"):
+            # Social preview images are absolute production URLs; map them to
+            # the local file so a missing og-image.png fails CI.
+            key = (values.get("property") or values.get("name") or "").lower()
+            content = values["content"]
+            prefix = "https://decempionz.com/"
+            if key in {"og:image", "twitter:image"} and content.startswith(prefix):
+                self.refs.append((tag, "/" + content[len(prefix):]))
         elif tag == "a" and values.get("href"):
             path = urlsplit(values["href"]).path
             if Path(path).suffix.lower() in {
