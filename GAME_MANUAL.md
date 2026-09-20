@@ -1,6 +1,6 @@
 # Decempionz — Game Manual
 
-**App version:** 5.19.0
+**App version:** 5.20.0
 **Last updated:** 2026-09-20
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.20.0 — Match Engine v5** — campaign and browser Duel now call the same pure expected-goals kernel for attack/defence, tactics, formation profile, Chemistry and elite-player effects. Campaign-only difficulty, knockout progression, coach and momentum enter through explicit modifiers. Post-match statistics expose both Team Scores, positional fit and formations alongside xG.
 - **5.19.0 — Match Engine v4** — campaign opponents now field deterministic canonical XIs selected from their historical roster. Formation, line ratings, positional fit, tactics, Chemistry and elite-player effects contribute on both sides; simulation, scorer selection and the displayed away XI share the same players.
 - **5.18.0 — Match Engine v3** — authoritative Duel now derives Chemistry from canonical player provenance, applies it symmetrically to xG and publishes verified Team Score / attack / defence / fit / Chemistry metrics only after both XIs are committed. The public verdict shows the official engine breakdown.
 - **5.17.0 — Match Engine v2** — positional fit now covers every supported adaptation, ratings and elite bonuses belong to the occupied slot department, campaign and browser Duel share one lineup evaluator, and the Draft exposes Team Score / attack / defence / fit. The authoritative PHP Duel engine uses the same v2 rules and is protected by deterministic and statistical balance tests.
@@ -334,7 +335,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.19.0`.
+Current cache namespace: `decempionz-v5.20.0`.
 
 Rules:
 
@@ -353,8 +354,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.19.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.19.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.20.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.20.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
