@@ -879,6 +879,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
         <div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div>
       </div>
     </div>
+    <div class="tournament-mastery" data-mastery="ucl" style="font-size:.58rem;color:var(--mut);margin:0 0 8px;padding:6px 8px;border:1px solid var(--brd);border-radius:8px"></div>
     <button class="btn btn-gold" onclick="quickStart()" style="font-size:1rem;padding:15px">
       <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-3-3 · All Time · Draft diretto</span>
@@ -901,6 +902,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="tourn-stat"><div class="tourn-stat-val" data-home-stat="copa-players">651</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
       <div class="tourn-stat"><div class="tourn-stat-val" data-home-stat="copa-tournaments">5</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
+    <div class="tournament-mastery" data-mastery="copa" style="font-size:.58rem;color:var(--mut);margin:0 0 8px;padding:6px 8px;border:1px solid var(--brd);border-radius:8px"></div>
     <button class="btn btn-gold" onclick="quickStartCopa()" style="font-size:1rem;padding:15px">
       <span data-i18n="copa.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-4-2 · All Time · Draft diretto</span>
@@ -923,6 +925,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
       <div class="tourn-stat"><div class="tourn-stat-val" data-home-stat="wc-players">1030</div><div class="tourn-stat-lbl" data-i18n="home.stat_players">Giocatori</div></div>
       <div class="tourn-stat"><div class="tourn-stat-val" data-home-stat="wc-tournaments">7</div><div class="tourn-stat-lbl" data-i18n="home.stat_eras">Ere</div></div>
     </div>
+    <div class="tournament-mastery" data-mastery="wc" style="font-size:.58rem;color:var(--mut);margin:0 0 8px;padding:6px 8px;border:1px solid var(--brd);border-radius:8px"></div>
     <button class="btn btn-gold" onclick="quickStartWC()" style="font-size:1rem;padding:15px">
       <span data-i18n="wc.btn_quick">⚽ Gioca subito</span>
       <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-3-3 · All Time · Draft diretto</span>
@@ -1612,14 +1615,14 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.25.0';
+const GAME_VERSION='5.26.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
 const STRINGS={
   it:{
     'home.tagline':'Il Draft di Calcio Definitivo',
-    'progress.manager':'MANAGER','progress.campaigns':'campagne','progress.wins':'vittorie','progress.level_up':'NUOVO LIVELLO','progress.reward':'Progresso Manager',
+    'progress.manager':'MANAGER','progress.mastery':'MAESTRIA','progress.best':'miglior grado','progress.campaigns':'campagne','progress.wins':'vittorie','progress.level_up':'NUOVO LIVELLO','progress.reward':'Progresso Manager',
     'home.stat_squads':'Rose',
     'home.stat_players':'Giocatori',
     'home.stat_eras':'Ere',
@@ -1946,7 +1949,7 @@ const STRINGS={
   },
   en:{
     'home.tagline':'The Ultimate Football Draft',
-    'progress.manager':'MANAGER','progress.campaigns':'campaigns','progress.wins':'wins','progress.level_up':'LEVEL UP','progress.reward':'Manager Progress',
+    'progress.manager':'MANAGER','progress.mastery':'MASTERY','progress.best':'best grade','progress.campaigns':'campaigns','progress.wins':'wins','progress.level_up':'LEVEL UP','progress.reward':'Manager Progress',
     'home.stat_squads':'Squads',
     'home.stat_players':'Players',
     'home.stat_eras':'Eras',
@@ -2276,7 +2279,7 @@ const STRINGS={
   },
   es:{
     'home.tagline':'El Draft de Fútbol Definitivo',
-    'progress.manager':'MANAGER','progress.campaigns':'campañas','progress.wins':'victorias','progress.level_up':'NUEVO NIVEL','progress.reward':'Progreso Manager',
+    'progress.manager':'MANAGER','progress.mastery':'MAESTRÍA','progress.best':'mejor grado','progress.campaigns':'campañas','progress.wins':'victorias','progress.level_up':'NUEVO NIVEL','progress.reward':'Progreso Manager',
     'home.stat_squads':'Plantillas',
     'home.stat_players':'Jugadores',
     'home.stat_eras':'Eras',
@@ -7746,6 +7749,28 @@ function _tutMaybe(){
 ══════════════════════════════════════ */
 const MANAGER_PROGRESS_KEY='dcz_manager_progress';
 function managerXPForLevel(level){return 100+Math.max(0,level-1)*50;}
+function masteryXPForLevel(level){return 120+Math.max(0,level-1)*60;}
+function managerMasteryDefaults(){return{level:1,xp:0,totalXP:0,campaigns:0,wins:0,bestGrade:null};}
+function managerNormalizeProfile(profile){
+  var p=managerApplyXP(profile||{},0).profile,m=p.mastery&&typeof p.mastery==='object'?p.mastery:{};
+  p.mastery={};
+  ['ucl','copa','wc'].forEach(function(mode){p.mastery[mode]=Object.assign(managerMasteryDefaults(),m[mode]||{});});
+  return p;
+}
+function managerCampaignGrade(results){
+  var rows=Array.isArray(results)?results:[],max=rows.length*3;
+  var stars=rows.reduce(function(sum,r){return sum+Math.max(0,Number(r.stars)||0);},0),pct=max?stars/max:0;
+  return pct>=.9?'S':pct>=.7?'A':pct>=.5?'B':'C';
+}
+function managerApplyMastery(profile,mode,amount,won,grade){
+  var p=managerNormalizeProfile(profile),key=['ucl','copa','wc'].includes(mode)?mode:'ucl';
+  var m=Object.assign(managerMasteryDefaults(),p.mastery[key]),from=m.level;
+  m.xp+=Math.max(0,Number(amount))||0;m.totalXP+=Math.max(0,Number(amount))||0;
+  m.campaigns++;if(won)m.wins++;
+  var ranks={C:1,B:2,A:3,S:4};if(grade&&(!m.bestGrade||ranks[grade]>ranks[m.bestGrade]))m.bestGrade=grade;
+  while(m.xp>=masteryXPForLevel(m.level)){m.xp-=masteryXPForLevel(m.level);m.level++;}
+  p.mastery[key]=m;return{profile:p,mastery:m,fromLevel:from,levelsGained:m.level-from,mode:key};
+}
 function managerCampaignReward(results,won,difficulty){
   var rows=Array.isArray(results)?results:[];
   var wins=rows.filter(function(r){return Number(r.myG)>Number(r.oppG);}).length;
@@ -7764,8 +7789,8 @@ function managerApplyXP(profile,amount){
   return{profile:p,fromLevel:from,levelsGained:p.level-from};
 }
 function managerLoad(){
-  try{return managerApplyXP(JSON.parse(localStorage.getItem(MANAGER_PROGRESS_KEY)||'{}'),0).profile;}
-  catch(e){return managerApplyXP({},0).profile;}
+  try{return managerNormalizeProfile(JSON.parse(localStorage.getItem(MANAGER_PROGRESS_KEY)||'{}'));}
+  catch(e){return managerNormalizeProfile({});}
 }
 function managerSave(profile){try{localStorage.setItem(MANAGER_PROGRESS_KEY,JSON.stringify(profile));}catch(e){}}
 function renderManagerProgress(){
@@ -7774,6 +7799,11 @@ function renderManagerProgress(){
   var xp=document.getElementById('manager-xp'),record=document.getElementById('manager-record');
   if(level)level.textContent='LV '+p.level;if(bar)bar.style.width=pct+'%';if(xp)xp.textContent=p.xp+' / '+need+' XP';
   if(record)record.textContent=p.campaigns+' '+t('progress.campaigns')+' · '+p.wins+' '+t('progress.wins');
+  document.querySelectorAll('[data-mastery]').forEach(function(el){
+    var mode=el.getAttribute('data-mastery'),m=p.mastery[mode],need=masteryXPForLevel(m.level);
+    el.innerHTML='<strong style="color:var(--gold2)">'+t('progress.mastery')+' LV '+m.level+'</strong> · '+m.xp+'/'+need+' XP · '+m.wins+' '+t('progress.wins')
+      +(m.bestGrade?' · '+t('progress.best')+' '+m.bestGrade:'');
+  });
 }
 function managerAwardCampaign(won,targetId){
   if(G.progressAwarded)return null;
@@ -7781,17 +7811,18 @@ function managerAwardCampaign(won,targetId){
   var results=[].concat(G.groupUserResults||[]).concat(G.knockResults||[]);
   var reward=managerCampaignReward(results,won,G.difficulty||'normal');
   var before=managerLoad(),applied=managerApplyXP(before,reward.total),p=applied.profile;
-  p.campaigns=(before.campaigns||0)+1;p.wins=(before.wins||0)+(won?1:0);managerSave(p);
+  p.campaigns=(before.campaigns||0)+1;p.wins=(before.wins||0)+(won?1:0);
+  var grade=managerCampaignGrade(results),mastery=managerApplyMastery(p,G.gameMode||'ucl',reward.total,won,grade);p=mastery.profile;managerSave(p);
   var el=document.getElementById(targetId);
   if(el){
     el.style.cssText='display:block;margin:10px 0;padding:10px 12px;border:1px solid rgba(201,162,39,.45);border-radius:10px;background:rgba(201,162,39,.08);text-align:center;font-size:.7rem;color:var(--mut)';
     el.innerHTML='<strong style="color:var(--gold2)">'+t('progress.reward')+': +'+reward.total+' XP</strong>'
       +(applied.levelsGained?'<div style="font-size:.82rem;font-weight:900;color:var(--gold);margin-top:3px">'+t('progress.level_up')+' · LV '+p.level+'</div>':'')
-      +'<div style="margin-top:3px">LV '+p.level+' · '+p.xp+' / '+managerXPForLevel(p.level)+' XP</div>';
+      +'<div style="margin-top:3px">LV '+p.level+' · '+p.xp+' / '+managerXPForLevel(p.level)+' XP · '+t('progress.mastery')+' '+mastery.mode.toUpperCase()+' LV '+mastery.mastery.level+'</div>';
   }
-  _ga('manager_xp',{xp:reward.total,level:p.level,level_up:applied.levelsGained,won:won?1:0,difficulty:reward.difficulty});
+  _ga('manager_xp',{xp:reward.total,level:p.level,level_up:applied.levelsGained,mastery:mastery.mode,mastery_level:mastery.mastery.level,mastery_level_up:mastery.levelsGained,grade:grade,won:won?1:0,difficulty:reward.difficulty});
   renderManagerProgress();
-  return{reward:reward,profile:p,levelsGained:applied.levelsGained};
+  return{reward:reward,profile:p,levelsGained:applied.levelsGained,mastery:mastery};
 }
 
 /* ══════════════════════════════════════
