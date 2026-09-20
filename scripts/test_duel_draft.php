@@ -60,6 +60,10 @@ dd_assert(dcz_draft_slot_penalty('CDM', 'CB') === .10, 'server preview parity mu
 $slotFixture = ['positions'=>['CDM','CB'], 'slots'=>[null,null]];
 $slotChoice = dcz_draft_best_slot($slotFixture, ['n'=>'Defender','p'=>'CB','r'=>8]);
 dd_assert(($slotChoice['i'] ?? null) === 1, 'server must choose the lowest-penalty target slot shown by Draft 2.0');
+$diverseTargets = dcz_draft_diverse_targets(['CB','LB','CM','ST','RB'], 3);
+dd_assert($diverseTargets === ['CB','CM','ST'], 'server Draft 2.1 offer must prefer distinct departments');
+$endgameTargets = dcz_draft_diverse_targets(['CB','LB','RB'], 3);
+dd_assert(count($endgameTargets) === 3 && count(array_unique($endgameTargets)) === 3, 'server single-department endgame must still fill the offer');
 
 $tournaments = dcz_draft_tournaments();
 dd_assert(isset($tournaments['ucl']['pioneers'], $tournaments['copa']['copa_pioneros'], $tournaments['wc']['wc_pionieri']), 'canonical era definitions must parse');
