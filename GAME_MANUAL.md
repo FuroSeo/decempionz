@@ -1,7 +1,7 @@
 # Decempionz — Game Manual
 
-**App version:** 5.18.0
-**Last updated:** 2026-09-19
+**App version:** 5.19.0
+**Last updated:** 2026-09-20
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
 **Production branch:** `main`
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.19.0 — Match Engine v4** — campaign opponents now field deterministic canonical XIs selected from their historical roster. Formation, line ratings, positional fit, tactics, Chemistry and elite-player effects contribute on both sides; simulation, scorer selection and the displayed away XI share the same players.
 - **5.18.0 — Match Engine v3** — authoritative Duel now derives Chemistry from canonical player provenance, applies it symmetrically to xG and publishes verified Team Score / attack / defence / fit / Chemistry metrics only after both XIs are committed. The public verdict shows the official engine breakdown.
 - **5.17.0 — Match Engine v2** — positional fit now covers every supported adaptation, ratings and elite bonuses belong to the occupied slot department, campaign and browser Duel share one lineup evaluator, and the Draft exposes Team Score / attack / defence / fit. The authoritative PHP Duel engine uses the same v2 rules and is protected by deterministic and statistical balance tests.
 - **5.16.3** — emergency draft fill guarantees an XI of 11 even when slot-compatible players are exhausted; positional penalties still apply to emergency fills.
@@ -144,7 +145,7 @@ TACT_MOD = {
 
 A counter matrix (`COUNTER_MOD`) provides rock-paper-scissors interactions between tactical choices.
 
-Other match inputs include positional penalties, coach boost, Chemistry, difficulty/opponent modifiers and Momentum where applicable.
+Other match inputs include positional penalties, coach boost, Chemistry, difficulty/opponent modifiers and Momentum where applicable. Match Engine v4 replaces the campaign's roster-average opponent with a deterministic canonical XI. The engine selects a formation that fits the historical roster, fills scarce roles first without duplicating or inventing players, and evaluates separate attack and defence lines. The selected XI is also used for opponent scorers and the match lineup. Difficulty and knockout progression adjust those canonical line ratings rather than replacing them with one scalar strength.
 
 Match Engine v2 evaluates a player inside the department of the occupied formation slot, not the natural-position department. A winger adapted to RM therefore contributes to midfield; a fullback adapted to CB contributes to defence. Rating-10 positional bonuses follow the same slot-based rule. Browser campaign and browser Duel both use `evaluateLineup(...)`; the server-authoritative Duel mirrors the same matrix in `dcz_duel_team_eval(...)`.
 
@@ -333,7 +334,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.18.0`.
+Current cache namespace: `decempionz-v5.19.0`.
 
 Rules:
 
@@ -352,8 +353,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.18.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.18.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.19.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.19.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
