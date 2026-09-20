@@ -1599,7 +1599,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.17.0';
+const GAME_VERSION='5.18.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -5637,9 +5637,10 @@ function playRound(){
    Stessa pipeline della campagna (penalità posizionali via slotPenalty, reparti pesati,
    star bonus, bonus r=10) ma applicata in modo identico a ENTRAMBE le squadre.
    Restano fuori i concetti da campagna: DIFF_CFG, momentum, coach, roundBonus. */
-function duelTeamEval(team){
+function duelTeamEval(team,mode,isDynasty){
   var pos=fmtPositions(team.formation,team.tactic||'balanced');
   var evaluated=evaluateLineup(team.players||[],pos,team.formation,team.tactic||'balanced');
+  evaluated.chemistry=calcChemistry(team.players||[],pos,mode,{dynasty:!!isDynasty});
   evaluated.scorers=evaluated.groups.FWD.concat(evaluated.groups.MID);
   return evaluated;
 }
@@ -5668,6 +5669,9 @@ function duelSimMatch(ea,eb){
   else if(eb.fmtT==='off'&&ea.tactic==='attack'){xb*=1.02;xa*=1.02;}
   else if(eb.fmtT==='def'&&ea.tactic==='attack'){xa*=0.96;xb*=1.02;}
   else if(eb.fmtT==='def'&&ea.tactic==='defend'){xb*=0.97;}
+  /* Chemistry: stessa regola simmetrica del motore PHP autoritativo. */
+  xa*=ea.chemistry&&ea.chemistry.mul?ea.chemistry.mul:1;
+  xb*=eb.chemistry&&eb.chemistry.mul?eb.chemistry.mul:1;
   /* bonus r=10 — stessi cap della campagna, applicati a entrambi */
   if(ea.r10.gk)xb*=1-Math.min(ea.r10.gk,0.08);
   if(ea.r10.def)xb*=1-Math.min(ea.r10.def,0.09);
@@ -5708,8 +5712,8 @@ function duelPenalties(){
 }
 
 /* Serie al meglio delle 3: si chiude 2-0 o 2-1. Ritorna il blocco result per duel-result.php. */
-function duelSimSeries(teamA,teamB){
-  var ea=duelTeamEval(teamA),eb=duelTeamEval(teamB);
+function duelSimSeries(teamA,teamB,modeA,modeB,isDynasty){
+  var ea=duelTeamEval(teamA,modeA,!!isDynasty),eb=duelTeamEval(teamB,modeB,!!isDynasty);
   var matches=[],wa=0,wb=0;
   while(wa<2&&wb<2&&matches.length<3){
     var m=duelSimMatch(ea,eb);
@@ -7679,25 +7683,36 @@ function importSave(inp){
 const CHEM_CFG={natMin:3,natBig:5,natPct:1,natBigPct:2,clubMin:3,clubBig:4,clubPct:1,clubBigPct:2,deptMin:3,deptFwdMin:2,deptPct:2,cap:6,
   /* Copa: pool concentrato (BR 40%, AR 32%) — soglie nat tarate su incidenza casuale UCL (34%/13%) */
   copa:{natMin:6,natBig:7,deptMin:4,deptFwdMin:3}};
-function _chemNat(p){
+function _chemTeam(p,mode){
+  if(!p||!p.teamId)return null;
+  var db=mode==='copa'?(typeof COPA_TEAMS!=='undefined'?COPA_TEAMS:{}):mode==='wc'?(typeof WC_TEAMS!=='undefined'?WC_TEAMS:{}):(typeof TEAMS!=='undefined'?TEAMS:{});
+  return db[p.teamId]||null;
+}
+function _chemNat(p,mode){
   if(p.nat)return p.nat;
   if(p.teamId){
-    var db=(typeof _activeTeams==='function'?_activeTeams():null)||{};
-    var t=db[p.teamId]||(typeof WC_TEAMS!=='undefined'?WC_TEAMS[p.teamId]:null);
+    var t=_chemTeam(p,mode);
     if(t&&t.country)return t.country;
   }
   return '';
 }
-function calcChemistry(players,positions,mode){
-  var m0=mode||G.gameMode||'ucl';
+function _chemClub(p,mode){
+  if(p.club)return p.club;
+  var team=_chemTeam(p,mode);
+  return team?(team.name||team.club||''):'';
+}
+function calcChemistry(players,positions,mode,options){
+  var m0=mode||((typeof G!=='undefined'&&G.gameMode)||'ucl');
+  var isDynasty=options&&typeof options.dynasty==='boolean'?options.dynasty:!!(typeof G!=='undefined'&&G.dynasty);
   var cfg=Object.assign({},CHEM_CFG,m0==='copa'?CHEM_CFG.copa:{});
   var bonds=[],nats={},clubs={};
   var dept={DEF:{},MID:{},FWD:{}},deptSize={DEF:0,MID:0,FWD:0};
   (players||[]).forEach(function(p,i){
     if(!p)return;
-    var pn=_chemNat(p);
+    var pn=_chemNat(p,m0);
     if(pn)nats[pn]=(nats[pn]||0)+1;
-    if(p.club)clubs[p.club]=(clubs[p.club]||0)+1;
+    var pc=_chemClub(p,m0);
+    if(pc)clubs[pc]=(clubs[pc]||0)+1;
     var sp=(positions&&positions[i])||p.p;
     var g=posGroup(sp);
     if(dept[g]!==undefined){deptSize[g]++;if(pn)dept[g][pn]=(dept[g][pn]||0)+1;}
@@ -7708,7 +7723,7 @@ function calcChemistry(players,positions,mode){
     else if(c>=cfg.natMin)bonds.push({label:natFlag(k)+' ×'+c,pct:cfg.natPct});
   });
   var m=m0;
-  if((m==='ucl'||m==='copa')&&!G.dynasty){
+  if((m==='ucl'||m==='copa')&&!isDynasty){
     Object.keys(clubs).forEach(function(k){
       var c=clubs[k];
       if(c>=cfg.clubBig)bonds.push({label:'🏟️ '+k+' ×'+c,pct:cfg.clubBigPct});

@@ -1,6 +1,6 @@
 # Decempionz — Game Manual
 
-**App version:** 5.17.0
+**App version:** 5.18.0
 **Last updated:** 2026-09-19
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.18.0 — Match Engine v3** — authoritative Duel now derives Chemistry from canonical player provenance, applies it symmetrically to xG and publishes verified Team Score / attack / defence / fit / Chemistry metrics only after both XIs are committed. The public verdict shows the official engine breakdown.
 - **5.17.0 — Match Engine v2** — positional fit now covers every supported adaptation, ratings and elite bonuses belong to the occupied slot department, campaign and browser Duel share one lineup evaluator, and the Draft exposes Team Score / attack / defence / fit. The authoritative PHP Duel engine uses the same v2 rules and is protected by deterministic and statistical balance tests.
 - **5.16.3** — emergency draft fill guarantees an XI of 11 even when slot-compatible players are exhausted; positional penalties still apply to emergency fills.
 - **5.16.2** — teams used as draft sources are excluded from opponent selection; safety guard prevents drafted players appearing in the opponent XI.
@@ -117,13 +118,13 @@ Formation determines XI slot layout and compatibility needs.
 
 Coach draft offers a small pool of coaches. Coach compatibility with the chosen formation affects the team through an xG boost; compatibility/boost is stored in `G.coach`.
 
-Chemistry is calculated by `calcChemistry(...)` and currently combines bonds such as nationality, club and department. It is capped and applied as an xG multiplier after the coach effect in the campaign match engine.
+Chemistry is calculated by `calcChemistry(...)` and combines bonds such as nationality, club and department. It is capped and applied as an xG multiplier after the coach effect in the campaign match engine. Match Engine v3 applies the same bond thresholds symmetrically in authoritative Duel simulation.
 
 Important Chemistry rules are configured centrally (`CHEM_CFG`) and differ where necessary for tournament data distributions. World Cup nationality handling can derive nationality from the team when individual `nat` is absent.
 
 Chemistry UI includes a segmented panel/chips and card badges. Chemistry is not a replacement for raw player quality or positional fit.
 
-Known historical limitation to re-audit: Duel originally used a reduced `{n,p,r}` payload and therefore did not automatically receive the full campaign Chemistry context.
+The Duel server never trusts nationality or club values supplied by the browser. It reconstructs both from canonical `game-data.js` using tournament family + `teamId` + exact player identity. World Cup players without individual `nat` inherit the canonical team country. Dynasty keeps the normal nationality/department bonds but excludes the automatic same-club bond, matching campaign semantics.
 
 ---
 
@@ -227,7 +228,9 @@ When A creates the Duel, or B commits the responding squad, the submitted slot-o
 
 The anti-reveal rule remains: player B does not see player A's full XI before committing B's own verified Draft. After B is committed, the backend generates a private match seed and computes the authoritative best-of-3 under the Duel-file lock. The browser receives that official result and uses it for the normal in-app match animation; client-generated scores are never authoritative.
 
-The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, occupied-slot departments, Team Score/fit, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties. Engine version `server-v2` marks the Match Engine v2 positional-fit rules. Moving Draft/result authority server-side remains an integrity boundary; balance changes require deterministic fixtures and statistical guardrails.
+The Duel simulator evaluates both sides symmetrically and avoids campaign-only advantages such as user difficulty settings. The server engine mirrors the Duel coefficients for positional penalties, occupied-slot departments, Team Score/fit, canonical Chemistry, tactics/counters, star/rating-10 bonuses, xG, Poisson goals and penalties. Engine version `server-v3` marks the canonical Chemistry rules. Moving Draft/result authority server-side remains an integrity boundary; balance changes require deterministic fixtures and statistical guardrails.
+
+After both players commit, the official result includes bounded public metrics for each side: Team Score, attack, defence, Position Fit and Chemistry. The public Duel verdict renders those values with a verified Match Engine v3 badge. Waiting responses continue to expose only the challenge constraints and challenger identity, never XI or engine metrics.
 
 For a fully new Duel, the backend can therefore establish the exact card offers, rerolls, accepted players, final slot order, canonical player sources and official match result without requiring accounts. Historical completed duels remain readable as legacy client-reported records. Historical `simulating` duels can still be finalized with a fresh server result, and a historical waiting Duel whose A-side predates server Draft sessions can complete with mixed legacy integrity metadata.
 
@@ -330,7 +333,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.17.0`.
+Current cache namespace: `decempionz-v5.18.0`.
 
 Rules:
 
@@ -349,8 +352,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.17.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.17.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.18.0**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.18.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.

@@ -28,8 +28,9 @@ const engineSource =
   section("function avg(arr)", "function pgClass(pg)") + "\n" +
   section("const TACT_MOD=", "function tacLabel(k)") + "\n" +
   section("function duelSimMatch(ea,eb)", "/* Rigori equi") + "\n" +
-  section("function duelPenalties()", "/* Serie al meglio") +
-  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,duelSimMatch};";
+  section("function duelPenalties()", "/* Serie al meglio") + "\n" +
+  section("const CHEM_CFG=", "/* ══════════════════════════════════════\n   DAILY PUZZLE") +
+  "\n;globalThis.__ENGINE__={SLOT_COMPAT,SLOT_PENALTIES,slotPenalty,posGroup,evaluateLineup,duelSimMatch,calcChemistry};";
 const sandbox = Object.create(null);
 let rngState = 1;
 const seededMath = Object.create(Math);
@@ -38,10 +39,16 @@ seededMath.random = function () {
   return rngState / 2147483648;
 };
 sandbox.Math = seededMath;
+sandbox.G = { gameMode: "ucl", dynasty: false };
+sandbox.TEAMS = {};
+sandbox.COPA_TEAMS = {};
+sandbox.WC_TEAMS = {};
+sandbox.natFlag = code => code;
+sandbox.t = key => key;
 vm.runInNewContext(engineSource, sandbox, { filename: "index.html#match-engine", timeout: 1000 });
 const engine = sandbox.__ENGINE__;
 
-if (!engine) throw new Error("Match Engine v2 helpers did not load");
+if (!engine) throw new Error("Match Engine v3 helpers did not load");
 
 for (const [slot, compatible] of Object.entries(engine.SLOT_COMPAT)) {
   for (const playerPos of compatible) {
@@ -104,6 +111,23 @@ if (!(exact.score > evaluated.score && exact.fit === 100)) {
   fail("natural positional fit must outperform the adapted fixture");
 }
 
+const chemPositions = ["GK","LB","CB","CB","RB","CM","CAM","CM","LW","ST","RW"];
+const uclChemPlayers = [
+  {nat:"ES",club:"Real Madrid"}, {nat:"ES",club:"Real Madrid"}, {nat:"UY",club:"Real Madrid"},
+  {nat:"ES",club:"Real Madrid"}, {nat:"ES",club:"Real Madrid"}, {nat:"AR",club:"Real Madrid"},
+  {nat:"ES",club:"Real Madrid"}, {nat:"BR",club:"Real Madrid"}, {nat:"AR",club:"Real Madrid"},
+  {nat:"HU",club:"Real Madrid"}, {nat:"ES",club:"Real Madrid"}
+];
+const uclChem = engine.calcChemistry(uclChemPlayers, chemPositions, "ucl", {dynasty:false});
+const dynastyChem = engine.calcChemistry(uclChemPlayers, chemPositions, "ucl", {dynasty:true});
+if (uclChem.pct !== 6 || dynastyChem.pct !== 4) {
+  fail("UCL/Dynasty Chemistry parity changed: " + uclChem.pct + "/" + dynastyChem.pct);
+}
+const copaChemPlayers = chemPositions.map(() => ({nat:"BR",club:"Atlético Mineiro"}));
+if (engine.calcChemistry(copaChemPlayers, chemPositions, "copa", {dynasty:false}).pct !== 6) {
+  fail("Copa-specific Chemistry thresholds must preserve the 6% cap fixture");
+}
+
 const natural442 = ["GK","LB","CB","CB","RB","LM","CM","CM","RM","ST","ST"];
 function ratedLineup(rating, tactic) {
   return engine.evaluateLineup(
@@ -152,6 +176,16 @@ for (const [winningTactic, losingTactic] of [
   }
 }
 
+const chemA = ratedLineup(8, "balanced");
+const chemB = ratedLineup(8, "balanced");
+chemA.chemistry = {pct:6,mul:1.06,bonds:[]};
+chemB.chemistry = {pct:0,mul:1,bonds:[]};
+rngState = 1357911;
+const chemMatch = engine.duelSimMatch(chemA, chemB);
+if (!(chemMatch.xa > chemMatch.xb)) {
+  fail("a 6% Chemistry edge must create an xG advantage between equal teams");
+}
+
 for (const key of ["team.score", "team.fit", "team.attack", "team.defence"]) {
   const count = homepage.split("'" + key + "':").length - 1;
   if (count !== 3) fail("Team Score translation missing for " + key);
@@ -164,14 +198,19 @@ if (!homepage.includes('id="d-team-score" class="team-score-panel"') ||
 if (!homepage.includes("var evaluated=evaluateLineup(team.players||[],pos")) {
   fail("browser Duel must use the shared lineup evaluator");
 }
-if (!phpEngine.includes("const DCZ_DUEL_ENGINE_VERSION = 'server-v2';") ||
+if (!phpEngine.includes("const DCZ_DUEL_ENGINE_VERSION = 'server-v3';") ||
     !phpEngine.includes("$group = dcz_duel_pos_group($slot);") ||
-    !phpEngine.includes("'score' => (int)round(dcz_duel_avg($allEffective) * 10)")) {
-  fail("authoritative PHP engine is not on Match Engine v2 rules");
+    !phpEngine.includes("function dcz_duel_team_chemistry") ||
+    !phpEngine.includes("$xa *= (float)($a['chemistry']['mul'] ?? 1.0)")) {
+  fail("authoritative PHP engine is not on Match Engine v3 Chemistry rules");
+}
+if (!homepage.includes("evaluated.chemistry=calcChemistry") ||
+    !homepage.includes("xa*=ea.chemistry&&ea.chemistry.mul?ea.chemistry.mul:1")) {
+  fail("browser Duel Chemistry parity hooks are missing");
 }
 
 if (errors.length) {
-  console.error("Match Engine v2 failures:");
+  console.error("Match Engine v3 failures:");
   for (const message of errors) console.error("  - " + message);
   process.exit(1);
 }
@@ -180,4 +219,4 @@ console.log(
   "Balance samples: equal-side A " + (equalRate * 100).toFixed(1) +
   "%, strong XI " + (strongRate * 100).toFixed(1) + "%"
 );
-console.log("Match Engine v2 client/parity tests passed.");
+console.log("Match Engine v3 client/parity tests passed.");

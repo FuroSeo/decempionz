@@ -6,7 +6,7 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'duel-engine.php') {
     http_response_code(403); exit;
 }
 
-const DCZ_DUEL_ENGINE_VERSION = 'server-v2';
+const DCZ_DUEL_ENGINE_VERSION = 'server-v3';
 
 function dcz_duel_form_positions($formation, $tactic) {
     static $formations = [
@@ -99,9 +99,81 @@ function dcz_duel_avg($values) {
     return count($values) ? array_sum($values) / count($values) : 0.0;
 }
 
-function dcz_duel_team_eval($team) {
+function dcz_duel_team_chemistry($team, $positions, $context = null) {
+    $empty = ['pct'=>0, 'mul'=>1.0, 'bonds'=>[], 'verified'=>false];
+    if (!is_array($context)) return $empty;
+    $mode = in_array($context['mode'] ?? '', ['ucl','copa','wc'], true) ? $context['mode'] : null;
+    if ($mode === null) return !empty($context['strict']) ? null : $empty;
+
+    $registry = dcz_duel_dataset_registry($context['datasetPath'] ?? null);
+    if (!is_array($registry)) return !empty($context['strict']) ? null : $empty;
+
+    $cfg = [
+        'natMin'=>3, 'natBig'=>5, 'natPct'=>1, 'natBigPct'=>2,
+        'clubMin'=>3, 'clubBig'=>4, 'clubPct'=>1, 'clubBigPct'=>2,
+        'deptMin'=>3, 'deptFwdMin'=>2, 'deptPct'=>2, 'cap'=>6,
+    ];
+    if ($mode === 'copa') {
+        $cfg['natMin'] = 6; $cfg['natBig'] = 7;
+        $cfg['deptMin'] = 4; $cfg['deptFwdMin'] = 3;
+    }
+
+    $nats = []; $clubs = [];
+    $dept = ['DEF'=>[], 'MID'=>[], 'FWD'=>[]];
+    $deptSize = ['DEF'=>0, 'MID'=>0, 'FWD'=>0];
+    $resolved = 0;
+    foreach (($team['players'] ?? []) as $i => $player) {
+        $meta = dcz_duel_canonical_player_meta($registry, $player, $mode);
+        if ($meta === null) {
+            if (!empty($context['strict'])) return null;
+            continue;
+        }
+        $resolved++;
+        $nat = (string)($meta['nat'] ?? '');
+        $club = (string)($meta['club'] ?? '');
+        if ($nat !== '') $nats[$nat] = ($nats[$nat] ?? 0) + 1;
+        if ($club !== '') $clubs[$club] = ($clubs[$club] ?? 0) + 1;
+        $group = dcz_duel_pos_group($positions[$i] ?? ($player['p'] ?? ''));
+        if (isset($dept[$group])) {
+            $deptSize[$group]++;
+            if ($nat !== '') $dept[$group][$nat] = ($dept[$group][$nat] ?? 0) + 1;
+        }
+    }
+
+    $bonds = [];
+    foreach ($nats as $key => $count) {
+        if ($count >= $cfg['natBig']) $bonds[] = ['type'=>'nationality','key'=>$key,'count'=>$count,'pct'=>$cfg['natBigPct']];
+        elseif ($count >= $cfg['natMin']) $bonds[] = ['type'=>'nationality','key'=>$key,'count'=>$count,'pct'=>$cfg['natPct']];
+    }
+    if (($mode === 'ucl' || $mode === 'copa') && empty($context['dynasty'])) {
+        foreach ($clubs as $key => $count) {
+            if ($count >= $cfg['clubBig']) $bonds[] = ['type'=>'club','key'=>$key,'count'=>$count,'pct'=>$cfg['clubBigPct']];
+            elseif ($count >= $cfg['clubMin']) $bonds[] = ['type'=>'club','key'=>$key,'count'=>$count,'pct'=>$cfg['clubPct']];
+        }
+    }
+    foreach (['DEF','MID','FWD'] as $group) {
+        $need = $group === 'FWD' ? $cfg['deptFwdMin'] : $cfg['deptMin'];
+        if ($group === 'FWD' && $deptSize[$group] < 2) continue;
+        $best = 0; $bestKey = '';
+        foreach ($dept[$group] as $key => $count) {
+            if ($count > $best) { $best = $count; $bestKey = $key; }
+        }
+        if ($best >= $need) $bonds[] = ['type'=>'department','key'=>$bestKey,'department'=>$group,'count'=>$best,'pct'=>$cfg['deptPct']];
+    }
+
+    $verified = $resolved === count($team['players'] ?? []);
+    /* I record legacy possono non avere teamId. In quel caso non applichiamo mai
+       una Chemistry parziale: o l'intero XI e' canonico, oppure il bonus e' zero. */
+    if (!$verified) return $empty;
+    $pct = min($cfg['cap'], array_sum(array_map(fn($bond) => (int)$bond['pct'], $bonds)));
+    return ['pct'=>$pct, 'mul'=>1.0 + $pct / 100.0, 'bonds'=>$bonds, 'verified'=>true];
+}
+
+function dcz_duel_team_eval($team, $context = null) {
     $positions = dcz_duel_form_positions($team['formation'], $team['tactic'] ?? 'balanced');
     if (count($positions) !== 11) return null;
+    $chemistry = dcz_duel_team_chemistry($team, $positions, $context);
+    if ($chemistry === null) return null;
     $groups = ['GK'=>[], 'DEF'=>[], 'MID'=>[], 'FWD'=>[]];
     $effective = ['GK'=>[], 'DEF'=>[], 'MID'=>[], 'FWD'=>[]];
     $allEffective = [];
@@ -150,6 +222,17 @@ function dcz_duel_team_eval($team) {
         'score' => (int)round(dcz_duel_avg($allEffective) * 10),
         'fit' => (int)round((1.0 - $penaltyTotal / 11.0) * 100),
         'lines' => ['GK'=>$gkR, 'DEF'=>$defR, 'MID'=>$midR, 'FWD'=>$fwdR],
+        'chemistry' => $chemistry,
+    ];
+}
+
+function dcz_duel_public_team_metrics($eval) {
+    return [
+        'score' => (int)$eval['score'],
+        'fit' => (int)$eval['fit'],
+        'chemistry' => (int)($eval['chemistry']['pct'] ?? 0),
+        'attack' => round((float)$eval['atk'], 2),
+        'defence' => round((float)$eval['def'], 2),
     ];
 }
 
@@ -216,6 +299,11 @@ function dcz_duel_sim_match($a, $b, &$state) {
     elseif ($b['fmtT'] === 'def' && $a['tactic'] === 'attack') { $xa *= 0.96; $xb *= 1.02; }
     elseif ($b['fmtT'] === 'def' && $a['tactic'] === 'defend') { $xb *= 0.97; }
 
+    /* Chemistry e' derivata esclusivamente dal dataset canonico. Il moltiplicatore
+       e' simmetrico e precede gli stessi bonus r=10 usati dalla campagna. */
+    $xa *= (float)($a['chemistry']['mul'] ?? 1.0);
+    $xb *= (float)($b['chemistry']['mul'] ?? 1.0);
+
     if ($a['r10']['gk']) $xb *= 1 - min($a['r10']['gk'], 0.08);
     if ($a['r10']['def']) $xb *= 1 - min($a['r10']['def'], 0.09);
     if ($a['r10']['midAtk']) $xa *= 1 + min($a['r10']['midAtk'], 0.06);
@@ -245,9 +333,9 @@ function dcz_duel_sim_match($a, $b, &$state) {
     return $match;
 }
 
-function dcz_duel_simulate_series($teamA, $teamB, $seed) {
-    $evalA = dcz_duel_team_eval($teamA);
-    $evalB = dcz_duel_team_eval($teamB);
+function dcz_duel_simulate_series($teamA, $teamB, $seed, $contextA = null, $contextB = null) {
+    $evalA = dcz_duel_team_eval($teamA, $contextA);
+    $evalB = dcz_duel_team_eval($teamB, $contextB);
     if ($evalA === null || $evalB === null) return null;
     $state = ((int)$seed) & 0x7fffffff;
     if ($state === 0) $state = 1;
@@ -263,5 +351,9 @@ function dcz_duel_simulate_series($teamA, $teamB, $seed) {
         'winsA' => $winsA,
         'winsB' => $winsB,
         'winner' => $winsA > $winsB ? 'a' : 'b',
+        'teams' => [
+            'a' => dcz_duel_public_team_metrics($evalA),
+            'b' => dcz_duel_public_team_metrics($evalB),
+        ],
     ];
 }

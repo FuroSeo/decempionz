@@ -57,10 +57,15 @@ t_assert(isset($registry['ucl']['rm_5960'], $registry['ucl']['bar_1415']), 'know
 t_assert(isset($registry['ucl']['atm_1314'], $registry['copa']['atm_1314']), 'same short teamId must coexist across tournament families');
 t_assert(($registry['ucl']['atm_1314']['club'] ?? '') === 'atletico', 'UCL atm_1314 must resolve to Atletico Madrid');
 t_assert(($registry['copa']['atm_1314']['club'] ?? '') === 'atletico_mineiro', 'Copa atm_1314 must resolve to Atletico Mineiro');
+t_assert(($registry['ucl']['rm_5960']['country'] ?? '') === '🇪🇸', 'team country must be available for canonical Chemistry fallback');
+t_assert(count($registry['ucl']['rm_5960']['players'] ?? []) === 12, 'registry must parse canonical players, not only raw team lines');
 t_assert(dcz_duel_dataset_source($registry, 'atm_1314', null) === null, 'ambiguous short teamId must require a tournament family');
 t_assert(dcz_duel_validate_team_dataset($teamA, 'ucl'), 'real Madrid fixture must match canonical UCL data');
 t_assert(dcz_duel_validate_team_dataset($teamB, 'ucl'), 'Barcelona fixture must match canonical UCL data');
 t_assert(!dcz_duel_validate_team_dataset($teamA, 'copa'), 'UCL sources must not validate as Copa sources');
+$uclCollisionMeta = dcz_duel_canonical_player_meta($registry, ['n'=>'Courtois','p'=>'GK','r'=>9,'teamId'=>'atm_1314'], 'ucl');
+$copaCollisionMeta = dcz_duel_canonical_player_meta($registry, ['n'=>'Victor','p'=>'GK','r'=>8,'teamId'=>'atm_1314'], 'copa');
+t_assert(($uclCollisionMeta['nat'] ?? '') === 'BE' && ($copaCollisionMeta['nat'] ?? '') === 'BR', 'canonical Chemistry lookup must respect tournament + teamId collisions');
 
 $dynRaw = team_fixture('Dynasty', '4-3-3', 'balanced', 'rm_5960', $rmPlayers, 'real_madrid');
 $dynTeam = dcz_sanitize_team($dynRaw);
@@ -100,6 +105,8 @@ t_assert(dcz_sanitize_result($result1) !== null, 'server result must satisfy bes
 t_assert(in_array(count($result1['matches']), [2, 3], true), 'best-of-3 must contain two or three matches');
 t_assert(max((int)$result1['winsA'], (int)$result1['winsB']) === 2, 'series winner must reach two wins');
 t_assert(in_array($result1['winner'], ['a', 'b'], true), 'winner marker must be canonical');
+t_assert(isset($result1['teams']['a']['score'], $result1['teams']['b']['chemistry']), 'authoritative result must include safe official team metrics');
+t_assert($result1['teams']['a']['chemistry'] === 0, 'context-free legacy simulation must not invent Chemistry');
 
 foreach ($result1['matches'] as $match) {
     t_assert($match['ga'] >= 0 && $match['gb'] >= 0, 'goals cannot be negative');
@@ -147,6 +154,37 @@ t_approx((float)$fitEval['def'], 8.007, 1e-9, 'defence rating parity');
 t_assert($fitEval['score'] === 84 && $fitEval['fit'] === 97, 'Team Score / fit parity fixture changed');
 t_assert($fitEval['r10']['fwd'] === 0.04 && $fitEval['r10']['midAtk'] === 0.0, 'elite bonus must follow occupied slot');
 
+/* Match Engine v3 canonical Chemistry: browser nat/club fields are never trusted. */
+$uclContext = ['mode'=>'ucl', 'dynasty'=>false, 'strict'=>true];
+$rmChemEval = dcz_duel_team_eval($teamA, $uclContext);
+t_assert(is_array($rmChemEval), 'verified UCL team must resolve canonical Chemistry');
+t_assert($rmChemEval['chemistry']['verified'] === true, 'all Chemistry inputs must resolve from game-data.js');
+t_assert($rmChemEval['chemistry']['pct'] === 6, 'Real Madrid fixture must reach the documented 6% Chemistry cap');
+$rmDynastyEval = dcz_duel_team_eval($teamA, ['mode'=>'ucl', 'dynasty'=>true, 'strict'=>true]);
+t_assert($rmDynastyEval['chemistry']['pct'] === 4, 'Dynasty must exclude the automatic same-club bond');
+
+$tamperedChemRaw = team_fixture('Tampered chemistry', '4-3-3', 'attack', 'rm_5960', $rmPlayers);
+foreach ($tamperedChemRaw['players'] as &$tamperedPlayer) {
+    $tamperedPlayer['nat'] = 'ZZ';
+    $tamperedPlayer['club'] = 'fake_club';
+}
+unset($tamperedPlayer);
+$tamperedChem = dcz_sanitize_team($tamperedChemRaw);
+t_assert($tamperedChem !== null, 'extra browser Chemistry fields must not break structural sanitization');
+t_assert($tamperedChem['players'] === $teamA['players'], 'browser-supplied nationality and club metadata must be stripped entirely');
+t_assert(!isset($tamperedChem['players'][0]['nat'], $tamperedChem['players'][0]['club']), 'sanitized Duel players must contain no client Chemistry metadata');
+t_assert(dcz_duel_team_eval($tamperedChem, $uclContext)['chemistry']['pct'] === 6, 'tampered browser metadata cannot change canonical Chemistry');
+
+$brazilPlayers = [
+    ['Félix','GK',8], ['Pelé','ST',10], ['Jairzinho','RW',9], ['Rivelino','LW',9],
+    ['Tostão','CF',9], ['Gerson','CM',9], ['Carlos Alberto','RB',9], ['Clodoaldo','CDM',8],
+    ['Brito','CB',8], ['Wilson Piazza','CB',7], ['Everaldo','LB',8],
+];
+$brazil = dcz_sanitize_team(team_fixture('Brazil', '4-3-3', 'balanced', 'bra_1970', $brazilPlayers));
+$brazilEval = dcz_duel_team_eval($brazil, ['mode'=>'wc', 'dynasty'=>false, 'strict'=>true]);
+t_assert(is_array($brazilEval) && $brazilEval['chemistry']['pct'] === 6, 'World Cup players without nat must inherit canonical team country');
+t_assert(count(array_filter($brazilEval['chemistry']['bonds'], fn($bond) => $bond['type'] === 'club')) === 0, 'World Cup Chemistry must never include club bonds');
+
 /* Deterministic statistical guardrails: neutral sides, quality separation and tactic counters. */
 $natural442 = [
     ['P1','GK',8], ['P2','LB',8], ['P3','CB',8], ['P4','CB',8], ['P5','RB',8],
@@ -183,5 +221,21 @@ foreach ([['attack','defend'], ['balanced','attack'], ['defend','balanced']] as 
     $match = dcz_duel_sim_match($evalA, $evalB, $state2);
     t_assert($match['xa'] > $match['xb'], "tactic counter {$winningTactic} must beat {$losingTactic} on xG");
 }
+
+$chemAdvantage = $equalA;
+$chemNeutral = $equalB;
+$chemAdvantage['chemistry'] = ['pct'=>6, 'mul'=>1.06, 'bonds'=>[], 'verified'=>true];
+$chemNeutral['chemistry'] = ['pct'=>0, 'mul'=>1.0, 'bonds'=>[], 'verified'=>true];
+$state2 = 1357911;
+$chemMatch = dcz_duel_sim_match($chemAdvantage, $chemNeutral, $state2);
+t_assert($chemMatch['xa'] > $chemMatch['xb'], 'a 6% Chemistry edge must create an xG advantage between otherwise equal teams');
+
+$canonicalSeries = dcz_duel_simulate_series($teamA, $teamB, 424242, $uclContext, $uclContext);
+t_assert(($canonicalSeries['teams']['a']['chemistry'] ?? null) === 6, 'official series metrics must expose canonical Chemistry after commitment');
+$canonicalClean = dcz_sanitize_result($canonicalSeries);
+t_assert(($canonicalClean['teams']['a']['chemistry'] ?? null) === 6, 'result sanitizer must preserve bounded official metrics');
+$badMetrics = $canonicalSeries;
+$badMetrics['teams']['a']['chemistry'] = 99;
+t_assert(dcz_sanitize_result($badMetrics) === null, 'out-of-range official metrics must fail result sanitization');
 
 echo "Duel integrity tests passed.\n";
