@@ -872,7 +872,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <button class="btn btn-gold" onclick="quickStart()" style="font-size:1rem;padding:15px">
       <span data-i18n="home.btn_quick">⚽ Gioca subito</span>
-      <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+      <span data-i18n="home.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-3-3 · All Time · Draft diretto</span>
     </button>
     <button class="btn btn-ghost" onclick="startGame()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="home.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="home.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
   </div>
@@ -894,7 +894,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <button class="btn btn-gold" onclick="quickStartCopa()" style="font-size:1rem;padding:15px">
       <span data-i18n="copa.btn_quick">⚽ Gioca subito</span>
-      <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+      <span data-i18n="copa.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-4-2 · All Time · Draft diretto</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameCopa()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="copa.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="copa.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
   </div>
@@ -916,7 +916,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
     <button class="btn btn-gold" onclick="quickStartWC()" style="font-size:1rem;padding:15px">
       <span data-i18n="wc.btn_quick">⚽ Gioca subito</span>
-      <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">Classic · All Time · Normale</span>
+      <span data-i18n="wc.btn_quick_sub" style="display:block;font-size:.58rem;font-weight:400;opacity:.75;margin-top:2px">4-3-3 · All Time · Draft diretto</span>
     </button>
     <button class="btn btn-ghost" onclick="startGameWC()" style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 12px"><span data-i18n="wc.btn_custom" style="font-size:.82rem">⚙️ Personalizza</span><span data-i18n="wc.btn_custom_sub" style="font-size:.56rem;font-weight:400;opacity:.65;letter-spacing:.1px">Scegli era, difficoltà, blind draft</span></button>
   </div>
@@ -1601,7 +1601,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 <script src="game-data.js?v=593"></script>
 <script>
-const GAME_VERSION='5.22.0';
+const GAME_VERSION='5.23.0';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */
@@ -1623,15 +1623,15 @@ const STRINGS={
     'tourn.wc.sub':'Mondiali · 1930 – 2022',
     'tourn.soon':'Prossimamente',
     'copa.btn_quick':'⚽ Gioca subito',
-    'copa.btn_quick_sub':'Classic · All Time · Normale',
+    'copa.btn_quick_sub':'4-4-2 · All Time · Draft diretto',
     'copa.btn_custom':'⚙️ Personalizza','copa.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'wc.btn_quick':'⚽ Gioca subito',
-    'wc.btn_quick_sub':'Classic · All Time · Normale',
+    'wc.btn_quick_sub':'4-3-3 · All Time · Draft diretto',
     'wc.btn_custom':'⚙️ Personalizza','wc.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'trophy.wc_classic':'Campione del Mondo!',
     'trophy.wc_old_cup':'Coppa Vecchio Stampo',
     'home.btn_quick':'⚽ Gioca subito',
-    'home.btn_quick_sub':'Classic · All Time · Normale',
+    'home.btn_quick_sub':'4-3-3 · All Time · Draft diretto',
     'home.btn_custom':'⚙️ Personalizza','home.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'home.howtoplay_btn':'❓ Come si gioca',
     'trophies.title':'🏅 I tuoi Trofei',
@@ -1948,15 +1948,15 @@ const STRINGS={
     'tourn.wc.sub':'World Cup · 1930 – 2022',
     'tourn.soon':'Coming Soon',
     'copa.btn_quick':'⚽ Play Now',
-    'copa.btn_quick_sub':'Classic · All Time · Normal',
+    'copa.btn_quick_sub':'4-4-2 · All Time · Direct Draft',
     'copa.btn_custom':'⚙️ Customize','copa.btn_custom_sub':'Choose era, difficulty, blind draft',
     'wc.btn_quick':'⚽ Play Now',
-    'wc.btn_quick_sub':'Classic · All Time · Normal',
+    'wc.btn_quick_sub':'4-3-3 · All Time · Direct Draft',
     'wc.btn_custom':'⚙️ Customize','wc.btn_custom_sub':'Choose era, difficulty, blind draft',
     'trophy.wc_classic':'World Champion!',
     'trophy.wc_old_cup':'Old Cup Style',
     'home.btn_quick':'⚽ Play Now',
-    'home.btn_quick_sub':'Classic · All Time · Normal',
+    'home.btn_quick_sub':'4-3-3 · All Time · Direct Draft',
     'home.btn_custom':'⚙️ Customize','home.btn_custom_sub':'Choose era, difficulty, blind draft',
     'home.howtoplay_btn':'❓ How to play',
     'trophies.title':'🏅 Your Trophies',
@@ -2276,15 +2276,15 @@ const STRINGS={
     'tourn.wc.sub':'Mundial · 1930 – 2022',
     'tourn.soon':'Próximamente',
     'copa.btn_quick':'⚽ Jugar ahora',
-    'copa.btn_quick_sub':'Classic · All Time · Normal',
+    'copa.btn_quick_sub':'4-4-2 · All Time · Draft directo',
     'copa.btn_custom':'⚙️ Personalizar','copa.btn_custom_sub':'Elige era, dificultad, blind draft',
     'wc.btn_quick':'⚽ Jugar ahora',
-    'wc.btn_quick_sub':'Classic · All Time · Normal',
+    'wc.btn_quick_sub':'4-3-3 · All Time · Draft directo',
     'wc.btn_custom':'⚙️ Personalizar','wc.btn_custom_sub':'Elige era, dificultad, blind draft',
     'trophy.wc_classic':'¡Campeón del Mundo!',
     'trophy.wc_old_cup':'Old Cup Estilo',
     'home.btn_quick':'⚽ Jugar ahora',
-    'home.btn_quick_sub':'Classic · All Time · Normal',
+    'home.btn_quick_sub':'4-3-3 · All Time · Draft directo',
     'home.btn_custom':'⚙️ Personalizar','home.btn_custom_sub':'Elige era, dificultad, blind draft',
     'home.howtoplay_btn':'❓ Cómo jugar',
     'trophies.title':'🏅 Tus Trofeos',
@@ -4309,44 +4309,29 @@ function replayGame(){
   showScreen('screen-formation');
 }
 
-function quickStart(){
+function quickStartPreset(mode){
+  var presets={ucl:{formation:'4-3-3'},copa:{formation:'4-4-2'},wc:{formation:'4-3-3'}};
+  var preset=presets[mode]||presets.ucl;
   G.dynasty=false;G.dynastyClub=null;
-  G.gameMode='ucl';
+  G.gameMode=mode;
   selectedFormat='classic';
   selectedEraT=null;
   selectedDiff='normal';
   G.format='classic';
   G.difficulty='normal';
-  const era=TOURNAMENTS.find(function(t){return t.id==='alltime';});
+  G.blindDraft=false;
+  var blind=document.getElementById('blind-draft-cb');if(blind)blind.checked=false;
+  var list=mode==='copa'?COPA_TOURNAMENTS:mode==='wc'?WC_TOURNAMENTS:TOURNAMENTS;
+  const era=list.find(function(t){return t.allTime||t.id==='alltime';});
   applyTournament(era);
   G.tactic='balanced';
-  renderFormationGrid();
-  setTimeout(function(){
-    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
-    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
-  },0);
-  applyTournamentTheme('ucl');
-  showScreen('screen-formation');
+  G.formation=preset.formation;
+  applyTournamentTheme(mode);
+  _ga('quick_start',{tournament:mode,format:'classic',era:'alltime',difficulty:'normal',formation:preset.formation});
+  initDraft();
 }
-function quickStartCopa(){
-  G.dynasty=false;G.dynastyClub=null;
-  G.gameMode='copa';
-  selectedFormat='classic';
-  selectedEraT=null;
-  selectedDiff='normal';
-  G.format='classic';
-  G.difficulty='normal';
-  const era=COPA_TOURNAMENTS.find(function(t){return t.allTime;});
-  applyTournament(era);
-  G.tactic='balanced';
-  renderFormationGrid();
-  setTimeout(function(){
-    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
-    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
-  },0);
-  applyTournamentTheme('copa');
-  showScreen('screen-formation');
-}
+function quickStart(){quickStartPreset('ucl');}
+function quickStartCopa(){quickStartPreset('copa');}
 function startGameCopa(){
   G.dynasty=false;G.dynastyClub=null;
   G.gameMode='copa';
@@ -4360,25 +4345,7 @@ function startGameCopa(){
   _syncFormatCards();
   applyTournamentTheme('copa');
 }
-function quickStartWC(){
-  G.dynasty=false;G.dynastyClub=null;
-  G.gameMode='wc';
-  selectedFormat='classic';
-  selectedEraT=null;
-  selectedDiff='normal';
-  G.format='classic';
-  G.difficulty='normal';
-  const era=WC_TOURNAMENTS.find(function(t){return t.allTime;});
-  applyTournament(era);
-  G.tactic='balanced';
-  renderFormationGrid();
-  setTimeout(function(){
-    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
-    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
-  },0);
-  applyTournamentTheme('wc');
-  showScreen('screen-formation');
-}
+function quickStartWC(){quickStartPreset('wc');}
 function startGameWC(){
   G.dynasty=false;G.dynastyClub=null;
   G.gameMode='wc';
