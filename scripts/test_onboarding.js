@@ -76,4 +76,22 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   vm.runInContext(boot[1], ok, {filename:"index.html#theme-boot"});
   if (attrs["data-theme"]!=="light") throw new Error("Stored light theme not restored");
 }
+/* Parità delle traduzioni: una chiave presente in una lingua e assente in un'altra fa
+   comparire testo in lingua sbagliata (t() ricade sull'inglese). */
+{
+  const iStart = homepage.indexOf("const STRINGS={");
+  const iEnd = homepage.indexOf("function t(key){", iStart);
+  if (iStart < 0 || iEnd < 0) throw new Error("STRINGS dictionary not found");
+  const box = {};
+  vm.createContext(box);
+  vm.runInContext(homepage.slice(iStart, iEnd) + ";this.S=STRINGS;", box, {filename:"index.html#strings"});
+  const langs = ["it","en","es"];
+  for (const a of langs) for (const b of langs) {
+    if (a === b) continue;
+    const missing = Object.keys(box.S[a]).filter(k => !(k in box.S[b]));
+    if (missing.length) throw new Error("Translation keys in "+a+" missing from "+b+": "+missing.join(", "));
+  }
+  for (const lang of langs) if (!box.S[lang]["draft.rerolls"]) throw new Error("draft.rerolls missing in "+lang);
+  if (/'Rerolls: <strong/.test(homepage)) throw new Error("Draft header Rerolls label must use t('draft.rerolls')");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");
