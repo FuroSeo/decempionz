@@ -28,7 +28,8 @@ def lastmod(rel):
     if rel == '' or rel.endswith('/'):
         rel += 'index.html'
     if _DIRTY is None:
-        _DIRTY = _git_dirty() or False
+        dirty = _git_dirty()
+        _DIRTY = False if dirty is None else dirty
     if _DIRTY is False or rel in _DIRTY:
         return TODAY
     try:
@@ -359,7 +360,7 @@ def main():
         n=cnt
     fixed=[('','1.0','weekly'),('about.html','0.6','monthly'),('ucl.html','0.8','monthly'),
       ('copa.html','0.8','monthly'),('worldcup.html','0.8','monthly'),
-      ('draft.html','0.3','never'),('sfide.html','0.7','weekly'),('rose/','0.7','weekly'),
+      ('sfide.html','0.7','weekly'),('rose/','0.7','weekly'),
       ('en/ucl.html','0.8','monthly'),('en/copa.html','0.8','monthly'),('en/worldcup.html','0.8','monthly'),
       ('en/about.html','0.6','monthly'),('es/ucl.html','0.8','monthly'),('es/copa.html','0.8','monthly'),
       ('es/worldcup.html','0.8','monthly'),('es/about.html','0.6','monthly'),('en/rose/','0.7','weekly')]
