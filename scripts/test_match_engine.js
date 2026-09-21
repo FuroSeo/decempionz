@@ -368,6 +368,17 @@ if (!homepage.includes("function evaluateDraftImpact(players,positions,formation
   };
   const bvb = clubBonds(["bvb_9697", "bvb_9697", "bvb_1213", "bvb_1213"]);
   if (bvb.length !== 1 || bvb[0].label.indexOf("\u00d74") < 0) fail("Dortmund squads must form ONE club bond of 4: " + JSON.stringify(bvb));
+  // Every dataset position must be playable by at least one slot: 'AM' had no slot mapping,
+  // so those players paid the 25% emergency penalty even at CAM.
+  const playable = new Set(Object.values(engine.SLOT_COMPAT).flat());
+  const orphans = new Set();
+  for (const db of ["TEAMS", "COPA_TEAMS", "WC_TEAMS"]) {
+    const teams = vm.runInContext(db, sb);
+    for (const team of Object.values(teams)) for (const pl of team.players) {
+      if (!playable.has(pl.p)) orphans.add(db + ":" + team.name + ":" + pl.n + ":" + pl.p);
+    }
+  }
+  if (orphans.size) fail("dataset positions with no compatible slot: " + [...orphans].slice(0, 8).join(", "));
   const atm = clubBonds(["atm_1314", "atm_1314", "atm_1516", "atm_1516"]);
   if (atm.length !== 1 || atm[0].label.indexOf("\u00d74") < 0) fail("Atletico squads must form ONE club bond of 4: " + JSON.stringify(atm));
   if (clubBonds(["bvb_9697", "bvb_1213", "atm_1314", "atm_1516"]).length !== 0) fail("two players per club must not form a club bond");
