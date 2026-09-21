@@ -87,3 +87,5 @@ jobs:
           npm install --no-save playwright@1.56.0
           npx playwright install --with-deps chromium
           node scripts/e2e_smoke.js
+      - name: Browser + PHP end to end test (Daily, Duel)
+        run: node scripts/e2e_php.js

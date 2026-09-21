@@ -92,6 +92,14 @@ Feature-specific changes require additional checks for the affected feature.
 
 Run it locally with `npm install --no-save playwright`, `npx playwright install chromium` and `node scripts/e2e_smoke.js` (`E2E_ONLY=ucl` runs a single scenario; `PW_CHROMIUM=/path/to/chrome` reuses an installed browser). It does not replace the manual smoke test above: Daily, Duel, Hall of Fame and visual checks still need a human pass on the live site.
 
+### Automated PHP end to end test
+
+`scripts/e2e_php.js` runs in CI on every pull request, after the PHP unit tests. Unlike `e2e_smoke.js`, which answers every `.php` request with 404, this test starts a real `php -S` server on a throw-away copy of the repository (the working tree is never touched) and drives the actual client against it, so it exercises the browser and the PHP backend together.
+
+It covers Daily (validation, one entry per network and nickname per day, ranking, percentile, HTML escaping, concurrent submissions) and Duel (player A drafts and creates the duel with a server-verified draft session, player B opens the invite link, drafts and the server plays the best-of-3 series, player A replays the verdict, and the public duel pages never leak a squad that has not been revealed yet). It fails on a PHP warning/notice/fatal, an unexpected JavaScript error or dialog, a stuck UI, or a check that does not hold.
+
+Run it locally the same way as `e2e_smoke.js`, with `node scripts/e2e_php.js` (`php` must be in `PATH`; `E2E_ONLY=daily-api,daily,duel,duel-api` runs a subset; `PW_CHROMIUM=/path/to/chrome` reuses an installed browser).
+
 ## Dynamic data safety
 
 The Service Worker must never cache PHP endpoints or community/runtime data such as Daily scores, Hall of Fame, Challenge or Duel state.
