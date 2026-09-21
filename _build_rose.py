@@ -10,6 +10,32 @@ from datetime import date
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = 'https://decempionz.com'
 TODAY = date.today().isoformat()
+
+def _git_dirty():
+    try:
+        out = subprocess.run(['git','status','--porcelain'],cwd=BASE,capture_output=True,text=True,timeout=60)
+    except Exception:
+        return None
+    if out.returncode != 0:
+        return None
+    return {l[3:].strip().strip('"') for l in out.stdout.splitlines()}
+
+_DIRTY = None
+def lastmod(rel):
+    """Data reale dell'ultima modifica del file (ultimo commit git); oggi se il file e' modificato
+    ma non ancora committato o se git non e' disponibile (es. copie temporanee dei test)."""
+    global _DIRTY
+    if rel == '' or rel.endswith('/'):
+        rel += 'index.html'
+    if _DIRTY is None:
+        _DIRTY = _git_dirty() or False
+    if _DIRTY is False or rel in _DIRTY:
+        return TODAY
+    try:
+        out = subprocess.run(['git','log','-1','--format=%cs','--',rel],cwd=BASE,capture_output=True,text=True,timeout=20)
+    except Exception:
+        return TODAY
+    return out.stdout.strip() if out.returncode == 0 and out.stdout.strip() else TODAY
 LANGS = ['it','en']
 GA = '''<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-F2ME1WYQHG',{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false});</script>'''
@@ -24,7 +50,7 @@ T={
  'tourn':{'ucl':('UCL Legends','Champions League','ucl.html','🏆'),'copa':('Copa Libertadores','Copa Libertadores','copa.html','🌎'),'wc':('World Cup Legends','Mondiali','worldcup.html','🌍')},
  'title':'Rosa %s %s — Giocatori e Rating | Decempionz',
  'h1':'Rosa %s %s',
- 'desc':'La rosa completa del %s %s in %s: %d giocatori con ruolo e rating. I migliori: %s. Draftala su Decempionz, il gioco gratuito delle leggende del calcio.',
+ 'desc':'La rosa %s %s in %s: %d giocatori con ruolo e rating. I migliori: %s. Draftala su Decempionz.',
  'crumb_home':'Home','crumb_hub':'Rose storiche',
  'stat_players':'Giocatori','stat_avg':'Rating medio','stat_leg':'Leggende ★10','stat_dmf':'Dif-Cen-Att',
  'h2_squad':'La rosa completa','h2_rel':'Rose correlate',
@@ -50,7 +76,7 @@ T={
  'tourn':{'ucl':('UCL Legends','Champions League','en/ucl.html','🏆'),'copa':('Copa Libertadores','Copa Libertadores','en/copa.html','🌎'),'wc':('World Cup Legends','World Cup','en/worldcup.html','🌍')},
  'title':'%s %s Squad — Players & Ratings | Decempionz',
  'h1':'%s %s Squad',
- 'desc':'The full %s %s squad in the %s: %d players with roles and ratings. Top players: %s. Draft it on Decempionz, the free football legends draft game.',
+ 'desc':'The %s %s squad in the %s: %d players with roles and ratings. Top players: %s. Draft it on Decempionz.',
  'crumb_home':'Home','crumb_hub':'Historic squads',
  'stat_players':'Players','stat_avg':'Avg rating','stat_leg':'★10 legends','stat_dmf':'Def-Mid-Fwd',
  'h2_squad':'The full squad','h2_rel':'Related squads',
@@ -174,6 +200,7 @@ def build_page(tid,t,mode,era,all_by_club,slug_of,d,lang):
     h1=L['h1']%(name,season)
     title=L['title']%(name,season)
     desc=L['desc']%(name,season,tourn_label,np_,topnames)
+    if len(desc)>160:desc=desc.rsplit('. ',1)[0]+'.'  # snippet Google: ~160 caratteri, si rinuncia alla call to action
     ivar=L['intros'][int(hashlib.md5(slug.encode()).hexdigest(),16)%len(L['intros'])]
     ntot=len({'ucl':d['TEAMS'],'copa':d['COPA_TEAMS'],'wc':d['WC_TEAMS']}[mode])
     intro=ivar.format(name=esc(name),season=season,tourn=tourn_label,np=np_,avg=fmt_avg(avg,L),
@@ -215,6 +242,7 @@ def build_page(tid,t,mode,era,all_by_club,slug_of,d,lang):
 <meta property="og:type" content="article">
 <meta property="og:url" content="%s">
 <meta property="og:image" content="%s/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 <script type="application/ld+json">%s</script>
@@ -280,6 +308,7 @@ def build_index(sets,slug_of,lang,n):
 <meta property="og:type" content="website">
 <meta property="og:url" content="%s">
 <meta property="og:image" content="%s/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 %s
 <style>%s</style>
@@ -334,10 +363,10 @@ def main():
       ('en/ucl.html','0.8','monthly'),('en/copa.html','0.8','monthly'),('en/worldcup.html','0.8','monthly'),
       ('en/about.html','0.6','monthly'),('es/ucl.html','0.8','monthly'),('es/copa.html','0.8','monthly'),
       ('es/worldcup.html','0.8','monthly'),('es/about.html','0.6','monthly'),('en/rose/','0.7','weekly')]
-    urls=['  <url>\n    <loc>%s/%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>%s</changefreq>\n    <priority>%s</priority>\n  </url>'%(SITE,p,TODAY,cf,pr) for p,pr,cf in fixed]
+    urls=['  <url>\n    <loc>%s/%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>%s</changefreq>\n    <priority>%s</priority>\n  </url>'%(SITE,p,lastmod(p),cf,pr) for p,pr,cf in fixed]
     for key,slug in sorted(slug_of.items(),key=lambda kv:kv[1]):
         for pre in ['rose','en/rose']:
-            urls.append('  <url>\n    <loc>%s/%s/%s.html</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>'%(SITE,pre,slug,TODAY))
+            urls.append('  <url>\n    <loc>%s/%s/%s.html</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.5</priority>\n  </url>'%(SITE,pre,slug,lastmod('%s/%s.html'%(pre,slug))))
     sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n%s\n</urlset>\n'%'\n'.join(urls)
     open(os.path.join(BASE,'sitemap.xml'),'w',encoding='utf-8').write(sm)
     print('sitemap: %d url'%len(urls))

@@ -558,7 +558,8 @@ def _site_path(url: str) -> str | None:
 
 
 def validate_seo_alternates() -> None:
-    """hreflang sets must be reciprocal and localized pages must not reuse Italian keywords."""
+    """hreflang sets must be reciprocal, localized pages must not reuse Italian keywords, and every
+    page with an og:image declares a twitter:card."""
     pages: dict[str, tuple[dict[str, str], str | None, str | None]] = {}
     for path in tracked_files("*.html"):
         rel = path.relative_to(ROOT).as_posix()
@@ -568,6 +569,8 @@ def validate_seo_alternates() -> None:
         alternates = dict(
             re.findall(r'<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"', html)
         )
+        if 'property="og:image"' in html and 'name="twitter:card"' not in html:
+            fail(f"{rel}: has og:image but no twitter:card (X/Twitter falls back to a small summary card)")
         canonical = re.search(r'<link rel="canonical" href="([^"]+)"', html)
         keywords = re.search(r'<meta name="keywords" content="([^"]*)"', html)
         pages[rel] = (
