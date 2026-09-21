@@ -101,6 +101,7 @@ async function snapshot(page) {
       coaches: buttons.filter(b => /coach-card/.test(b.cls)).length,
       rcont: vis(document.getElementById('btn-rcont')),
       skip: vis(document.getElementById('spd-skip')),
+      ht: vis(document.querySelector('#m-ht .ht-opt')),
       buttons,
       text: a.innerText,
     };
@@ -141,6 +142,7 @@ async function playCampaign(browser, base, sc) {
 
   const started = Date.now();
   let steps = 0;
+  let htSeen = 0;
 
   // Plays whatever is on screen until a campaign end screen (or a problem).
   async function drive() {
@@ -153,7 +155,7 @@ async function playCampaign(browser, base, sc) {
       if (!s) { await sleep(200); continue; }
       steps++;
 
-      const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.buttons.map(b => b.text).join(',')].join('|');
+      const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.ht, s.buttons.map(b => b.text).join(',')].join('|');
       if (sig !== lastSig) {
         lastSig = sig; lastChange = Date.now();
         if (!visited.includes(s.screen)) visited.push(s.screen);
@@ -188,8 +190,26 @@ async function playCampaign(browser, base, sc) {
       try {
         if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
         else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
-        else if (s.screen === 'screen-match' && s.rcont) await page.click('#btn-rcont', { timeout: 4000 });
-        else if (s.screen === 'screen-match' && s.skip) await page.click('#spd-skip', { timeout: 4000 });
+        else if (s.screen === 'screen-match' && s.rcont) {
+          // Half-time invariant: the goals shown in the log add up to the final score.
+          const m = await page.evaluate(() => ({ half: M.half ? M.half.stage : null, my: M.myS, opp: M.oppS, myG: M.myG, oppG: M.oppG }));
+          if (m.half !== 2) problems.push('match reached the result without a second half: ' + JSON.stringify(m));
+          if (m.my !== m.myG || m.opp !== m.oppG) problems.push('log goals do not match the final score: ' + JSON.stringify(m));
+          await page.click('#btn-rcont', { timeout: 4000 });
+        }
+        else if (s.screen === 'screen-match' && s.ht) {
+          // Alternate between the three second-half tactics so every branch runs.
+          const tac = ['attack', 'balanced', 'defend'][htSeen % 3];
+          htSeen++;
+          await page.click(`#m-ht .ht-opt[data-tac="${tac}"]`, { timeout: 4000 });
+          await page.waitForSelector('#m-ht', { state: 'hidden', timeout: 4000 });
+        }
+        else if (s.screen === 'screen-match' && s.skip) {
+          // Odd matches play out at fast speed (natural playback), even ones use "skip".
+          const odd = await page.evaluate(() => (G.groupUserResults.length + G.knockResults.length) % 2 === 1);
+          if (odd) await page.evaluate(() => { setMatchSpeed('fast'); });
+          else await page.click('#spd-skip', { timeout: 4000 });
+        }
         else if (s.screen !== 'screen-match') {
           const next = s.buttons.find(b => !b.disabled && !/ghost|screen-logo/.test(b.cls) &&
             !/New Game|Nuova Partita|Reroll|Home|Menu|DECEMPIONZ/i.test(b.text));
@@ -236,6 +256,7 @@ async function playCampaign(browser, base, sc) {
     if (finished && after !== before + 1) problems.push(`Daily run did not award progression: campaigns ${before} -> ${after}`);
   }
 
+  if (finished && !htSeen) problems.push('no half-time decision appeared during the campaign');
   if (!finished && !problems.some(p => p.startsWith('stuck') || p.startsWith('no actionable'))) {
     problems.push(`campaign did not finish within ${CAMPAIGN_MS / 1000}s`);
   }
