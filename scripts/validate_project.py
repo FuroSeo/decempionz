@@ -602,6 +602,24 @@ def validate_seo_alternates() -> None:
                 fail(f"{rel}: keywords are identical to the Italian page {it_rel}")
 
 
+def validate_sitemap_indexability() -> None:
+    """Pages that only make sense with a query string (shared draft, duel invite) must be noindex,
+    and no sitemap URL may point to a noindex page."""
+    for rel in ("draft.html", "duel.html"):
+        html = read(rel)
+        if not re.search(r'<meta name="robots" content="[^"]*noindex', html):
+            fail(f"{rel}: parameter-driven page must declare noindex")
+    sitemap = read("sitemap.xml")
+    for url in re.findall(r"<loc>([^<]+)</loc>", sitemap):
+        rel = _site_path(url)
+        if rel is None or not (ROOT / rel).exists():
+            fail(f"sitemap.xml: {url} does not map to a file")
+            continue
+        html = (ROOT / rel).read_text(encoding="utf-8")
+        if re.search(r'<meta name="robots" content="[^"]*noindex', html):
+            fail(f"sitemap.xml: {url} is noindex")
+
+
 def extract_inline_javascript(html: str) -> list[str]:
     """Return executable inline JS blocks, excluding src scripts and data script types."""
     blocks: list[str] = []
@@ -695,6 +713,7 @@ def main() -> int:
     validate_duel_integrity()
     validate_html_javascript()
     validate_seo_alternates()
+    validate_sitemap_indexability()
 
     for message in NOTES:
         print(f"[info] {message}")
