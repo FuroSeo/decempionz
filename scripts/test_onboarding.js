@@ -177,4 +177,43 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   if (lStart < 0 || lEnd < 0) throw new Error("applyLang not found");
   if (!homepage.slice(lStart, lEnd).includes("renderManagerProgress()")) throw new Error("applyLang must refresh the Manager progress texts");
 }
+/* Modali: il Tab resta dentro il dialogo (focus trap). Tutorial: Esc salta, Invio/Spazio/Freccia avanzano. */
+{
+  const fStart = homepage.indexOf("function _modalFocusable(modal){");
+  const fEnd = homepage.indexOf("document.addEventListener('keydown',function(e){", fStart);
+  if (fStart < 0 || fEnd < 0) throw new Error("focus trap helpers not found");
+  const mk = (name) => ({name, disabled:false, getAttribute:()=>null, getClientRects:()=>[1], focus(){focused = this;}});
+  let focused = null;
+  const hidden = {name:"hidden", disabled:false, getAttribute:()=>null, getClientRects:()=>[], focus(){}};
+  const off = {name:"off", disabled:true, getAttribute:()=>null, getClientRects:()=>[1], focus(){}};
+  const skipTab = {name:"skip", disabled:false, getAttribute:k=>k==="tabindex"?"-1":null, getClientRects:()=>[1], focus(){}};
+  const a = mk("a"), b = mk("b"), c = mk("c");
+  const modal = {querySelectorAll:()=>[a, hidden, b, off, skipTab, c]};
+  const tbox = {};
+  vm.createContext(tbox);
+  vm.runInContext(homepage.slice(fStart, fEnd), tbox, {filename:"index.html#focus-trap"});
+  const ev = (over) => Object.assign({key:"Tab", shiftKey:false, prevented:false, preventDefault(){this.prevented = true;}}, over);
+  let e = ev({}); focused = null;
+  if (!tbox._trapTab(modal, e, c) || !e.prevented || focused !== a) throw new Error("Tab on the last control must wrap to the first");
+  e = ev({shiftKey:true}); focused = null;
+  if (!tbox._trapTab(modal, e, a) || !e.prevented || focused !== c) throw new Error("Shift+Tab on the first control must wrap to the last");
+  e = ev({}); focused = null;
+  if (tbox._trapTab(modal, e, b) || e.prevented) throw new Error("Tab in the middle must keep native behavior");
+  e = ev({}); focused = null;
+  if (!tbox._trapTab(modal, e, {name:"outside"}) || focused !== a) throw new Error("Tab from outside the dialog must move focus inside");
+  e = ev({}); if (!tbox._trapTab({querySelectorAll:()=>[]}, e, null) || !e.prevented) throw new Error("Dialog without controls must swallow Tab");
+  e = ev({key:"Enter"}); if (tbox._trapTab(modal, e, c)) throw new Error("Only Tab is trapped");
+  if (!/id="share-modal" role="dialog" aria-modal="true"/.test(homepage)) throw new Error("share modal must stay aria-modal");
+
+  const tStart = homepage.indexOf("function _tutKey(e){");
+  const tEnd = homepage.indexOf("function _tutMaybe(){", tStart);
+  if (tStart < 0 || tEnd < 0) throw new Error("_tutKey not found");
+  const kbox = {};
+  vm.createContext(kbox);
+  vm.runInContext(homepage.slice(tStart, tEnd), kbox, {filename:"index.html#tut-key"});
+  const expectKey = {Escape:"skip", Enter:"next", " ":"next", ArrowRight:"next", a:null, Tab:null};
+  for (const [key, want] of Object.entries(expectKey)) if (kbox._tutKey({key}) !== want) throw new Error("tutorial key "+JSON.stringify(key)+" must map to "+want);
+  const tut = homepage.slice(homepage.indexOf("function _tutMaybe(){"), homepage.indexOf("/* ═", homepage.indexOf("function _tutMaybe(){")));
+  if (!tut.includes("role','dialog'") || !tut.includes("removeEventListener('keydown',tutKeydown,true)")) throw new Error("tutorial must be an accessible dialog and release its key handler");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");

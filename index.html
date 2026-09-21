@@ -7517,12 +7517,36 @@ function openPrivacy(){
   _openLegalModal('modal-privacy');
 }
 function closePrivacy(){_closeLegalModal('modal-privacy');}
+/* Focus trap dei modali (share e legali): con aria-modal il Tab non deve uscire dal dialogo. */
+function _modalFocusable(modal){
+  return Array.prototype.filter.call(modal.querySelectorAll('a[href],button,input,select,textarea,[tabindex]'),function(el){
+    return !el.disabled&&el.getAttribute('tabindex')!=='-1'&&el.getClientRects().length>0;
+  });
+}
+function _trapTab(modal,e,active){
+  if(!modal||e.key!=='Tab')return false;
+  var f=_modalFocusable(modal);
+  if(!f.length){e.preventDefault();return true;}
+  var first=f[0],last=f[f.length-1],i=f.indexOf(active);
+  if(i===-1){e.preventDefault();first.focus();return true;}
+  if(e.shiftKey&&active===first){e.preventDefault();last.focus();return true;}
+  if(!e.shiftKey&&active===last){e.preventDefault();first.focus();return true;}
+  return false;
+}
 document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape')return;
   var shareModal=document.getElementById('share-modal');
   var privacy=document.getElementById('modal-privacy');
   var contatti=document.getElementById('modal-contatti');
   var fanProject=document.getElementById('modal-fanproject');
+  if(e.key==='Tab'){
+    var _open=(shareModal&&shareModal.classList.contains('open'))?shareModal
+      :(privacy&&privacy.style.display==='flex')?privacy
+      :(contatti&&contatti.style.display==='flex')?contatti
+      :(fanProject&&fanProject.style.display==='flex')?fanProject:null;
+    if(_open)_trapTab(_open,e,document.activeElement);
+    return;
+  }
+  if(e.key!=='Escape')return;
   if(shareModal&&shareModal.classList.contains('open')){e.preventDefault();closeShareModal();return;}
   if(privacy&&privacy.style.display==='flex'){e.preventDefault();closePrivacy();return;}
   if(contatti&&contatti.style.display==='flex'){e.preventDefault();closeContatti();return;}
@@ -7758,6 +7782,13 @@ function copyDraftLink(){
 /* ══════════════════════════════════════
    ONBOARDING PRIMA PARTITA — 3 coach mark nel draft
 ══════════════════════════════════════ */
+/* Tastiera per i coach mark: Esc salta il tutorial, Invio/Spazio/Freccia destra avanzano. */
+function _tutKey(e){
+  if(!e)return null;
+  if(e.key==='Escape')return'skip';
+  if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')return'next';
+  return null;
+}
 function _tutMaybe(){
   try{if(localStorage.getItem('dcz_tut'))return;}catch(e){return;}
   if(document.getElementById('tut-ov'))return;
@@ -7769,7 +7800,10 @@ function _tutMaybe(){
   var idx=0;
   var ov=document.createElement('div');
   ov.id='tut-ov';
-  ov.style.cssText='position:fixed;inset:0;z-index:900;cursor:pointer';
+  ov.style.cssText='position:fixed;inset:0;z-index:900;cursor:pointer;outline:none';
+  ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-live','polite');
+  ov.setAttribute('tabindex','-1');
+  var _tutReturn=document.activeElement;
   ov.innerHTML='<div id="tut-hl" style="position:fixed;pointer-events:none;border:2px solid var(--gold2);border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.62);transition:all .25s"></div>'
     +'<div id="tut-box" style="position:fixed;left:50%;transform:translateX(-50%);max-width:340px;width:calc(100% - 40px);background:var(--s1);border:1.5px solid var(--gold);border-radius:14px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.5)">'
     +'<div id="tut-txt" style="font-size:.86rem;line-height:1.5"></div>'
@@ -7791,9 +7825,23 @@ function _tutMaybe(){
     if(top>window.innerHeight-150)top=Math.max(10,r.top-130);
     box.style.top=top+'px';
   }
-  function end(){try{localStorage.setItem('dcz_tut','1');}catch(e){}ov.remove();}
+  function tutKeydown(e){
+    if(e.key==='Tab'){e.preventDefault();return;}
+    var act=_tutKey(e);
+    if(!act)return;
+    e.preventDefault();e.stopPropagation();
+    if(act==='skip')end();else{idx++;show();}
+  }
+  function end(){
+    try{localStorage.setItem('dcz_tut','1');}catch(e){}
+    document.removeEventListener('keydown',tutKeydown,true);
+    ov.remove();
+    if(_tutReturn&&document.contains(_tutReturn)&&typeof _tutReturn.focus==='function')_tutReturn.focus();
+  }
+  document.addEventListener('keydown',tutKeydown,true);
   ov.onclick=function(){idx++;show();};
   show();
+  try{ov.focus();}catch(e){}
   _ga('tutorial_start',{});
 }
 
