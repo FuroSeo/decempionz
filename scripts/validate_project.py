@@ -557,6 +557,37 @@ def _site_path(url: str) -> str | None:
     return path
 
 
+def validate_localized_seo() -> None:
+    """EN and ES landing pages: short titles, social tags matching og, breadcrumbs pointing to the
+    page's own language, and FAQ structured data that matches the visible FAQ (not the Italian one)."""
+    for lang in ("en", "es"):
+        for path in sorted((ROOT / lang).glob("*.html")):
+            rel = path.relative_to(ROOT).as_posix()
+            html = path.read_text(encoding="utf-8")
+            title = re.search(r"<title>(.*?)</title>", html, re.S)
+            if not title or len(title.group(1).strip()) > 70:
+                fail(f"{rel}: title is missing or longer than 70 characters")
+            og = re.search(r'<meta property="og:title" content="([^"]*)"', html)
+            tw = re.search(r'<meta name="twitter:title" content="([^"]*)"', html)
+            if og and tw and og.group(1) != tw.group(1):
+                fail(f"{rel}: twitter:title differs from og:title")
+            for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S):
+                try:
+                    data = json.loads(block)
+                except ValueError:
+                    fail(f"{rel}: invalid JSON-LD")
+                    continue
+                for node in data.get("@graph", [data]):
+                    crumbs = (node.get("breadcrumb") or {}).get("itemListElement", [])
+                    for item in crumbs[1:]:
+                        if not item.get("item", "").startswith(f"https://decempionz.com/{lang}/"):
+                            fail(f"{rel}: breadcrumb {item.get('item')} does not point to /{lang}/")
+                    if node.get("@type") == "FAQPage" and path.name == "about.html":
+                        for q in node.get("mainEntity", []):
+                            if f"<strong>{q['name']}</strong>" not in html.replace("&amp;", "&"):
+                                fail(f"{rel}: FAQ structured data question not in the visible FAQ: {q['name']}")
+
+
 def validate_seo_alternates() -> None:
     """hreflang sets must be reciprocal, localized pages must not reuse Italian keywords, and every
     page with an og:image declares a twitter:card."""
@@ -727,6 +758,7 @@ def main() -> int:
     validate_duel_integrity()
     validate_html_javascript()
     validate_seo_alternates()
+    validate_localized_seo()
     validate_sitemap_indexability()
     validate_render_blocking_fonts()
 
