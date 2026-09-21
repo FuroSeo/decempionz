@@ -216,4 +216,41 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   const tut = homepage.slice(homepage.indexOf("function _tutMaybe(){"), homepage.indexOf("/* ═", homepage.indexOf("function _tutMaybe(){")));
   if (!tut.includes("role','dialog'") || !tut.includes("removeEventListener('keydown',tutKeydown,true)")) throw new Error("tutorial must be an accessible dialog and release its key handler");
 }
+// Daily standing line and share text.
+{
+  const start = homepage.indexOf("const DAILY_PCT_MIN=");
+  const end = homepage.indexOf("function _loadChallengeBanner(){", start);
+  if (start < 0 || end < 0) throw new Error("Daily standing helpers not found");
+  const dbox = {
+    t: (k) => ({"daily.pct":"P{P}/{C}","daily.pct_none":"NONE","daily.pct_one":"ONE","daily.pct_few":"FEW{C}","daily.pct_invite":"+INVITE","daily.pct_share":" +S{P}","daily.share_cta":"CTA"})[k] || k,
+    _DAILY_DIFFEMO: {normal:"N"}, _dailyConfigLabel: () => "CFG", _dailyGrid: (r) => "G" + r,
+    _dailyLoad: () => ({}), showShareToast: () => {}, navigator: {}, localStorage: {getItem: () => ""}, fetch: () => Promise.reject(new Error("offline")), encodeURIComponent,
+  };
+  vm.createContext(dbox);
+  vm.runInContext(homepage.slice(start, end) + "\nthis.api={DAILY_PCT_MIN,_dailyPctLine,_dailyShareText,_dailyStandingKey};", dbox, {filename: "index.html#daily-standing"});
+  const A = dbox.api;
+  if (A.DAILY_PCT_MIN !== 5) throw new Error("the percentile needs at least 5 ranked players");
+  const eq = (got, want, label) => { if (got !== want) throw new Error("Daily standing " + label + ": expected " + JSON.stringify(want) + ", got " + JSON.stringify(got)); };
+  eq(A._dailyPctLine(null, false), "", "no data");
+  eq(A._dailyPctLine({count: 12, percentile: 71}, false), "P71/12", "enough players");
+  eq(A._dailyPctLine({count: 5, percentile: 0}, true), "P0/5", "threshold with zero percentile");
+  eq(A._dailyPctLine({count: 0, percentile: null}, false), "NONE+INVITE", "empty board");
+  eq(A._dailyPctLine({count: 1, percentile: 0}, false), "ONE+INVITE", "single player");
+  eq(A._dailyPctLine({count: 4, percentile: 50}, false), "FEW4+INVITE", "few players");
+  eq(A._dailyPctLine({count: 4, percentile: 50}, true), "FEW4", "few players, already sent");
+  eq(A._dailyPctLine({count: 12, percentile: null}, true), "FEW12", "missing percentile never prints a number");
+  eq(A._dailyStandingKey("2026-09-21", {g: "A", win: 1}), "2026-09-21|A|1", "cache key");
+  const pz = {num: 37, dateStr: "2026-09-21", difficulty: "normal", formation: "4-3-3"};
+  const entry = {g: "A", res: "WWD", win: 1, n: 37};
+  const withPct = A._dailyShareText(entry, pz, {streak: 3}, {count: 12, percentile: 71}).split("\n");
+  eq(withPct.length, 5, "share text lines");
+  eq(withPct[3], "🏆 Grade A · 🔥 3 +S71", "share result line with percentile");
+  eq(withPct[4], "CTA https://decempionz.com/?daily=1", "share link opens today's Daily");
+  const few = A._dailyShareText(entry, pz, {}, {count: 3, percentile: 66}).split("\n");
+  eq(few[3], "🏆 Grade A", "share text hides a percentile from a tiny board");
+  eq(A._dailyShareText(entry, pz, {}, undefined).split("\n")[3], "🏆 Grade A", "share text without data");
+  eq(A._dailyShareText({g: "C", res: "L", win: 0, n: 37}, pz, {}, undefined).split("\n")[3], "💔 Grade C", "share text for a non-winner");
+  if (!homepage.includes('id="hdb-standing"') || !homepage.includes("_dailyShowStanding(document.getElementById('hdb-standing')")) throw new Error("Home banner must show the Daily standing");
+  if (!homepage.includes("_dailyShowStanding(box.querySelector('.daily-standing')")) throw new Error("Daily end screen must show the standing");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");

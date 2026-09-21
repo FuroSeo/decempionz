@@ -1012,6 +1012,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     <button id="hdb-play-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)" data-i18n="daily.play">🗓️ Gioca il puzzle di oggi</button>
     <div id="hdb-done" style="display:none">
       <div id="hdb-result" style="font-size:.9rem;font-weight:700;letter-spacing:1px;margin:2px 0 8px"></div>
+      <div id="hdb-standing" style="display:none;font-size:.66rem;color:var(--mut);line-height:1.45;margin:0 0 8px"></div>
       <button id="hdb-share-btn" class="btn" style="font-size:.78rem;padding:9px 20px;margin-top:0;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)" data-i18n="daily.share">📋 Condividi risultato</button>
       <div style="margin-top:7px;display:flex;justify-content:space-between"><a href="#" id="hdb-replay" style="font-size:.6rem;color:#6b7a8d;text-decoration:none" data-i18n="daily.replay">Rigioca (non conta per la serie) →</a><a href="#" id="hdb-lb-link" style="font-size:.6rem;color:var(--gold2);text-decoration:none" data-i18n="daily.lb_show">🏆 Classifica di oggi →</a></div>
       <div id="hdb-lb" style="display:none;margin-top:8px;text-align:left"></div>
@@ -1647,7 +1648,7 @@ const STRINGS={
     'home.stat_clubs':'Club',
     'home.subtitle':'I Campioni che hanno fatto la storia<br>Tutti insieme, per una volta sola.',
     'home.tournament_picker':'Scegli il torneo',
-    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.onboarding.pick':'1 · Scegli torneo e modulo','home.onboarding.draft':'2 · Drafta 11 leggende','home.onboarding.play':'3 · Gioca il torneo','home.link_ucl':'83 rose →','home.link_copa':'51 rose →','home.link_wc':'87 rose →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.unfinished':'⚠️ Hai iniziato il puzzle di oggi senza completarlo: il risultato si registra solo a fine campagna.','daily.nick':'Il tuo nickname','daily.lb_send':'Invia in classifica','daily.lb_pos':'Sei #{N} su {C} oggi!','daily.lb_show':'🏆 Classifica di oggi →','daily.lb_empty':'Nessun risultato oggi — sii il primo!','daily.lb_sent':'🏆 Inviato alla classifica di oggi ✓','daily.lb_err_dup':'Risultato già ricevuto da questa rete oggi.','daily.lb_err':'Invio non riuscito, riprova.','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
+    'home.lobby_sub':'I grandi campioni tutti insieme, per una volta sola.','home.onboarding.pick':'1 · Scegli torneo e modulo','home.onboarding.draft':'2 · Drafta 11 leggende','home.onboarding.play':'3 · Gioca il torneo','home.link_ucl':'83 rose →','home.link_copa':'51 rose →','home.link_wc':'87 rose →','challenge.join':'⚡ Partecipa','challenge.archive':'Classifica e archivio →','challenge.participants':' partecipanti','daily.title':'PUZZLE DEL GIORNO','daily.unfinished':'⚠️ Hai iniziato il puzzle di oggi senza completarlo: il risultato si registra solo a fine campagna.','daily.nick':'Il tuo nickname','daily.lb_send':'Invia in classifica','daily.lb_pos':'Sei #{N} su {C} oggi!','daily.lb_show':'🏆 Classifica di oggi →','daily.lb_empty':'Nessun risultato oggi — sii il primo!','daily.lb_sent':'🏆 Inviato alla classifica di oggi ✓','daily.lb_err_dup':'Risultato già ricevuto da questa rete oggi.','daily.lb_err':'Invio non riuscito, riprova.','tut.cards':'Queste sono le tue carte: tocca un giocatore per aggiungerlo alla squadra.','tut.pitch':'Ogni pick riempie uno slot del campo. Completa tutti gli 11 ruoli della formazione.','tut.reroll':'Carte che non convincono? Cambiale col Reroll — ma le ricariche sono limitate.','tut.next':'Avanti →','tut.done':'Si parte! ⚽','daily.play':'🗓️ Gioca il puzzle di oggi','daily.share':'📋 Condividi risultato','daily.replay':'Rigioca (non conta per la serie) →','daily.streak':'giorni di fila','daily.streak_one':'giorno di fila','daily.copied':'Risultato copiato!','daily.pct':'📊 Meglio del {P}% dei {C} giocatori in classifica oggi','daily.pct_none':'📊 Nessuno in classifica oggi.','daily.pct_one':'📊 Oggi in classifica: 1 giocatore.','daily.pct_few':'📊 Oggi in classifica: {C} giocatori.','daily.pct_invite':' Invia il tuo nickname per entrare.','daily.pct_share':' · meglio del {P}% oggi','daily.share_cta':'Battimi:','challenge.expires_today':'Scade oggi','challenge.expires_tomorrow':'Scade domani','challenge.expires_days':'Scade tra {N} giorni',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -1996,7 +1997,7 @@ const STRINGS={
     'home.stat_clubs':'Clubs',
     'home.subtitle':'The Legends Who Made History<br>Together, just this once.',
     'home.tournament_picker':'Choose tournament',
-    'home.lobby_sub':'The greatest champions together, just this once.','home.onboarding.pick':'1 · Pick tournament & formation','home.onboarding.draft':'2 · Draft 11 legends','home.onboarding.play':'3 · Play the tournament','home.link_ucl':'83 squads →','home.link_copa':'51 squads →','home.link_wc':'87 squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.unfinished':'⚠️ You started today\'s puzzle without finishing it: the result is recorded only when the campaign ends.','daily.nick':'Your nickname','daily.lb_send':'Submit to leaderboard','daily.lb_pos':'You are #{N} of {C} today!','daily.lb_show':'🏆 Today\'s leaderboard →','daily.lb_empty':'No results yet today — be the first!','daily.lb_sent':'🏆 Submitted to today\'s leaderboard ✓','daily.lb_err_dup':'A result was already received from this network today.','daily.lb_err':'Submission failed, try again.','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
+    'home.lobby_sub':'The greatest champions together, just this once.','home.onboarding.pick':'1 · Pick tournament & formation','home.onboarding.draft':'2 · Draft 11 legends','home.onboarding.play':'3 · Play the tournament','home.link_ucl':'83 squads →','home.link_copa':'51 squads →','home.link_wc':'87 squads →','challenge.join':'⚡ Join','challenge.archive':'Leaderboard & archive →','challenge.participants':' players','daily.title':'DAILY PUZZLE','daily.unfinished':'⚠️ You started today\'s puzzle without finishing it: the result is recorded only when the campaign ends.','daily.nick':'Your nickname','daily.lb_send':'Submit to leaderboard','daily.lb_pos':'You are #{N} of {C} today!','daily.lb_show':'🏆 Today\'s leaderboard →','daily.lb_empty':'No results yet today — be the first!','daily.lb_sent':'🏆 Submitted to today\'s leaderboard ✓','daily.lb_err_dup':'A result was already received from this network today.','daily.lb_err':'Submission failed, try again.','tut.cards':'These are your cards: tap a player to add him to your squad.','tut.pitch':'Every pick fills a slot on the pitch. Complete all 11 roles of your formation.','tut.reroll':'Not convinced? Swap the cards with a Reroll — but refills are limited.','tut.next':'Next →','tut.done':'Kick off! ⚽','daily.play':'🗓️ Play today\'s puzzle','daily.share':'📋 Share result','daily.replay':'Replay (does not count for the streak) →','daily.streak':'day streak','daily.streak_one':'day streak','daily.copied':'Result copied!','daily.pct':'📊 Better than {P}% of the {C} ranked players today','daily.pct_none':'📊 Nobody ranked today.','daily.pct_one':'📊 Ranked today: 1 player.','daily.pct_few':'📊 Ranked today: {C} players.','daily.pct_invite':' Send your nickname to join.','daily.pct_share':' · better than {P}% today','daily.share_cta':'Beat me:','challenge.expires_today':'Ends today','challenge.expires_tomorrow':'Ends tomorrow','challenge.expires_days':'Ends in {N} days',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -2345,7 +2346,7 @@ const STRINGS={
     'home.stat_clubs':'Clubes',
     'home.subtitle':'Las Leyendas que Hicieron Historia<br>Juntas, solo una vez.',
     'home.tournament_picker':'Elige el torneo',
-    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.onboarding.pick':'1 · Elige torneo y formación','home.onboarding.draft':'2 · Haz el draft de tu XI','home.onboarding.play':'3 · Juega el torneo','home.link_ucl':'83 plantillas →','home.link_copa':'51 plantillas →','home.link_wc':'87 plantillas →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.unfinished':'⚠️ Empezaste el puzzle de hoy sin terminarlo: el resultado se registra solo al final de la campaña.','daily.nick':'Tu nickname','daily.lb_send':'Enviar a la clasificación','daily.lb_pos':'¡Eres #{N} de {C} hoy!','daily.lb_show':'🏆 Clasificación de hoy →','daily.lb_empty':'Aún no hay resultados hoy — ¡sé el primero!','daily.lb_sent':'🏆 Enviado a la clasificación de hoy ✓','daily.lb_err_dup':'Ya se recibió un resultado desde esta red hoy.','daily.lb_err':'Envío fallido, inténtalo de nuevo.','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
+    'home.lobby_sub':'Los grandes campeones juntos, solo por esta vez.','home.onboarding.pick':'1 · Elige torneo y formación','home.onboarding.draft':'2 · Haz el draft de tu XI','home.onboarding.play':'3 · Juega el torneo','home.link_ucl':'83 plantillas →','home.link_copa':'51 plantillas →','home.link_wc':'87 plantillas →','challenge.join':'⚡ Participar','challenge.archive':'Clasificación y archivo →','challenge.participants':' jugadores','daily.title':'PUZZLE DEL DÍA','daily.unfinished':'⚠️ Empezaste el puzzle de hoy sin terminarlo: el resultado se registra solo al final de la campaña.','daily.nick':'Tu nickname','daily.lb_send':'Enviar a la clasificación','daily.lb_pos':'¡Eres #{N} de {C} hoy!','daily.lb_show':'🏆 Clasificación de hoy →','daily.lb_empty':'Aún no hay resultados hoy — ¡sé el primero!','daily.lb_sent':'🏆 Enviado a la clasificación de hoy ✓','daily.lb_err_dup':'Ya se recibió un resultado desde esta red hoy.','daily.lb_err':'Envío fallido, inténtalo de nuevo.','tut.cards':'Estas son tus cartas: toca un jugador para añadirlo a tu equipo.','tut.pitch':'Cada elección llena un hueco del campo. Completa los 11 roles de tu formación.','tut.reroll':'¿No te convencen? Cámbialas con un Reroll — pero las recargas son limitadas.','tut.next':'Siguiente →','tut.done':'¡Comenzamos! ⚽','daily.play':'🗓️ Juega el puzzle de hoy','daily.share':'📋 Compartir resultado','daily.replay':'Rejugar (no cuenta para la racha) →','daily.streak':'días seguidos','daily.streak_one':'día seguido','daily.copied':'¡Resultado copiado!','daily.pct':'📊 Mejor que el {P}% de los {C} jugadores clasificados hoy','daily.pct_none':'📊 Nadie clasificado hoy.','daily.pct_one':'📊 Clasificados hoy: 1 jugador.','daily.pct_few':'📊 Clasificados hoy: {C} jugadores.','daily.pct_invite':' Envía tu apodo para entrar.','daily.pct_share':' · mejor que el {P}% hoy','daily.share_cta':'Superame:','challenge.expires_today':'Termina hoy','challenge.expires_tomorrow':'Termina mañana','challenge.expires_days':'Termina en {N} días',
     'tourn.ucl.name':'UCL Legends',
     'tourn.ucl.sub':'Champions League · 1956 – 2024',
     'tourn.copa.name':'Copa Libertadores',
@@ -8296,6 +8297,7 @@ function _loadDailyBanner(){
     document.getElementById('hdb-streak').textContent='';
     document.getElementById('hdb-result').textContent=_dailyGrid(entry.res)+'  ·  Grade '+entry.g;
     document.getElementById('hdb-share-btn').onclick=function(){_dailyShare(entry,pz);};
+    _dailyShowStanding(document.getElementById('hdb-standing'),pz.dateStr,entry);
     const rp=document.getElementById('hdb-replay');
     if(rp)rp.onclick=function(e){e.preventDefault();window.location.href='/?daily=replay';};
     const lb=document.getElementById('hdb-lb-link');
@@ -8363,11 +8365,13 @@ function _dailyInjectShare(entry,screenId){
   const st=_dailyLoad();
   box.innerHTML='<div style="font-size:.52rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px">🗓️ '+t('daily.title')+' #'+(entry.n||G.dailyNum||'')+'</div>'
     +'<div style="font-size:1.05rem;letter-spacing:2px;margin-bottom:4px">'+_dailyGrid(entry.res)+'</div>'
-    +'<div style="font-size:.75rem;margin-bottom:10px">Grade '+entry.g+(st.streak?' · 🔥 '+st.streak:'')+'</div>'
+    +'<div style="font-size:.75rem;margin-bottom:8px">Grade '+entry.g+(st.streak?' · 🔥 '+st.streak:'')+'</div>'
+    +'<div class="daily-standing" style="display:none;font-size:.68rem;color:var(--mut);line-height:1.45;margin-bottom:10px"></div>'
     +'<button class="btn" style="font-size:.78rem;padding:9px 20px;width:100%;background:rgba(201,162,39,.18);border-color:rgba(201,162,39,.6);color:var(--gold2)">'+t('daily.share')+'</button>';
   box.querySelector('button').onclick=function(){_dailyShare(entry,getDailyPuzzle());};
   _dailyLbForm(entry,box);
   scr.appendChild(box);
+  _dailyShowStanding(box.querySelector('.daily-standing'),G.dailyPuzzle||_dailyDateStr(),entry);
 }
 function _dailyLbForm(entry,box){
   var day=G.dailyPuzzle||_dailyDateStr();
@@ -8395,6 +8399,9 @@ function _dailySubmitScore(entry,form,day){
     if(j&&j.success){
       try{localStorage.setItem('dcz_daily_sent',day);}catch(e){}
       form.innerHTML='<div style="font-size:.8rem;color:var(--gold2);font-weight:700;width:100%;text-align:center">🏆 '+t('daily.lb_pos').replace('{N}',j.position).replace('{C}',j.count)+'</div>';
+      delete _dailyStandingCache[_dailyStandingKey(day,entry)];
+      var _stEl=form.parentNode&&form.parentNode.querySelector('.daily-standing');
+      if(_stEl)_dailyShowStanding(_stEl,day,entry);
       _ga('daily_submit',{daily_num:entry.n||0,position:j.position});
     }else{
       btn.disabled=false;btn.textContent=t('daily.lb_send');
@@ -8425,13 +8432,51 @@ function _dailyToggleBoard(){
     })
     .catch(function(){box.style.display='none';});
 }
-function _dailyShare(entry,pz){
-  const st=_dailyLoad();
-  const txt=['🗓️ Decempionz Daily #'+(entry.n||pz.num),
+/* Posizione del risultato nella classifica del giorno (solo chi ha inviato il nickname e' contato).
+   La percentuale e' per fascia di risultato (vittoria + grade), non per differenza reti. */
+const DAILY_PCT_MIN=5;
+var _dailyStandingCache={};
+function _dailyStandingKey(day,entry){return day+'|'+(entry.g||'')+'|'+(entry.win?1:0);}
+function _dailyPctLine(s,sent){
+  if(!s||typeof s.count!=='number')return'';
+  if(s.count>=DAILY_PCT_MIN&&typeof s.percentile==='number')
+    return t('daily.pct').replace('{P}',s.percentile).replace('{C}',s.count);
+  var base=s.count===0?t('daily.pct_none'):s.count===1?t('daily.pct_one'):t('daily.pct_few').replace('{C}',s.count);
+  return base+(sent?'':t('daily.pct_invite'));
+}
+function _dailyFetchStanding(day,entry,cb){
+  var key=_dailyStandingKey(day,entry);
+  if(_dailyStandingCache[key]){cb(_dailyStandingCache[key]);return;}
+  try{
+    fetch('/daily-scores.php?day='+encodeURIComponent(day)+'&grade='+encodeURIComponent(entry.g||'')+'&winner='+(entry.win?1:0),{cache:'no-store'})
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!j||typeof j.count!=='number')return;
+        var st={count:j.count,percentile:j.me&&typeof j.me.percentile==='number'?j.me.percentile:null};
+        _dailyStandingCache[key]=st;cb(st);
+      }).catch(function(){});
+  }catch(e){}
+}
+function _dailyShowStanding(el,day,entry){
+  if(!el)return;
+  _dailyFetchStanding(day,entry,function(st){
+    var sent='';try{sent=localStorage.getItem('dcz_daily_sent')||'';}catch(e){}
+    var line=_dailyPctLine(st,sent===day);
+    if(!line)return;
+    el.textContent=line;el.style.display='';
+  });
+}
+function _dailyShareText(entry,pz,st,standing){
+  var pct=standing&&standing.count>=DAILY_PCT_MIN&&typeof standing.percentile==='number'?t('daily.pct_share').replace('{P}',standing.percentile):'';
+  return['🗓️ Decempionz Daily #'+(entry.n||pz.num),
     _dailyConfigLabel(pz)+' · '+pz.formation+' · '+_DAILY_DIFFEMO[pz.difficulty],
     _dailyGrid(entry.res),
-    (entry.win?'🏆 ':'💔 ')+'Grade '+entry.g+(st.streak?' · 🔥 '+st.streak:''),
-    'https://decempionz.com'].join('\n');
+    (entry.win?'🏆 ':'💔 ')+'Grade '+entry.g+(st.streak?' · 🔥 '+st.streak:'')+pct,
+    t('daily.share_cta')+' https://decempionz.com/?daily=1'].join('\n');
+}
+function _dailyShare(entry,pz){
+  const st=_dailyLoad();
+  const txt=_dailyShareText(entry,pz,st,_dailyStandingCache[_dailyStandingKey(pz.dateStr,entry)]);
   if(navigator.share){navigator.share({text:txt}).catch(function(){});return;}
   try{navigator.clipboard.writeText(txt).then(function(){showShareToast(t('daily.copied'));});}catch(e){}
 }

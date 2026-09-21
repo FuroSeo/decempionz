@@ -8,6 +8,8 @@ network calls are made.
 
 from __future__ import annotations
 
+import json
+import shutil
 import socket
 import subprocess
 import sys
@@ -70,6 +72,44 @@ def fetch(port: int, path: str) -> bytes:
     return body
 
 
+def check_daily_standing(port: int) -> None:
+    """daily-scores.php reports where a not-yet-submitted result would land (fixture in a scratch day)."""
+    scores_dir = ROOT / "daily-scores"
+    existed = scores_dir.exists()
+    fixture = scores_dir / "2001-01-01.json"
+    def entry(winner: bool, grade: str) -> dict:
+        return {"nickname": "t", "grade": grade, "winner": winner, "res": "W", "goals": {"gf": 1, "ga": 0}, "submittedAt": "2001-01-01T00:00:00+00:00"}
+    entries = ([entry(True, "S")] + [entry(True, "A")] * 2 + [entry(True, "C")] * 2 +
+               [entry(False, "A")] * 3 + [entry(False, "C")] * 2)
+    try:
+        scores_dir.mkdir(exist_ok=True)
+        fixture.write_text(json.dumps({"entries": entries}), encoding="utf-8")
+        def me(query: str) -> dict:
+            raw = json.loads(fetch(port, "/daily-scores.php?day=2001-01-01" + query).decode("utf-8"))
+            if raw.get("count") != 10:
+                raise RuntimeError(f"daily-scores.php count wrong: {raw.get('count')}")
+            return raw.get("me")
+        got = me("&grade=A&winner=1")
+        if got != {"better": 1, "same": 2, "worse": 7, "percentile": 70}:
+            raise RuntimeError(f"daily standing for a winning A is wrong: {got}")
+        got = me("&grade=C&winner=0")
+        if not got or got["worse"] != 0 or got["percentile"] != 0:
+            raise RuntimeError(f"daily standing for a losing C is wrong: {got}")
+        got = me("&grade=S&winner=1")
+        if not got or got["better"] != 0 or got["percentile"] != 90:
+            raise RuntimeError(f"daily standing for a winning S is wrong: {got}")
+        if me("") is not None or me("&grade=Z&winner=1") is not None:
+            raise RuntimeError("daily standing must be null without a valid grade")
+        empty = json.loads(fetch(port, "/daily-scores.php?day=2001-01-02&grade=A&winner=1").decode("utf-8"))
+        if empty.get("count") != 0 or empty.get("me") is not None or empty.get("entries") != []:
+            raise RuntimeError(f"empty Daily day must stay empty: {empty}")
+        print("[ok] /daily-scores.php standing")
+    finally:
+        fixture.unlink(missing_ok=True)
+        if not existed:
+            shutil.rmtree(scores_dir, ignore_errors=True)
+
+
 def main() -> int:
     port = free_port()
     process = subprocess.Popen(
@@ -93,6 +133,10 @@ def main() -> int:
                 print(f"[ok] {path}")
             except RuntimeError as exc:
                 failures.append(str(exc))
+        try:
+            check_daily_standing(port)
+        except RuntimeError as exc:
+            failures.append(str(exc))
     except Exception as exc:  # noqa: BLE001 - surface server startup diagnostics
         failures.append(str(exc))
     finally:
@@ -114,7 +158,7 @@ def main() -> int:
                 print(logs, file=sys.stderr)
         return 1
 
-    print(f"\nSmoke test passed ({len(CHECKS)} endpoints/assets).")
+    print(f"\nSmoke test passed ({len(CHECKS)} endpoints/assets and the Daily standing check).")
     return 0
 
 
