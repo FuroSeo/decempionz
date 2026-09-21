@@ -104,7 +104,11 @@ async function startPhp() {
   return {
     base, site, work,
     errors: () => log.split('\n').filter(l => /Fatal error|Warning:|Notice:|Deprecated:|Parse error|Uncaught/.test(l)),
-    stop: () => new Promise(resolve => { proc.once('exit', resolve); proc.kill(); setTimeout(resolve, 2000); }),
+    stop: () => new Promise(resolve => {
+      const timer = setTimeout(resolve, 2000);
+      proc.once('exit', () => { clearTimeout(timer); resolve(); });
+      proc.kill();
+    }),
   };
 }
 
@@ -586,4 +590,10 @@ async function duelApi(base, state) {
   if (crashed) { console.error('\nThe test crashed:', crashed); process.exit(1); }
   if (failed) { console.error(`${failed} check(s) failed`); process.exit(1); }
   console.log('PHP end to end test passed.');
+  // Force the exit instead of letting Node drain the event loop on its own: a lingering
+  // handle (an undici keep-alive socket from the plain fetch() calls above, a not-quite-dead
+  // Chromium/PHP child process on a constrained CI runner, ...) can otherwise keep the process
+  // alive well after all the real work — and every check — is done, leaving the CI step stuck
+  // "in progress" indefinitely instead of reporting the success it already reached.
+  process.exit(0);
 })().catch(e => { console.error(e); process.exit(1); });
