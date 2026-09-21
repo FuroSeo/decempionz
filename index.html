@@ -62,7 +62,7 @@
 }
 </script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" href="/fonts/oswald-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 :root{
   --bg:#07090f;--s1:#111928;--s2:#1a2336;--brd:#1e2d42;
@@ -145,14 +145,19 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   #screen-draft .d-col-r{display:block;flex:1 1 340px;min-width:340px}
   #screen-draft .draft-pitch{min-height:430px;justify-content:space-evenly}
 }
-h1,h2,#d-title{font-family:'Oswald','Segoe UI',system-ui,sans-serif;letter-spacing:.5px}
-.logo,.screen-logo{font-family:'Oswald','Segoe UI',system-ui,sans-serif}
+/* Fallback metriche per Oswald: il font arriva dopo il primo paint, e questi override (size-adjust e
+   ascent/descent calcolati dal file Oswald 700 contro Arial e Roboto) evitano lo spostamento del testo allo swap. */
+@font-face{font-family:'Oswald';font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/oswald-latin.woff2) format('woff2')}
+@font-face{font-family:'Oswald Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Arimo Bold'),local('Helvetica Bold');font-weight:600 900;size-adjust:85.9%;ascent-override:138.9%;descent-override:33.7%;line-gap-override:0%}
+@font-face{font-family:'Oswald Fallback Roboto';src:local('Roboto Bold'),local('Roboto-Bold');font-weight:600 900;size-adjust:91.2%;ascent-override:130.9%;descent-override:31.7%;line-gap-override:0%}
+h1,h2,#d-title{font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto','Segoe UI',system-ui,sans-serif;letter-spacing:.5px}
+.logo,.screen-logo{font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto','Segoe UI',system-ui,sans-serif}
 .screen.active{display:block}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* base */
 h1{font-size:2.8rem;font-weight:900;letter-spacing:-2px;line-height:1}
-h2{font-size:1.35rem;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:.5px}
+h2{font-size:1.35rem;font-weight:700;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif;letter-spacing:.5px}
 h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut)}
 .card{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:20px}
 .btn{width:100%;padding:15px;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .13s;display:block;margin-top:10px;text-align:center}
@@ -166,12 +171,12 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tourn-card{background:var(--s1);border:1.5px solid var(--brd);border-radius:16px;padding:18px 18px 14px;margin-bottom:14px;position:relative;overflow:hidden}
 .tourn-card-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .tourn-icon{font-size:2rem;line-height:1;flex-shrink:0}
-.tourn-name{font-size:1.15rem;font-weight:700;letter-spacing:.3px;color:var(--text);font-family:'Oswald',sans-serif}
+.tourn-name{font-size:1.15rem;font-weight:700;letter-spacing:.3px;color:var(--text);font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif}
 .tourn-sub{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);margin-top:3px}
 .tourn-stats{display:flex;gap:6px;margin-bottom:14px}
 .tourn-stat{flex:1;text-align:center;padding:10px 6px;background:var(--s2);border-radius:8px}
 .tourn-stat+.tourn-stat{border-left:none}
-.tourn-stat-val{font-size:1.8rem;font-weight:900;color:var(--gold);font-family:'Oswald',sans-serif;line-height:1}
+.tourn-stat-val{font-size:1.8rem;font-weight:900;color:var(--gold);font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif;line-height:1}
 .tourn-stat-lbl{font-size:.54rem;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
 .tourn-badge-soon{position:absolute;top:14px;right:14px;background:var(--s2);color:var(--mut);font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--brd)}
 .tourn-card.tourn-locked{opacity:.5;pointer-events:none}
@@ -254,7 +259,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .era-card:hover{border-color:var(--blue2);background:var(--s2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .era-card:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 .era-card.era-sel{border-color:var(--gold);background:#1a1600}
-.era-name{font-size:1rem;font-weight:700;margin-bottom:2px;font-family:'Oswald',sans-serif;letter-spacing:.3px}
+.era-name{font-size:1rem;font-weight:700;margin-bottom:2px;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif;letter-spacing:.3px}
 .era-years{font-size:.72rem;color:var(--mut);margin-bottom:6px}
 .era-desc{font-size:.78rem;color:var(--mut);margin-bottom:8px;line-height:1.4}
 .era-teams{display:flex;flex-wrap:wrap;gap:4px}
@@ -262,7 +267,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 
 
 /* ── HOME ── */
-.logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Oswald',sans-serif;letter-spacing:0px}
+.logo{background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif;letter-spacing:0px}
 .step-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--brd)}
 .step-row:last-child{border-bottom:none}
 .sn{background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 10px;font-weight:900;font-size:.82rem;flex-shrink:0;min-width:34px;text-align:center}
@@ -278,7 +283,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .tour-card{background:linear-gradient(145deg,#0f1a2e,#131f35);border:1px solid #2a3d5a;border-radius:16px;padding:28px 22px;text-align:center;position:relative;overflow:hidden}
 .tour-card::before{content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,162,39,.18),transparent 70%);pointer-events:none}
 .tc-badge{display:inline-block;background:var(--blue);color:var(--blue-lt);border-radius:6px;padding:4px 12px;font-size:.72rem;font-weight:800;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase}
-.tc-name{font-size:2rem;font-weight:700;letter-spacing:0;margin-bottom:4px;font-family:'Oswald',sans-serif}
+.tc-name{font-size:2rem;font-weight:700;letter-spacing:0;margin-bottom:4px;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif}
 .tc-years{color:var(--mut);font-size:.9rem;margin-bottom:18px}
 .tc-teams{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .tc-team{background:rgba(255,255,255,.04);border:1px solid var(--brd);border-radius:8px;padding:9px 11px;text-align:left}
@@ -429,7 +434,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .prc-club{font-size:.72rem;color:var(--mut);margin-bottom:6px}
 .prc-rating{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px;color:var(--tier-c,var(--gold))}
 .prc.tier-elite .prc-rating{text-shadow:0 0 18px rgba(251,191,36,.5)}
-.prc-name{font-size:1.4rem;font-weight:700;letter-spacing:.2px;margin-bottom:3px;font-family:'Oswald',sans-serif}
+.prc-name{font-size:1.4rem;font-weight:700;letter-spacing:.2px;margin-bottom:3px;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif}
 .prc-pos{font-size:.76rem;color:var(--mut)}
 
 .draft-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
@@ -583,13 +588,13 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .team-score-panel{grid-template-columns:1.2fr repeat(3,1fr);gap:5px;margin:4px 0 7px}
 .team-score-cell{background:var(--s1);border:1px solid var(--brd);border-radius:9px;padding:7px 6px;text-align:center}
 .team-score-cell.main{border-color:rgba(201,162,39,.55);background:linear-gradient(135deg,rgba(201,162,39,.13),var(--s1))}
-.team-score-value{font-family:'Oswald','Segoe UI',sans-serif;font-size:1.12rem;font-weight:800;color:var(--text);line-height:1}
+.team-score-value{font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto','Segoe UI',sans-serif;font-size:1.12rem;font-weight:800;color:var(--text);line-height:1}
 .team-score-cell.main .team-score-value{color:var(--gold2);font-size:1.3rem}
 .team-score-label{font-size:.5rem;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--mut);margin-top:3px}
 .chem-panel{background:var(--s1);border:1px solid var(--brd);border-radius:12px;padding:9px 12px;margin:4px 0 10px}
 .chem-top{display:flex;align-items:center;gap:10px}
-.chem-lbl{font-family:'Oswald','Segoe UI',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mut);white-space:nowrap}
-.chem-val{font-family:'Oswald','Segoe UI',sans-serif;font-size:.95rem;font-weight:700;color:#4ade80;min-width:44px;text-align:right}
+.chem-lbl{font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto','Segoe UI',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.chem-val{font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto','Segoe UI',sans-serif;font-size:.95rem;font-weight:700;color:#4ade80;min-width:44px;text-align:right}
 .chem-val.zero{color:var(--mut)}
 .chem-val.max{color:var(--gold2)}
 .chem-segs{display:flex;gap:3px;flex:1}
@@ -693,7 +698,7 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
   text-transform:uppercase;cursor:pointer;margin-bottom:16px;
   background:linear-gradient(135deg,var(--gold),#fff 55%,var(--gold2));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  opacity:.9;transition:opacity .18s;font-family:'Oswald',sans-serif;
+  opacity:.9;transition:opacity .18s;font-family:'Oswald','Oswald Fallback','Oswald Fallback Roboto',sans-serif;
   border:0;padding:0;appearance:none;-webkit-appearance:none;text-align:left}
 .screen-logo:hover{opacity:1}
 .screen-logo:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}

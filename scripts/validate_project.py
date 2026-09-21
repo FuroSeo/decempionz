@@ -621,15 +621,17 @@ def validate_sitemap_indexability() -> None:
 
 
 def validate_render_blocking_fonts() -> None:
-    """The Google Fonts stylesheet must not block the first paint: it is preloaded and applied on load,
-    with a plain <link> only inside <noscript>."""
+    """Oswald is self-hosted: no third-party font request, a preloaded woff2 that exists, and a matching @font-face."""
     html = read("index.html")
-    without_noscript = re.sub(r"<noscript>.*?</noscript>", "", html, flags=re.DOTALL)
-    for tag in re.findall(r"<link\b[^>]*>", without_noscript):
-        if "fonts.googleapis.com/css" in tag and re.search(r'rel="stylesheet"', tag):
-            fail("index.html: Google Fonts stylesheet is render-blocking; preload it and apply it on load")
-    if 'rel="preload" as="style" href="https://fonts.googleapis.com/css2' not in html or "<noscript><link" not in html:
-        fail("index.html: non-blocking Google Fonts preload or its noscript fallback is missing")
+    if "fonts.googleapis.com" in html or "fonts.gstatic.com" in html:
+        fail("index.html: Google Fonts must not be referenced; Oswald is self-hosted in /fonts/")
+    if '<link rel="preload" href="/fonts/oswald-latin.woff2" as="font" type="font/woff2" crossorigin>' not in html:
+        fail("index.html: preload of /fonts/oswald-latin.woff2 is missing")
+    if "font-family:'Oswald';font-style:normal;font-weight:600 700;font-display:swap;src:url(/fonts/oswald-latin.woff2)" not in html:
+        fail("index.html: self-hosted Oswald @font-face is missing")
+    font = ROOT / "fonts" / "oswald-latin.woff2"
+    if not font.exists() or font.read_bytes()[:4] != b"wOF2":
+        fail("fonts/oswald-latin.woff2 is missing or not a WOFF2 file")
 
 
 def extract_inline_javascript(html: str) -> list[str]:
