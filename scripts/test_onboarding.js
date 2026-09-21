@@ -93,6 +93,18 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
     if (missing.length) throw new Error("Translation keys in "+a+" missing from "+b+": "+missing.join(", "));
   }
   for (const lang of langs) if (!box.S[lang]["draft.rerolls"]) throw new Error("draft.rerolls missing in "+lang);
+  /* Layout stabile: il testo statico della home deve occupare lo stesso spazio di quello che il JS
+     scrive dopo il primo paint (altrimenti la pagina "salta"). I link "N rose →" dipendono dai dati
+     e sono nella stringa italiana; le righe riempite dal JS riservano una riga con &nbsp;. */
+  for (const [href, key] of [["ucl.html","home.link_ucl"],["copa.html","home.link_copa"],["worldcup.html","home.link_wc"]]) {
+    const m = homepage.match(new RegExp('<a href="'+href.replace(".","\\.")+'" data-i18n="'+key+'"[^>]*>([^<]*)</a>'));
+    if (!m) throw new Error("Home tournament link not found: "+key);
+    if (m[1] !== box.S.it[key]) throw new Error("Static "+key+" text '"+m[1]+"' differs from STRINGS.it '"+box.S.it[key]+"' (layout shift)");
+  }
+  for (const id of ["manager-record","manager-xp","hmc-daily-st","hmc-duel-st","hmc-weekly-st"]) {
+    if (!new RegExp('id="'+id+'"[^>]*>&nbsp;</div>').test(homepage)) throw new Error("#"+id+" must reserve its line with &nbsp; in the static markup (layout shift)");
+  }
+  if ((homepage.match(/class="tournament-mastery"[^>]*>&nbsp;<\/div>/g) || []).length !== 3) throw new Error("Each .tournament-mastery must reserve its line with &nbsp; (layout shift)");
   if (/'Rerolls: <strong/.test(homepage)) throw new Error("Draft header Rerolls label must use t('draft.rerolls')");
 }
 /* Reroll: un doppio click nella finestra di 130 ms consumava due reroll. */
