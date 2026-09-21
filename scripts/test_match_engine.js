@@ -3,10 +3,11 @@
 
 const fs = require("fs");
 const path = require("path");
+const readAppSource = require("./_app_source");
 const vm = require("vm");
 
 const ROOT = path.resolve(__dirname, "..");
-const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+const homepage = readAppSource(ROOT);
 const phpEngine = fs.readFileSync(path.join(ROOT, "duel-engine.php"), "utf8");
 const errors = [];
 

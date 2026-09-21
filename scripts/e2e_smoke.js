@@ -155,7 +155,10 @@ async function playCampaign(browser, base, sc) {
       if (!s) { await sleep(200); continue; }
       steps++;
 
-      const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.ht, s.buttons.map(b => b.text).join(',')].join('|');
+      // On the match screen the visible text is progress too: a long sudden-death shootout has no
+      // buttons and no new screen for many seconds, but its rounds keep being written.
+      const sig = [s.screen, s.cards, s.coaches, s.rcont, s.skip, s.ht, s.buttons.map(b => b.text).join(','),
+        s.screen === 'screen-match' ? s.text : ''].join('|');
       if (sig !== lastSig) {
         lastSig = sig; lastChange = Date.now();
         if (!visited.includes(s.screen)) visited.push(s.screen);

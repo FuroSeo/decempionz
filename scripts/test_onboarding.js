@@ -3,9 +3,10 @@
 
 const fs = require("fs");
 const path = require("path");
+const readAppSource = require("./_app_source");
 const vm = require("vm");
 
-const homepage = fs.readFileSync(path.resolve(__dirname, "..", "index.html"), "utf8");
+const homepage = readAppSource(path.resolve(__dirname, ".."));
 const start = homepage.indexOf("function quickStartPreset(mode)");
 const end = homepage.indexOf("function startGameCopa()", start);
 if (start < 0 || end < 0) throw new Error("Quick Draft implementation not found");

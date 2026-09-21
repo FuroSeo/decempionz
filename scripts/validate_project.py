@@ -56,6 +56,11 @@ def validate_json() -> None:
             fail(f"Invalid JSON in {path.relative_to(ROOT)}: {exc}")
 
 
+def read_app_source() -> str:
+    """index.html plus the external app bundle, for guards that look at client code wherever it lives."""
+    return read("index.html") + "\n" + read("app.js")
+
+
 def validate_versions(index_html: str, sw_js: str) -> None:
     app_match = re.search(r"const\s+GAME_VERSION\s*=\s*['\"]([^'\"]+)['\"]", index_html)
     cache_match = re.search(r"const\s+CACHE\s*=\s*['\"]decempionz-v([^'\"]+)['\"]", sw_js)
@@ -423,7 +428,7 @@ def validate_duel_integrity() -> None:
     create = read("duel-create.php")
     join = read("duel-join.php")
     duel_page = read("duel.html")
-    index_html = read("index.html")
+    index_html = read_app_source()
     integrity_doc = read("COMPETITIVE_INTEGRITY.md")
 
     for filename in ("duel-engine.php", "duel-draft-lib.php"):
@@ -732,8 +737,48 @@ def validate_inline_javascript(filename: str, label: str) -> None:
             tmp_path.unlink()
 
 
+def validate_app_bundle() -> None:
+    """The game code lives in app.js, loaded with defer next to game-data.js. Its ?v= revision is the
+    SHA-1 prefix of the file (LF-normalized), the service worker precaches both URLs, and index.html
+    keeps no large inline script. Run scripts/sync_asset_versions.py after changing app.js."""
+    import hashlib
+
+    html = read("index.html")
+    sw = read("sw.js")
+    app = (ROOT / "app.js").read_bytes().replace(b"\r\n", b"\n")
+    revision = hashlib.sha1(app).hexdigest()[:10]
+    fix = "run python scripts/sync_asset_versions.py"
+
+    tags = re.findall(r'<script defer src="(game-data\.js|app\.js)\?v=([A-Za-z0-9._-]+)"></script>', html)
+    if [name for name, _ in tags] != ["game-data.js", "app.js"]:
+        fail("index.html must load game-data.js and then app.js, both with defer and a ?v= revision")
+        return
+    data_rev, app_rev = tags[0][1], tags[1][1]
+    if app_rev != revision:
+        fail(f"index.html app.js?v={app_rev} does not match the file content ({revision}); {fix}")
+    listed = re.search(r"const VERSIONED_ASSETS = \[(.*?)\];", sw, re.S)
+    expected = [f"/game-data.js?v={data_rev}", f"/app.js?v={app_rev}"]
+    if not listed or re.findall(r"'([^']+)'", listed.group(1)) != expected:
+        fail(f"sw.js VERSIONED_ASSETS must be {expected}; {fix}")
+    for block in re.findall(r"<script\b[^>]*>(.*?)</script>", html, re.S):
+        if len(block.encode("utf-8")) > 20000:
+            fail("index.html has a large inline script; game code belongs in app.js")
+    rule = re.search(r'<FilesMatch "\^\(game-data\|app\)\\.js\$">(.*?)</FilesMatch>', read(".htaccess"), re.S)
+    if not rule or "immutable" not in rule.group(1):
+        fail(".htaccess must serve game-data.js and app.js with a long immutable cache")
+    note(f"app.js revision {app_rev}")
+
+    tmp_path = ROOT / "app.js"
+    result = subprocess.run(["node", "--check", str(tmp_path)], cwd=ROOT, text=True, capture_output=True, check=False)
+    if result.returncode != 0:
+        fail(f"JavaScript syntax error in app.js: {(result.stderr or result.stdout).strip()}")
+    else:
+        note("Production app JavaScript syntax OK: app.js")
+
+
 def validate_html_javascript() -> None:
     """Syntax-check the production app plus recovered local-only HTML tools."""
+    validate_app_bundle()
     validate_inline_javascript("index.html", "Production app")
     validate_inline_javascript("duel.html", "Public Duel page")
     for filename in ("dataset-editor.html", "_studio.html"):
@@ -742,7 +787,7 @@ def validate_html_javascript() -> None:
 
 
 def main() -> int:
-    index_html = read("index.html")
+    index_html = read_app_source()
     sw_js = read("sw.js")
     deploy_yml = read(".github/workflows/deploy.yml")
     read("game-data.js")

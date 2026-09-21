@@ -63,7 +63,7 @@ Questi file sono versionati ma esclusi dal deploy FTP. Essendo il repository pub
 
 Dopo una modifica a `game-data.js`:
 
-1. aggiorna la revisione `game-data.js?v=...` in `index.html`;
+1. aggiorna la revisione `game-data.js?v=...` in `index.html` ed esegui `python scripts\sync_asset_versions.py` (aggiorna anche `app.js?v=...` e l'elenco di precache in `sw.js`);
 2. rigenera le rose se necessario con `python _build_rose.py`;
 3. esegui `python scripts\test_generators.py` per verificare in una copia temporanea entrambi i generatori recuperati;
 4. esegui `python scripts\validate_project.py`;

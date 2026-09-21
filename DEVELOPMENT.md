@@ -43,7 +43,7 @@ Decempionz currently has three separate revision concepts. They are intentionall
 
 ### App version
 
-`GAME_VERSION` in `index.html` is the public Decempionz release version shown in the interface and included in exported backups.
+`GAME_VERSION` in `app.js` is the public Decempionz release version shown in the interface and included in exported backups.
 
 Increment it when the public game release changes in a way users should recognise as a new Decempionz version.
 
