@@ -544,6 +544,61 @@ def validate_duel_integrity() -> None:
         fail("Competitive integrity documentation must state Duel draft-offer authority")
 
 
+SITE_URL = "https://decempionz.com/"
+
+
+def _site_path(url: str) -> str | None:
+    """Map a canonical/hreflang URL of this site to its repository file path."""
+    if not url.startswith(SITE_URL):
+        return None
+    path = url[len(SITE_URL):]
+    if path == "" or path.endswith("/"):
+        path += "index.html"
+    return path
+
+
+def validate_seo_alternates() -> None:
+    """hreflang sets must be reciprocal and localized pages must not reuse Italian keywords."""
+    pages: dict[str, tuple[dict[str, str], str | None, str | None]] = {}
+    for path in tracked_files("*.html"):
+        rel = path.relative_to(ROOT).as_posix()
+        if rel.startswith(("scripts/", "duels/")):
+            continue
+        html = path.read_text(encoding="utf-8")
+        alternates = dict(
+            re.findall(r'<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"', html)
+        )
+        canonical = re.search(r'<link rel="canonical" href="([^"]+)"', html)
+        keywords = re.search(r'<meta name="keywords" content="([^"]*)"', html)
+        pages[rel] = (
+            alternates,
+            canonical.group(1) if canonical else None,
+            keywords.group(1) if keywords else None,
+        )
+
+    for rel, (alternates, canonical, keywords) in pages.items():
+        if not alternates:
+            continue
+        own = _site_path(canonical) if canonical else None
+        if own != rel:
+            fail(f"{rel}: canonical URL does not point to itself ({canonical})")
+        if own is not None and canonical not in alternates.values():
+            fail(f"{rel}: hreflang set does not include the page itself")
+        for lang, url in alternates.items():
+            target = _site_path(url)
+            if target is None or target not in pages:
+                fail(f"{rel}: hreflang {lang} points to a missing page ({url})")
+                continue
+            if pages[target][0] != alternates:
+                fail(f"{rel}: hreflang set is not reciprocal with {target}")
+        # localized pages need their own keywords, not a copy of the Italian ones
+        if rel.startswith(("en/", "es/")) and not rel.startswith(("en/rose/", "es/rose/")):
+            it_rel = rel.split("/", 1)[1]
+            it_keywords = pages.get(it_rel, ({}, None, None))[2]
+            if keywords and it_keywords and keywords == it_keywords:
+                fail(f"{rel}: keywords are identical to the Italian page {it_rel}")
+
+
 def extract_inline_javascript(html: str) -> list[str]:
     """Return executable inline JS blocks, excluding src scripts and data script types."""
     blocks: list[str] = []
@@ -636,6 +691,7 @@ def main() -> int:
     validate_draft_storage()
     validate_duel_integrity()
     validate_html_javascript()
+    validate_seo_alternates()
 
     for message in NOTES:
         print(f"[info] {message}")

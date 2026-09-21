@@ -62,6 +62,11 @@ def digest_tree(root: Path, patterns: tuple[str, ...]) -> str:
     return h.hexdigest()
 
 
+def strip_localized_seo(html: str) -> str:
+    html = re.sub(r'<script type="application/ld\+json">.*?</script>', "", html, flags=re.S)
+    return re.sub(r'<meta name="keywords" content="[^"]*">', "", html)
+
+
 def test_i18n_generator() -> None:
     with tempfile.TemporaryDirectory(prefix="dcz-i18n-") as td:
         work = Path(td)
@@ -105,12 +110,16 @@ def test_i18n_generator() -> None:
                     if not committed.exists():
                         fail(f"missing committed generated page: {lang}/{page}.html")
                     committed_text = committed.read_text(encoding="utf-8")
-                    if committed_text != html:
+                    # Keywords and JSON-LD are localized by hand after generation, so they are
+                    # excluded here; everything else must match the generator byte for byte.
+                    committed_text = strip_localized_seo(committed_text)
+                    html_cmp = strip_localized_seo(html)
+                    if committed_text != html_cmp:
                         diff = "\n".join(
                             list(
                                 difflib.unified_diff(
                                     committed_text.splitlines(),
-                                    html.splitlines(),
+                                    html_cmp.splitlines(),
                                     fromfile=f"committed/{lang}/{page}.html",
                                     tofile=f"generated/{lang}/{page}.html",
                                     lineterm="",
