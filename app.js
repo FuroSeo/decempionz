@@ -1,4 +1,4 @@
-const GAME_VERSION='5.27.0';
+const GAME_VERSION='5.27.1';
 /* ═══════════════════════════════════════
    INTERNATIONALISATION (i18n)
 ═══════════════════════════════════════ */

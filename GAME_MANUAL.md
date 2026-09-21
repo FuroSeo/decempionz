@@ -1,7 +1,7 @@
 # Decempionz — Game Manual
 
-**App version:** 5.27.0
-**Last updated:** 2026-09-21
+**App version:** 5.27.1
+**Last updated:** 2026-09-22
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
 **Production branch:** `main`
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.27.1 — Performance and Daily standing** — Daily now shows how a result compares to the field: the end screen and the Home banner report a percentile ("better than X%") once at least 5 players have submitted that day, and the shared result text includes it when known. This release also closes out the layout-shift regressions introduced while moving the game code out of `index.html` into a deferred, cached `app.js` for a faster first paint: the Oswald heading font is now self-hosted with a preload instead of fetched from Google Fonts, and the Home screen's manager, mastery and mode-status lines are reserved in the static markup so they no longer jump into place once the script runs.
 - **5.27.0 — Half-time decision** — every campaign match now pauses at 45'. The player sees the score, the tactic played and a hint of the opponent's likely second-half move, then picks Attack, Balanced or Defend for the second half; the opponent reacts to the score with fixed weights and the hint is a likelihood, not a promise. With unchanged tactics the goal distribution is identical to before, Duel keeps its single server-authoritative draw, and "skip" stops at the interval. The release also ships keyboard focus trapping in modals and Esc/Enter in the tutorial, the AM slot fix (Brahim and Brandt now CAM), locale-independent tie-breaks, the Manager panel refreshing on language change, hreflang reciprocity with localized keywords and structured data, real sitemap `lastmod` values, twitter cards, and `noindex` on the bare draft and duel pages.
 - **5.26.1 — Reliability and consistency pass** — a stability release with no rule changes. Club Chemistry is now grouped by the dataset club slug exactly like the Duel server, so the draft preview matches the applied bonus; the USSR 1966 squad is accepted by the Duel registry; Chemistry and Team Score refresh after the 11th pick; campaign, Daily and Duel state no longer leak between runs; goal scorers are attributed to the correct side; Manager progression data is validated on load and import; the theme switch works with blocked browser storage; Italian text is complete and translations are checked for parity; a double click on Reroll spends one Reroll and a mouse click picks immediately on touch-capable desktops; Duel drafts no longer count as started campaigns in personal and global stats. The site also gains a dedicated Open Graph image and a browser smoke test in CI.
 - **5.26.0 — Tournament Mastery** — Manager Progression now maintains independent, migration-safe UCL, Copa and World Cup mastery tracks. Every campaign advances only its own tournament family, tracking level, XP, campaigns, wins and best grade directly on the relevant Home card without changing match balance.
@@ -38,7 +39,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 2. Architecture
 
-Decempionz is a vanilla HTML/CSS/JavaScript browser game. The page markup and styles live in `index.html`; the game logic lives in `app.js`; historical squads and tournament datasets live in `game-data.js`. Both scripts are loaded with `defer`, so the first paint does not wait for them (unreleased: the game code used to be an inline script of `index.html`).
+Decempionz is a vanilla HTML/CSS/JavaScript browser game. The page markup and styles live in `index.html`; the game logic lives in `app.js`; historical squads and tournament datasets live in `game-data.js`. Both scripts are loaded with `defer`, so the first paint does not wait for them (since 5.27.1: the game code used to be an inline script of `index.html`).
 
 Backend PHP provides Hall of Fame, Daily, Weekly Challenge, Draft sharing, Duel and counters/statistics. Dynamic JSON/state is maintained on the server and must not be overwritten by normal deploys.
 
@@ -216,7 +217,7 @@ Completion hooks cover trophy, knockout elimination and group-stage elimination.
 
 Daily sharing uses a compact Wordle-like emoji result. Online ranking uses `daily-submit.php` and `daily-scores.php`, with server-side validation/rate limiting and date-scoped score storage.
 
-Daily standing (unreleased): `daily-scores.php` accepts optional `grade` (S/A/B/C) and `winner` (`1`/`0`) and adds `me: {better, same, worse, percentile}` computed over every stored entry of the day, where the comparison is by result tier only (tournament winner first, then grade; goal difference is not used). `percentile = floor(100 × worse / count)`. Only players who submitted a nickname are ranked, so the client (`DAILY_PCT_MIN = 5`) prints the percentile only when at least 5 players are ranked; with fewer it shows the count and, until the player has submitted, an invitation to send the nickname. The line appears on the Daily end screen and in the Home banner once the Daily is done, and fails silently if the server is unreachable. The shared text adds the percentile only when known and ranked players are at least 5, and ends with `https://decempionz.com/?daily=1`, which opens today's Daily. `scripts/smoke_test.py` exercises the endpoint against a scratch fixture day.
+Daily standing (since 5.27.1): `daily-scores.php` accepts optional `grade` (S/A/B/C) and `winner` (`1`/`0`) and adds `me: {better, same, worse, percentile}` computed over every stored entry of the day, where the comparison is by result tier only (tournament winner first, then grade; goal difference is not used). `percentile = floor(100 × worse / count)`. Only players who submitted a nickname are ranked, so the client (`DAILY_PCT_MIN = 5`) prints the percentile only when at least 5 players are ranked; with fewer it shows the count and, until the player has submitted, an invitation to send the nickname. The line appears on the Daily end screen and in the Home banner once the Daily is done, and fails silently if the server is unreachable. The shared text adds the percentile only when known and ranked players are at least 5, and ends with `https://decempionz.com/?daily=1`, which opens today's Daily. `scripts/smoke_test.py` exercises the endpoint against a scratch fixture day.
 
 The Dev Panel provides Daily reset and preview utilities for testing.
 
@@ -349,7 +350,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.27.0`.
+Current cache namespace: `decempionz-v5.27.1`.
 
 Rules:
 
@@ -368,8 +369,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `app.js`; public release shown in UI/backups. Current: **5.27.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.27.0**.
+1. **App version** — `GAME_VERSION` in `app.js`; public release shown in UI/backups. Current: **5.27.1**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.27.1**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.

@@ -1,4 +1,4 @@
-const CACHE = 'decempionz-v5.27.0';
+const CACHE = 'decempionz-v5.27.1';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -10,7 +10,7 @@ const SHELL_ASSETS = [
 // Aggiornato da scripts/sync_asset_versions.py: gli URL con ?v= degli script dell'app.
 const VERSIONED_ASSETS = [
   '/game-data.js?v=595',
-  '/app.js?v=069cdb2c6e'
+  '/app.js?v=6b94ddb378'
 ];
 const NAV_TIMEOUT_MS = 6000;
 const STATIC_ASSET_RE = /\.(?:css|js|png|jpe?g|gif|webp|svg|ico|woff2?|ttf)$/i;
