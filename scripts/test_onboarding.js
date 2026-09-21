@@ -170,4 +170,11 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   const initSrc = homepage.slice(cStart, cEnd);
   if (!initSrc.includes("_dczStatsCampaignStart();")) throw new Error("Campaign draft must still count as a campaign start");
 }
+/* Il cambio lingua deve rigenerare anche il record Manager e la maestria (testo dinamico). */
+{
+  const lStart = homepage.indexOf("function applyLang(){");
+  const lEnd = homepage.indexOf("/* ═", lStart);
+  if (lStart < 0 || lEnd < 0) throw new Error("applyLang not found");
+  if (!homepage.slice(lStart, lEnd).includes("renderManagerProgress()")) throw new Error("applyLang must refresh the Manager progress texts");
+}
 console.log("One-tap Quick Draft onboarding tests passed.");

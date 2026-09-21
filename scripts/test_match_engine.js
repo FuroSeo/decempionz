@@ -80,6 +80,17 @@ if (!canonicalA || canonicalA.players.filter(Boolean).length !== 11 || canonical
     fail("canonical opponent selection must be deterministic");
   }
 }
+// Tie-break between equal players must not depend on the browser locale (localeCompare):
+// plain code-point order keeps every visitor's canonical opponent identical.
+{
+  const tied = [
+    {n:"\u00c4rger",p:"ST",r:9,nat:"DE",club:"Fixture"},
+    {n:"Zed",p:"ST",r:9,nat:"DE",club:"Fixture"}
+  ];
+  vm.runInContext("String.prototype.localeCompare=function(){throw new Error('localeCompare must not decide canonical ties');};", sandbox);
+  const picked = engine.selectCanonicalXI(tied, ["ST"]);
+  if (!picked[0] || picked[0].n !== "Zed") fail("canonical tie-break must use code-point order, picked " + (picked[0] && picked[0].n));
+}
 const sparse = engine.selectCanonicalXI(canonicalRoster.slice(0,8), ["GK","LB","CB","CB","RB","LM","CM","CM","RM","ST","ST"]);
 if (sparse.filter(Boolean).length !== 8) fail("sparse historical rosters must degrade without invented players");
 

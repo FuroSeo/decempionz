@@ -2681,6 +2681,7 @@ function applyLang(){
      rigenerassimo subito dopo. */
   try{_loadDailyBanner();}catch(e){}
   try{_loadChallengeBanner();}catch(e){}
+  try{renderManagerProgress();}catch(e){}
 }
 
 /* ═══════════════════════════════════════
@@ -2898,7 +2899,7 @@ function selectCanonicalXI(players,positions){
       var ae=a.player.r*(1-slotPenalty(slot.pos,a.player.p));
       var be=b.player.r*(1-slotPenalty(slot.pos,b.player.p));
       return be-ae||slotPenalty(slot.pos,a.player.p)-slotPenalty(slot.pos,b.player.p)||
-        b.player.r-a.player.r||String(a.player.n).localeCompare(String(b.player.n))||a.index-b.index;
+        b.player.r-a.player.r||(String(a.player.n)<String(b.player.n)?-1:String(a.player.n)>String(b.player.n)?1:0)||a.index-b.index; /* confronto per codice, non localeCompare: la scelta dell'XI avversario non deve dipendere dalla lingua del browser */
     });
     if(candidates.length){assigned[slot.index]=candidates[0].player;used.add(candidates[0].index);}
   });
@@ -4669,7 +4670,7 @@ function initDraft(){
     var _dynSquads=Object.entries(_dynDB).filter(function(e){return e[1].club===G.dynastyClub;});
     // Dynasty dedup: stessa persona in più stagioni → teniamo la versione con rating più alto
     var _dynSeen=new Map();
-    _dynSquads.sort(function(a,b){return a[0].localeCompare(b[0]);});
+    _dynSquads.sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:0;}); /* ordine per codice, indipendente dal locale */
     _dynSquads.forEach(function(e){
       var tid=e[0],sq=e[1];
       sq.players.forEach(function(p){
