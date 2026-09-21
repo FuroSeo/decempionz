@@ -620,6 +620,18 @@ def validate_sitemap_indexability() -> None:
             fail(f"sitemap.xml: {url} is noindex")
 
 
+def validate_render_blocking_fonts() -> None:
+    """The Google Fonts stylesheet must not block the first paint: it is preloaded and applied on load,
+    with a plain <link> only inside <noscript>."""
+    html = read("index.html")
+    without_noscript = re.sub(r"<noscript>.*?</noscript>", "", html, flags=re.DOTALL)
+    for tag in re.findall(r"<link\b[^>]*>", without_noscript):
+        if "fonts.googleapis.com/css" in tag and re.search(r'rel="stylesheet"', tag):
+            fail("index.html: Google Fonts stylesheet is render-blocking; preload it and apply it on load")
+    if 'rel="preload" as="style" href="https://fonts.googleapis.com/css2' not in html or "<noscript><link" not in html:
+        fail("index.html: non-blocking Google Fonts preload or its noscript fallback is missing")
+
+
 def extract_inline_javascript(html: str) -> list[str]:
     """Return executable inline JS blocks, excluding src scripts and data script types."""
     blocks: list[str] = []
@@ -714,6 +726,7 @@ def main() -> int:
     validate_html_javascript()
     validate_seo_alternates()
     validate_sitemap_indexability()
+    validate_render_blocking_fonts()
 
     for message in NOTES:
         print(f"[info] {message}")
