@@ -216,6 +216,8 @@ Completion hooks cover trophy, knockout elimination and group-stage elimination.
 
 Daily sharing uses a compact Wordle-like emoji result. Online ranking uses `daily-submit.php` and `daily-scores.php`, with server-side validation/rate limiting and date-scoped score storage.
 
+Daily standing (unreleased): `daily-scores.php` accepts optional `grade` (S/A/B/C) and `winner` (`1`/`0`) and adds `me: {better, same, worse, percentile}` computed over every stored entry of the day, where the comparison is by result tier only (tournament winner first, then grade; goal difference is not used). `percentile = floor(100 × worse / count)`. Only players who submitted a nickname are ranked, so the client (`DAILY_PCT_MIN = 5`) prints the percentile only when at least 5 players are ranked; with fewer it shows the count and, until the player has submitted, an invitation to send the nickname. The line appears on the Daily end screen and in the Home banner once the Daily is done, and fails silently if the server is unreachable. The shared text adds the percentile only when known and ranked players are at least 5, and ends with `https://decempionz.com/?daily=1`, which opens today's Daily. `scripts/smoke_test.py` exercises the endpoint against a scratch fixture day.
+
 The Dev Panel provides Daily reset and preview utilities for testing.
 
 ---
