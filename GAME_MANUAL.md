@@ -1,7 +1,7 @@
 # Decempionz — Game Manual
 
-**App version:** 5.26.0
-**Last updated:** 2026-09-20
+**App version:** 5.26.1
+**Last updated:** 2026-09-21
 **Production:** `https://decempionz.com/`
 **Repository:** `FuroSeo/decempionz` (public)
 **Production branch:** `main`
@@ -14,6 +14,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 1. Current release notes
 
+- **5.26.1 — Reliability and consistency pass** — a stability release with no rule changes. Club Chemistry is now grouped by the dataset club slug exactly like the Duel server, so the draft preview matches the applied bonus; the USSR 1966 squad is accepted by the Duel registry; Chemistry and Team Score refresh after the 11th pick; campaign, Daily and Duel state no longer leak between runs; goal scorers are attributed to the correct side; Manager progression data is validated on load and import; the theme switch works with blocked browser storage; Italian text is complete and translations are checked for parity; a double click on Reroll spends one Reroll and a mouse click picks immediately on touch-capable desktops; Duel drafts no longer count as started campaigns in personal and global stats. The site also gains a dedicated Open Graph image and a browser smoke test in CI.
 - **5.26.0 — Tournament Mastery** — Manager Progression now maintains independent, migration-safe UCL, Copa and World Cup mastery tracks. Every campaign advances only its own tournament family, tracking level, XP, campaigns, wins and best grade directly on the relevant Home card without changing match balance.
 - **5.25.0 — Match Engine v7 opponent adaptation** — campaign opponents now learn repeated tactics. A third consecutive use starts a capped, deterministic xG penalty while helping the opponent; changing approach resets it immediately. The modifier is visible in match diagnostics, resets per campaign and does not affect symmetric Duel simulation.
 - **5.24.0 — Manager Progression v1** — every completed campaign now awards deterministic XP for matches, wins, stars, difficulty and trophies. The persistent, balance-neutral Manager profile tracks level, campaigns and victories, appears on Home and reports rewards on both end screens; it is included in existing backups.
@@ -343,7 +344,7 @@ Both HTML tools are versioned but excluded from the FTP deploy. Their inline Jav
 
 ## 20. Service Worker / PWA
 
-Current cache namespace: `decempionz-v5.26.0`.
+Current cache namespace: `decempionz-v5.26.1`.
 
 Rules:
 
@@ -362,8 +363,8 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.26.0**.
-2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.26.0**.
+1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.26.1**.
+2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.26.1**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
 Do not force these values to match. `_sync_version.py` belongs to the retired legacy workflow and must not be reactivated.
