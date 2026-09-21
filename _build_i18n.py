@@ -82,13 +82,15 @@ def build_lang_page(page,lang,h):
     out=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="%s">\n%s'%(url,hreflang_block(page,page_langs)),out,count=1)
     out=out.replace('"url": "%s/%s.html"'%(SITE,page),'"url": "%s"'%url)
     out=out.replace('"inLanguage": ["it", "en", "es"]','"inLanguage": "%s"'%lang)
-    out=re.sub(r'  <div class="lang-bar">.*?</div>',switcher(page,lang,page_langs),out,count=1,flags=re.S)
     i=out.find('function setLang(lang){')
     if i!=-1:
         j=out.find('})();',i)
         if j!=-1:out=out[:i]+out[j+5:]
     for pg in PAGES:
         out=re.sub(r'href="/?%s\.html"'%pg,'href="/%s/%s.html"'%(lang,pg),out)
+    # Il selettore lingua si scrive DOPO la riscrittura dei link interni: il pulsante Italiano
+    # deve puntare alla pagina IT (/pagina.html), non alla stessa pagina localizzata.
+    out=re.sub(r'  <div class="lang-bar">.*?</div>',switcher(page,lang,page_langs),out,count=1,flags=re.S)
     out=out.replace('<link rel="alternate" hreflang="it" href="%s/%s/'%(SITE,lang),'<link rel="alternate" hreflang="it" href="%s/'%SITE)
     return out
 
