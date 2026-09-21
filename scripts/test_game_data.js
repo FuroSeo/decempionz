@@ -3,6 +3,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const readAppSource = require("./_app_source");
 const vm = require("vm");
 
 const ROOT = path.resolve(__dirname, "..");
@@ -187,7 +188,7 @@ for (const entry of idFamilies.entries()) {
 }
 
 function validateHomepageSummary() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
 
   for (const family of families) {
     const row = summary[family.mode];
@@ -222,7 +223,7 @@ function validateHomepageSummary() {
 validateHomepageSummary();
 
 function validateHomepageOnboarding() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const primerIndex = homepage.indexOf("data-home-onboarding");
   const tabsIndex = homepage.indexOf("<!-- Tournament tab switcher -->");
 
@@ -391,7 +392,7 @@ function validateHomepageOnboarding() {
 validateHomepageOnboarding();
 
 function validatePrivacyNotice() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const inventory = fs.readFileSync(
     path.join(ROOT, "PRIVACY_DATA_INVENTORY.md"),
     "utf8"
@@ -456,7 +457,7 @@ function validatePrivacyNotice() {
 validatePrivacyNotice();
 
 function validateDraftAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf("function renderThreeCards()");
   const end = homepage.indexOf("\nfunction draftPick(", start);
   if (start < 0 || end < 0) {
@@ -491,7 +492,7 @@ function validateDraftAccessibility() {
 validateDraftAccessibility();
 
 function validateCoachAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf("function renderCoachCards(pool)");
   const end = homepage.indexOf("\nfunction pickCoach(", start);
   if (start < 0 || end < 0) {
@@ -529,7 +530,7 @@ function validateCoachAccessibility() {
 validateCoachAccessibility();
 
 function validateScreenLogoAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const logoButtons = homepage.match(
     /<button type="button" class="screen-logo" aria-label="Decempionz — Home" onclick="showScreen\('screen-home'\)">Decempionz<\/button>/g
   ) || [];
@@ -550,7 +551,7 @@ function validateScreenLogoAccessibility() {
 validateScreenLogoAccessibility();
 
 function validateFooterActionAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf('<div class="legal-footer">');
   const end = homepage.indexOf("</div>", start);
   if (start < 0 || end < 0) {
@@ -585,7 +586,7 @@ function validateFooterActionAccessibility() {
 validateFooterActionAccessibility();
 
 function validateLegalModalAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const dialogs = [
     ["fanproject", "closeFanProject"],
     ["contatti", "closeContatti"],
@@ -628,7 +629,7 @@ function validateLegalModalAccessibility() {
 validateLegalModalAccessibility();
 
 function validateShareModalAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
 
   if (!homepage.includes(
     '<div id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" onclick="closeShareModal()">'
@@ -684,7 +685,7 @@ function validateShareModalAccessibility() {
 validateShareModalAccessibility();
 
 function validateShareFlowLocalization() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf("function _shareGeneratedCopy(lang)");
   const end = homepage.indexOf("\nfunction submitToHoF()", start);
   if (start < 0 || end < 0) {
@@ -754,7 +755,7 @@ function validateShareFlowLocalization() {
 validateShareFlowLocalization();
 
 function validateMatchSpeedAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const translationKeys = [
     "match.speed_group", "match.speed_slow", "match.speed_normal",
     "match.speed_fast", "match.speed_skip"
@@ -849,7 +850,7 @@ function validateMatchSpeedAccessibility() {
 validateMatchSpeedAccessibility();
 
 function validateFormationAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf("function renderFormationGrid()");
   const end = homepage.indexOf("\nfunction selectRandomFormation(", start);
   if (start < 0 || end < 0) {
@@ -891,7 +892,7 @@ function validateFormationAccessibility() {
 validateFormationAccessibility();
 
 function validateSetupChoiceAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const formatButtons = homepage.match(
     /<button type="button" class="format-card[^"]*" aria-pressed="(?:true|false)" id="fc-(?:coppa|classic|nuovo)" onclick="selectFormat/g
   ) || [];
@@ -943,7 +944,7 @@ function validateSetupChoiceAccessibility() {
 validateSetupChoiceAccessibility();
 
 function validateEraAccessibility() {
-  const homepage = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const homepage = readAppSource(ROOT);
   const start = homepage.indexOf("function showEraGrid()");
   const end = homepage.indexOf("\nfunction selectAllTime(", start);
   if (start < 0 || end < 0) {

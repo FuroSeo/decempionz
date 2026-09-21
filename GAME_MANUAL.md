@@ -38,7 +38,7 @@ The richer pre-migration manual recovered from `C:\Projects\decempionz` is prese
 
 ## 2. Architecture
 
-Decempionz is a vanilla HTML/CSS/JavaScript browser game. The core UI and most game logic live in `index.html`; historical squads and tournament datasets live in `game-data.js`.
+Decempionz is a vanilla HTML/CSS/JavaScript browser game. The page markup and styles live in `index.html`; the game logic lives in `app.js`; historical squads and tournament datasets live in `game-data.js`. Both scripts are loaded with `defer`, so the first paint does not wait for them (unreleased: the game code used to be an inline script of `index.html`).
 
 Backend PHP provides Hall of Fame, Daily, Weekly Challenge, Draft sharing, Duel and counters/statistics. Dynamic JSON/state is maintained on the server and must not be overwritten by normal deploys.
 
@@ -94,7 +94,7 @@ Main fields:
 
 Squads include name, season, country/club metadata and a player list. `game-data.js` is the source of truth for historical squad data.
 
-When `game-data.js` changes, update the `game-data.js?v=...` revision in `index.html` because the asset is served with long-lived caching.
+When `game-data.js` changes, update the `game-data.js?v=...` revision in `index.html` because the asset is served with long-lived caching. `app.js` is cached the same way and its `?v=` revision is the SHA-1 prefix of its content: after any change to `app.js` or `game-data.js` run `python scripts/sync_asset_versions.py`, which updates `index.html` and the precache list in `sw.js`. The validator fails when they are out of date.
 
 ---
 
@@ -317,7 +317,7 @@ Verified capabilities include:
 - toggle trophy by id
 - clear local duel data
 
-The Dev Panel is part of `index.html` and must be included in regression checks after major refactors.
+The Dev Panel is part of the app (markup in `index.html`, code in `app.js`) and must be included in regression checks after major refactors.
 
 ---
 
@@ -360,7 +360,7 @@ Rules:
 - static assets use stale-while-revalidate;
 - old `decempionz-*` cache namespaces are cleaned on activation.
 
-`index.html` and `sw.js` are also configured no-cache/no-store at the HTTP layer.
+`index.html` and `sw.js` are also configured no-cache/no-store at the HTTP layer. `game-data.js` and `app.js` are served with a one-year immutable cache and versioned through `?v=`; the service worker precaches both URLs.
 
 ---
 
@@ -368,7 +368,7 @@ Rules:
 
 Three concepts are intentionally separate:
 
-1. **App version** — `GAME_VERSION` in `index.html`; public release shown in UI/backups. Current: **5.27.0**.
+1. **App version** — `GAME_VERSION` in `app.js`; public release shown in UI/backups. Current: **5.27.0**.
 2. **Service Worker cache version** — `CACHE` in `sw.js`; technical PWA cache namespace. Current: **5.27.0**.
 3. **Game-data revision** — query value in `game-data.js?v=...`; invalidates the long-lived dataset cache.
 
@@ -401,7 +401,7 @@ The old `C:\Projects\decempionz` + `_push.bat` flow is retired. Follow `LOCAL_SE
 
 ### Production code/content in Git
 
-`index.html`, `game-data.js`, `sw.js`, public HTML pages, language/rose pages, PHP endpoints, manifest/robots/sitemap/htaccess and GitHub workflows.
+`index.html`, `app.js`, `game-data.js`, `sw.js`, public HTML pages, language/rose pages, PHP endpoints, manifest/robots/sitemap/htaccess and GitHub workflows.
 
 ### Developer files versioned in Git but excluded from FTP
 

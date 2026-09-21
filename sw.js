@@ -7,6 +7,11 @@ const SHELL_ASSETS = [
   '/icon-512.png',
   '/manifest.json'
 ];
+// Aggiornato da scripts/sync_asset_versions.py: gli URL con ?v= degli script dell'app.
+const VERSIONED_ASSETS = [
+  '/game-data.js?v=595',
+  '/app.js?v=069cdb2c6e'
+];
 const NAV_TIMEOUT_MS = 6000;
 const STATIC_ASSET_RE = /\.(?:css|js|png|jpe?g|gif|webp|svg|ico|woff2?|ttf)$/i;
 
@@ -14,7 +19,7 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
     await Promise.all(
-      SHELL_ASSETS.map(url =>
+      [...SHELL_ASSETS, ...VERSIONED_ASSETS].map(url =>
         cache.add(new Request(url, { cache: 'reload' })).catch(() => null)
       )
     );

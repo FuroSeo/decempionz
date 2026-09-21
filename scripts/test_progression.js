@@ -4,7 +4,8 @@
 const fs=require("fs");
 const vm=require("vm");
 const path=require("path");
-const homepage=fs.readFileSync(path.resolve(__dirname,"..","index.html"),"utf8");
+const readAppSource=require("./_app_source");
+const homepage=readAppSource(path.resolve(__dirname,".."));
 const start=homepage.indexOf("const MANAGER_PROGRESS_KEY=");
 const end=homepage.indexOf("function managerLoad()",start);
 if(start<0||end<0)throw new Error("Manager progression kernel not found");

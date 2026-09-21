@@ -23,7 +23,7 @@ HOST = "127.0.0.1"
 
 CHECKS: tuple[tuple[str, str | None], ...] = (
     ("/", "GAME_VERSION"),
-    ("/index.html", "GAME_VERSION"),
+    ("/app.js", "GAME_VERSION"),
     ("/game-data.js", "const TEAMS"),
     ("/sw.js", "const CACHE"),
     ("/manifest.json", "Decempionz"),
