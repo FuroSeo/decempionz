@@ -395,6 +395,82 @@ if (!homepage.includes("function evaluateDraftImpact(players,positions,formation
   if (clubBonds(["bvb_9697", "bvb_1213", "atm_1314", "atm_1516"]).length !== 0) fail("two players per club must not form a club bond");
 }
 
+// Half-time tactical decision (campaign only): pure helpers, split-half equivalence and log windows.
+{
+  const sb = { G: { lang: "it" }, Math: seededMath };
+  vm.createContext(sb);
+  vm.runInContext(
+    section("const TACTIC_WINS=", "function tacticAdaptation") + "\n" +
+    section("/* ── Intervallo tattico (solo campagna)", "function selectFormTactic") + "\n" +
+    section("function pick(arr)", "function sh(n)") + "\n" +
+    section("function weightedContributor(", "function buildMatchLog") + "\n" +
+    section("function buildMatchLog(", "\nlet P={};") + "\n" +
+    "this.api={HT_MIN,HT_P1,HT_P2,htOppWeights,htPickTactic,htHint,htChip,poisson,buildMatchLog};",
+    sb
+  );
+  const A = sb.api;
+  const T = ["attack", "balanced", "defend"];
+  if (Math.abs(A.HT_P1 + A.HT_P2 - 1) > 1e-12 || A.HT_MIN !== 45) fail("half-time split constants are inconsistent");
+  for (const orig of T) for (const lead of [-1, 0, 1]) {
+    const w = A.htOppWeights(orig, lead);
+    approx(T.reduce((a, k) => a + w[k], 0), 1, 1e-9, "htOppWeights sums to 1 (" + orig + "," + lead + ")");
+    const best = T.reduce((b, k) => (w[k] > w[b] ? k : b), "attack");
+    const expected = lead > 0 ? "defend" : lead < 0 ? "attack" : orig;
+    if (A.htHint(w, orig) !== expected) fail("htHint " + orig + "/" + lead + " -> " + A.htHint(w, orig) + ", expected " + expected);
+    if (best !== expected) fail("htOppWeights favourite " + orig + "/" + lead + " is " + best + ", expected " + expected);
+  }
+  if (A.htPickTactic({ attack: .2, balanced: .5, defend: .3 }, 0) !== "attack" ||
+      A.htPickTactic({ attack: .2, balanced: .5, defend: .3 }, .69) !== "balanced" ||
+      A.htPickTactic({ attack: .2, balanced: .5, defend: .3 }, .999999) !== "defend") fail("htPickTactic thresholds are wrong");
+  // The rock-paper-scissors chips must mirror TACTIC_WINS in all nine pairs.
+  const chips = {};
+  for (const a of T) for (const b of T) chips[a + ">" + b] = A.htChip(a, b);
+  if (chips["attack>defend"] !== "edge" || chips["balanced>attack"] !== "edge" || chips["defend>balanced"] !== "edge" ||
+      chips["defend>attack"] !== "mismatch" || chips["attack>balanced"] !== "mismatch" || chips["balanced>defend"] !== "mismatch" ||
+      chips["attack>attack"] !== "even" || chips["balanced>balanced"] !== "even" || chips["defend>defend"] !== "even") {
+    fail("half-time chips do not follow the tactic wheel: " + JSON.stringify(chips));
+  }
+  // Keeping tactics must not change the match: Poisson(x*P1)+Poisson(x*P2) has mean and variance x.
+  for (const x of [0.6, 1.4, 2.4]) {
+    const N = 40000; let sum = 0, sq = 0;
+    for (let i = 0; i < N; i++) { const g = A.poisson(x * A.HT_P1) + A.poisson(x * A.HT_P2); sum += g; sq += g * g; }
+    const mean = sum / N, variance = sq / N - mean * mean;
+    approx(mean, x, 0.04, "split-half mean for xG " + x);
+    approx(variance, x, 0.08, "split-half variance for xG " + x);
+  }
+  // Log windows: default log is unchanged, halves never cross the interval, the score carries on.
+  for (let run = 0; run < 200; run++) {
+    const full = A.buildMatchLog(3, 2, "Me", "Opp", [{ n: "A", goalWeight: 1, assistWeight: 1 }], [{ n: "B", goalWeight: 1, assistWeight: 1 }]);
+    const fg = full.filter(e => e.goal);
+    if (fg.length !== 5 || fg.some(e => e.min < 3 || e.min > 89)) fail("default match log must keep goals inside 3'-89'");
+    if (!full[full.length - 1].final || full.filter(e => e.final).length !== 1) fail("default match log must end with one full-time event");
+    const first = A.buildMatchLog(2, 1, "Me", "Opp", [{ n: "A", goalWeight: 1, assistWeight: 1 }], [{ n: "B", goalWeight: 1, assistWeight: 1 }], { hi: 45, nHi: 44, nTries: 2, final: false });
+    if (first.some(e => e.min > 45 || e.min < 3 || e.final)) fail("first-half log leaks past the interval or has a full-time event");
+    const second = A.buildMatchLog(1, 2, "Me", "Opp", [{ n: "A", goalWeight: 1, assistWeight: 1 }], [{ n: "B", goalWeight: 1, assistWeight: 1 }], { lo: 46, hi: 89, nLo: 46, nHi: 87, nTries: 3, startMy: 2, startOpp: 1, totalMy: 3, totalOpp: 3 });
+    if (second.some(e => e.min < 46 || (e.min > 89 && !e.final))) fail("second-half log starts before the restart");
+    const last = second[second.length - 1];
+    if (!last.final || last.text.indexOf("3–3") < 0) fail("second-half full-time event must show the total score: " + last.text);
+    const goals = second.filter(e => e.goal);
+    if (goals.length && goals[goals.length - 1].text.indexOf("3–3") < 0) fail("second-half goals must continue from the interval score: " + goals[goals.length - 1].text);
+  }
+}
+
+// Half-time wiring in the page: campaign only, no duel/dev-forced score, skip cannot bypass the choice.
+{
+  const run = section("function _runMatch()", "function attackContributors");
+  if (!run.includes("_useHalf") || !run.includes("_DEV_FORCE_SCORE") || run.indexOf("_useHalf=false") < 0) fail("half-time must be disabled for dev-forced scores");
+  if (!run.includes("M.half=null;") || !run.includes("_htHide();")) fail("_runMatch must reset the half-time state");
+  const duel = section("function duelPlayMatch(idx)", "function duelShowMatchResult");
+  if (duel.includes("M.half=") && !duel.includes("M.half=null")) fail("duel matches must never have a half-time state");
+  const skip = section("function skipToResult()", "function _simPenaltiesInstant");
+  if (!skip.includes("M.half&&M.half.stage===1&&M.idx>=M.log.length")) fail("skipToResult must not bypass an open half-time choice");
+  if (!skip.includes("showHalftime();")) fail("skipToResult must stop at the interval");
+  const log = section("function runLog()", "function _htHide");
+  if (!log.includes("ev.ht&&M.half&&M.half.stage===1")) fail("runLog must pause at the interval");
+  const tacHistory = section("function showResult()", "function ");
+  void tacHistory;
+}
+
 if (errors.length) {
   console.error("Match Engine v7 failures:");
   for (const message of errors) console.error("  - " + message);

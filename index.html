@@ -614,6 +614,25 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .mini-tact-btn{flex:1;padding:8px 6px;border-radius:8px;border:1.5px solid var(--mut);background:var(--s1);cursor:pointer;text-align:center;font-size:.72rem;font-weight:700;color:var(--text);transition:.13s}
 .mini-tact-btn:hover{border-color:var(--gold);color:var(--text)}
 .mini-tact-btn.tact-sel{border-color:var(--gold);background:rgba(234,179,8,.10);color:var(--gold)}
+/* ── Intervallo tattico ── */
+#m-ht{background:var(--s1);border:1px solid var(--gold);border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 0 0 3px rgba(201,162,39,.08)}
+.ht-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.ht-t{font-size:.66rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+.ht-s{font-size:.68rem;color:var(--mut);text-align:right}
+.ht-read{font-size:.74rem;line-height:1.5;color:var(--text);margin-bottom:10px}
+.ht-hint{display:flex;gap:8px;align-items:center;background:var(--s2);border:1px solid var(--brd);border-radius:8px;padding:8px 10px;font-size:.68rem;color:var(--mut);margin-bottom:10px;line-height:1.4}
+.ht-hint em{font-style:normal;color:var(--red2);font-weight:700}
+.ht-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ht-opt{border:1.5px solid var(--mut);background:var(--s1);border-radius:9px;padding:9px 4px 8px;text-align:center;font-size:.72rem;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:.13s}
+.ht-opt:hover{border-color:var(--gold)}
+.ht-opt:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
+.ht-opt.cur{border-color:var(--gold);background:rgba(234,179,8,.10);color:var(--gold)}
+.ht-opt small{display:block;font-size:.58rem;font-weight:600;color:var(--mut);margin-top:3px;line-height:1.3}
+.ht-chip{display:inline-block;margin-top:5px;font-size:.54rem;font-weight:800;padding:2px 6px;border-radius:10px;letter-spacing:.3px}
+.ht-chip.g{background:rgba(34,197,94,.15);color:var(--grn2)}
+.ht-chip.r{background:rgba(248,113,113,.15);color:var(--red2)}
+.ht-chip.n{background:rgba(147,197,253,.12);color:var(--blue-lt)}
+.ht-foot{font-size:.58rem;color:var(--mut);text-align:center;margin-top:8px}
 /* Formation screen tactic buttons — larger, with sub-description */
 .form-tact-btn{flex:1;padding:10px 7px 9px;border-radius:8px;border:1.5px solid var(--mut);background:var(--s1);cursor:pointer;text-align:center;font-size:.74rem;font-weight:700;color:var(--text);transition:.13s;line-height:1.2}
 .form-tact-btn:hover{border-color:var(--gold);color:var(--text)}
@@ -1394,6 +1413,9 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
     </div>
   </div>
 
+  <!-- Half-time tactical decision (campaign only) -->
+  <div id="m-ht" role="group" aria-labelledby="m-ht-title" style="display:none"></div>
+
   <!-- 2-line event box -->
   <div id="m-ev-box" style="background:var(--s1);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:8px">
     <div id="m-ev1" style="font-size:.76rem;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid var(--brd)"><span id="m-ev1-min" style="color:var(--gold);font-weight:700;min-width:24px;flex-shrink:0"></span><span id="m-ev1-txt">⚽ Fischio d'inizio</span></div>
@@ -1797,6 +1819,24 @@ const STRINGS={
     'tac.mismatch':'🔴 Svantaggio tattico — tua',
     'tac.balanced_msg':'🔵 Tattiche equilibrate — tua',
     'tac.vs_their':'vs loro',
+    'ht.title':'⏸ Intervallo',
+    'ht.played':'Hai giocato:',
+    'ht.read_trail':"Sotto di un gol o più all'intervallo. Chi è in vantaggio potrebbe chiudersi.",
+    'ht.read_level':'Partita in equilibrio. Il secondo tempo si decide sui dettagli.',
+    'ht.read_lead':"In vantaggio all'intervallo. L'avversario dovrà spingere.",
+    'ht.hint_pre':'Segnali dalla panchina rivale: probabile',
+    'ht.hint_post':'Non è certo, può cambiare idea.',
+    'ht.keep':'Mantieni il piano',
+    'ht.sub_attack':'Più gol, più rischi',
+    'ht.sub_balanced':'Gioca sul possesso',
+    'ht.sub_defend':'Chiudi gli spazi',
+    'ht.edge':'🟢 Vantaggio',
+    'ht.mismatch':'🔴 Svantaggio',
+    'ht.even':'🔵 Pari',
+    'ht.foot':'La scelta vale per tutto il secondo tempo',
+    'ht.group_aria':'Scelta tattica del secondo tempo',
+    'ht.log':'🔄 Secondo tempo · tu: {me} · rivale: {opp}',
+    'ht.log_ht':'⏸ Intervallo',
     'go.eliminated_in':'Eliminati al',
     'go.failed_qualify_pre':'Non qualificati — solo',
     'go.failed_qualify_post':'punti in 6 partite (obiettivo: 8).',
@@ -1868,7 +1908,7 @@ const STRINGS={
     'howto.p2':'<strong style="color:var(--text)">Scegli il formato.</strong> <em>Old Cup</em>: puro eliminatorio dall\'inizio, nessuna fase a gironi. <em>Classic</em>: 3 partite di girone poi playoff. <em>New Wave</em> (solo UCL): 6 giornate di lega con soglia 8 punti, poi playoff. Copa Libertadores e World Cup giocano sempre in formato Old Cup o Classic.',
     'howto.p3':'<strong style="color:var(--text)">Scegli l\'era e la difficoltà.</strong> Ogni torneo ha le sue ere (es. UCL: Anni \'60, Anni \'80… oppure All Time per il pool completo). Facile = 5 reroll, Normale = 3, Difficile = 2. La difficoltà scala anche la forza degli avversari. In modalità Normale e Difficile il reroll è bloccato negli ultimi 3 slot — risparmia le mosse quando conta.',
     'howto.p4':'<strong style="color:var(--text)">Scegli la formazione e drafta il tuo XI.</strong> Dieci moduli disponibili: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Ad ogni pick vedi fino a 3 carte, ognuna pensata per un ruolo ancora libero nel tuo schema. Il tier di valutazione è estratto casualmente ad ogni pick — con più peso su Elite e Alto — e se per un ruolo non ci sono candidati nel tier primario il sistema cerca nei tier vicini. Usa <strong style="color:var(--gold)">↺ Reroll</strong> per ripescare opzioni diverse. I giocatori r=10 (★★★★ Elite) mostrano un badge ⚡/🛡️ e forniscono un bonus xG diretto in simulazione in base al ruolo (attacco, difesa o centrocampo). Se una card viene assegnata a uno slot non naturale compare un avviso ⚠️ — la penalità è lieve per ruoli adiacenti, più pesante per distanze tattiche maggiori. Per UCL e Copa vedi il club, per il World Cup vedi nazione e anno (es. 🇧🇷 Brasile · 1970).',
-    'howto.p5':'<strong style="color:var(--text)">Tattica e report scout.</strong> Prima di ogni partita lo scout rivela lo stile probabile dell\'avversario — <em>Pressione Alta</em>, <em>Possesso</em> o <em>Blocco Basso</em>. Contrastare correttamente dà un vantaggio in xG: Pressione batte Blocco Basso, Possesso batte Pressione, Blocco Basso batte Possesso.',
+    'howto.p5':'<strong style="color:var(--text)">Tattica e report scout.</strong> Prima di ogni partita lo scout rivela lo stile probabile dell\'avversario — <em>Pressione Alta</em>, <em>Possesso</em> o <em>Blocco Basso</em>. Contrastare correttamente dà un vantaggio in xG: Pressione batte Blocco Basso, Possesso batte Pressione, Blocco Basso batte Possesso. All\'intervallo puoi cambiare tattica per il secondo tempo: lo scout ti dice cosa farà probabilmente il rivale, ma non è una certezza.',
     'howto.p6':'<strong style="color:var(--text)">Momentum.</strong> Vincere accumula momentum (fino a +3), perdere lo erode (fino a −3). Ogni punto sposta il tuo xG di ±0.05 — una striscia vincente ti rende più difficile da fermare.',
     'howto.p7':'<strong style="color:var(--text)">Struttura del torneo.</strong> Old Cup: playoff secco dall\'inizio (R16 → QF → SF → Finale). Classic: 3 partite di girone (top 2 avanzano) poi playoff. New Wave (UCL): 6 giornate di lega — servono ≥ 8 punti per qualificarsi, poi playoff. Un solo ko nei playoff e la campagna finisce. I pareggi si risolvono ai rigori.',
     'howto.p8':'<strong style="color:var(--text)">Allenatore.</strong> Completato l\'XI scegli il tuo allenatore tra 3 candidati. Ogni allenatore ha un modulo preferito: corrispondenza perfetta +8% xG, due linee su tre +5%, una +2%, nessuna +0%. Scelta definitiva, nessun reroll.',
@@ -2128,6 +2168,24 @@ const STRINGS={
     'tac.mismatch':'🔴 Tactical mismatch — your',
     'tac.balanced_msg':'🔵 Balanced tactics — your',
     'tac.vs_their':'vs their',
+    'ht.title':'⏸ Half time',
+    'ht.played':'You played:',
+    'ht.read_trail':'Behind at half time. The leaders may sit back.',
+    'ht.read_level':'Level at half time. The second half will turn on the details.',
+    'ht.read_lead':'Ahead at half time. The opponent will have to push.',
+    'ht.hint_pre':'Signals from the rival bench: likely',
+    'ht.hint_post':'It is not certain, they may change their mind.',
+    'ht.keep':'Keep the plan',
+    'ht.sub_attack':'More goals, more risk',
+    'ht.sub_balanced':'Play for possession',
+    'ht.sub_defend':'Close the spaces',
+    'ht.edge':'🟢 Edge',
+    'ht.mismatch':'🔴 Mismatch',
+    'ht.even':'🔵 Even',
+    'ht.foot':'This choice lasts the whole second half',
+    'ht.group_aria':'Second-half tactical choice',
+    'ht.log':'🔄 Second half · you: {me} · rival: {opp}',
+    'ht.log_ht':'⏸ Half time',
     'go.eliminated_in':'Eliminated in the',
     'go.failed_qualify_pre':'Failed to qualify — only',
     'go.failed_qualify_post':'pts from 6 matches (target: 8).',
@@ -2199,7 +2257,7 @@ const STRINGS={
     'howto.p2':'<strong style="color:var(--text)">Choose a format.</strong> <em>Old Cup</em>: pure knockout from round one, no group stage. <em>Classic</em>: 3 group matches then playoffs. <em>New Wave</em> (UCL only): 6 league-phase matches with an 8-point qualification threshold, then playoffs. Copa Libertadores and World Cup support Old Cup and Classic only.',
     'howto.p3':'<strong style="color:var(--text)">Pick an era and difficulty.</strong> Each tournament has its own eras (e.g. UCL: 1960s, 1980s… or All Time for the full pool). Easy = 5 rerolls, Normal = 3, Hard = 2. Difficulty also scales opponent strength. On Normal and Hard, reroll is locked for the last 3 slots — save your moves when it matters.',
     'howto.p4':'<strong style="color:var(--text)">Pick a formation and draft your XI.</strong> Ten formations available: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Each pick shows up to 3 cards, each targeting a different open slot type in your formation. The rating tier is randomly weighted at each pick — Elite and High appear more often — and if a role has no candidates in the primary tier the system searches adjacent tiers. Use <strong style="color:var(--gold)">↺ Reroll</strong> to draw different options. r=10 (★★★★ Elite) players show a ⚡/🛡️ badge and grant a direct xG bonus in simulation based on their role (attack, defence or midfield). When a card is assigned to a slot outside its natural position, a ⚠️ warning appears — the penalty is minor for adjacent roles, heavier for bigger tactical mismatches. UCL and Copa show club names; World Cup shows nation and year (e.g. 🇧🇷 Brazil · 1970).',
-    'howto.p5':'<strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent\'s likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession.',
+    'howto.p5':'<strong style="color:var(--text)">Tactic &amp; scout report.</strong> Before each match a scout report reveals the opponent\'s likely style — <em>High Press</em>, <em>Possession</em>, or <em>Low Block</em>. Countering correctly gives a significant xG advantage: Press beats Low Block, Possession beats Press, Low Block beats Possession. At half time you can change tactic for the second half: the scout tells you what the rival will probably do, but it is not a certainty.',
     'howto.p6':'<strong style="color:var(--text)">Momentum.</strong> Winning builds momentum (up to +3), losing erodes it (down to −3). Each point shifts your xG by ±0.05 — a winning run makes you harder to stop.',
     'howto.p7':'<strong style="color:var(--text)">Tournament structure.</strong> Old Cup: straight knockout from the start (R16 → QF → SF → Final). Classic: 3 group matches (top 2 advance) then playoffs. New Wave (UCL): 6 league matches — earn ≥ 8 points to qualify, then playoffs. One loss in the knockout phase ends the campaign. Draws go to penalties.',
     'howto.p8':'<strong style="color:var(--text)">Manager.</strong> After completing your XI, choose a manager from 3 candidates. Each has a preferred formation — perfect match +8% xG, two lines matching +5%, one +2%, none +0%. Final choice, no rerolls.',
@@ -2459,6 +2517,24 @@ const STRINGS={
     'tac.mismatch':'🔴 Desventaja táctica — tuya',
     'tac.balanced_msg':'🔵 Tácticas equilibradas — tuya',
     'tac.vs_their':'vs ellos',
+    'ht.title':'⏸ Descanso',
+    'ht.played':'Has jugado:',
+    'ht.read_trail':'Por detrás en el descanso. Quien va ganando puede cerrarse.',
+    'ht.read_level':'Partido igualado en el descanso. La segunda parte se decide en los detalles.',
+    'ht.read_lead':'Por delante en el descanso. El rival tendrá que apretar.',
+    'ht.hint_pre':'Señales del banquillo rival: probable',
+    'ht.hint_post':'No es seguro, puede cambiar de idea.',
+    'ht.keep':'Mantén el plan',
+    'ht.sub_attack':'Más goles, más riesgo',
+    'ht.sub_balanced':'Juega a la posesión',
+    'ht.sub_defend':'Cierra los espacios',
+    'ht.edge':'🟢 Ventaja',
+    'ht.mismatch':'🔴 Desventaja',
+    'ht.even':'🔵 Igualado',
+    'ht.foot':'La elección vale para toda la segunda parte',
+    'ht.group_aria':'Elección táctica de la segunda parte',
+    'ht.log':'🔄 Segunda parte · tú: {me} · rival: {opp}',
+    'ht.log_ht':'⏸ Descanso',
     'go.eliminated_in':'Eliminados en',
     'go.failed_qualify_pre':'No clasificado — solo',
     'go.failed_qualify_post':'pts en 6 partidos (objetivo: 8).',
@@ -2530,7 +2606,7 @@ const STRINGS={
     'howto.p2':'<strong style="color:var(--text)">Elige un formato.</strong> <em>Old Cup</em>: eliminación directa desde el principio, sin fase de grupos. <em>Classic</em>: 3 partidos de grupo y luego eliminatorias. <em>New Wave</em> (solo UCL): 6 jornadas de liga con umbral de 8 puntos, luego eliminatorias. Copa Libertadores y World Cup solo admiten Old Cup y Classic.',
     'howto.p3':'<strong style="color:var(--text)">Elige una era y dificultad.</strong> Cada torneo tiene sus propias eras (p.ej. UCL: años 60, 80… o All Time para el pool completo). Fácil = 5 rerolls, Normal = 3, Difícil = 2. La dificultad también escala la fuerza de los rivales. En Normal y Difícil el reroll se bloquea en los últimos 3 huecos — guarda tus movimientos cuando importa.',
     'howto.p4':'<strong style="color:var(--text)">Elige formación y haz el draft de tu XI.</strong> Diez formaciones disponibles: 4-3-3, 4-4-2, 4-2-3-1, 3-5-2, 4-1-4-1, 3-4-3, 5-3-2, 4-5-1, 5-4-1, 3-6-1. Cada pick muestra hasta 3 cartas, cada una pensada para un puesto diferente aún libre en tu esquema. El tier de valoración se extrae aleatoriamente en cada pick — con más peso en Élite y Alto — y si un puesto no tiene candidatos en el tier principal el sistema busca en los tiers adyacentes. Usa <strong style="color:var(--gold)">↺ Reroll</strong> para obtener opciones distintas. Los jugadores r=10 (★★★★ Élite) muestran un badge ⚡/🛡️ y otorgan un bonus directo de xG en simulación según su rol (ataque, defensa o centrocampo). Si una carta se asigna a un slot fuera de su posición natural aparece un aviso ⚠️ — la penalización es leve si el rol es adyacente, mayor si la diferencia táctica es grande. UCL y Copa muestran nombres de club; World Cup muestra nación y año (p.ej. 🇧🇷 Brasil · 1970).',
-    'howto.p5':'<strong style="color:var(--text)">Táctica e informe de scout.</strong> Antes de cada partido el scout revela el estilo probable del rival — <em>Presión Alta</em>, <em>Posesión</em> o <em>Bloque Bajo</em>. Contrarrestar correctamente da una ventaja significativa en xG: Presión vence a Bloque Bajo, Posesión vence a Presión, Bloque Bajo vence a Posesión.',
+    'howto.p5':'<strong style="color:var(--text)">Táctica e informe de scout.</strong> Antes de cada partido el scout revela el estilo probable del rival — <em>Presión Alta</em>, <em>Posesión</em> o <em>Bloque Bajo</em>. Contrarrestar correctamente da una ventaja significativa en xG: Presión vence a Bloque Bajo, Posesión vence a Presión, Bloque Bajo vence a Posesión. En el descanso puedes cambiar de táctica para la segunda parte: el scout te dice lo que probablemente hará el rival, pero no es una certeza.',
     'howto.p6':'<strong style="color:var(--text)">Momentum.</strong> Ganar acumula momentum (hasta +3), perder lo erosiona (hasta −3). Cada punto desplaza tu xG ±0.05 — una racha ganadora te hace más difícil de parar.',
     'howto.p7':'<strong style="color:var(--text)">Estructura del torneo.</strong> Old Cup: eliminación directa desde el inicio (R16 → QF → SF → Final). Classic: 3 partidos de grupo (los 2 primeros avanzan) y luego eliminatorias. New Wave (UCL): 6 partidos de liga — necesitas ≥ 8 puntos para clasificar, luego eliminatorias. Una sola derrota en eliminatorias acaba la campaña. Los empates van a penaltis.',
     'howto.p8':'<strong style="color:var(--text)">Entrenador.</strong> Tras completar tu XI, elige un entrenador entre 3 candidatos. Cada uno tiene una formación preferida — coincidencia perfecta +8% xG, dos líneas coincidentes +5%, una +2%, ninguna +0%. Elección definitiva, sin rerolls.',
@@ -3779,6 +3855,7 @@ function duelPlayMatch(idx){
   M.homeXI=(me.players||[]).map(function(p,i){return{n:p.n,p:posMe[i]||p.p};});
   M.awayXI=(opp.players||[]).map(function(p,i){return{n:p.n,p:posOpp[i]||p.p};});
   M.homeGoals={};M.awayGoals={};
+  _htHide();
   document.getElementById('m-tag').innerHTML='<span class="tag tag-ko">⚔️ '+_duelEsc(roundLabel).toUpperCase()+'</span>';
   document.getElementById('m-home').innerHTML=jerseyIcon('#c9a227',18)+'<span style="margin-left:4px">'+_duelEsc(myName)+'</span>';
   document.getElementById('m-away').innerHTML=jerseyIcon('#8a4444',18)+'<span style="margin-left:4px">'+_duelEsc(oppName)+'</span>';
@@ -5704,6 +5781,31 @@ function tacticAdaptation(history,current){
   var steps=Math.min(3,exposed);
   return{streak:streak+1,active:steps>0,myAdd:-.04*steps,oppAdd:.02*steps};
 }
+/* ── Intervallo tattico (solo campagna) ──
+   HT_P1 e' la quota di finestra gol del primo tempo (3'-45' su 3'-89'): con tattiche invariate,
+   Poisson(xG*HT_P1)+Poisson(xG*HT_P2) ha la stessa distribuzione di Poisson(xG). */
+const HT_MIN=45;
+const HT_P1=43/87;
+const HT_P2=1-HT_P1;
+/* Reazione dell'avversario all'intervallo: chi perde spinge, chi vince si chiude, a parita' conferma. */
+function htOppWeights(orig,oppLead){
+  if(oppLead>0)return{attack:.15,balanced:.35,defend:.50};
+  if(oppLead<0)return{attack:.60,balanced:.25,defend:.15};
+  var w={attack:.125,balanced:.125,defend:.125};
+  w[['attack','balanced','defend'].indexOf(orig)>=0?orig:'balanced']=.75;
+  return w;
+}
+function htPickTactic(w,r){
+  var order=['attack','balanced','defend'],acc=0;
+  for(var i=0;i<order.length;i++){acc+=w[order[i]];if(r<acc)return order[i];}
+  return order[order.length-1];
+}
+function htHint(w,orig){
+  var best=['attack','balanced','defend'].indexOf(orig)>=0?orig:'balanced';
+  ['attack','balanced','defend'].forEach(function(k){if(w[k]>w[best]+1e-9)best=k;});
+  return best;
+}
+function htChip(mine,hint){return TACTIC_WINS[mine]===hint?'edge':TACTIC_WINS[hint]===mine?'mismatch':'even';}
 function selectFormTactic(t,el){
   G.tactic=t;
   document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(b=>b.classList.remove('tact-sel'));
@@ -5897,22 +5999,33 @@ function _runMatch(){
   };
   const momMod=(G.momentum||0)*0.03;
   const adaptation=tacticAdaptation(G.tacticHistory,G.tactic||'balanced');
-  const xg=computeMatchXG(teamEval,oppEval,{
+  const _xgOpts={
     lineBoostB:oppXI?diffCfg.oppMod+roundBonus:0,
     xgMulA:G.coach&&G.coach.boost>1?G.coach.boost:1,
     xgAddA:momMod+adaptation.myAdd,
     xgAddB:-momMod*.35+adaptation.oppAdd,
     floor:.10,
     cap:2.6
-  });
+  };
+  /* Stesso kernel per tutta la partita; all'intervallo si ricalcola cambiando solo la chiave tattica. */
+  const _calcXG=function(myT,oppT){
+    return computeMatchXG(Object.assign({},teamEval,{tactic:myT}),Object.assign({},oppEval,{tactic:oppT}),_xgOpts);
+  };
+  const xg=computeMatchXG(teamEval,oppEval,_xgOpts);
   let myXG=xg.xa,oppXG=xg.xb;
 
   // Store tactic matchup result for match log
   const tacAdv=xg.counter[0]>1.05?'advantage':xg.counter[0]<0.95?'disadvantage':'neutral';
   _pendingMatch.tacAdv=tacAdv;_pendingMatch.oppTacticLabel=tacLabel(oppTactic);
 
-  let myG=poisson(myXG), oppG=poisson(oppXG);
-  if(_DEV_FORCE_SCORE){myG=_DEV_FORCE_SCORE[0];oppG=_DEV_FORCE_SCORE[1];_DEV_FORCE_SCORE=null;document.getElementById('dv-force-status').textContent='';}
+  let myG,oppG,_useHalf=true;
+  if(_DEV_FORCE_SCORE){
+    myG=_DEV_FORCE_SCORE[0];oppG=_DEV_FORCE_SCORE[1];_useHalf=false;
+    _DEV_FORCE_SCORE=null;document.getElementById('dv-force-status').textContent='';
+  } else {
+    /* primo tempo: il resto della partita si decide dopo la scelta all'intervallo */
+    myG=poisson(myXG*HT_P1);oppG=poisson(oppXG*HT_P1);
+  }
 
   const scorers=attackContributors(G.slotPlayers,_formPos);
   // Opponent players for scorer names
@@ -5925,9 +6038,33 @@ function _runMatch(){
     if(koOpp&&koOpp.id&&(_aDB[koOpp.id]||TEAMS[koOpp.id]))
       {var _kp=(_aDB[koOpp.id]||TEAMS[koOpp.id]).players;oppPlayerPool=attackContributors(_kp,_kp.map(function(p){return p.p;}));}
   }
-  const log=buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
+  const log=_useHalf
+    ?buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool,{hi:HT_MIN,nHi:HT_MIN-1,nTries:2,final:false})
+    :buildMatchLog(myG,oppG,'Decempionz FC',oppName,scorers,oppPlayerPool);
+  if(_useHalf)log.push({min:HT_MIN,text:HT_MIN+"' "+t('ht.log_ht')+' — '+myG+'–'+oppG,cls:'lh',ht:true});
 
   M={myG,oppG,myXG,oppXG,adaptation:adaptation,teamScore:teamEval.score,teamFit:teamEval.fit,teamLines:teamEval.lines,oppTeamScore:oppEval?oppEval.score:null,oppTeamFit:oppEval?oppEval.fit:null,oppFormation:oppXI?oppXI.formation:null,oppName,roundLabel,roundTag,isKnockout,myS:0,oppS:0,log,idx:0,eliminated:false,won:false,penResult:null};
+
+  /* Intervallo: stato del primo tempo + funzione che gioca il secondo con la tattica scelta. */
+  M.half=null;
+  if(_useHalf){
+    const _myT0=teamEval.tactic||'balanced',_oppT0=oppEval.tactic||'balanced';
+    M.half={stage:1,myT0:_myT0,oppT0:_oppT0,myG1:myG,oppG1:oppG,w:null,hint:null,
+      resolve:function(myT){
+        var H=M.half;H.stage=2;
+        var oppT=htPickTactic(H.w||htOppWeights(_oppT0,H.oppG1-H.myG1),Math.random());
+        var x2=_calcXG(myT,oppT);
+        var g2a=poisson(x2.xa*HT_P2),g2b=poisson(x2.xb*HT_P2);
+        var totA=H.myG1+g2a,totB=H.oppG1+g2b;
+        var log2=buildMatchLog(g2a,g2b,'Decempionz FC',oppName,scorers,oppPlayerPool,{lo:HT_MIN+1,hi:89,nLo:HT_MIN+1,nHi:87,nTries:3,startMy:H.myG1,startOpp:H.oppG1,totalMy:totA,totalOpp:totB});
+        log2.unshift({min:HT_MIN+1,text:(HT_MIN+1)+"' "+t('ht.log').replace('{me}',t('tac.btn_'+myT)).replace('{opp}',t('tac.btn_'+oppT)),cls:'ls',sw:true});
+        M.log=M.log.concat(log2);
+        M.myG=totA;M.oppG=totB;
+        M.myXG=myXG*HT_P1+x2.xa*HT_P2;M.oppXG=oppXG*HT_P1+x2.xb*HT_P2;
+        return{oppT:oppT,totA:totA,totB:totB};
+      }};
+  }
+  _htHide();
 
   // Build home XI from slot players with positions
   const _dTac=G.draftTactic||G.tactic||'balanced';
@@ -6006,11 +6143,15 @@ function weightedContributor(pool,weightKey,excludeName){
   for(var i=0;i<eligible.length;i++){roll-=Math.max(0,Number(eligible[i][weightKey])||1);if(roll<=0)return eligible[i];}
   return eligible[eligible.length-1];
 }
-function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
+function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers,opts){
+  opts=opts||{};
+  /* opts (solo campagna con intervallo): finestra minuti del tempo, punteggio di partenza, totali finali */
+  const _lo=opts.lo==null?3:opts.lo,_hi=opts.hi==null?89:opts.hi;
+  const _nLo=opts.nLo==null?5:opts.nLo,_nHi=opts.nHi==null?87:opts.nHi,_nTries=opts.nTries==null?5:opts.nTries;
   const evs=[];
   const myMins=[],oppMins=[];
-  for(let i=0;i<myG;i++)myMins.push(Math.floor(Math.random()*87)+3);
-  for(let i=0;i<oppG;i++)oppMins.push(Math.floor(Math.random()*87)+3);
+  for(let i=0;i<myG;i++)myMins.push(Math.floor(Math.random()*(_hi-_lo+1))+_lo);
+  for(let i=0;i<oppG;i++)oppMins.push(Math.floor(Math.random()*(_hi-_lo+1))+_lo);
   myMins.sort((a,b)=>a-b);oppMins.sort((a,b)=>a-b);
   const _lang=G.lang||'it';
   const _isIt=_lang==='it';
@@ -6071,8 +6212,8 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
     function(m){return m+"' 💨 Fast break — cut out";},
   ]);
   const nMins=[];
-  for(let i=0;i<5;i++){let m=Math.floor(Math.random()*83)+5;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
-  let ms=0,os=0;
+  for(let i=0;i<_nTries;i++){let m=Math.floor(Math.random()*(_nHi-_nLo+1))+_nLo;if(!myMins.includes(m)&&!oppMins.includes(m))nMins.push(m);}
+  let ms=opts.startMy||0,os=opts.startOpp||0;
   const allEvs=[...myMins.map(m=>({m,t:'my'})),...oppMins.map(m=>({m,t:'opp'})),...nMins.map(m=>({m,t:'n',tpl:pick(nTpls)}))].sort((a,b)=>a.m-b.m);
   // Goal phrases — espanse + contestuali per stato del punteggio
   const _myGoalPhrases=_isIt?['in rete!','GOL!','che conclusione!','non perdona!','devastante!','firma il gol!','freddo davanti al portiere!','che diagonale!']:
@@ -6107,7 +6248,7 @@ function buildMatchLog(myG,oppG,myName,oppName,scorers,oppPlayers){
       evs.push({min:ev.m,text:ev.tpl(ev.m),cls:'ln',goal:false});
     }
   });
-  evs.push({min:90,text:`90' 🔔 ${_isIt?'Fischio finale':_isEs?'Pitido final':'Full time'} — ${myG}–${oppG}`,cls:'lw',final:true});
+  if(opts.final!==false)evs.push({min:90,text:`90' 🔔 ${_isIt?'Fischio finale':_isEs?'Pitido final':'Full time'} — ${opts.totalMy==null?myG:opts.totalMy}–${opts.totalOpp==null?oppG:opts.totalOpp}`,cls:'lw',final:true});
   return evs;
 }
 
@@ -6318,6 +6459,8 @@ function setMatchSpeed(s){
 
 function skipToResult(){
   M.speedKey='skip';
+  /* intervallo aperto: la scelta resta al giocatore, poi il resto scorre veloce */
+  if(M.half&&M.half.stage===1&&M.idx>=M.log.length)return;
   // Stop any running penalty kick sequence
   if(typeof P!=='undefined'&&P)P.done=true;
   // Process all remaining match events instantly
@@ -6326,6 +6469,13 @@ function skipToResult(){
     if(ev.goal){
       if(ev.mine){M.myS++;if(M.homeGoals&&ev.scorer)M.homeGoals[ev.scorer]=(M.homeGoals[ev.scorer]||0)+1;}
       else{M.oppS++;if(M.awayGoals&&ev.scorer)M.awayGoals[ev.scorer]=(M.awayGoals[ev.scorer]||0)+1;}
+    }
+    if(ev.ht&&M.half&&M.half.stage===1){
+      var _td=document.getElementById('m-timer');if(_td)_td.textContent=HT_MIN+"'";
+      document.getElementById('m-score').textContent=M.myS+' — '+M.oppS;
+      renderMatchLineups();
+      showHalftime();
+      return;
     }
   }
   document.getElementById('m-score').textContent=M.myS+' — '+M.oppS;
@@ -6405,10 +6555,43 @@ function runLog(){
     renderMatchLineups();
   }
 
+  if(ev.ht&&M.half&&M.half.stage===1){showHalftime();return;}
   if(ev.final){setTimeout(showResult,1000);return;}
 
   var delay=M.speedKey==='slow'?2400:M.speedKey==='fast'?200:(700+Math.random()*600);
   setTimeout(runLog,delay);
+}
+
+function _htHide(){
+  var b=document.getElementById('m-ht');
+  if(b){b.style.display='none';b.innerHTML='';}
+}
+function showHalftime(){
+  var H=M.half,box=document.getElementById('m-ht');
+  if(!H||H.stage!==1||!box)return;
+  var lead=H.myG1-H.oppG1;
+  H.w=htOppWeights(H.oppT0,H.oppG1-H.myG1);
+  H.hint=htHint(H.w,H.oppT0);
+  var opts=['attack','balanced','defend'].map(function(k){
+    var chip=htChip(k,H.hint);
+    return'<button type="button" class="ht-opt'+(k===H.myT0?' cur':'')+'" data-tac="'+k+'" onclick="htChoose(\''+k+'\')"><span>'+t('tac.btn_'+k)+'</span><small>'+t(k===H.myT0?'ht.keep':'ht.sub_'+k)+'</small><span class="ht-chip '+(chip==='edge'?'g':chip==='mismatch'?'r':'n')+'">'+t(chip==='edge'?'ht.edge':chip==='mismatch'?'ht.mismatch':'ht.even')+'</span></button>';
+  }).join('');
+  box.innerHTML='<div class="ht-h"><span class="ht-t" id="m-ht-title">'+t('ht.title')+'</span><span class="ht-s">'+t('ht.played')+' '+t('tac.btn_'+H.myT0)+'</span></div>'
+    +'<div class="ht-read">'+t(lead<0?'ht.read_trail':lead>0?'ht.read_lead':'ht.read_level')+'</div>'
+    +'<div class="ht-hint"><span aria-hidden="true">🔎</span><span>'+t('ht.hint_pre')+' <em>'+t('tac.btn_'+H.hint)+'</em>. '+t('ht.hint_post')+'</span></div>'
+    +'<div class="ht-opts" role="group" aria-label="'+t('ht.group_aria')+'">'+opts+'</div>'
+    +'<div class="ht-foot">'+t('ht.foot')+'</div>';
+  box.style.display='';
+  var cur=box.querySelector('.ht-opt.cur');
+  if(cur){try{cur.focus({preventScroll:true});}catch(e){}}
+}
+function htChoose(tac){
+  var H=M&&M.half;
+  if(!H||H.stage!==1||['attack','balanced','defend'].indexOf(tac)<0)return;
+  var r=H.resolve(tac);
+  _htHide();
+  _ga('halftime_choice',{tournament:G.gameMode||'ucl',phase:G.phase,from_tactic:H.myT0,to_tactic:tac,changed:tac!==H.myT0,opp_hint:H.hint,opp_actual:r.oppT,half_diff:H.myG1-H.oppG1});
+  if(M.speedKey==='skip')skipToResult();else runLog();
 }
 
 function matchNext(){showResult();}
