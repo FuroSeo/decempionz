@@ -813,20 +813,33 @@ h3{font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercas
 .mode-panel #home-challenge-banner,.mode-panel #home-daily-banner,.mode-panel #home-duel-banner{background:none!important;border:none!important;padding:0!important;margin:0!important;border-radius:0!important}
 .mode-panel #home-challenge-banner>div:first-child,.mode-panel #home-daily-banner>div:first-child,.mode-panel #home-duel-banner>div:first-child{display:none}
 </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG"></script>
+<!-- Google Analytics + Microsoft Clarity. Le code (dataLayer/gtag, coda di Clarity) restano sincrone
+     cosi' nessun evento di gioco tracciato da _ga() va perso; solo i due script esterni veri e propri
+     (gtag.js, clarity.ms) vengono richiesti dopo l'evento load, cosi' non competono con font/app.js/
+     game-data.js per banda e priorita' di rete durante il primo render (LCP). -->
 <script>
   window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
   gtag('js',new Date());
   gtag('config','G-F2ME1WYQHG',{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false});
-</script>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xciibosxg4");
+  (function(c,a){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};})(window,"clarity");
+  (function(){
+    function loadAnalyticsScripts(){
+      var g=document.createElement('script');
+      g.async=true;
+      g.src='https://www.googletagmanager.com/gtag/js?id=G-F2ME1WYQHG';
+      document.head.appendChild(g);
+      var t=document.createElement('script');
+      t.async=true;
+      t.src='https://www.clarity.ms/tag/xciibosxg4';
+      document.head.appendChild(t);
+    }
+    if(document.readyState==='complete'){
+      setTimeout(loadAnalyticsScripts,0);
+    }else{
+      window.addEventListener('load',function(){setTimeout(loadAnalyticsScripts,0);});
+    }
+  })();
 </script>
 </head>
 <body><script>
