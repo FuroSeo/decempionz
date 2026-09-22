@@ -10,7 +10,7 @@ const SHELL_ASSETS = [
 // Aggiornato da scripts/sync_asset_versions.py: gli URL con ?v= degli script dell'app.
 const VERSIONED_ASSETS = [
   '/game-data.js?v=595',
-  '/app.js?v=d07b6e391c'
+  '/app.js?v=2dbaa4bb84'
 ];
 const NAV_TIMEOUT_MS = 6000;
 const STATIC_ASSET_RE = /\.(?:css|js|png|jpe?g|gif|webp|svg|ico|woff2?|ttf)$/i;
