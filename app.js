@@ -7675,7 +7675,11 @@ function _devForceScore(myG,oppG){
   document.getElementById('dv-force-status').textContent='✅ Prossima partita forzata: '+myG+' – '+oppG;
 }
 
-/* ── Stress Test ── */
+/* ── Stress Test ──
+   Riusa lo stesso kernel della partita vera (evaluateLineup + computeMatchXG, con
+   l'avversario scalare "legacy" identico a quello di _runMatch quando non c'e' una
+   canonica) cosi' i numeri restano coerenti col bilanciamento reale invece di una
+   formula propria che puo' disallinearsi silenziosamente dal motore. */
 function _devStressTest(){
   if(!G.squad||G.squad.length<1){
     document.getElementById('dv-stress-result').innerHTML='<span style="color:#ef4444">⚠️ Clicca prima Top XI o Random XI</span>';
@@ -7688,36 +7692,25 @@ function _devStressTest(){
   var diffCfg=DIFF_CFG[G.difficulty||'normal'];
   var effOppStr=Math.max(5,oppStr+diffCfg.oppMod+extraMod);
 
-  var pl=G.squad;
-  var grp2={GK:[],DEF:[],MID:[],FWD:[]};
-  pl.forEach(function(p){grp2[posGroup(p.p)].push(p);});
-  var gkR=avg(grp2.GK.map(function(p){return p.r;}))||6;
-  var defR=avg(grp2.DEF.map(function(p){return p.r;}))||6;
-  var midR=avg(grp2.MID.map(function(p){return p.r;}))||6;
-  var fwdR=avg(grp2.FWD.map(function(p){return p.r;}))||6;
-  var atk=fwdR*.65+midR*.35, def2=defR*.70+gkR*.30;
-  var topR=Math.max.apply(null,pl.map(function(p){return p.r;}));
-  var sb=Math.max(0,(topR-8.5)*.06);
   var tac=G.tactic||'balanced';
-  var tm=TACT_MOD[tac]||TACT_MOD.balanced;
-  var mom=G.momentum||0;
+  var _formPos=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
+  var teamEval=evaluateLineup(G.slotPlayers,_formPos,G.formation,tac);
+  teamEval.chemistry=G.chem||{mul:1,pct:0,bonds:[]};
+
+  var oppEval={atk:effOppStr,def:effOppStr,starBonus:0,r10:{gk:0,def:0,midAtk:0,midDef:0,fwd:0},fmtT:'mid',chemistry:{mul:1,pct:0,bonds:[]}};
+  var oppBias=effOppStr-8;
+  var oppTacWeights=oppBias>.35?[.50,.35,.15]:oppBias<-.35?[.20,.40,.40]:[.33,.34,.33];
+  var momMod=(G.momentum||0)*0.03;
+  var adaptation=tacticAdaptation(G.tacticHistory,tac);
+  var xgOpts={xgMulA:G.coach&&G.coach.boost>1?G.coach.boost:1,xgAddA:momMod+adaptation.myAdd,xgAddB:-momMod*.35+adaptation.oppAdd,floor:.10,cap:2.6};
 
   var wins=0,draws=0,losses=0,gf=0,ga=0;
-  var ow=effOppStr>=8.5?[.50,.35,.15]:effOppStr<7?[.20,.40,.40]:[.33,.34,.33];
 
   for(var i=0;i<N;i++){
     var r=Math.random();
-    var ot=r<ow[0]?'attack':r<ow[0]+ow[1]?'balanced':'defend';
-    var ctKey=tac+'-'+ot;
-    var ct=COUNTER_MOD[ctKey]||[1,1];
-    var mxg=Math.max(0.13,((atk-effOppStr*.84)*.36+.56)*tm.myXG*ct[0]);
-    var oxg=Math.max(0.10,((effOppStr-def2*.80)*.42+.32)*tm.oppXG*ct[1]);
-    mxg=Math.min(mxg+sb,2.6);
-    mxg=Math.max(.10,Math.min(2.6,mxg+mom*.03));
-    oxg=Math.max(.08,Math.min(2.6,oxg-mom*.03*.35));
-    var diff3=Math.abs(mxg-oxg);
-    if(diff3<.35){var pull=.05*((.35-diff3)/.35);mxg-=pull;oxg-=pull;}
-    var mg=poisson(mxg),og=poisson(oxg);
+    var oppTactic=r<oppTacWeights[0]?'attack':r<oppTacWeights[0]+oppTacWeights[1]?'balanced':'defend';
+    var xg=computeMatchXG(Object.assign({},teamEval,{tactic:tac}),Object.assign({},oppEval,{tactic:oppTactic}),xgOpts);
+    var mg=poisson(xg.xa),og=poisson(xg.xb);
     gf+=mg;ga+=og;
     if(mg>og)wins++;else if(mg===og)draws++;else losses++;
   }
@@ -7738,7 +7731,7 @@ function _devStressTest(){
     +'<span style="color:#eab308">P '+draws+' ('+p(draws)+'%)</span>'
     +'<span style="color:#ef4444">🔴 S '+losses+' ('+p(losses)+'%)</span>'
     +'</div>'
-    +'<div style="font-size:.65rem;color:#555;margin-top:6px">Media gol: <strong style="color:#999">'+(gf/N).toFixed(2)+'</strong> – <strong style="color:#999">'+(ga/N).toFixed(2)+'</strong> per partita &nbsp;·&nbsp; atk <strong style="color:#999">'+atk.toFixed(2)+'</strong> def <strong style="color:#999">'+def2.toFixed(2)+'</strong></div>'
+    +'<div style="font-size:.65rem;color:#555;margin-top:6px">Media gol: <strong style="color:#999">'+(gf/N).toFixed(2)+'</strong> – <strong style="color:#999">'+(ga/N).toFixed(2)+'</strong> per partita &nbsp;·&nbsp; atk <strong style="color:#999">'+teamEval.atk.toFixed(2)+'</strong> def <strong style="color:#999">'+teamEval.def.toFixed(2)+'</strong></div>'
     +'</div>';
 }
 
