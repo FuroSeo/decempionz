@@ -295,6 +295,13 @@ def build_index(sets,slug_of,lang,n):
             for tid,t in sorted(teams.items(),key=lambda kv:(kv[1]['name'],kv[1]['season'])))
         sec.append('<h2>%s</h2><div class="rel">%s</div>'%(L['idx_sec']%(temoji,tourn_name,len(teams)),links))
     title=L['idx_title']%n;desc=L['idx_desc']%n
+    graph=json.dumps({"@context":"https://schema.org","@graph":[
+      {"@type":"CollectionPage","name":title,"description":desc,"url":hub_url,
+       "breadcrumb":{"@type":"BreadcrumbList","itemListElement":[
+         {"@type":"ListItem","position":1,"name":L['crumb_home'],"item":SITE+'/'},
+         {"@type":"ListItem","position":2,"name":L['crumb_hub'],"item":hub_url}]}},
+      {"@type":"ItemList","name":title,"url":hub_url,"numberOfItems":n}
+    ]},ensure_ascii=False)
     return '''<!DOCTYPE html>
 <html lang="%s">
 <head>
@@ -311,6 +318,7 @@ def build_index(sets,slug_of,lang,n):
 <meta property="og:image" content="%s/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+<script type="application/ld+json">%s</script>
 %s
 <style>%s</style>
 </head>
@@ -325,7 +333,7 @@ def build_index(sets,slug_of,lang,n):
 <footer>© 2026 Decempionz · <a href="/">%s</a><a href="%s">UCL</a><a href="%s">Copa</a><a href="%s">World Cup</a><a href="%s">%s</a></footer>
 </div>
 </body>
-</html>'''%(lang,esc(title),esc(desc),hub_url,hreflang_pair(None),esc(title),esc(desc),hub_url,SITE,GA,CSS,
+</html>'''%(lang,esc(title),esc(desc),hub_url,hreflang_pair(None),esc(title),esc(desc),hub_url,SITE,graph,GA,CSS,
     langsw(None,lang),L['crumb_home'],L['crumb_hub'],L['idx_h1']%n,L['idx_intro'],'\n'.join(sec),L['idx_cta'],
     L['foot_play'],L['tpage'](L['tourn']['ucl'][2]),L['tpage'](L['tourn']['copa'][2]),L['tpage'](L['tourn']['wc'][2]),
     '/about.html' if lang=='it' else '/en/about.html',L['foot_about'])
