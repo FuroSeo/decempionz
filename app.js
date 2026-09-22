@@ -3920,6 +3920,7 @@ function finalizeDraft(){
   // The 11th pick and the emergency fill happen after the last updateDraftScreen:
   // refresh Team Score / Chemistry so G.chem matches the final XI.
   try{renderDraftMetrics(G.squad.length);}catch(e){console.error('final draft metrics:',e);}
+  _ga('draft_complete',{tournament:G.dynasty?(G.gameMode||'ucl')+'_dynasty':(G.gameMode||'ucl'),era:G.tournament?G.tournament.id:'alltime',difficulty:G.difficulty||'normal',formation:G.formation||'',format:DUEL.mode?'duel':(G.format||'classic'),squad_size:G.squad.length});
   var _finalSquad=G.squad;
   setTimeout(function(){
     // The player may have left (Home / New Game) during the pause: never let this
@@ -6274,6 +6275,7 @@ function closeShareModal(){
 }
 
 function saveDraftLink(){
+  _ga('share_click',{method:'save_link',context:'campaign',tournament:G.gameMode||'ucl'});
   var lb=document.getElementById('draft-link-btn');
   var la=document.getElementById('draft-link-area');
   if(lb){lb.disabled=true;lb.textContent=t('share.saving');}
@@ -6713,7 +6715,7 @@ function _dailyFinish(isWinner,screenId){
     st.last=G.dailyPuzzle;
     st.hist[G.dailyPuzzle]=entry;
     _dailyStore(st);
-    _ga('daily_complete',{daily_num:G.dailyNum,grade:grade,winner:!!isWinner});
+    _ga('daily_complete',{daily_num:G.dailyNum,grade:grade,winner:!!isWinner,streak:st.streak});
   }
   if(!entry)entry={g:grade,res:res,win:isWinner?1:0,n:G.dailyNum};
   setTimeout(function(){_dailyInjectShare(entry,screenId);},400);
@@ -6839,6 +6841,7 @@ function _dailyShareText(entry,pz,st,standing){
     t('daily.share_cta')+' https://decempionz.com/?daily=1'].join('\n');
 }
 function _dailyShare(entry,pz){
+  _ga('share_click',{method:navigator.share?'native':'copy',context:'daily',daily_num:entry.n||pz.num});
   const st=_dailyLoad();
   const txt=_dailyShareText(entry,pz,st,_dailyStandingCache[_dailyStandingKey(pz.dateStr,entry)]);
   if(navigator.share){navigator.share({text:txt}).catch(function(){});return;}
@@ -7176,6 +7179,7 @@ function _buildShareText(){
 }
 
 function downloadShareCard(){
+  _ga('share_click',{method:'download',context:'campaign',tournament:G.gameMode||'ucl'});
   const canvas=document.getElementById('share-canvas');
   const a=document.createElement('a');
   a.download='decempionz-result.png';
@@ -7184,6 +7188,7 @@ function downloadShareCard(){
 }
 
 function nativeShare(){
+  _ga('share_click',{method:'native',context:'campaign',tournament:G.gameMode||'ucl'});
   const canvas=document.getElementById('share-canvas');
   const text=_buildShareText();
   canvas.toBlob(function(blob){
@@ -7204,6 +7209,7 @@ function nativeShare(){
 }
 
 function copyShareText(){
+  _ga('share_click',{method:'copy',context:'campaign',tournament:G.gameMode||'ucl'});
   _copyText(_buildShareText());
 }
 
