@@ -78,6 +78,8 @@ def build_lang_page(page,lang,h):
     out=re.sub(r'(<meta property="og:title" content=")[^"]*(">)',lambda m:m.group(1)+title+m.group(2),out,count=1)
     out=re.sub(r'(<meta property="og:description" content=")[^"]*(">)',lambda m:m.group(1)+desc+m.group(2),out,count=1)
     out=re.sub(r'<meta property="og:url" content="[^"]*">','<meta property="og:url" content="%s">'%url,out,count=1)
+    out=re.sub(r'(<meta name="twitter:title" content=")[^"]*(">)',lambda m:m.group(1)+title+m.group(2),out,count=1)
+    out=re.sub(r'(<meta name="twitter:description" content=")[^"]*(">)',lambda m:m.group(1)+desc+m.group(2),out,count=1)
     out=re.sub(r'[ \t]*<link rel="alternate" hreflang="[^"]*" href="[^"]*">\n?','',out)
     out=re.sub(r'<link rel="canonical" href="[^"]*">','<link rel="canonical" href="%s">\n%s'%(url,hreflang_block(page,page_langs)),out,count=1)
     out=out.replace('"url": "%s/%s.html"'%(SITE,page),'"url": "%s"'%url)
