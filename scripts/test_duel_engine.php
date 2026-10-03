@@ -40,9 +40,9 @@ $rmPlayers = [
     ['Di Stéfano','CF',10], ['Puskas','LW',10], ['Gento','LW',9],
 ];
 $barPlayers = [
-    ['Ter Stegen','GK',8], ['Alves','RB',8], ['Pique','CB',8], ['Mascherano','CB',8],
+    ['Ter Stegen','GK',8], ['Dani Alves','RB',8], ['Pique','CB',8], ['Mascherano','CB',8],
     ['Alba','LB',9], ['Busquets','CDM',9], ['Rakitic','CM',8], ['Iniesta','CM',10],
-    ['Messi','SS',10], ['Neymar','LW',9], ['Suarez','ST',9],
+    ['Lionel Messi','SS',10], ['Neymar','LW',9], ['Suarez','ST',9],
 ];
 
 $teamA = dcz_sanitize_team(team_fixture('Alpha', '4-3-3', 'attack', 'rm_5960', $rmPlayers));
