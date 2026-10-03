@@ -117,7 +117,7 @@ function dcz_duel_dataset_registry($path = null) {
         if (!preg_match('/players:\[(.*)\]\},?\s*$/u', $line, $playersMatch)) continue;
 
         $players = [];
-        preg_match_all('/\{n:\'((?:\\\\.|[^\'\\\\])*)\',p:\'([A-Z]+)\',r:(\d+)(?:,nat:\'((?:\\\\.|[^\'\\\\])*)\')?\}/u', $playersMatch[1], $matches, PREG_SET_ORDER);
+        preg_match_all('/\{n:\'((?:\\\\.|[^\'\\\\])*)\',p:\'([A-Z]+)\',r:(\d+)(?:,nat:\'((?:\\\\.|[^\'\\\\])*)\')?(?:,o:[\d.]+,d:[\d.]+)?\}/u', $playersMatch[1], $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
             $player = [
                 'n' => dcz_duel_js_unescape($match[1]),
