@@ -243,7 +243,14 @@ async function autoplay(page, problems, label, until, generic, timeoutMs) {
     }
 
     try {
-      if (s.cards) await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
+      if (s.cards) {
+        // Draft 2.0: un tap sulla carta ora solo la anteprima (il Draft Duel resta invece
+        // un tap singolo, server-authoritative, e non mostra mai questi chip). Se uno slot-chip
+        // compatibile e' gia' visibile, la carta e' gia' in anteprima: lo clicchiamo per confermare.
+        const compatChip = page.locator('.screen.active button.slot-chip.sc-compat').first();
+        if (await compatChip.count() > 0) await pointerClick(page, compatChip);
+        else await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
+      }
       else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
       else if (s.screen === 'screen-match' && s.rcont) await page.click('#btn-rcont', { timeout: 4000 });
       else if (s.screen === 'screen-match' && s.ht) {

@@ -140,36 +140,41 @@ for (const marker of ["function quickStart(){quickStartPreset('ucl');}","functio
   if (rbox.G.passes !== 2) throw new Error("A failed redraw must not leave reroll locked");
 }
 
-/* Anteprima con doppio tap solo per input touch, non per il mouse su schermi touch. */
+/* Draft 2.0 (2026-10): un tap sulla carta (mouse o touch, non c'e' piu' distinzione per
+   tipo di puntatore) deve SEMPRE solo mostrare l'anteprima dei ruoli compatibili, mai
+   assegnare subito la carta — l'assegnazione avviene solo toccando lo slot-chip scelto
+   (confirmDraftSlot -> draftPickToSlot), anche quando c'e' un solo ruolo compatibile. Il
+   Draft Duel (server-authoritative, lo slot lo sceglie il server) resta invece un tap
+   singolo che assegna subito, comportamento invariato. Vedi claude/gameplay-decisioni.md. */
 {
   const dStart = homepage.indexOf("var _draftPreviewIdx=-1;");
   const dEnd = homepage.indexOf("document.addEventListener('touchstart'", dStart);
   if (dStart < 0 || dEnd < 0) throw new Error("draftTap not found");
-  const handlers = {};
+  const src = homepage.slice(dStart, dEnd);
+
   const picks = [], previews = [];
   const dbox = {
-    window:{matchMedia:()=>({matches:false}),ontouchstart:null},
-    document:{addEventListener:(ev,fn)=>{handlers[ev]=fn;},querySelectorAll:()=>[]},
+    DUEL:{mode:false},
+    document:{querySelectorAll:()=>[]},
     draftPick:i=>picks.push(i),previewCard:i=>previews.push(i)
   };
   vm.createContext(dbox);
-  vm.runInContext(homepage.slice(dStart, dEnd), dbox, {filename:"index.html#draft-tap"});
-  handlers.pointerdown({pointerType:"mouse"});
+  vm.runInContext(src, dbox, {filename:"index.html#draft-tap"});
   dbox.draftTap(1);
-  if (picks.join() !== "1" || previews.length) throw new Error("Mouse click must pick immediately even on touch-capable desktops");
-  handlers.pointerdown({pointerType:"touch"});
+  dbox.draftTap(1);
   dbox.draftTap(2);
-  if (picks.length !== 1 || previews.join() !== "2") throw new Error("First touch tap must only preview");
-  dbox.draftTap(2);
-  if (picks.join() !== "1,2") throw new Error("Second touch tap must confirm the pick");
-  handlers.pointerdown({pointerType:"mouse"});
-  dbox.draftTap(0);
-  if (picks.join() !== "1,2,0") throw new Error("Switching back to mouse must pick immediately");
-  const coarse = {window:{matchMedia:()=>({matches:true})},document:{addEventListener(){},querySelectorAll:()=>[]},draftPick(){},previewCard:i=>coarse.p=i};
-  vm.createContext(coarse);
-  vm.runInContext(homepage.slice(dStart, dEnd), coarse, {filename:"index.html#draft-tap-coarse"});
-  coarse.draftTap(1);
-  if (coarse.p !== 1) throw new Error("A coarse primary pointer must start in preview mode");
+  if (previews.join() !== "1,1,2" || picks.length) throw new Error("A tap on a draft card (even a repeat tap on the same card) must only preview it — picking must always go through a slot-chip, never a direct card tap");
+
+  const duelPicks = [], duelPreviews = [];
+  const duelBox = {
+    DUEL:{mode:true,draftSessionId:"s1"},
+    document:{querySelectorAll:()=>[]},
+    draftPick:i=>duelPicks.push(i),previewCard:i=>duelPreviews.push(i)
+  };
+  vm.createContext(duelBox);
+  vm.runInContext(src, duelBox, {filename:"index.html#draft-tap-duel"});
+  duelBox.draftTap(3);
+  if (duelPicks.join() !== "3" || duelPreviews.length) throw new Error("Duel draft must still pick instantly on a single tap (server chooses the slot), unlike the normal draft");
 }
 /* Il Duel non e' una campagna: il suo draft non deve contare come campagna iniziata (statistiche
    personali e globali), altrimenti la percentuale di campagne vinte cala a ogni duello. */

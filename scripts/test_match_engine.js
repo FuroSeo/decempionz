@@ -342,11 +342,19 @@ if (!homepage.includes("const adaptation=tacticAdaptation(G.tacticHistory") ||
     !homepage.includes("'match.adaptation':'Opponent adaptation'")) {
   fail("Match Engine v7 campaign adaptation lifecycle or diagnostics are missing");
 }
+// Draft 2.0 (2026-10): l'impatto non sta piu' su un solo slot assunto a livello di carta
+// (vecchio currentDraftPlacement(p) dentro renderThreeCards) ma su OGNI slot compatibile,
+// cliccabile singolarmente — vedi claude/gameplay-decisioni.md, filone mappatura impatto
+// tecnico. allCurrentDraftPlacements/renderSlotChips(impacts)/confirmDraftSlot sono la nuova
+// catena draft-tap-anteprima -> slot-tap-conferma, mai piu' un'assegnazione automatica.
 if (!homepage.includes("function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slotIndex)") ||
-    !homepage.includes("const impact=currentDraftPlacement(p)") ||
-    !homepage.includes("'draft.impact_score':'Score'") ||
+    !homepage.includes("function allDraftPlacements(player,candidates,players,positions,formation,tactic,mode)") ||
+    !homepage.includes("function allCurrentDraftPlacements(player)") ||
+    !homepage.includes("function renderSlotChips(impacts)") ||
+    !homepage.includes("function confirmDraftSlot(slotIndex)") ||
+    !homepage.includes("function draftPickToSlot(i,slotIndex)") ||
     homepage.includes("if(blind&&impact)")) {
-  fail("Draft 2.0 impact preview or Blind Draft protection is missing");
+  fail("Draft 2.0 multi-slot impact preview or manual role choice wiring is missing");
 }
 
 // Scorer attribution must use the event's scorer, never the log text that also
