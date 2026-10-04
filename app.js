@@ -1716,7 +1716,7 @@ const G = {
 /* ═══════════════════════════════════════
    HELPERS
 ═══════════════════════════════════════ */
-function showScreen(id){if(id==='screen-home'){switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}try{_syncModeCells();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
+function showScreen(id){if(id==='screen-home'){if(G.dailyPrevMode){G.gameMode=G.dailyPrevMode;G.dailyPrevMode=null;}switchTournTab(G.gameMode||'ucl');_renderGamesCounter();try{_loadDailyBanner();}catch(e){}try{duelRenderHomeStatus();}catch(e){}try{_syncModeCells();}catch(e){}};if(id==='screen-format'){_syncFormatBadge();_syncFormatCards();}if(id==='screen-formation'||id==='screen-draft')_syncFormatBadge();if(id==='screen-draft')setTimeout(_tutMaybe,700);document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);var _lb=document.getElementById('lang-btn');if(_lb){var _safe=['screen-home','screen-format','screen-formation','screen-era','screen-howto','screen-hof','screen-trophies'].indexOf(id)!==-1;_lb.style.opacity=_safe?'1':'0.35';_lb.style.pointerEvents=_safe?'':'none';}}
 function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 // Pick knockout opponents in sequence, never repeating a club already faced
 function _draftedTeamNames(){
@@ -6699,6 +6699,10 @@ function _loadDailyBanner(){
 function startDailyPuzzle(replay){
   const pz=getDailyPuzzle();
   G.dailyPuzzle=pz.dateStr;G.dailyNum=pz.num;G.dailyReplay=!!replay;
+  /* la Daily ha una modalita' propria (random per giorno) che non deve sostituire in
+     modo permanente il tab home dell'utente: la salviamo e la ripristiniamo al rientro
+     in home (vedi showScreen, stesso pattern del reset di G.dailyPuzzle in applyTournament). */
+  G.dailyPrevMode=G.gameMode||'ucl';
   if(typeof DUEL!=='undefined')DUEL.mode=null;
   if(!replay){try{localStorage.setItem('dcz_daily_run',pz.dateStr);}catch(e){}}
   G.gameMode=pz.mode;
