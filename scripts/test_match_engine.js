@@ -138,8 +138,13 @@ approx(evaluated.lines.GK, 8, 1e-9, "goalkeeper line");
 approx(evaluated.lines.DEF, 8.01, 1e-9, "defensive line");
 approx(evaluated.lines.MID, 8.345, 1e-9, "midfield line");
 approx(evaluated.lines.FWD, 9.32, 1e-9, "forward line");
-approx(evaluated.atk, 8.97875, 1e-9, "attack rating");
-approx(evaluated.def, 8.007, 1e-9, "defence rating");
+// Off/Def engine (2026-10): atk/def are now a weighted average over all 11 players
+// by continuous per-role attack/defence weight (ROLE_ATK_WEIGHT), not the old 65/35
+// FWD/MID and 70/30 DEF/GK group split. This fixture has no o/d fields, so both fall
+// back to r; values recomputed against the real engine + the real-dataset calibration
+// constants (OFFDEF_CAL, see claude/gameplay-decisioni.md).
+approx(evaluated.atk, 9.039130265848671, 1e-9, "attack rating");
+approx(evaluated.def, 8.527401963993453, 1e-9, "defence rating");
 if (evaluated.score !== 84 || evaluated.fit !== 97) {
   fail("Team Score / fit fixture changed: " + evaluated.score + "/" + evaluated.fit);
 }
