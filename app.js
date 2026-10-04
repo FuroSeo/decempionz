@@ -3262,7 +3262,7 @@ function evaluateDraftImpact(players,positions,formation,tactic,mode,player,slot
     scoreDelta:after.score-before.score,fitDelta:after.fit-before.fit,chemDelta:afterChem-beforeChem,
     chemistry:afterChem};
 }
-function bestDraftPlacement(player,candidates,players,positions,formation,tactic,mode){
+function allDraftPlacements(player,candidates,players,positions,formation,tactic,mode){
   var impacts=(candidates||[]).map(function(slot){
     return evaluateDraftImpact(players,positions,formation,tactic,mode,player,slot.i);
   });
@@ -3270,11 +3270,22 @@ function bestDraftPlacement(player,candidates,players,positions,formation,tactic
     var an=a.slot===player.p?1:0,bn=b.slot===player.p?1:0;
     return b.after.score-a.after.score||b.after.fit-a.after.fit||bn-an||a.slotIndex-b.slotIndex;
   });
+  return impacts;
+}
+function bestDraftPlacement(player,candidates,players,positions,formation,tactic,mode){
+  var impacts=allDraftPlacements(player,candidates,players,positions,formation,tactic,mode);
   return impacts[0]||null;
 }
 function currentDraftPlacement(player){
   var positions=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
   return bestDraftPlacement(player,compatibleEmptySlots(player),G.slotPlayers,positions,G.formation,G.draftTactic||G.tactic||'balanced',G.gameMode);
+}
+/* Come currentDraftPlacement ma per OGNI slot compatibile, non solo il migliore: alimenta
+   i chip-slot cliccabili del draft (scelta manuale del ruolo), non solo la vecchia anteprima
+   a singolo slot assunto. */
+function allCurrentDraftPlacements(player){
+  var positions=fmtPositions(G.formation,G.draftTactic||G.tactic||'balanced');
+  return allDraftPlacements(player,compatibleEmptySlots(player),G.slotPlayers,positions,G.formation,G.draftTactic||G.tactic||'balanced',G.gameMode);
 }
 function filledCount(){
   return G.slotPlayers.filter(function(p){return p!==null;}).length;
@@ -3649,20 +3660,38 @@ function updateDraftScreen(){
     pssBtn.innerHTML='↺ Reroll <span id="d-pc">('+G.passes+')</span>';
   }
 
+  _draftPreviewIdx=-1;
   renderThreeCards();
   renderSlotChips(null);
   renderDraftPitch(null);
 }
 
-function renderSlotChips(compatIndices){
+/* impacts: array di evaluateDraftImpact (uno per slot compatibile della carta in anteprima,
+   vedi allCurrentDraftPlacements) oppure null/[] quando nessuna carta e' in anteprima. Ogni
+   slot compatibile diventa un bottone cliccabile con il proprio impatto (non piu' un singolo
+   badge sulla carta): la scelta del ruolo e' dell'utente, non automatica. */
+function renderSlotChips(impacts){
   var el=document.getElementById('d-slot-chips');
   if(!el)return;
   var positions=fmtPositions(G.formation,G.tactic);
+  var blind=!!(G&&G.blindDraft);
+  var byIdx={};
+  (impacts||[]).forEach(function(imp){byIdx[imp.slotIndex]=imp;});
+  var prevP=(impacts&&impacts.length&&typeof _draftPreviewIdx!=='undefined'&&_draftPreviewIdx>=0&&G.draftCards)?G.draftCards[_draftPreviewIdx]:null;
   el.innerHTML=positions.map(function(pos,i){
     var filled=G.slotPlayers[i]!==null;
-    var compat=!filled&&compatIndices&&compatIndices.indexOf(i)>=0;
-    var cls=filled?'sc-filled':(compat?'sc-compat':'sc-empty');
-    return'<span class="slot-chip '+cls+'">'+pos+'</span>';
+    var imp=byIdx[i];
+    var cls=filled?'sc-filled':(imp?'sc-compat':'sc-empty');
+    if(!imp)return'<span class="slot-chip '+cls+'">'+pos+'</span>';
+    var detail='';
+    if(!blind){
+      var sgn=function(v){return v>0?'+'+v:String(v);};
+      var pen=prevP?slotPenalty(pos,prevP.p):0;
+      detail='<span class="slot-chip-detail">'+sgn(imp.scoreDelta)
+        +' <span class="sc-chem">\ud83d\udd17'+sgn(imp.chemDelta)+'%</span>'
+        +(pen>0?' <span class="sc-warn">\u26a0\ufe0f</span>':'')+'</span>';
+    }
+    return'<button type="button" class="slot-chip '+cls+'" onclick="confirmDraftSlot('+i+')"><span>'+pos+'</span>'+detail+'</button>';
   }).join('');
 }
 function renderThreeCards(){
@@ -3672,8 +3701,6 @@ function renderThreeCards(){
   const n=G.draftCards.length;
   container.innerHTML='<div style="display:flex;gap:6px;justify-content:center;padding:4px 0;overflow:hidden">'
     +G.draftCards.map(function(p,i){
-      const empSlots=compatibleEmptySlots(p);
-      const _empSorted=empSlots.slice().sort(function(a,b){var pf=function(s){return s.pos===p.p?0:posGroup(s.pos)===posGroup(p.p)?1:2;};return pf(a)-pf(b);});
       var _aDB=_activeTeams();
       const teamEntry=_aDB[p.teamId]||TEAMS[p.teamId]||null;
       const season=teamEntry?(teamEntry.season.length<=4?teamEntry.season:"'"+teamEntry.season.slice(-2)):'';
@@ -3682,65 +3709,35 @@ function renderThreeCards(){
       const col=(WC_JERSEY_COLORS[p.teamId]||COPA_JERSEY_COLORS[p.teamId]||JERSEY_COLORS[p.teamId])||'#555';
       const blind=!!(G&&G.blindDraft);
       const tierCss=blind?'border:1px solid var(--brd)':slotTierCss(p.r);
-      const impact=currentDraftPlacement(p);
-      const targetSlot=impact?impact.slot:(_empSorted[0]?_empSorted[0].pos:'');
       const isElite=p.r>=9.5;
       const pg=posGroup(p.p);
       const posClass_=pgClass(pg);
-      const light=document.body.getAttribute('data-theme')==='light';
-      const ratingCol=p.r>=9.0?(light?'#a07800':'#ffd700'):p.r>=8.5?(light?'#666':'#aaaaaa'):(light?'#7a6030':'#8a7050');
       const maxW=n===1?'260px':n===2?'180px':'140px';
       const nameSz=draftNameSz(p.n,isElite);
-      var chemBadge='';
-      try{
-        var _tI=_empSorted[0]?_empSorted[0].i:-1;
-        if(_tI>=0){
-          var _posArr=fmtPositions(G.formation,G.tactic);
-          var _cur=calcChemistry(G.slotPlayers,_posArr,G.gameMode);
-          var _sim=G.slotPlayers.slice();_sim[_tI]=p;
-          var _d=calcChemistry(_sim,_posArr,G.gameMode).pct-_cur.pct;
-          if(_d>0)chemBadge='<div class="chem-cbadge'+(_d>=3?' big':'')+'">🔗 +'+_d+'%</div>';
-        }
-      }catch(e){}
-      var impactBadge='';
-      if(!blind&&impact){
-        var _sd=impact.scoreDelta,_fd=impact.fitDelta,_cd=impact.chemDelta;
-        var _sgn=function(v){return v>0?'+'+v:String(v);};
-        impactBadge='<div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-top:3px">'
-          +'<span class="draft-impact">'+t('draft.impact_score')+' '+impact.after.score+' ('+_sgn(_sd)+')</span>'
-          +'<span class="draft-impact">'+t('draft.impact_fit')+' '+impact.after.fit+'% ('+_sgn(_fd)+')</span>'
-          +'<span class="draft-impact chem">🔗 '+_sgn(_cd)+'%</span></div>';
-      }
       const starBadge=(!blind&&isElite)?'<div style="font-size:.55rem;font-weight:900;letter-spacing:1.8px;color:#fbbf24;background:rgba(251,191,36,.12);border:0.5px solid rgba(251,191,36,.45);padding:2px 10px;border-radius:10px;margin-top:4px">★ LEGEND</div>':'';
-      // Out-of-position badge
-      var _pen=targetSlot?slotPenalty(targetSlot,p.p):0;
-      var oopBadge='';
-      var _skipBadges=blind;
-      if(!_skipBadges&&_pen>=0.15)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ff6b6b;background:rgba(255,80,80,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ ADATTATO</div>';
-      else if(!_skipBadges&&_pen>0)oopBadge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#f59e0b;background:rgba(245,158,11,.13);padding:1px 6px;border-radius:3px;margin-top:2px">⚠️ ADATTATO</div>';
-      // r=10 positional bonus badge
-      var r10Badge='';
-      if(!blind&&p.r>=10){var _pg10=posGroup(p.p);r10Badge='<div style="font-size:.5rem;font-weight:800;letter-spacing:1px;color:#ffd700;background:rgba(255,215,0,.12);padding:1px 6px;border-radius:3px;margin-top:1px">'
-        +(_pg10==='GK'?'🛡️ +DEF':_pg10==='DEF'?'🛡️ +DEF':_pg10==='MID'?'⚡ +MID':'⚡ +ATT')+'</div>';}
-      var _ci=empSlots.map(function(s){return s.i;});
-      return'<button type="button" onclick="draftTap('+i+')" onmouseenter="previewCard('+i+')" onmouseleave="clearPreview()" class="draft-pick-card"'
+      /* Due valori (Offensivo/Difensivo) al posto del rating singolo: fallback su p.r per i rari
+         giocatori senza o/d ancora assegnati (vedi claude/gameplay-decisioni.md). Il badge di
+         impatto/fuori ruolo che prima stava qui si e' spostato sul singolo slot-chip (vedi
+         renderSlotChips), perche' ora puo' cambiare da uno slot compatibile all'altro. */
+      const offVal=p.o!=null?p.o:p.r;
+      const defVal=p.d!=null?p.d:p.r;
+      const odRow=blind
+        ?'<span style="font-size:.75rem;font-weight:900;color:var(--mut)">?</span>'
+        :'<div class="card-od-pill atk"><span class="lbl">ATT</span>'+offVal.toFixed(1)+'</div>'
+          +'<div class="card-od-pill def"><span class="lbl">DIF</span>'+defVal.toFixed(1)+'</div>';
+      return'<button type="button" onclick="draftTap('+i+')" class="draft-pick-card"'
         +' style="'+tierCss
         +';border-radius:10px;padding:12px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px'
         +';cursor:pointer;min-width:0;flex:1;max-width:'+maxW+';text-align:center;font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;transition:transform .1s,box-shadow .1s;position:relative">'
         +playerSprite(col)
         +starBadge
-        +r10Badge
-        +oopBadge
-        +chemBadge
-        +impactBadge
         +'<div style="font-size:.6rem;font-weight:600;color:var(--mut);letter-spacing:.03em;margin-top:2px">'+countryFlag+displayClub+(season?' · '+season:'')+'</div>'
         +'<div style="font-size:'+nameSz+';font-weight:900;color:var(--text);line-height:1.15;max-width:100%;overflow:hidden;word-break:break-word">'+p.n+'</div>'
         +(p.nat&&!blind?'<div style="font-size:.8rem;line-height:1;margin-top:1px">'+natFlag(p.nat)+'</div>':'')
         +'<div style="display:flex;align-items:center;gap:4px;margin-top:2px">'
           +'<span class="prc-pos-badge '+posClass_+'" style="font-size:.55rem;padding:2px 5px">'+p.p+'</span>'
-          +(blind?'<span style="font-size:.75rem;font-weight:900;color:var(--mut)">?</span>':'<span style="font-size:'+(isElite?'.85':'.75')+'rem;font-weight:900;color:'+ratingCol+'">'+p.r+'</span>')
         +'</div>'
-        +'<div style="font-size:.58rem;color:var(--mut);margin-top:3px">→ '+targetSlot+' slot</div>'
+        +'<div class="card-od-row">'+odRow+'</div>'
         +'</button>';
     }).join('')
     +'</div>';
@@ -3750,77 +3747,86 @@ function renderThreeCards(){
   }
 }
 
+/* Resta usata solo dal Draft Duel (server-authoritative: e' il server a scegliere lo slot,
+   stesso comportamento di sempre, vedi duel-draft-lib.php). Il draft normale (campagna/Daily/
+   Dynasty) passa invece da draftPickToSlot, che richiede lo slot scelto a mano dall'utente —
+   vedi claude/gameplay-decisioni.md, filone mappatura impatto tecnico. */
 function draftPick(i){
   if(typeof DUEL!=='undefined'&&DUEL.mode&&DUEL.draftSessionId){_duelDraftAction('pick',i);return;}
+}
+
+/* Assegna la carta i allo slotIndex scelto esplicitamente dall'utente (mai piu' calcolato in
+   automatico come la vecchia bestDraftPlacement). Chiamata solo da confirmDraftSlot, mai
+   direttamente da un tap sulla carta: la carta mostra solo l'anteprima (vedi previewCard),
+   l'assegnazione vera avviene sempre toccando lo slot-chip. */
+function draftPickToSlot(i,slotIndex){
   if(G.draftLock)return;
   G.draftLock=true;
   try{
     const p=G.draftCards[i];
     if(!p){G.draftLock=false;return;}
     const empSlots=compatibleEmptySlots(p);
-    if(empSlots.length===0){G.draftLock=false;return;}
-    const _impact=currentDraftPlacement(p);
-    const bestSlot=_impact?{i:_impact.slotIndex,pos:_impact.slot}:empSlots[0];
-    G.slotPlayers[bestSlot.i]=p;
+    const chosen=empSlots.find(function(s){return s.i===slotIndex;});
+    if(!chosen){G.draftLock=false;return;}
+    G.slotPlayers[chosen.i]=p;
     G.accepted.push(p);
     _dczStatsPlayerDrafted(p.n);
     // Salva le carte non scelte nel pool riciclo
     if(!G.draftDiscarded)G.draftDiscarded=[];
     G.draftCards.forEach(function(c,ci){if(ci!==i&&c)G.draftDiscarded.push(c);});
     G.draftCards=[];
+    _draftPreviewIdx=-1;
     if(filledCount()>=11){finalizeDraft();return;}
     drawDraftCards();
     G.draftLock=false;
     updateDraftScreen();
   }catch(e){
-    console.error('draftPick error:',e);
+    console.error('draftPickToSlot error:',e);
     G.draftLock=false;
     try{updateDraftScreen();}catch(e2){console.error('recovery failed:',e2);}
   }
 }
-
+/* Tap su uno slot-chip evidenziato (vedi renderSlotChips): conferma la carta attualmente in
+   anteprima su quello slot preciso. */
+function confirmDraftSlot(slotIndex){
+  if(_draftPreviewIdx<0)return;
+  draftPickToSlot(_draftPreviewIdx,slotIndex);
+}
 
 function previewCard(i){
   if(G.draftCards&&G.draftCards[i]){
+    _draftPreviewIdx=i;
     var p=G.draftCards[i];
-    var empSlots=compatibleEmptySlots(p);
-    var _ci=empSlots.map(function(s){return s.i;});
-    renderSlotChips(_ci);
+    renderSlotChips(allCurrentDraftPlacements(p));
     renderDraftPitch(p);
   }
 }
 function clearPreview(){
+  _draftPreviewIdx=-1;
   renderSlotChips(null);
   renderDraftPitch(null);
 }
 var _draftPreviewIdx=-1;
-/* Il doppio tap (anteprima poi conferma) serve solo con input touch. 'ontouchstart' in window è vero
-   anche sui desktop con schermo touch, dove un normale click del mouse restava in anteprima:
-   si usa il tipo dell'ultimo puntatore, con il puntatore primario come valore iniziale. */
-var _lastPointerType=(function(){try{return window.matchMedia&&window.matchMedia('(pointer: coarse)').matches?'touch':'mouse';}catch(e){return 'mouse';}})();
-document.addEventListener('pointerdown',function(e){if(e&&e.pointerType)_lastPointerType=e.pointerType;},true);
+/* Scelta manuale del ruolo, sempre in due passaggi (anteprima poi conferma sullo slot), per
+   qualunque tipo di puntatore — mouse incluso, non piu' solo touch — anche quando la carta ha
+   un solo slot compatibile: vedi la nota di ritmo del 2026-10-02 in claude/gameplay-decisioni.md.
+   Il Draft Duel (server-authoritative) resta invece un tap singolo, vedi draftPick sopra. */
 function draftTap(i){
-  if(_lastPointerType!=='touch'){draftPick(i);return;}
-  if(_draftPreviewIdx===i){
-    _draftPreviewIdx=-1;
-    var cards=document.querySelectorAll('.draft-pick-card');
-    cards.forEach(function(c){c.style.opacity='1';c.style.transform='';});
-    draftPick(i);
-  }else{
-    _draftPreviewIdx=i;
-    previewCard(i);
-    var cards=document.querySelectorAll('.draft-pick-card');
-    cards.forEach(function(c,j){
-      c.style.opacity=j===i?'1':'0.4';
-      c.style.transform=j===i?'scale(1.05)':'scale(0.96)';
-    });
-  }
+  if(typeof DUEL!=='undefined'&&DUEL.mode&&DUEL.draftSessionId){draftPick(i);return;}
+  previewCard(i);
+  var cards=document.querySelectorAll('.draft-pick-card');
+  cards.forEach(function(c,j){
+    c.style.opacity=j===i?'1':'0.4';
+    c.style.transform=j===i?'scale(1.05)':'scale(0.96)';
+  });
 }
 document.addEventListener('touchstart',function(e){
   if(_draftPreviewIdx>=0){
     var cards=document.querySelectorAll('.draft-pick-card');
+    var chipsEl=document.getElementById('d-slot-chips');
     var tappedCard=Array.from(cards).some(function(c){return c.contains(e.target);});
-    if(!tappedCard){
+    var tappedChips=!!(chipsEl&&chipsEl.contains(e.target));
+    if(!tappedCard&&!tappedChips){
       _draftPreviewIdx=-1;
       clearPreview();
       cards.forEach(function(c){c.style.opacity='1';c.style.transform='';});
