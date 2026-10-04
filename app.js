@@ -1750,12 +1750,15 @@ const MATCH_DEFENSIVE_FORMATIONS={'5-3-2':1,'5-4-1':1,'4-5-1':1,'3-6-1':1};
 
 /* Pure lineup evaluation shared by campaign and browser Duel. Ratings belong to the
    occupied slot department: positional adaptation changes both fit and tactical output. */
+const ROLE_ATK_WEIGHT={GK:.05,CB:.10,RB:.25,LB:.25,CDM:.30,CM:.50,CAM:.75,RM:.65,LM:.65,RW:.80,LW:.80,SS:.85,CF:.85,ST:.92};
+const OFFDEF_CAL={atk:0.3723,def:0.3966};
 function evaluateLineup(players,positions,formation,tactic){
   var groups={GK:[],DEF:[],MID:[],FWD:[]};
   var effective={GK:[],DEF:[],MID:[],FWD:[]};
   var allEffective=[],penaltyTotal=0,filled=0;
   var r10={gk:0,def:0,midAtk:0,midDef:0,fwd:0};
   var starRating=0;
+  var atkNum=0,atkDen=0,defNum=0,defDen=0;
   (players||[]).forEach(function(p,i){
     if(!p)return;
     var slotP=(positions&&positions[i])||p.p;
@@ -1773,15 +1776,22 @@ function evaluateLineup(players,positions,formation,tactic){
       else if(group==='MID'){r10.midAtk+=.03;r10.midDef+=.02;}
       else r10.fwd+=.04;
     }
+    var off=p.o!=null?p.o:p.r,def_=p.d!=null?p.d:p.r;
+    var wA=ROLE_ATK_WEIGHT[slotP];if(wA==null)wA=.5;
+    var wD=1-wA;
+    atkNum+=off*(1-penalty)*wA;atkDen+=wA;
+    defNum+=def_*(1-penalty)*wD;defDen+=wD;
   });
   var gkR=avg(effective.GK)||6;
   var defR=avg(effective.DEF)||6;
   var midR=avg(effective.MID)||6;
   var fwdR=avg(effective.FWD)||6;
+  var atkRaw=atkDen?atkNum/atkDen:6;
+  var defRaw=defDen?defNum/defDen:6;
   var fmtT=MATCH_OFFENSIVE_FORMATIONS[formation]?'off':MATCH_DEFENSIVE_FORMATIONS[formation]?'def':'mid';
   return{
-    atk:fwdR*.65+midR*.35,
-    def:defR*.70+gkR*.30,
+    atk:atkRaw+OFFDEF_CAL.atk,
+    def:defRaw+OFFDEF_CAL.def,
     starBonus:Math.max(0,(starRating-8.5)*.06),
     r10:r10,
     tactic:['attack','balanced','defend'].includes(tactic)?tactic:'balanced',
@@ -4493,8 +4503,9 @@ function attackContributors(players,positions){
     if(!p)return null;
     var slot=(positions&&positions[i])||p.p,group=posGroup(slot);
     if(group==='GK')return null;
-    var effective=p.r*(1-slotPenalty(slot,p.p));
-    var goalRole=group==='FWD'?1.75:group==='MID'?1:.28;
+    var off=p.o!=null?p.o:p.r;
+    var effective=off*(1-slotPenalty(slot,p.p));
+    var goalRole=ROLE_ATK_WEIGHT[slot];if(goalRole==null)goalRole=.5;
     var assistRole=group==='MID'?1.45:group==='FWD'?1:.55;
     return{n:p.n,p:p.p,slot:slot,r:p.r,effective:effective,
       goalWeight:Math.pow(effective,2)*goalRole*(p.r>=10?1.12:1),
