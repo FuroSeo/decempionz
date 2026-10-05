@@ -23,20 +23,28 @@ const sandbox = {
   applyTournament(era){calls.push(["era",era.id]);sandbox.G.formation=null;sandbox.G.tactic="balanced";},
   applyTournamentTheme(mode){calls.push(["theme",mode]);},
   _ga(name,data){calls.push([name,data]);},
+  renderFormationGrid(){calls.push(["renderFormationGrid"]);sandbox.G.formation=null;},
+  showScreen(id){calls.push(["showScreen",id]);},
+  setTimeout(){/* visual-only tactic button reset, not exercised by this unit test */},
   initDraft(){calls.push(["draft",sandbox.G.gameMode,sandbox.G.formation]);}
 };
 vm.createContext(sandbox);
 vm.runInContext(homepage.slice(start,end),sandbox,{filename:"index.html#quick-start"});
 
-for (const [mode,formation,era] of [["ucl","4-3-3","alltime"],["copa","4-4-2","copa_alltime"],["wc","4-3-3","wc_alltime"]]) {
-  calls.length=0;blind.checked=true;sandbox.G.dynasty=true;sandbox.G.dynastyClub="old";sandbox.G.blindDraft=true;
+/* Da quando Gioca subito mostra anche la scelta del modulo, non entra piu' nel
+   Draft in automatico: deve fermarsi sulla schermata formazione con un modulo
+   ancora da scegliere (G.formation===null), non piu' su un preset fisso. */
+for (const [mode,era] of [["ucl","alltime"],["copa","copa_alltime"],["wc","wc_alltime"]]) {
+  calls.length=0;blind.checked=true;sandbox.G.dynasty=true;sandbox.G.dynastyClub="old";sandbox.G.blindDraft=true;sandbox.G.formation="5-4-1";
   sandbox.quickStartPreset(mode);
-  if (sandbox.G.gameMode!==mode || sandbox.G.formation!==formation) throw new Error(mode+" preset mismatch");
+  if (sandbox.G.gameMode!==mode || sandbox.G.formation!==null) throw new Error(mode+" must clear the stale formation and wait for a pick");
   if (sandbox.G.format!=="classic" || sandbox.G.difficulty!=="normal" || sandbox.G.tactic!=="balanced") throw new Error(mode+" safe defaults missing");
   if (sandbox.G.dynasty || sandbox.G.dynastyClub!==null || sandbox.G.blindDraft || blind.checked) throw new Error(mode+" leaked stale mode state");
   if (!calls.some(c=>c[0]==="era"&&c[1]===era)) throw new Error(mode+" All Time era missing");
-  if (!calls.some(c=>c[0]==="quick_start"&&c[1].formation===formation)) throw new Error(mode+" analytics missing");
-  if (!calls.some(c=>c[0]==="draft"&&c[1]===mode&&c[2]===formation)) throw new Error(mode+" did not enter Draft directly");
+  if (!calls.some(c=>c[0]==="quick_start"&&c[1].tournament===mode&&c[1].format==="classic"&&c[1].era==="alltime"&&c[1].difficulty==="normal")) throw new Error(mode+" analytics missing");
+  if (!calls.some(c=>c[0]==="renderFormationGrid")) throw new Error(mode+" did not show the formation picker");
+  if (!calls.some(c=>c[0]==="showScreen"&&c[1]==="screen-formation")) throw new Error(mode+" did not navigate to the formation screen");
+  if (calls.some(c=>c[0]==="draft")) throw new Error(mode+" must not enter Draft before a formation is chosen");
 }
 
 for (const marker of ["function quickStart(){quickStartPreset('ucl');}","function quickStartCopa(){quickStartPreset('copa');}","function quickStartWC(){quickStartPreset('wc');}"]) {

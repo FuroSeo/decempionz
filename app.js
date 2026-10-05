@@ -21,15 +21,15 @@ const STRINGS={
     'tourn.wc.sub':'Mondiali · 1930 – 2022',
     'tourn.soon':'Prossimamente',
     'copa.btn_quick':'⚽ Gioca subito',
-    'copa.btn_quick_sub':'4-4-2 · All Time · Draft diretto',
+    'copa.btn_quick_sub':'Scegli modulo · All Time · Draft diretto',
     'copa.btn_custom':'⚙️ Personalizza','copa.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'wc.btn_quick':'⚽ Gioca subito',
-    'wc.btn_quick_sub':'4-3-3 · All Time · Draft diretto',
+    'wc.btn_quick_sub':'Scegli modulo · All Time · Draft diretto',
     'wc.btn_custom':'⚙️ Personalizza','wc.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'trophy.wc_classic':'Campione del Mondo!',
     'trophy.wc_old_cup':'Coppa Vecchio Stampo',
     'home.btn_quick':'⚽ Gioca subito',
-    'home.btn_quick_sub':'4-3-3 · All Time · Draft diretto',
+    'home.btn_quick_sub':'Scegli modulo · All Time · Draft diretto',
     'home.btn_custom':'⚙️ Personalizza','home.btn_custom_sub':'Scegli era, difficoltà, blind draft',
     'home.howtoplay_btn':'❓ Come si gioca',
     'trophies.title':'🏅 I tuoi Trofei',
@@ -370,15 +370,15 @@ const STRINGS={
     'tourn.wc.sub':'World Cup · 1930 – 2022',
     'tourn.soon':'Coming Soon',
     'copa.btn_quick':'⚽ Play Now',
-    'copa.btn_quick_sub':'4-4-2 · All Time · Direct Draft',
+    'copa.btn_quick_sub':'Pick formation · All Time · Direct Draft',
     'copa.btn_custom':'⚙️ Customize','copa.btn_custom_sub':'Choose era, difficulty, blind draft',
     'wc.btn_quick':'⚽ Play Now',
-    'wc.btn_quick_sub':'4-3-3 · All Time · Direct Draft',
+    'wc.btn_quick_sub':'Pick formation · All Time · Direct Draft',
     'wc.btn_custom':'⚙️ Customize','wc.btn_custom_sub':'Choose era, difficulty, blind draft',
     'trophy.wc_classic':'World Champion!',
     'trophy.wc_old_cup':'Old Cup Style',
     'home.btn_quick':'⚽ Play Now',
-    'home.btn_quick_sub':'4-3-3 · All Time · Direct Draft',
+    'home.btn_quick_sub':'Pick formation · All Time · Direct Draft',
     'home.btn_custom':'⚙️ Customize','home.btn_custom_sub':'Choose era, difficulty, blind draft',
     'home.howtoplay_btn':'❓ How to play',
     'trophies.title':'🏅 Your Trophies',
@@ -719,15 +719,15 @@ const STRINGS={
     'tourn.wc.sub':'Mundial · 1930 – 2022',
     'tourn.soon':'Próximamente',
     'copa.btn_quick':'⚽ Jugar ahora',
-    'copa.btn_quick_sub':'4-4-2 · All Time · Draft directo',
+    'copa.btn_quick_sub':'Elige módulo · All Time · Draft directo',
     'copa.btn_custom':'⚙️ Personalizar','copa.btn_custom_sub':'Elige era, dificultad, blind draft',
     'wc.btn_quick':'⚽ Jugar ahora',
-    'wc.btn_quick_sub':'4-3-3 · All Time · Draft directo',
+    'wc.btn_quick_sub':'Elige módulo · All Time · Draft directo',
     'wc.btn_custom':'⚙️ Personalizar','wc.btn_custom_sub':'Elige era, dificultad, blind draft',
     'trophy.wc_classic':'¡Campeón del Mundo!',
     'trophy.wc_old_cup':'Old Cup Estilo',
     'home.btn_quick':'⚽ Jugar ahora',
-    'home.btn_quick_sub':'4-3-3 · All Time · Draft directo',
+    'home.btn_quick_sub':'Elige módulo · All Time · Draft directo',
     'home.btn_custom':'⚙️ Personalizar','home.btn_custom_sub':'Elige era, dificultad, blind draft',
     'home.howtoplay_btn':'❓ Cómo jugar',
     'trophies.title':'🏅 Tus Trofeos',
@@ -2800,8 +2800,6 @@ function replayGame(){
 }
 
 function quickStartPreset(mode){
-  var presets={ucl:{formation:'4-3-3'},copa:{formation:'4-4-2'},wc:{formation:'4-3-3'}};
-  var preset=presets[mode]||presets.ucl;
   G.dynasty=false;G.dynastyClub=null;
   G.gameMode=mode;
   selectedFormat='classic';
@@ -2815,10 +2813,14 @@ function quickStartPreset(mode){
   const era=list.find(function(t){return t.allTime||t.id==='alltime';});
   applyTournament(era);
   G.tactic='balanced';
-  G.formation=preset.formation;
   applyTournamentTheme(mode);
-  _ga('quick_start',{tournament:mode,format:'classic',era:'alltime',difficulty:'normal',formation:preset.formation});
-  initDraft();
+  _ga('quick_start',{tournament:mode,format:'classic',era:'alltime',difficulty:'normal'});
+  renderFormationGrid();
+  setTimeout(function(){
+    document.querySelectorAll('#fmt-attack,#fmt-balanced,#fmt-defend').forEach(function(b){b.classList.remove('tact-sel');});
+    var fb=document.getElementById('fmt-balanced');if(fb)fb.classList.add('tact-sel');
+  },0);
+  showScreen('screen-formation');
 }
 function quickStart(){quickStartPreset('ucl');}
 function quickStartCopa(){quickStartPreset('copa');}
