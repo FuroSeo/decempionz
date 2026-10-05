@@ -200,6 +200,19 @@ async function playCampaign(browser, base, sc) {
         else await pointerClick(page, page.locator('.screen.active button.draft-pick-card').first());
       }
         else if (s.coaches) await pointerClick(page, page.locator('.screen.active button.coach-card').first());
+        else if (s.screen === 'screen-formation') {
+          // Gioca subito ora si ferma qui per far scegliere il modulo: la card selezionata
+          // non cambia il testo dei bottoni (solo le classi), quindi il drive loop generico
+          // non la vedrebbe come "progresso" e resterebbe bloccato a ri-cliccare la stessa
+          // carta in eterno. Guidiamo esplicitamente i due passaggi: scegli un modulo fisso
+          // (non quello casuale, per restare deterministici), poi avvia il draft.
+          const btnStart = s.buttons.find(b => b.id === 'btn-start-draft');
+          if (btnStart && !/btn-inactive/.test(btnStart.cls)) {
+            await page.click('#btn-start-draft', { timeout: 4000 });
+          } else {
+            await page.click('.screen.active .form-card:not(#fc-formation-random)', { timeout: 4000 });
+          }
+        }
         else if (s.screen === 'screen-match' && s.rcont) {
           // Half-time invariant: the goals shown in the log add up to the final score.
           const m = await page.evaluate(() => ({ half: M.half ? M.half.stage : null, my: M.myS, opp: M.oppS, myG: M.myG, oppG: M.oppG }));
